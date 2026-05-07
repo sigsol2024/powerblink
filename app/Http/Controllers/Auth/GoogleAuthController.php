@@ -38,7 +38,15 @@ class GoogleAuthController extends Controller
         }
         $request->session()->put('google_oauth_intent', $intent);
 
-        return Socialite::driver('google')->redirect();
+        /** @var \Laravel\Socialite\Two\AbstractProvider $provider */
+        $provider = Socialite::driver('google');
+
+        $hint = trim((string) $request->query('login_hint', ''));
+        if ($hint !== '') {
+            return $provider->with(['login_hint' => $hint])->redirect();
+        }
+
+        return $provider->redirect();
     }
 
     public function callback(Request $request, EmailOtpService $otp): RedirectResponse
@@ -98,6 +106,10 @@ class GoogleAuthController extends Controller
             Role::findOrCreate('user');
             $user->assignRole('user');
 
+            $request->session()->put('google_welcome_pending', [
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
             return $this->finalizeGoogleLogin($otp, $user);
         }
 
@@ -147,10 +159,31 @@ class GoogleAuthController extends Controller
         Auth::login($user, true);
         request()->session()->regenerate();
 
+        if (request()->session()->has('google_welcome_pending')) {
+            return redirect()
+                ->route('auth.google.welcome')
+                ->cookie('mt_google_email', $user->email, 60 * 24 * 365, null, null, false, true, false, 'Lax');
+        }
+
         $home = $user->hasRole('admin')
             ? route('admin.dashboard', absolute: false)
             : route('dashboard', absolute: false);
 
-        return redirect()->intended($home);
+        return redirect()
+            ->intended($home)
+            ->cookie('mt_google_email', $user->email, 60 * 24 * 365, null, null, false, true, false, 'Lax');
+    }
+
+    public function welcome(Request $request)
+    {
+        $payload = $request->session()->pull('google_welcome_pending');
+        if (! is_array($payload)) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('auth.google-welcome', [
+            'name' => (string) ($payload['name'] ?? ''),
+            'email' => (string) ($payload['email'] ?? ''),
+        ]);
     }
 }

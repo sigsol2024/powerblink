@@ -58,6 +58,7 @@ class PageController extends Controller
         $homeSections = $this->pageSections('home', [
             'hero_title' => 'Lorem ipsum dolor sit amet',
             'hero_subtitle' => 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt',
+            'hero_description' => '',
             'hero_cta_text' => 'Lorem CTA',
             'hero_cta_href' => '/inventory',
             'home_search_label' => 'Lorem ipsum — search inventory',
@@ -84,20 +85,7 @@ class PageController extends Controller
             'welcome_title' => 'Lorem ipsum welcome block',
             'welcome_body' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.',
             'welcome_video_url' => '',
-            'stats_metric_1_label' => 'Listings',
-            'stats_metric_2_value' => '0',
-            'stats_metric_2_label' => 'Metric two',
-            'stats_metric_3_value' => '0',
-            'stats_metric_3_label' => 'Metric three',
-            'stats_metric_4_value' => '0',
-            'stats_metric_4_label' => 'Metric four',
-            'stats_center_image' => 'asset/images/media/home-stats-car.jpg',
-            'testimonial_bg_image' => 'asset/images/media/home-stats-bg.jpg',
-            'testimonial_overlay_opacity' => '0.55',
-            'testimonial_name' => 'Lorem Ipsum',
-            'testimonial_role' => 'Lorem role',
-            'testimonial_avatar' => 'asset/images/media/home-testimonial-avatar.jpg',
-            'testimonial_quote' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fringilla, velit id laoreet hendrerit, sapien nisl varius dolor, eu consequat erat augue in eros.',
+            // Statistics + testimonial section keys removed (plan requirement).
             'prefooter_title' => 'Lorem ipsum — questions?',
             'prefooter_button_text' => 'Contact',
             'prefooter_button_href' => '/contact',
@@ -260,6 +248,48 @@ class PageController extends Controller
             'ogTitle' => $page->title,
             'ogDescription' => $page->meta_description,
             'ogUrl' => route('faq', [], true),
+            'page' => $page,
+            'sections' => $sections,
+        ]);
+    }
+
+    public function privacyPolicy()
+    {
+        $page = CmsPage::query()->where('slug', 'privacy-policy')->where('is_active', true)->firstOrFail();
+        $siteName = config('app.name');
+        $sections = $this->pageSections('privacy-policy', [
+            'heading' => 'Privacy Policy',
+            'body' => "This Privacy Policy explains how we collect, use, and protect information when you use our marketplace website.\n\nIf you create an account, sign in (including via Google), save listings, submit inquiries, or contact us, we may process the information you provide to deliver these features.\n\nWe do not sell your personal information. We use your information to operate the site, communicate with you, prevent fraud, and comply with legal obligations.\n\nFor questions about this policy or to request access, correction, or deletion of your data, please use the Contact page.",
+        ]);
+
+        return view('pages.legal', [
+            'title' => $page->title . ' | ' . $siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('privacy-policy', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('privacy-policy', [], true),
+            'page' => $page,
+            'sections' => $sections,
+        ]);
+    }
+
+    public function terms()
+    {
+        $page = CmsPage::query()->where('slug', 'terms')->where('is_active', true)->firstOrFail();
+        $siteName = config('app.name');
+        $sections = $this->pageSections('terms', [
+            'heading' => 'Terms & Conditions',
+            'body' => "These Terms & Conditions govern your use of our marketplace website.\n\nBy using the site, you agree not to misuse the platform, attempt unauthorized access, or submit false or misleading information.\n\nListings may be posted by dealers and by staff accounts. Listing details, pricing, and availability can change and are provided for informational purposes.\n\nIf you submit an inquiry, you agree that we may contact you using the information you provide.\n\nWe may suspend or terminate accounts that violate these terms. These terms may be updated from time to time; continued use indicates acceptance of updates.",
+        ]);
+
+        return view('pages.legal', [
+            'title' => $page->title . ' | ' . $siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('terms', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('terms', [], true),
             'page' => $page,
             'sections' => $sections,
         ]);

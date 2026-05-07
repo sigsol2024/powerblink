@@ -66,37 +66,27 @@
   @endif
   <div class="h-10 border-b border-white/10 bg-[#232628]">
     <div class="mx-auto flex h-full w-full max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
-      <div class="relative">
-        <button type="button" class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.05em] text-white/70 hover:text-white" data-currency-toggle>
-          <span data-currency-label>{{ $currencyLabel }}</span>
-          <span class="material-symbols-outlined text-[16px]">keyboard_arrow_down</span>
-        </button>
-        <div class="absolute left-0 top-full z-30 mt-2 hidden min-w-[200px] rounded-md border border-slate-200 bg-white p-2 shadow-xl ring-1 ring-black/5" data-currency-menu>
-          @foreach (($currencyUi['supported'] ?? ['USD' => 'US Dollar']) as $code => $name)
-            <button type="button" class="block w-full rounded px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-800 hover:bg-slate-100 hover:text-[#1280DF]" data-currency-option="{{ $code }}">
-              {{ $code }} - {{ $name }}
-            </button>
-          @endforeach
-        </div>
-      </div>
+      {{-- Currency system remains enabled, but the top-bar switcher is intentionally hidden (UX requirement). --}}
+      <div></div>
 
-      <div class="hidden xl:flex items-center gap-6 text-[11px] font-semibold tracking-[0.01em] text-white/90">
+      <div class="hidden xl:flex items-center gap-6 text-[12px] font-semibold tracking-[0.01em] text-white/90">
         @if ($phone !== '')
           <a href="tel:{{ preg_replace('/[^\d+]/', '', $phone) }}" class="inline-flex items-center gap-1.5 text-white/90 hover:text-white">
-            <span class="material-symbols-outlined text-[17px] text-[#1280DF]">call</span>
+            <span class="material-symbols-outlined text-[18px] text-[#1280DF]">call</span>
             <span>{{ $phone }}</span>
           </a>
         @endif
         @if ($address !== '')
           <span class="inline-flex min-w-0 items-center gap-1.5 text-white/80">
-            <span class="material-symbols-outlined text-[17px] text-[#1280DF]">location_on</span>
+            <span class="material-symbols-outlined text-[18px] text-[#1280DF]">location_on</span>
             <span class="truncate max-w-[370px]">{{ $address }}</span>
           </span>
         @endif
         @if ($hoursSnippet !== '')
           <span class="inline-flex items-center gap-1.5 text-white/90">
-            <span class="material-symbols-outlined text-[17px] text-[#1280DF]">schedule</span>
+            <span class="material-symbols-outlined text-[18px] text-[#1280DF]">schedule</span>
             <span>{{ $hoursLabel }}</span>
+            <span class="text-white/60">&nbsp;{{ $hoursSnippet }}</span>
           </span>
         @endif
       </div>
@@ -105,7 +95,7 @@
         @foreach (['facebook' => $socialFacebook, 'instagram' => $socialInstagram, 'linkedin' => $socialLinkedin, 'youtube' => $socialYoutube] as $net => $url)
           @if (!empty($url) && $url !== '#')
             <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="inline-flex h-7 w-7 items-center justify-center text-white/60 transition-colors hover:text-white" aria-label="{{ ucfirst($net) }}">
-              <span class="material-symbols-outlined text-[18px]">
+              <span class="material-symbols-outlined text-[19px]">
                 @if ($net === 'facebook')
                   thumb_up
                 @elseif ($net === 'instagram')

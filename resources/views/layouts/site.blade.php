@@ -101,6 +101,7 @@
       @yield('content')
     </main>
     @include('partials.footer')
+    @include('partials.whatsapp-widget')
     <div id="currencySelectionModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/65 p-4">
       <div class="w-full max-w-xl rounded-xl bg-white p-6 text-zinc-900 shadow-2xl">
         <h2 class="text-xl font-black">{{ __('Use your local currency?') }}</h2>

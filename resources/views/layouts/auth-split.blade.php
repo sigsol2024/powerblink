@@ -69,8 +69,8 @@
                 align-items: center;
             }
             .auth-split__brand {
-                display: flex;
-                width: 100%;
+                display: inline-flex;
+                width: auto;
                 justify-content: center;
                 align-items: center;
             }

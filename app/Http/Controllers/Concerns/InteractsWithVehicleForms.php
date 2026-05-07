@@ -100,7 +100,6 @@ trait InteractsWithVehicleForms
                 $q->where('category_id', $modelCatId)->whereNotNull('parent_id')->where('is_active', true);
             })],
             'price' => ['nullable', 'integer', 'min:0'],
-            'msrp' => ['nullable', 'integer', 'min:0'],
             'mileage' => ['nullable', 'integer', 'min:0'],
             'city_mpg' => ['nullable', 'integer', 'min:0', 'max:200'],
             'hwy_mpg' => ['nullable', 'integer', 'min:0', 'max:200'],
@@ -121,14 +120,6 @@ trait InteractsWithVehicleForms
             'map_location' => ['nullable', 'string', 'max:255'],
             'overview' => ['nullable', 'string', 'max:50000'],
             'video_url' => ['nullable', 'url', 'max:2048'],
-            'finance_price' => ['nullable', 'integer', 'min:0'],
-            'finance_interest_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'finance_term_months' => ['nullable', 'integer', 'min:1', 'max:600'],
-            'finance_down_payment' => ['nullable', 'integer', 'min:0'],
-            'finance_min_down_payment' => ['nullable', 'integer', 'min:0'],
-            'finance_term_min_months' => ['nullable', 'integer', 'min:1', 'max:600'],
-            'finance_term_max_months' => ['nullable', 'integer', 'min:1', 'max:600'],
-            'show_financing_calculator' => ['nullable', 'boolean'],
             'features_text' => ['nullable', 'string', 'max:10000'],
             'exterior_color' => array_merge(['nullable', 'string', 'max:255'], $in($exteriorColors)),
             'interior_color' => ['nullable', 'string', 'max:255'],
@@ -166,28 +157,6 @@ trait InteractsWithVehicleForms
         }
 
         $data['is_special'] = $request->boolean('is_special');
-        if ($this->vehiclesHasShowFinancingCalculatorColumn()) {
-            $data['show_financing_calculator'] = $request->boolean('show_financing_calculator');
-        } else {
-            unset($data['show_financing_calculator']);
-        }
-
-        // Finance constraint coherence (server-side safety).
-        $termMin = isset($data['finance_term_min_months']) ? (int) $data['finance_term_min_months'] : null;
-        $termMax = isset($data['finance_term_max_months']) ? (int) $data['finance_term_max_months'] : null;
-        if ($termMin !== null && $termMax !== null && $termMax > 0 && $termMin > 0 && $termMax < $termMin) {
-            throw ValidationException::withMessages([
-                'finance_term_max_months' => __('Max loan term must be greater than or equal to min loan term.'),
-            ]);
-        }
-
-        $vehiclePrice = isset($data['price']) ? (int) $data['price'] : 0;
-        $minDown = isset($data['finance_min_down_payment']) ? (int) $data['finance_min_down_payment'] : null;
-        if ($vehiclePrice > 0 && $minDown !== null && $minDown > $vehiclePrice) {
-            throw ValidationException::withMessages([
-                'finance_min_down_payment' => __('Minimum down payment cannot exceed the vehicle price.'),
-            ]);
-        }
 
         $data['features'] = $this->parseFeatures($data['features_text'] ?? null);
         unset($data['features_text']);

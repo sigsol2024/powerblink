@@ -23,6 +23,7 @@ class AdminPageController extends Controller
                 'fields' => [
                     ['name' => 'hero_title', 'label' => 'Hero Title', 'type' => 'text', 'default' => 'Lorem ipsum dolor sit amet', 'group' => 'Hero & search'],
                     ['name' => 'hero_subtitle', 'label' => 'Hero Subtitle', 'type' => 'text', 'default' => 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt', 'group' => 'Hero & search'],
+                    ['name' => 'hero_description', 'label' => 'Hero Description (small line)', 'type' => 'textarea', 'default' => '', 'group' => 'Hero & search'],
                     ['name' => 'hero_cta_text', 'label' => 'Hero CTA Button Text', 'type' => 'text', 'default' => 'Lorem CTA', 'group' => 'Hero & search'],
                     ['name' => 'hero_cta_href', 'label' => 'Hero CTA Link (path or URL)', 'type' => 'text', 'default' => '/inventory', 'group' => 'Hero & search'],
                     ['name' => 'home_search_label', 'label' => 'Search Bar Label', 'type' => 'text', 'default' => 'Lorem ipsum — search inventory', 'group' => 'Hero & search'],
@@ -49,20 +50,7 @@ class AdminPageController extends Controller
                     ['name' => 'welcome_title', 'label' => 'Welcome Block Title', 'type' => 'text', 'default' => 'Lorem ipsum welcome block', 'group' => 'Welcome block'],
                     ['name' => 'welcome_body', 'label' => 'Welcome Block Body', 'type' => 'textarea', 'default' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.', 'group' => 'Welcome block'],
                     ['name' => 'welcome_video_url', 'label' => 'Welcome video (YouTube URL or ID)', 'type' => 'text', 'default' => '', 'group' => 'Welcome block'],
-                    ['name' => 'stats_metric_1_label', 'label' => 'Stat 1 label (count is live approved listings)', 'type' => 'text', 'default' => 'Listings', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_2_value', 'label' => 'Stat 2 number', 'type' => 'text', 'default' => '0', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_2_label', 'label' => 'Stat 2 label', 'type' => 'text', 'default' => 'Metric two', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_3_value', 'label' => 'Stat 3 number', 'type' => 'text', 'default' => '0', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_3_label', 'label' => 'Stat 3 label', 'type' => 'text', 'default' => 'Metric three', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_4_value', 'label' => 'Stat 4 number', 'type' => 'text', 'default' => '0', 'group' => 'Statistics block'],
-                    ['name' => 'stats_metric_4_label', 'label' => 'Stat 4 label', 'type' => 'text', 'default' => 'Metric four', 'group' => 'Statistics block'],
-                    ['name' => 'stats_center_image', 'label' => 'Statistics block center image', 'type' => 'image', 'default' => 'asset/images/media/home-stats-car.jpg', 'group' => 'Statistics block', 'preview' => 'thumbnail'],
-                    ['name' => 'testimonial_bg_image', 'label' => 'Testimonial background image', 'type' => 'image', 'default' => 'asset/images/media/home-stats-bg.jpg', 'group' => 'Testimonial', 'preview' => 'thumbnail'],
-                    ['name' => 'testimonial_overlay_opacity', 'label' => 'Testimonial overlay darkness (0–1, e.g. 0.55)', 'type' => 'text', 'default' => '0.55', 'group' => 'Testimonial'],
-                    ['name' => 'testimonial_name', 'label' => 'Testimonial Name', 'type' => 'text', 'default' => 'Lorem Ipsum', 'group' => 'Testimonial'],
-                    ['name' => 'testimonial_role', 'label' => 'Testimonial Role', 'type' => 'text', 'default' => 'Lorem role', 'group' => 'Testimonial'],
-                    ['name' => 'testimonial_avatar', 'label' => 'Testimonial headshot', 'type' => 'image', 'default' => 'asset/images/media/home-testimonial-avatar.jpg', 'group' => 'Testimonial', 'preview' => 'thumbnail'],
-                    ['name' => 'testimonial_quote', 'label' => 'Testimonial Quote', 'type' => 'textarea', 'default' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fringilla, velit id laoreet hendrerit, sapien nisl varius dolor, eu consequat erat augue in eros.', 'group' => 'Testimonial'],
+                    // Statistics block + Testimonial block removed (plan requirement).
                     ['name' => 'prefooter_title', 'label' => 'Pre-footer heading', 'type' => 'text', 'default' => 'Lorem ipsum — questions?', 'group' => 'Pre-footer CTA'],
                     ['name' => 'prefooter_button_text', 'label' => 'Pre-footer button text', 'type' => 'text', 'default' => 'Contact', 'group' => 'Pre-footer CTA'],
                     ['name' => 'prefooter_button_href', 'label' => 'Pre-footer button link (path or URL)', 'type' => 'text', 'default' => '/contact', 'group' => 'Pre-footer CTA'],
@@ -201,6 +189,24 @@ class AdminPageController extends Controller
                 'fields' => [
                     ['name' => 'heading', 'label' => 'Compare Heading', 'type' => 'text', 'default' => 'Compare Vehicles', 'group' => 'Page intro'],
                     ['name' => 'intro', 'label' => 'Compare Intro', 'type' => 'textarea', 'default' => 'Compare list is dynamic and comes from visitor selections.', 'group' => 'Page intro'],
+                ],
+            ],
+            'privacy-policy' => [
+                'label' => 'Privacy Policy',
+                'default_title' => 'Privacy Policy',
+                'default_description' => 'Privacy policy content for marketplace users.',
+                'fields' => [
+                    ['name' => 'heading', 'label' => 'Page heading', 'type' => 'text', 'default' => 'Privacy Policy', 'group' => 'Content'],
+                    ['name' => 'body', 'label' => 'Policy body', 'type' => 'textarea', 'default' => "This Privacy Policy explains how we collect, use, and protect information when you use our marketplace website.\n\nIf you create an account, sign in (including via Google), save listings, submit inquiries, or contact us, we may process the information you provide to deliver these features.\n\nWe do not sell your personal information. We use your information to operate the site, communicate with you, prevent fraud, and comply with legal obligations.\n\nFor questions about this policy or to request access, correction, or deletion of your data, please use the Contact page.", 'group' => 'Content'],
+                ],
+            ],
+            'terms' => [
+                'label' => 'Terms & Conditions',
+                'default_title' => 'Terms & Conditions',
+                'default_description' => 'Terms and conditions for using the marketplace.',
+                'fields' => [
+                    ['name' => 'heading', 'label' => 'Page heading', 'type' => 'text', 'default' => 'Terms & Conditions', 'group' => 'Content'],
+                    ['name' => 'body', 'label' => 'Terms body', 'type' => 'textarea', 'default' => "These Terms & Conditions govern your use of our marketplace website.\n\nBy using the site, you agree not to misuse the platform, attempt unauthorized access, or submit false or misleading information.\n\nListings may be posted by dealers and by staff accounts. Listing details, pricing, and availability can change and are provided for informational purposes.\n\nIf you submit an inquiry, you agree that we may contact you using the information you provide.\n\nWe may suspend or terminate accounts that violate these terms. These terms may be updated from time to time; continued use indicates acceptance of updates.", 'group' => 'Content'],
                 ],
             ],
             'listing-detail' => [

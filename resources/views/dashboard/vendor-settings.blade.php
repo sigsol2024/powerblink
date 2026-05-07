@@ -5,11 +5,11 @@
   <x-slot name="header">
     <div>
       <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Account') }}</div>
-      <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Dealer profile') }}</div>
+      <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Dealer contact') }}</div>
     </div>
   </x-slot>
 
-  <div class="mx-auto max-w-3xl space-y-6">
+  <div class="mx-auto w-full max-w-6xl space-y-6">
     @if (session('status'))
       <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{{ session('status') }}</div>
     @endif
@@ -24,7 +24,7 @@
       @csrf
       @method('PUT')
 
-      <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-700">{{ __('Public contact on listings') }}</h2>
         <p class="mt-1 text-xs text-zinc-500">{{ __('When enabled, buyers see this information on your vehicle detail page instead of only the per-listing fields.') }}</p>
         <div class="mt-4 space-y-4">
@@ -67,7 +67,7 @@
         </div>
       </section>
 
-      <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-700">{{ __('Email login code (OTP)') }}</h2>
         <p class="mt-1 text-xs text-zinc-500">{{ __('After you enable this, you will receive a code by email each time you sign in with your password.') }}</p>
         <div class="mt-4 space-y-4">
@@ -85,7 +85,7 @@
         </div>
       </section>
 
-      <div class="flex justify-end gap-3">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         <a href="{{ route('dashboard') }}" class="inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50">{{ __('Cancel') }}</a>
         <button type="submit" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">{{ __('Save') }}</button>
       </div>

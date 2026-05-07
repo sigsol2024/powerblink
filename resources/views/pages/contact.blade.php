@@ -117,7 +117,7 @@
 <span class="material-symbols-outlined text-2xl">call</span>
 </div>
 <div>
-<h4 class="font-bold text-[14px] text-slate-900 mb-1 uppercase">{{ $panelTitle }} Phone</h4>
+<h4 class="font-bold text-[14px] text-slate-900 mb-1 uppercase">{{ $panel === 'parts' ? __('Telephone') : ($panelTitle . ' ' . __('Phone')) }}</h4>
 <p class="text-slate-500 text-[14px]">{{ $panelPhone }}</p>
 </div>
 </div>

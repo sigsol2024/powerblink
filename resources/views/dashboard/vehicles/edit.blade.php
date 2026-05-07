@@ -84,11 +84,6 @@
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <x-input-label for="msrp" value="MSRP" />
-                  <x-text-input id="msrp" name="msrp" type="number" class="mt-1 block w-full" value="{{ old('msrp', $vehicle->msrp) }}" />
-                  <x-input-error :messages="$errors->get('msrp')" class="mt-2" />
-                </div>
-                <div>
                   <x-input-label for="video_url" value="Video URL (optional)" />
                   <x-text-input id="video_url" name="video_url" type="url" class="mt-1 block w-full" value="{{ old('video_url', $vehicle->video_url) }}" />
                   <x-input-error :messages="$errors->get('video_url')" class="mt-2" />
@@ -103,45 +98,6 @@
                 <div>
                   <x-input-label for="hwy_mpg" value="Highway MPG" />
                   <x-text-input id="hwy_mpg" name="hwy_mpg" type="number" class="mt-1 block w-full" value="{{ old('hwy_mpg', $vehicle->hwy_mpg) }}" />
-                </div>
-                <div>
-                  <x-input-label for="finance_interest_rate" value="Finance rate (%)" />
-                  <x-text-input id="finance_interest_rate" name="finance_interest_rate" type="number" step="0.01" class="mt-1 block w-full" value="{{ old('finance_interest_rate', $vehicle->finance_interest_rate) }}" />
-                </div>
-                <div>
-                  <x-input-label for="finance_term_months" value="Finance term (months)" />
-                  <x-text-input id="finance_term_months" name="finance_term_months" type="number" class="mt-1 block w-full" value="{{ old('finance_term_months', $vehicle->finance_term_months) }}" />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <x-input-label for="finance_min_down_payment" value="Minimum down payment" />
-                  <x-text-input id="finance_min_down_payment" name="finance_min_down_payment" type="number" class="mt-1 block w-full" value="{{ old('finance_min_down_payment', $vehicle->finance_min_down_payment) }}" />
-                </div>
-                <div>
-                  <x-input-label for="finance_term_min_months" value="Loan term min (months)" />
-                  <x-text-input id="finance_term_min_months" name="finance_term_min_months" type="number" class="mt-1 block w-full" value="{{ old('finance_term_min_months', $vehicle->finance_term_min_months) }}" />
-                </div>
-                <div>
-                  <x-input-label for="finance_term_max_months" value="Loan term max (months)" />
-                  <x-text-input id="finance_term_max_months" name="finance_term_max_months" type="number" class="mt-1 block w-full" value="{{ old('finance_term_max_months', $vehicle->finance_term_max_months) }}" />
-                </div>
-              </div>
-
-              <div class="flex items-center gap-2 rounded-md border border-indigo-200 bg-indigo-50/70 px-3 py-2">
-                <input id="show_financing_calculator" name="show_financing_calculator" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('show_financing_calculator', $vehicle->show_financing_calculator)) />
-                <x-input-label for="show_financing_calculator" value="{{ __('Show financing calculator on detail page') }}" class="!mb-0" />
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <x-input-label for="finance_price" value="Finance vehicle price" />
-                  <x-text-input id="finance_price" name="finance_price" type="number" class="mt-1 block w-full" value="{{ old('finance_price', $vehicle->finance_price) }}" />
-                </div>
-                <div>
-                  <x-input-label for="finance_down_payment" value="Finance down payment" />
-                  <x-text-input id="finance_down_payment" name="finance_down_payment" type="number" class="mt-1 block w-full" value="{{ old('finance_down_payment', $vehicle->finance_down_payment) }}" />
                 </div>
               </div>
 
@@ -180,10 +136,12 @@
               </div>
             </section>
 
-            <div class="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50/80 px-3 py-2">
-              <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('is_special', $vehicle->is_special)) />
-              <x-input-label for="is_special" value="{{ __('Special listing (shows “Special” ribbon on homepage cards)') }}" class="!mb-0" />
-            </div>
+            @if($isAdminEdit)
+              <div class="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50/80 px-3 py-2">
+                <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('is_special', $vehicle->is_special)) />
+                <x-input-label for="is_special" value="{{ __('Special listing (shows “Special” ribbon on homepage cards)') }}" class="!mb-0" />
+              </div>
+            @endif
 
             @if($isAdminEdit && in_array($vehicle->status, ['pending', 'draft', 'rejected'], true))
               <div class="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-2">

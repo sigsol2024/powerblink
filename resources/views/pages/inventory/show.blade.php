@@ -52,9 +52,7 @@
           'externalUrl' => $videoUrl,
       ];
   }
-  $msrp = $vehicle->msrp;
   $price = $vehicle->price;
-  $saving = (!is_null($price) && !is_null($msrp) && $msrp > $price) ? ($msrp - $price) : null;
   $overview = $vehicle->overview ?: $vehicle->description;
   $techSpecs = is_array($vehicle->tech_specs) ? $vehicle->tech_specs : [];
   $pickMap = static function (?string ...$candidates): string {
@@ -72,38 +70,7 @@
     $vehicle->map_location ?? null,
     $vehicle->street_address ?? null,
   );
-  // Financing (constrained): vendor sets interest + minimum down payment + min/max term.
-  // Calculator derives from listing price only.
-  $financePrice = (float) ($vehicle->price ?? 0);
-  $financeRate = (float) ($vehicle->finance_interest_rate ?? 0);
-  $financeDownMin = (float) ($vehicle->finance_min_down_payment ?? $vehicle->finance_down_payment ?? 0);
-  $financeTermMonthsBase = (int) ($vehicle->finance_term_months ?? 0);
-  $hasTermMinCol = $vehicle->finance_term_min_months !== null;
-  $hasTermMaxCol = $vehicle->finance_term_max_months !== null;
-  $financeTermMin = $hasTermMinCol
-      ? (int) $vehicle->finance_term_min_months
-      : ($financeTermMonthsBase > 0 ? $financeTermMonthsBase : 0);
-  $financeTermMax = $hasTermMaxCol
-      ? (int) $vehicle->finance_term_max_months
-      : ($financeTermMonthsBase > 0 ? $financeTermMonthsBase : 0);
-  if ($financeTermMin <= 0 && $financeTermMax > 0) {
-      $financeTermMin = $financeTermMax;
-  }
-  if ($financeTermMax <= 0 && $financeTermMin > 0) {
-      $financeTermMax = $financeTermMin;
-  }
-  if ($financeTermMin > 0 && $financeTermMax > 0 && $financeTermMax < $financeTermMin) {
-      $financeTermMax = $financeTermMin;
-  }
-  if ($financePrice > 0 && $financeDownMin > $financePrice) {
-      $financeDownMin = $financePrice;
-  }
-  $financingEnabled = (bool) ($vehicle->show_financing_calculator ?? false);
-  $showFinanceCalculator = $financingEnabled
-    && $financePrice > 0
-    && $financeRate >= 0
-    && $financeTermMin > 0
-    && $financeTermMax >= $financeTermMin;
+  // Financing calculator removed (plan requirement).
 @endphp
 
 <div class="vehicle-detail-page bg-black text-white font-['Open_Sans']">
@@ -118,15 +85,6 @@
           <div class="text-[10px] uppercase font-bold opacity-70">Buy for</div>
           <div class="text-2xl font-black">{{ !is_null($price) ? '' : 'ASK' }}@if(!is_null($price))<span data-currency-amount="{{ (float) $price }}" data-currency-decimals="0">${{ number_format((int) $price) }}</span>@endif</div>
         </div>
-        <div class="bg-[#3b5998] p-4 flex flex-col justify-center min-w-[140px] text-center">
-          <div class="text-[10px] uppercase font-bold opacity-70">MSRP</div>
-          <div class="text-2xl font-black">{{ !is_null($msrp) ? '' : 'N/A' }}@if(!is_null($msrp))<span data-currency-amount="{{ (float) $msrp }}" data-currency-decimals="0">${{ number_format((int) $msrp) }}</span>@endif</div>
-        </div>
-        @if ($saving)
-          <div class="bg-black/20 p-2 flex items-center px-4">
-            <span class="text-[10px] font-bold uppercase text-[#ffb129]">Instant Savings: <span data-currency-amount="{{ (float) $saving }}" data-currency-decimals="0">${{ number_format((int) $saving) }}</span></span>
-          </div>
-        @endif
       </div>
     </section>
 
@@ -298,47 +256,7 @@
           <div class="text-center"><div class="text-3xl font-black">{{ $vehicle->hwy_mpg ?: 'N/A' }}</div><div class="text-[10px] font-bold text-gray-500 uppercase">HWY MPG</div></div>
         </div>
 
-        @if ($showFinanceCalculator)
-          <div class="bg-[#191c1e] p-8 border border-white/5" data-finance-calculator data-finance-version="constrained"
-               data-price="{{ (float) $financePrice }}"
-               data-rate="{{ (float) $financeRate }}"
-               data-term-min="{{ (int) $financeTermMin }}"
-               data-term-max="{{ (int) $financeTermMax }}"
-               data-down-min="{{ (float) $financeDownMin }}">
-            <h3 class="text-sm font-black uppercase flex items-center gap-2 mb-8"><span class="material-symbols-outlined text-[#ffb129]">calculate</span> Financing calculator</h3>
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase text-gray-500">Vehicle price ($)</label>
-                <input class="w-full bg-white/90 text-[#191c1e] font-bold py-2.5 px-4 rounded-sm border-none" type="number" data-finance-input="price" readonly aria-readonly="true" />
-              </div>
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase text-gray-500">Interest rate (%)</label>
-                <input class="w-full bg-white/90 text-[#191c1e] font-bold py-2.5 px-4 rounded-sm border-none" type="number" step="0.01" data-finance-input="rate" readonly aria-readonly="true" />
-              </div>
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase text-gray-500">Loan term (months)</label>
-                <input class="w-full bg-white text-[#191c1e] font-bold py-2.5 px-4 rounded-sm border-none" type="number" data-finance-input="term" />
-                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Allowed: {{ (int) $financeTermMin }}–{{ (int) $financeTermMax }}</p>
-              </div>
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase text-gray-500">Down payment ($)</label>
-                <input class="w-full bg-white text-[#191c1e] font-bold py-2.5 px-4 rounded-sm border-none" type="number" data-finance-input="down" />
-                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Minimum: {{ number_format((float) $financeDownMin, 0, '.', ',') }}</p>
-              </div>
-              <button class="w-full bg-[#3b5998] py-3 text-xs font-black uppercase tracking-tighter hover:bg-[#4b71be] transition-colors" type="button" data-finance-apply-btn>Apply</button>
-              <div class="pt-6 border-t border-white/10 space-y-2">
-                <div class="flex justify-between text-xs"><span class="text-gray-500">Monthly Payment</span><span class="font-black text-[#ffb129]" data-finance-result>$0</span></div>
-                <div class="flex justify-between text-xs"><span class="text-gray-500">Total Interest Payment</span><span class="font-black text-[#ffb129]" data-finance-total-interest>$0</span></div>
-                <div class="flex justify-between text-xs"><span class="text-gray-500">Total Amount to Pay</span><span class="font-black text-[#ffb129]" data-finance-total-amount>$0</span></div>
-              </div>
-            </div>
-          </div>
-        @elseif ($financingEnabled)
-          <div class="bg-[#191c1e] p-8 border border-white/5">
-            <h3 class="text-sm font-black uppercase flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-[#ffb129]">calculate</span> Financing calculator</h3>
-            <p class="text-sm text-gray-400">{{ __('Financing not available for this vehicle.') }}</p>
-          </div>
-        @endif
+        {{-- Financing calculator removed (plan requirement). --}}
       </aside>
     </section>
 
@@ -438,7 +356,7 @@
                         <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="{{ \App\Support\VehicleImageUrl::url($itemCover->path) }}" alt="{{ $item->title }}">
                       @endif
                       <div class="absolute bottom-0 left-0 right-0 bg-[#3b5998]/90 p-2 text-center">
-                        <span class="text-[10px] font-bold">Our price {{ !is_null($item->price) ? '' : 'ASK' }}@if(!is_null($item->price))<span data-currency-amount="{{ (float) $item->price }}" data-currency-decimals="0">${{ number_format((int) $item->price) }}</span>@endif @if($item->msrp)<span class="opacity-50">MSRP <span data-currency-amount="{{ (float) $item->msrp }}" data-currency-decimals="0">${{ number_format((int) $item->msrp) }}</span></span>@endif</span>
+                        <span class="text-[10px] font-bold">Our price {{ !is_null($item->price) ? '' : 'ASK' }}@if(!is_null($item->price))<span data-currency-amount="{{ (float) $item->price }}" data-currency-decimals="0">${{ number_format((int) $item->price) }}</span>@endif</span>
                       </div>
                     </div>
                     <div class="p-4"><h4 class="text-xs font-bold uppercase">{{ trim(($item->makeOption?->value ?: '').' '.($item->modelOption?->value ?: '').' '.($item->year ?: '')) }}</h4></div>

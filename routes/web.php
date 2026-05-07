@@ -50,7 +50,13 @@ Route::redirect('/admin/login', '/login', 302);
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::post('/contact', [ContactController::class, 'submit'])->middleware('throttle:5,1')->name('contact.submit');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/auth/google/welcome', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'welcome'])->name('auth.google.welcome');
+});
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:10,1')
     ->name('newsletter.subscribe');

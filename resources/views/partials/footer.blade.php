@@ -11,11 +11,39 @@
   $serviceHoursLines = $splitHours((string) ($site['dealer_service_hours'] ?? ''));
   $partsHoursLines = $splitHours((string) ($site['dealer_parts_hours'] ?? ''));
 
-  $blogTitle = trim((string) ($site['footer_blog_title'] ?? __('Latest Blog Posts')));
-  $blogRaw = $site['footer_blog_entries_json'] ?? '[]';
-  $blogEntries = json_decode((string) $blogRaw, true);
-  if (! is_array($blogEntries)) {
-      $blogEntries = [];
+  // Footer “Top makes” column (public inventory only: approved listings).
+  $topMakes = collect();
+  try {
+      $makeCatId = \App\Models\ListingOptionCategory::query()->where('slug', 'make')->value('id');
+      if ($makeCatId) {
+          $rows = \App\Models\Vehicle::query()
+              ->where('status', 'approved')
+              ->whereNotNull('make_listing_option_id')
+              ->selectRaw('make_listing_option_id, COUNT(*) as listing_count')
+              ->groupBy('make_listing_option_id')
+              ->orderByDesc('listing_count')
+              ->limit(5)
+              ->get();
+
+          $ids = $rows->pluck('make_listing_option_id')->filter()->values()->all();
+          $optById = \App\Models\ListingOption::query()
+              ->where('category_id', $makeCatId)
+              ->whereIn('id', $ids)
+              ->get(['id', 'value'])
+              ->keyBy('id');
+
+          $topMakes = $rows->map(function ($r) use ($optById) {
+              $opt = $optById->get((int) $r->make_listing_option_id);
+              if (! $opt) return null;
+              return (object) [
+                  'id' => (int) $opt->id,
+                  'label' => (string) $opt->value,
+                  'count' => (int) $r->listing_count,
+              ];
+          })->filter()->values();
+      }
+  } catch (\Throwable) {
+      $topMakes = collect();
   }
 
   $aboutGalleryStr = \App\Models\PageSection::query()->where('page', 'about')->where('section_key', 'gallery')->value('content') ?? '[]';
@@ -27,6 +55,12 @@
   $newsletterNote = trim((string) ($site['newsletter_note'] ?? ''));
   $privacyUrl = trim((string) ($site['footer_privacy_url'] ?? ''));
   $termsUrl = trim((string) ($site['footer_terms_url'] ?? ''));
+  if (\Illuminate\Support\Facades\Route::has('privacy-policy')) {
+      $privacyUrl = route('privacy-policy');
+  }
+  if (\Illuminate\Support\Facades\Route::has('terms')) {
+      $termsUrl = route('terms');
+  }
   if ($privacyUrl === '') {
       $privacyUrl = '#';
   }
@@ -55,33 +89,21 @@
       </div>
     </div>
     <div class="space-y-6">
-      <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ $blogTitle }}</h4>
-      @if (count($blogEntries) > 0)
-        <div class="space-y-4">
-          @foreach ($blogEntries as $entry)
-            @if (! is_array($entry))
-              @continue
-            @endif
-            @php
-              $bt = trim((string) ($entry['title'] ?? ''));
-              $burl = trim((string) ($entry['url'] ?? $entry['href'] ?? ''));
-              $bmeta = trim((string) ($entry['meta'] ?? ''));
-            @endphp
-            @if ($bt === '' && $burl === '')
-              @continue
-            @endif
-            <div>
-              @if ($burl !== '')
-                <a href="{{ $burl }}" class="block text-slate-300 text-[13px] font-medium hover:text-white">{{ $bt !== '' ? $bt : $burl }}</a>
-              @else
-                <p class="text-slate-300 text-[13px] font-medium">{{ $bt }}</p>
-              @endif
-              @if ($bmeta !== '')
-                <p class="text-brand_blue text-[11px] mt-1 font-bold">{{ $bmeta }}</p>
-              @endif
-            </div>
+      <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Top 5 car makes') }}</h4>
+      @if ($topMakes->isNotEmpty())
+        <div class="space-y-3">
+          @foreach ($topMakes as $mk)
+            <a
+              href="{{ route('inventory.index', ['make_listing_option_id' => $mk->id]) }}"
+              class="flex items-center justify-between gap-4 text-slate-300 text-[13px] font-medium hover:text-white"
+            >
+              <span class="truncate">{{ $mk->label }}</span>
+              <span class="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/80">{{ number_format((int) $mk->count) }}</span>
+            </a>
           @endforeach
         </div>
+      @else
+        <p class="text-slate-400 text-[13px]">{{ __('Top makes will appear once listings are available.') }}</p>
       @endif
     </div>
     <div class="space-y-6">
@@ -143,8 +165,8 @@
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-500 font-bold uppercase tracking-widest">
-    <p>&copy; {{ date('Y') }} {{ $copyrightName }}. {{ __('All Rights Reserved.') }}</p>
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-500 font-medium">
+    <p>&copy; {{ date('Y') }} {{ $copyrightName }}. {{ __('All rights reserved.') }}</p>
     <div class="flex items-center gap-6 mt-4 md:mt-0">
       <a class="hover:text-white transition-colors" href="{{ $privacyUrl }}">{{ __('Privacy Policy') }}</a>
       <a class="hover:text-white transition-colors" href="{{ $termsUrl }}">{{ __('Terms of Service') }}</a>

@@ -35,8 +35,7 @@
       : [
           ['route' => 'dashboard', 'match' => 'dashboard', 'label' => __('Overview'), 'icon' => $icOverview],
           ['route' => 'dashboard.vehicles.index', 'match' => 'dealer.vehicles.list', 'label' => __('My listings'), 'icon' => $icListings],
-          ['route' => 'dashboard.vehicles.create', 'match' => 'dashboard.vehicles.create', 'label' => __('New listing'), 'icon' => $icPlus],
-          ['route' => 'dashboard.vendor-settings.edit', 'match' => 'dashboard.vendor-settings.*', 'label' => __('Dealer profile'), 'icon' => $icStore],
+          ['route' => 'dashboard.vendor-settings.edit', 'match' => 'dashboard.vendor-settings.*', 'label' => __('Dealer contact'), 'icon' => $icStore],
           ['route' => 'dashboard.favorites.index', 'match' => 'dashboard.favorites.*', 'label' => __('Saved vehicles'), 'icon' => $icHeart],
       ];
 

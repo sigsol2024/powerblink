@@ -6,20 +6,13 @@
   $heroSubtitle = $s['hero_subtitle'] ?? 'Consectetur adipiscing elit';
   $heroBg = \App\Support\PlaceholderMedia::url($s['hero_image'] ?? 'asset/images/media/home-hero-main.jpg');
   $dealerCtaBg = \App\Support\PlaceholderMedia::url($s['dealer_cta_bg'] ?? 'asset/images/media/home-cta-left.jpg');
-  $testimonialBg = \App\Support\PlaceholderMedia::url($s['testimonial_bg_image'] ?? 'asset/images/media/home-stats-bg.jpg');
-  $testimonialAvatar = \App\Support\PlaceholderMedia::url($s['testimonial_avatar'] ?? 'asset/images/media/home-testimonial-avatar.jpg');
-  $statsCar = \App\Support\PlaceholderMedia::url($s['stats_center_image'] ?? 'asset/images/media/home-stats-car.jpg');
+  // testimonial + statistics blocks removed (see plan)
   $heroCtaHref = $s['hero_cta_href'] ?? '/inventory';
   $heroCtaUrl = \Illuminate\Support\Str::startsWith($heroCtaHref, ['http://', 'https://']) ? $heroCtaHref : url($heroCtaHref);
   $ctaLeftHref = $s['cta_left_button_href'] ?? '/inventory';
   $ctaLeftUrl = \Illuminate\Support\Str::startsWith($ctaLeftHref, ['http://', 'https://']) ? $ctaLeftHref : url($ctaLeftHref);
   $ctaRightHref = $s['cta_right_button_href'] ?? (auth()->check() ? '/dashboard/vehicles/create' : '/register');
   $ctaRightUrl = \Illuminate\Support\Str::startsWith($ctaRightHref, ['http://', 'https://']) ? $ctaRightHref : url($ctaRightHref);
-  $approvedCount = (int) ($approvedListingCount ?? 0);
-  $statsM2 = max(0, (int) preg_replace('/\D/', '', (string) ($s['stats_metric_2_value'] ?? '0')));
-  $statsM3 = max(0, (int) preg_replace('/\D/', '', (string) ($s['stats_metric_3_value'] ?? '0')));
-  $statsM4 = max(0, (int) preg_replace('/\D/', '', (string) ($s['stats_metric_4_value'] ?? '0')));
-  $testimonialOverlay = min(0.95, max(0.0, (float) ($s['testimonial_overlay_opacity'] ?? 0.55)));
   $leftCtaIcon = preg_replace('/[^a-z0-9_]/', '', strtolower((string) ($s['dealer_cta_left_icon'] ?? 'directions_car'))) ?: 'directions_car';
   $rightCtaIcon = preg_replace('/[^a-z0-9_]/', '', strtolower((string) ($s['dealer_cta_right_icon'] ?? 'sell'))) ?: 'sell';
   $recentTitleRaw = trim((string) ($s['recent_title'] ?? 'RECENT CARS'));
@@ -51,8 +44,13 @@
     <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ e($heroBg) }}');"></div>
     <div class="absolute inset-0 hero-gradient"></div>
     <div class="relative z-10 container mx-auto px-8 py-[65px] text-center">
-      <h1 class="text-white font-headline font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-tight uppercase">{{ $heroTitle }}</h1>
-      <p class="text-primary font-bold tracking-widest mt-6 text-lg sm:text-xl md:text-2xl uppercase">{{ $heroSubtitle }}</p>
+      <h1 class="text-white font-headline font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-tight">{{ $heroTitle }}</h1>
+      <p class="text-primary font-bold tracking-widest mt-6 text-lg sm:text-xl md:text-2xl">{{ $heroSubtitle }}</p>
+      @if (! empty($s['hero_description']))
+        <p class="mx-auto mt-4 max-w-3xl text-sm font-medium leading-relaxed text-white/90 sm:text-[15px]">
+          {{ $s['hero_description'] }}
+        </p>
+      @endif
       <a href="{{ $heroCtaUrl }}" class="mt-10 inline-block bg-primary text-on_surface px-10 py-4 font-bold text-xs tracking-widest uppercase rounded shadow-lg hover:bg-yellow-400 transition-colors">
         {{ $s['hero_cta_text'] ?? 'Lorem CTA' }}
       </a>
@@ -66,7 +64,7 @@
         $homeConditions = collect($filterOptions['conditions'] ?? []);
         $homeMakes = collect($filterOptions['makes'] ?? []);
       @endphp
-      <form id="home-inventory-search" method="get" action="{{ route('inventory.index') }}" class="space-y-4">
+      <form id="home-inventory-search" method="get" action="{{ route('inventory.index') }}" class="space-y-4" data-initial-model="{{ (int) ($filters['model_listing_option_id'] ?? 0) }}">
         <div class="flex items-center gap-2.5 text-white">
           <span class="material-symbols-outlined text-[28px] text-primary">search_insights</span>
           <span class="font-headline text-[20px] font-black uppercase tracking-tight">{{ $s['home_search_label'] ?? 'Search inventory' }}</span>
@@ -100,14 +98,16 @@
         </div>
       </form>
       @if ($homeMatrix->isNotEmpty())
+        <script type="application/json" id="homeModelMatrixJson">@json($homeMatrix->values()->all())</script>
         <script>
           (() => {
-            const matrix = @json($homeMatrix->values()->all());
+            const matrixSource = document.getElementById('homeModelMatrixJson');
+            const matrix = matrixSource ? JSON.parse(matrixSource.textContent || '[]') : [];
             const makeEl = document.getElementById('home-search-make');
             const modelEl = document.getElementById('home-search-model');
             const form = document.getElementById('home-inventory-search');
             if (!makeEl || !modelEl || !form) return;
-            const initialModel = {{ (int) ($filters['model_listing_option_id'] ?? 0) }};
+            const initialModel = parseInt(form.getAttribute('data-initial-model') || '0', 10) || 0;
             function rebuild() {
               const mk = parseInt(makeEl.value || '0', 10) || 0;
               modelEl.innerHTML = '<option value=\"\">Model</option>';
@@ -216,45 +216,7 @@
     </div>
   </section>
 
-  <section class="relative bg-inverse-surface bg-cover bg-center py-24" style="background-image:url('{{ e($testimonialBg) }}');">
-    <div class="absolute inset-0" style="background-color: rgba(0,0,0,{{ $testimonialOverlay }});"></div>
-    <div class="container relative z-10 mx-auto flex flex-col items-center px-8 text-center">
-      <div class="mb-6 h-24 w-24 overflow-hidden rounded-full border-4 border-white"><img alt="" class="h-full w-full object-cover" src="{{ $testimonialAvatar }}"/></div>
-      <h6 class="mb-1 font-headline text-xl font-bold uppercase tracking-widest text-white">{{ strtoupper($s['testimonial_name'] ?? 'Lorem Ipsum') }}</h6>
-      <p class="mb-8 text-xs font-bold uppercase text-primary">{{ $s['testimonial_role'] ?? 'Lorem role' }}</p>
-      <p class="max-w-3xl font-headline text-2xl font-light italic leading-relaxed text-white">&ldquo;{{ $s['testimonial_quote'] ?? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' }}&rdquo;</p>
-    </div>
-  </section>
-
-  <section class="overflow-hidden bg-slate-50 py-16 md:py-32">
-    <div class="container mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
-      <div class="relative rounded-2xl bg-white p-6 shadow-2xl md:p-16" data-home-stats-root>
-        <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_auto_1fr] md:gap-10">
-          <div class="grid gap-8 text-center md:gap-16 md:text-left">
-            <div>
-              <span class="font-headline block text-6xl font-black leading-none text-slate-900" data-count-up data-target="{{ max(0, $approvedCount) }}">{{ number_format(max(0, $approvedCount)) }}</span>
-              <span class="mt-4 block text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">{{ $s['stats_metric_1_label'] ?? 'Listings' }}</span>
-            </div>
-            <div>
-              <span class="font-headline block text-6xl font-black leading-none text-slate-900" data-count-up data-target="{{ $statsM2 }}">{{ number_format($statsM2) }}</span>
-              <span class="mt-4 block text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">{{ $s['stats_metric_2_label'] ?? 'Metric two' }}</span>
-            </div>
-          </div>
-          <div class="mx-auto"><img class="h-auto w-52 drop-shadow-2xl sm:w-64 md:w-80" src="{{ $statsCar }}" alt=""/></div>
-          <div class="grid gap-8 text-center md:gap-16 md:text-right">
-            <div>
-              <span class="font-headline block text-6xl font-black leading-none text-slate-900" data-count-up data-target="{{ $statsM3 }}">{{ number_format($statsM3) }}</span>
-              <span class="mt-4 block text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">{{ $s['stats_metric_3_label'] ?? 'Metric three' }}</span>
-            </div>
-            <div>
-              <span class="font-headline block text-6xl font-black leading-none text-slate-900" data-count-up data-target="{{ $statsM4 }}">{{ number_format($statsM4) }}</span>
-              <span class="mt-4 block text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">{{ $s['stats_metric_4_label'] ?? 'Metric four' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  {{-- Testimonials + statistics sections removed (plan requirement). --}}
 
   <section class="bg-white py-32">
     <div class="container mx-auto flex flex-col items-center px-8 text-center">

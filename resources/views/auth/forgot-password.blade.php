@@ -16,7 +16,13 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="mt-4 flex items-center justify-between gap-3">
+            <a
+                href="{{ route('login') }}"
+                class="text-sm font-medium text-gray-600 underline hover:text-gray-900"
+            >
+                {{ __('Back to login') }}
+            </a>
             <x-primary-button>
                 {{ __('Email Password Reset Link') }}
             </x-primary-button>
