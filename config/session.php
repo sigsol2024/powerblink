@@ -34,6 +34,18 @@ return [
 
     'lifetime' => (int) env('SESSION_LIFETIME', 120),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Vendor (non-admin) idle timeout
+    |--------------------------------------------------------------------------
+    |
+    | Dealer/vendor accounts are logged out after this many minutes without
+    | a request, independent of the global session lifetime above.
+    |
+    */
+
+    'vendor_idle_timeout' => (int) env('SESSION_VENDOR_IDLE_TIMEOUT', 15),
+
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
     /*

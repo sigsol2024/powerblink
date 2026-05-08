@@ -318,6 +318,7 @@ class PageController extends Controller
             'street_q' => ['nullable', 'string', 'max:1000'],
             'condition_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['conditions'] ?? []))),
             'country_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['countries'] ?? []))),
+            'type_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['vehicle_origin_types'] ?? []))),
             'make_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['makes'] ?? []))),
             'model_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['model_matrix'] ?? collect())->pluck('model_id'))),
             'fuel_type_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['fuel_types'] ?? []))),
@@ -382,6 +383,11 @@ class PageController extends Controller
         $countryId = (int) ($filters['country_listing_option_id'] ?? 0);
         if ($countryId > 0) {
             $query->where('country_listing_option_id', $countryId);
+        }
+
+        $typeId = (int) ($filters['type_listing_option_id'] ?? 0);
+        if ($typeId > 0) {
+            $query->where('type_listing_option_id', $typeId);
         }
 
         $makeId = (int) ($filters['make_listing_option_id'] ?? 0);
@@ -487,6 +493,7 @@ class PageController extends Controller
             'vin' => '',
             'condition_listing_option_id' => '',
             'country_listing_option_id' => '',
+            'type_listing_option_id' => '',
             'year_min' => '',
             'year_max' => '',
             'mileage_min' => '',
@@ -524,6 +531,7 @@ class PageController extends Controller
                 'fuelTypeOption',
                 'driveOption',
                 'countryOption',
+                'typeOption',
             ])
             ->where('slug', $slug)
             ->when(!($user && $user->hasRole('admin')), function ($query) use ($user) {
@@ -659,6 +667,7 @@ class PageController extends Controller
                 'bodyTypeOption',
                 'driveOption',
                 'countryOption',
+                'typeOption',
             ])
             ->whereIn('id', Compare::ids())
             ->get()

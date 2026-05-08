@@ -45,9 +45,9 @@
     <div class="absolute inset-0 hero-gradient"></div>
     <div class="relative z-10 container mx-auto px-8 py-[65px] text-center">
       <h1 class="text-white font-headline font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-tight">{{ $heroTitle }}</h1>
-      <p class="text-primary font-bold tracking-widest mt-6 text-lg sm:text-xl md:text-2xl">{{ $heroSubtitle }}</p>
+      <p class="text-primary font-bold tracking-widest mt-[7px] text-lg sm:text-xl md:text-2xl">{{ $heroSubtitle }}</p>
       @if (! empty($s['hero_description']))
-        <p class="mx-auto mt-4 max-w-3xl text-sm font-medium leading-relaxed text-white/90 sm:text-[15px]">
+        <p class="mx-auto mt-6 w-full max-w-3xl px-2 text-base font-medium leading-relaxed text-white/90 sm:px-4 sm:text-lg md:mt-7 md:text-xl">
           {{ $s['hero_description'] }}
         </p>
       @endif
@@ -63,6 +63,7 @@
         $homeMatrix = collect($filterOptions['model_matrix'] ?? []);
         $homeConditions = collect($filterOptions['conditions'] ?? []);
         $homeMakes = collect($filterOptions['makes'] ?? []);
+        $homeOriginTypes = collect($filterOptions['vehicle_origin_types'] ?? []);
       @endphp
       <form id="home-inventory-search" method="get" action="{{ route('inventory.index') }}" class="space-y-4" data-initial-model="{{ (int) ($filters['model_listing_option_id'] ?? 0) }}">
         <div class="flex items-center gap-2.5 text-white">
@@ -70,13 +71,21 @@
           <span class="font-headline text-[20px] font-black uppercase tracking-tight">{{ $s['home_search_label'] ?? 'Search inventory' }}</span>
         </div>
         <div class="flex flex-col gap-4 md:flex-row md:items-center">
-          <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <select name="condition_listing_option_id" class="appearance-none rounded border-none bg-white px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
               <option value="">Condition</option>
               @foreach ($homeConditions as $row)
                 <option value="{{ $row->id }}" @selected((int) ($filters['condition_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>
               @endforeach
             </select>
+            @if ($homeOriginTypes->isNotEmpty())
+            <select name="type_listing_option_id" class="appearance-none rounded border-none bg-white px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
+              <option value="">{{ __('Type') }}</option>
+              @foreach ($homeOriginTypes as $row)
+                <option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>
+              @endforeach
+            </select>
+            @endif
             <select id="home-search-make" name="make_listing_option_id" class="appearance-none rounded border-none bg-white px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
               <option value="">Make</option>
               @foreach ($homeMakes as $row)

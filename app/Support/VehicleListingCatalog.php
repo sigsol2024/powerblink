@@ -116,6 +116,7 @@ final class VehicleListingCatalog
             'body_types' => collect(),
             'drives' => collect(),
             'countries' => collect(),
+            'vehicle_origin_types' => collect(),
             'conditions' => collect(),
             'exterior_colors' => self::normalizeOptionValues(
                 Vehicle::query()->where('status', 'approved')->whereNotNull('exterior_color')->where('exterior_color', '!=', '')->pluck('exterior_color')
@@ -188,8 +189,43 @@ final class VehicleListingCatalog
             'body_types' => self::activeRootOptionRows('body_type'),
             'drives' => self::activeRootOptionRows('drive'),
             'countries' => self::activeRootOptionRows('country'),
+            'vehicle_origin_types' => self::activeRootOptionRows('vehicle_origin_type'),
             'conditions' => self::activeRootOptionRows('condition'),
             'exterior_colors' => self::normalizeOptionValues((clone $optionQuery)->whereNotNull('exterior_color')->where('exterior_color', '!=', '')->pluck('exterior_color')),
         ];
+    }
+
+    /**
+     * Root country option id whose label matches "Nigeria" (case-insensitive), or null.
+     */
+    public static function nigeriaCountryListingOptionId(): ?int
+    {
+        $rows = self::activeRootOptionRows('country');
+        foreach ($rows as $row) {
+            if (mb_strtolower(trim((string) ($row->value ?? ''))) === 'nigeria') {
+                return (int) $row->id;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Origin type option id for "Nigerian" / "Foreign" (case-insensitive value match).
+     */
+    public static function vehicleOriginTypeIdByLabel(string $label): ?int
+    {
+        $key = mb_strtolower(trim($label));
+        if ($key === '') {
+            return null;
+        }
+        $rows = self::activeRootOptionRows('vehicle_origin_type');
+        foreach ($rows as $row) {
+            if (mb_strtolower(trim((string) ($row->value ?? ''))) === $key) {
+                return (int) $row->id;
+            }
+        }
+
+        return null;
     }
 }

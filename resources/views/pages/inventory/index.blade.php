@@ -13,6 +13,7 @@
       'fuel_type_listing_option_id',
       'drive_listing_option_id',
       'country_listing_option_id',
+      'type_listing_option_id',
       'exterior_color',
       'year_min',
       'year_max',
@@ -41,6 +42,7 @@
     }
     $conditions = $conditionChoices;
     $countries = collect($filterOptions['countries'] ?? []);
+    $originTypes = collect($filterOptions['vehicle_origin_types'] ?? []);
     $extColors = collect($filterOptions['exterior_colors'] ?? []);
   @endphp
   <div class="max-w-[1400px] mx-auto px-6 md:px-12 pb-20 pt-10 bg-black text-white min-h-screen">
@@ -167,6 +169,12 @@
             <select name="condition_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">Condition</option>@foreach($conditions as $row)<option value="{{ $row->id }}" @selected((int) ($filters['condition_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
             <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span>
           </div>
+          @if ($originTypes->isNotEmpty())
+          <div class="relative">
+            <select name="type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span>
+          </div>
+          @endif
           <div class="relative">
             <select name="body_type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">Body</option>@foreach(($filterOptions['body_types'] ?? collect()) as $row)<option value="{{ $row->id }}" @selected((int) ($filters['body_type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
             <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span>
@@ -243,6 +251,9 @@
             <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Search') }}" autocomplete="off" class="inventory-filter-input w-full rounded-sm py-2.5 pl-9 pr-3 text-xs font-semibold uppercase" />
           </div>
           <div class="relative"><select name="condition_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Condition</option>@foreach($conditions as $row)<option value="{{ $row->id }}" @selected((int) ($filters['condition_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
+          @if ($originTypes->isNotEmpty())
+          <div class="relative"><select name="type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
+          @endif
           <div class="relative"><select name="body_type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Body</option>@foreach(($filterOptions['body_types'] ?? collect()) as $row)<option value="{{ $row->id }}" @selected((int) ($filters['body_type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           <div class="relative"><select name="make_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Make</option>@foreach(($filterOptions['makes'] ?? collect()) as $row)<option value="{{ $row->id }}" @selected((int) ($filters['make_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           <div class="relative"><select name="model_listing_option_id" data-initial-model="{{ (int) ($filters['model_listing_option_id'] ?? 0) }}" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Model</option></select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
@@ -271,6 +282,7 @@
     </div>
   </div>
 
+  <script type="application/json" id="inventoryModelMatrixJson">@json($modelMatrix->values()->all())</script>
   <script>
     (() => {
       const sort = document.getElementById('inventory-sort');
@@ -290,7 +302,8 @@
         });
       }
 
-      const matrix = @json($modelMatrix->values()->all());
+      const matrixEl = document.getElementById('inventoryModelMatrixJson');
+      const matrix = matrixEl ? JSON.parse(matrixEl.textContent || '[]') : [];
       function bindInventoryMakeModel(form) {
         if (!matrix.length || !form) return;
         const makeEl = form.querySelector('select[name="make_listing_option_id"]');

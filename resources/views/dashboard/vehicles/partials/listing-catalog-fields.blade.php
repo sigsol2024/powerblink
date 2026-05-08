@@ -64,6 +64,11 @@
   $drives = collect($opts['drives'] ?? []);
   $countries = collect($opts['countries'] ?? []);
   $exteriorColors = collect($opts['exterior_colors'] ?? []);
+  $originTypes = collect($opts['vehicle_origin_types'] ?? []);
+  $nigeriaCountryId = \App\Support\VehicleListingCatalog::nigeriaCountryListingOptionId();
+  $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
+  $foreignTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Foreign');
+  $defaultTypeId = (int) ($nigerianTypeId ?? $foreignTypeId ?? 0);
 @endphp
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -88,6 +93,84 @@
   </div>
 </div>
 
+@if ($originTypes->isNotEmpty())
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <x-input-label for="vehicle_type_listing_option_id">
+        {{ __('Type') }}<span class="text-red-600" aria-hidden="true">*</span>
+      </x-input-label>
+      <select
+        id="vehicle_type_listing_option_id"
+        name="type_listing_option_id"
+        required
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        data-nigerian-id="{{ (int) ($nigerianTypeId ?? 0) }}"
+        data-foreign-id="{{ (int) ($foreignTypeId ?? 0) }}"
+        data-nigeria-country-id="{{ (int) ($nigeriaCountryId ?? 0) }}"
+      >
+        <option value="">—</option>
+        @foreach ($originTypes as $row)
+          <option value="{{ $row->id }}" @selected((int) old('type_listing_option_id', $vehicle->type_listing_option_id ?? $defaultTypeId) === (int) $row->id)>{{ $row->value }}</option>
+        @endforeach
+      </select>
+      <x-input-error :messages="$errors->get('type_listing_option_id')" class="mt-2" />
+    </div>
+    <div>
+      <x-input-label for="country_listing_option_id">
+        {{ __('Country') }}<span class="text-red-600" aria-hidden="true">*</span>
+      </x-input-label>
+      @if ($countries->isNotEmpty())
+        <select id="country_listing_option_id" name="country_listing_option_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">—</option>
+          @foreach ($countries as $row)
+            <option value="{{ $row->id }}" @selected((int) old('country_listing_option_id', $vehicle->country_listing_option_id ?? 0) === (int) $row->id)>{{ $row->value }}</option>
+          @endforeach
+        </select>
+      @else
+        <p class="text-sm text-red-700 font-medium">{{ __('No countries are configured. Listings cannot be saved until an administrator adds country options.') }}</p>
+      @endif
+      <x-input-error :messages="$errors->get('country_listing_option_id')" class="mt-2" />
+    </div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="sm:col-span-2">
+      <x-input-label for="map_location" :value="__('Map location (pin / map query only)')" />
+      <x-text-input id="map_location" name="map_location" type="text" class="mt-1 block w-full" value="{{ old('map_location', $vehicle->map_location ?? '') }}" />
+      <x-input-error :messages="$errors->get('map_location')" class="mt-2" />
+    </div>
+  </div>
+  @push('body-end')
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var typeEl = document.getElementById('vehicle_type_listing_option_id');
+        var countryEl = document.getElementById('country_listing_option_id');
+        if (!typeEl || !countryEl) return;
+        var form = typeEl.closest('form');
+        var nigerian = String(typeEl.getAttribute('data-nigerian-id') || '');
+        var nigeria = String(typeEl.getAttribute('data-nigeria-country-id') || '');
+        function sync() {
+          if (nigerian && nigeria && typeEl.value === nigerian) {
+            countryEl.value = nigeria;
+            countryEl.setAttribute('disabled', 'disabled');
+            countryEl.setAttribute('aria-disabled', 'true');
+            countryEl.classList.add('bg-slate-100', 'cursor-not-allowed');
+          } else {
+            countryEl.removeAttribute('disabled');
+            countryEl.removeAttribute('aria-disabled');
+            countryEl.classList.remove('bg-slate-100', 'cursor-not-allowed');
+          }
+        }
+        typeEl.addEventListener('change', sync);
+        sync();
+        if (form) {
+          form.addEventListener('submit', function () {
+            if (countryEl.hasAttribute('disabled')) countryEl.removeAttribute('disabled');
+          });
+        }
+      });
+    </script>
+  @endpush
+@else
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div>
     <x-input-label for="country_listing_option_id">
@@ -111,6 +194,7 @@
     <x-input-error :messages="$errors->get('map_location')" class="mt-2" />
   </div>
 </div>
+@endif
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   <div>
@@ -207,13 +291,17 @@
 
 @if ($cascadeModels)
   @push('body-end')
+    <script type="application/json" id="listingModelsUrlTemplateJson">@json($listingModelsUrlTemplate)</script>
+    <script type="application/json" id="listingInitialModelIdJson">@json((int) old('model_listing_option_id', $vehicle->model_listing_option_id ?? 0))</script>
     <script>
       (() => {
-        const template = @json($listingModelsUrlTemplate);
+        const templateEl = document.getElementById('listingModelsUrlTemplateJson');
+        const template = templateEl ? JSON.parse(templateEl.textContent || '""') : '';
         const makeEl = document.getElementById('vehicle_make_catalog');
         const modelEl = document.getElementById('vehicle_model_catalog');
         if (!makeEl || !modelEl) return;
-        const initialModelId = @json((int) old('model_listing_option_id', $vehicle->model_listing_option_id ?? 0));
+        const initialModelEl = document.getElementById('listingInitialModelIdJson');
+        const initialModelId = initialModelEl ? (parseInt(JSON.parse(initialModelEl.textContent || '0'), 10) || 0) : 0;
 
         async function loadModels() {
           const makeId = makeEl.value || '';

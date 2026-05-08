@@ -26,6 +26,7 @@ class Vehicle extends Model
         'fuel_type_listing_option_id',
         'drive_listing_option_id',
         'country_listing_option_id',
+        'type_listing_option_id',
         'price',
         'msrp',
         'finance_price',
@@ -144,5 +145,10 @@ class Vehicle extends Model
     public function countryOption(): BelongsTo
     {
         return $this->belongsTo(ListingOption::class, 'country_listing_option_id');
+    }
+
+    public function typeOption(): BelongsTo
+    {
+        return $this->belongsTo(ListingOption::class, 'type_listing_option_id');
     }
 }

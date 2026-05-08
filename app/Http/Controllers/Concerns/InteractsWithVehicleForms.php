@@ -50,6 +50,7 @@ trait InteractsWithVehicleForms
         $fuelCatId = (int) ($catIds['fuel_type'] ?? 0);
         $driveCatId = (int) ($catIds['drive'] ?? 0);
         $countryCatId = (int) ($catIds['country'] ?? 0);
+        $typeCatId = (int) ($catIds['vehicle_origin_type'] ?? 0);
 
         $rootRule = function (int $categoryId, bool $required): array {
             if ($categoryId <= 0) {
@@ -70,6 +71,9 @@ trait InteractsWithVehicleForms
 
         $makeRequired = $makeRows->isNotEmpty() && $matrix->isNotEmpty();
         $modelRequired = $makeRequired;
+
+        $originTypeRows = VehicleListingCatalog::activeRootOptionRows('vehicle_origin_type');
+        $typeRequired = $originTypeRows->isNotEmpty() && $typeCatId > 0;
 
         $exteriorColors = collect($opts['exterior_colors'] ?? []);
         $vehicle = $request->route('vehicle');
@@ -109,6 +113,7 @@ trait InteractsWithVehicleForms
             'fuel_type_listing_option_id' => $rootRule($fuelCatId, $fuelRequired),
             'drive_listing_option_id' => $rootRule($driveCatId, $driveRequired),
             'street_address' => ['nullable', 'string', 'max:1000'],
+            'type_listing_option_id' => $typeRequired ? $rootRule($typeCatId, true) : ['nullable', 'integer'],
             'country_listing_option_id' => $rootRule($countryCatId, true),
             'engine_size' => ['nullable', 'string', 'max:64'],
             'engine_layout' => ['nullable', 'string', 'max:100'],
@@ -154,6 +159,24 @@ trait InteractsWithVehicleForms
             if ($matrix instanceof Collection && $matrix->isNotEmpty()) {
                 VehicleListingCatalog::assertMakeModelPairById($matrix, $makeId, $modelId);
             }
+        }
+
+        $nigerianTypeId = VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
+        $nigeriaCountryId = VehicleListingCatalog::nigeriaCountryListingOptionId();
+        if ($typeRequired && $nigerianTypeId) {
+            $typeId = (int) ($data['type_listing_option_id'] ?? 0);
+            if ($typeId === $nigerianTypeId) {
+                if (! $nigeriaCountryId) {
+                    throw ValidationException::withMessages([
+                        'type_listing_option_id' => __('A “Nigeria” country option must exist in Admin → Listing options to use the Nigerian type.'),
+                    ]);
+                }
+                $data['country_listing_option_id'] = $nigeriaCountryId;
+            }
+        }
+
+        if (! $typeRequired) {
+            unset($data['type_listing_option_id']);
         }
 
         $data['is_special'] = $request->boolean('is_special');

@@ -257,6 +257,7 @@ class AdminListingOptionController extends Controller
             'fuel_type' => 'fuel_type_listing_option_id',
             'drive' => 'drive_listing_option_id',
             'country' => 'country_listing_option_id',
+            'vehicle_origin_type' => 'type_listing_option_id',
             default => null,
         };
         if ($column === null) {

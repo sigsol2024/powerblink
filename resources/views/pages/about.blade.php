@@ -34,9 +34,6 @@
       ->map(fn ($p) => \App\Support\VehicleImageUrl::url($p))
       ->values();
 
-    $tBody = trim((string) ($sections['testimonial_1_body'] ?? ''));
-    $tAuthor = trim((string) ($sections['testimonial_1_author'] ?? ''));
-    $tBrand = trim((string) ($sections['testimonial_1_brand'] ?? ''));
 @endphp
 
 <style>
@@ -77,11 +74,6 @@
                 <p class="text-lg font-body text-slate-600 leading-relaxed mb-10">
                     {{ $sections['intro'] ?? 'Experience the pinnacle of automotive engineering and white-glove service.' }}
                 </p>
-                @if(!empty($sections['hero_primary_cta_text']))
-                <a href="{{ $sections['hero_primary_cta_href'] ?? '#' }}" class="inline-block px-10 py-4 border-2 border-on_surface text-on_surface font-bold font-label uppercase tracking-widest hover:bg-on_surface hover:text-white transition-all text-center">
-                    {{ $sections['hero_primary_cta_text'] }}
-                </a>
-                @endif
             </div>
         </div>
     </div>
@@ -206,26 +198,6 @@
             </div>
             @endif
         @endforeach
-    </div>
-</section>
-
-<!-- Testimonials -->
-<section class="py-32 bg-slate-900 relative overflow-hidden">
-    <div class="absolute top-0 right-0 p-20 opacity-5">
-        <span class="material-symbols-outlined text-[300px] text-white" style="font-variation-settings: 'FILL' 1;">format_quote</span>
-    </div>
-    <div class="max-w-4xl mx-auto px-8 text-center relative z-10">
-        <span class="material-symbols-outlined text-primary text-6xl mb-8" style="font-variation-settings: 'FILL' 1;">format_quote</span>
-        <p class="text-3xl font-light font-body text-white leading-relaxed italic mb-12">
-            "{{ $tBody }}"
-        </p>
-        <div class="flex flex-col items-center">
-            <h4 class="text-lg font-bold font-headline text-white uppercase tracking-widest mb-1">{{ $tAuthor }}</h4>
-            <p class="text-primary text-sm font-label font-semibold tracking-tighter uppercase">{{ $tBrand }}</p>
-        </div>
-        <div class="mt-16 text-3xl font-black font-headline text-white/20 italic tracking-tighter uppercase">
-            {{ config('app.name') }}
-        </div>
     </div>
 </section>
 
