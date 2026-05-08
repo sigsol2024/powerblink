@@ -115,7 +115,7 @@
       </select>
       <x-input-error :messages="$errors->get('type_listing_option_id')" class="mt-2" />
     </div>
-    <div>
+    <div id="vehicle_country_wrap">
       <x-input-label for="country_listing_option_id">
         {{ __('Country') }}<span class="text-red-600" aria-hidden="true">*</span>
       </x-input-label>
@@ -144,6 +144,7 @@
       document.addEventListener('DOMContentLoaded', function () {
         var typeEl = document.getElementById('vehicle_type_listing_option_id');
         var countryEl = document.getElementById('country_listing_option_id');
+        var countryWrap = document.getElementById('vehicle_country_wrap');
         if (!typeEl || !countryEl) return;
         var form = typeEl.closest('form');
         var nigerian = String(typeEl.getAttribute('data-nigerian-id') || '');
@@ -154,10 +155,12 @@
             countryEl.setAttribute('disabled', 'disabled');
             countryEl.setAttribute('aria-disabled', 'true');
             countryEl.classList.add('bg-slate-100', 'cursor-not-allowed');
+            if (countryWrap) countryWrap.classList.add('hidden');
           } else {
             countryEl.removeAttribute('disabled');
             countryEl.removeAttribute('aria-disabled');
             countryEl.classList.remove('bg-slate-100', 'cursor-not-allowed');
+            if (countryWrap) countryWrap.classList.remove('hidden');
           }
         }
         typeEl.addEventListener('change', sync);

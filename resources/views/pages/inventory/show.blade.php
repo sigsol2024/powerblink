@@ -196,7 +196,7 @@
         <div class="mt-12">
           <h3 class="text-xs font-bold uppercase tracking-widest text-[#ffb129] mb-4">Extra features</h3>
           <h4 class="text-lg font-black uppercase mb-6 font-['Montserrat']">Extra Features</h4>
-          <div class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 xl:grid-cols-1 xl:max-w-3xl">
+          <div class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
             @forelse (($vehicle->features ?? []) as $feature)
               <div class="flex min-w-0 max-w-full items-start gap-3 text-xs">
                 <span class="material-symbols-outlined shrink-0 text-[#ffb129] text-[16px]">check_circle</span>

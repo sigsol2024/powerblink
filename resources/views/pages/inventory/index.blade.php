@@ -44,6 +44,7 @@
     $countries = collect($filterOptions['countries'] ?? []);
     $originTypes = collect($filterOptions['vehicle_origin_types'] ?? []);
     $extColors = collect($filterOptions['exterior_colors'] ?? []);
+    $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
   @endphp
   <div class="max-w-[1400px] mx-auto px-6 md:px-12 pb-20 pt-10 bg-black text-white min-h-screen">
     <section class="py-10 flex flex-col md:flex-row md:justify-between md:items-end border-b border-white/10 mb-8 gap-4">
@@ -171,7 +172,7 @@
           </div>
           @if ($originTypes->isNotEmpty())
           <div class="relative">
-            <select name="type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
+            <select name="type_listing_option_id" data-nigerian-id="{{ (int) ($nigerianTypeId ?? 0) }}" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
             <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span>
           </div>
           @endif
@@ -204,7 +205,7 @@
             <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-white/50">location_on</span>
           </div>
           @if ($countries->isNotEmpty())
-          <div class="relative">
+          <div class="relative" data-country-wrap>
             <select name="country_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase transition-colors"><option value="">Country</option>@foreach($countries as $row)<option value="{{ $row->id }}" @selected((int) ($filters['country_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select>
             <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span>
           </div>
@@ -252,7 +253,7 @@
           </div>
           <div class="relative"><select name="condition_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Condition</option>@foreach($conditions as $row)<option value="{{ $row->id }}" @selected((int) ($filters['condition_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           @if ($originTypes->isNotEmpty())
-          <div class="relative"><select name="type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
+          <div class="relative"><select name="type_listing_option_id" data-nigerian-id="{{ (int) ($nigerianTypeId ?? 0) }}" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">{{ __('Type') }}</option>@foreach($originTypes as $row)<option value="{{ $row->id }}" @selected((int) ($filters['type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           @endif
           <div class="relative"><select name="body_type_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Body</option>@foreach(($filterOptions['body_types'] ?? collect()) as $row)<option value="{{ $row->id }}" @selected((int) ($filters['body_type_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           <div class="relative"><select name="make_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Make</option>@foreach(($filterOptions['makes'] ?? collect()) as $row)<option value="{{ $row->id }}" @selected((int) ($filters['make_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
@@ -265,7 +266,7 @@
             <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-white/50">location_on</span>
           </div>
           @if ($countries->isNotEmpty())
-          <div class="relative"><select name="country_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Country</option>@foreach($countries as $row)<option value="{{ $row->id }}" @selected((int) ($filters['country_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
+          <div class="relative" data-country-wrap><select name="country_listing_option_id" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Country</option>@foreach($countries as $row)<option value="{{ $row->id }}" @selected((int) ($filters['country_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
           @endif
           @if ($extColors->isNotEmpty())
           <div class="relative"><select name="exterior_color" class="inventory-filter-select w-full appearance-none rounded-sm px-4 py-3 text-[11px] font-bold uppercase"><option value="">Exterior</option>@foreach($extColors as $ec)<option value="{{ $ec }}" @selected(($filters['exterior_color'] ?? '') === $ec)>{{ $ec }}</option>@endforeach</select><span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/60">expand_more</span></div>
@@ -330,6 +331,27 @@
       }
       bindInventoryMakeModel(document.getElementById('inventory-filter-form'));
       bindInventoryMakeModel(document.getElementById('inventory-filter-form-mobile'));
+
+      function bindInventoryTypeCountry(form) {
+        if (!form) return;
+        const typeEl = form.querySelector('select[name="type_listing_option_id"]');
+        const countryWrap = form.querySelector('[data-country-wrap]');
+        const countryEl = form.querySelector('select[name="country_listing_option_id"]');
+        if (!typeEl || !countryWrap || !countryEl) return;
+        const nigerianId = String(typeEl.getAttribute('data-nigerian-id') || '');
+        function sync() {
+          const isNigerian = nigerianId && String(typeEl.value || '') === nigerianId;
+          countryWrap.classList.toggle('hidden', !!isNigerian);
+          if (isNigerian) {
+            countryEl.value = '';
+          }
+        }
+        typeEl.addEventListener('change', sync);
+        sync();
+      }
+
+      bindInventoryTypeCountry(document.getElementById('inventory-filter-form'));
+      bindInventoryTypeCountry(document.getElementById('inventory-filter-form-mobile'));
 
       document.querySelectorAll('.js-share-listing').forEach((button) => {
         button.addEventListener('click', async () => {
