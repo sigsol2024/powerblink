@@ -157,10 +157,16 @@
             countryEl.classList.add('bg-slate-100', 'cursor-not-allowed');
             if (countryWrap) countryWrap.classList.add('hidden');
           } else {
+            // If the user is switching away from Nigerian, clear any auto-selected Nigeria value
+            // so Foreign defaults to "—" and the user must choose.
+            var wasDisabled = countryEl.hasAttribute('disabled');
             countryEl.removeAttribute('disabled');
             countryEl.removeAttribute('aria-disabled');
             countryEl.classList.remove('bg-slate-100', 'cursor-not-allowed');
             if (countryWrap) countryWrap.classList.remove('hidden');
+            if (wasDisabled && String(countryEl.value || '') === nigeria) {
+              countryEl.value = '';
+            }
           }
         }
         typeEl.addEventListener('change', sync);

@@ -21,12 +21,14 @@
   $compareCount = \App\Support\Compare::count();
   $isHome = request()->routeIs('home') || request()->routeIs('faq') || request()->routeIs('about');
   $inventoryUrl = route('inventory.index');
-  $inventoryNigeriaUrl = route('inventory.index', ['q' => 'Nigeria']);
-  $inventoryForeignUrl = route('inventory.index', ['q' => 'United States']);
+  $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
+  $foreignTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Foreign');
+  $inventoryNigeriaUrl = $nigerianTypeId ? route('inventory.index', ['type_listing_option_id' => $nigerianTypeId]) : $inventoryUrl;
+  $inventoryForeignUrl = $foreignTypeId ? route('inventory.index', ['type_listing_option_id' => $foreignTypeId]) : $inventoryUrl;
   $inventoryActive = request()->routeIs('inventory.index');
-  $qRaw = strtolower((string) request('q', ''));
-  $nigeriaActive = $inventoryActive && str_contains($qRaw, 'nigeria');
-  $foreignActive = $inventoryActive && str_contains($qRaw, 'united states');
+  $currentTypeId = (int) request('type_listing_option_id', 0);
+  $nigeriaActive = $inventoryActive && $nigerianTypeId && $currentTypeId === $nigerianTypeId;
+  $foreignActive = $inventoryActive && $foreignTypeId && $currentTypeId === $foreignTypeId;
   $navMakes = \App\Support\VehicleListingCatalog::activeMakeNavTiles();
   $faqNavItems = $faqNavItems ?? [];
   $faqUrl = route('faq');
@@ -148,8 +150,7 @@
                   </a>
                   <a href="{{ $inventoryForeignUrl }}" class="group flex items-start justify-between gap-3 bg-slate-50 px-4 py-3 transition hover:bg-slate-100 {{ $foreignActive ? 'ring-1 ring-inset ring-[#1280DF]/40' : '' }}">
                     <div>
-                      <span class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.06em] text-zinc-900 transition-colors group-hover:text-[#1280DF]">
-                        <img src="https://flagcdn.com/w40/us.png" srcset="https://flagcdn.com/w80/us.png 2x" width="28" height="19" alt="" class="h-6 w-auto shrink-0 rounded-sm object-cover shadow-sm ring-1 ring-slate-200" decoding="async" loading="lazy" />
+                      <span class="block text-[13px] font-bold uppercase tracking-[0.06em] text-zinc-900 transition-colors group-hover:text-[#1280DF]">
                         {{ __('Foreign Used') }}
                       </span>
                       <p class="mt-1 text-xs font-medium text-zinc-600">{{ __('Foreign-used imports and international stock.') }}</p>
@@ -271,11 +272,11 @@
         <span class="material-symbols-outlined text-[22px] text-zinc-500 transition-transform duration-200" data-mobile-inventory-chevron aria-hidden="true">expand_more</span>
       </button>
       <div id="mobile-inventory-subnav" class="hidden max-h-[min(78dvh,36rem)] overflow-y-auto overscroll-y-contain border-t border-slate-200 bg-white" data-mobile-inventory-panel>
-        <a href="{{ $inventoryNigeriaUrl }}" class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
-          <img src="https://flagcdn.com/w40/ng.png" width="24" height="16" alt="" class="h-4 w-auto shrink-0 rounded-sm object-cover ring-1 ring-slate-200" decoding="async" loading="lazy" />{{ __('Nigerian Used') }}
+        <a href="{{ $inventoryNigeriaUrl }}" class="block border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
+          {{ __('Nigerian Used') }}
         </a>
-        <a href="{{ $inventoryForeignUrl }}" class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
-          <img src="https://flagcdn.com/w40/us.png" width="24" height="16" alt="" class="h-4 w-auto shrink-0 rounded-sm object-cover ring-1 ring-slate-200" decoding="async" loading="lazy" />{{ __('Foreign Used') }}
+        <a href="{{ $inventoryForeignUrl }}" class="block border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
+          {{ __('Foreign Used') }}
         </a>
         <a href="{{ $inventoryUrl }}" class="block border-b border-slate-100 bg-slate-50/80 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition hover:bg-slate-100 hover:text-[#0a5cb3]">{{ __('View full inventory') }}</a>
         @if ($navMakes->isNotEmpty())
