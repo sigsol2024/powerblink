@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Middleware\EnsureLoginOtpPending;
+use App\Http\Middleware\EnsurePendingRegistration;
+use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\TrackAdminAuditTrail;
+use App\Http\Middleware\TrackPublicTraffic;
+use App\Http\Middleware\VendorIdleTimeout;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,17 +20,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', '*'));
         $middleware->web(append: [
-            \App\Http\Middleware\TrackPublicTraffic::class,
+            TrackPublicTraffic::class,
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
-            'admin.audit' => \App\Http\Middleware\TrackAdminAuditTrail::class,
-            'login.otp.pending' => \App\Http\Middleware\EnsureLoginOtpPending::class,
-            'pending.registration' => \App\Http\Middleware\EnsurePendingRegistration::class,
-            'vendor.idle' => \App\Http\Middleware\VendorIdleTimeout::class,
+            'role' => EnsureUserHasRole::class,
+            'admin.audit' => TrackAdminAuditTrail::class,
+            'login.otp.pending' => EnsureLoginOtpPending::class,
+            'pending.registration' => EnsurePendingRegistration::class,
+            'vendor.idle' => VendorIdleTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('listing-options:sync-vpic --makes-only')->weekly();
+        $schedule->command('listing-options:sync-vpic --models-only')->monthly();
+    })
+    ->create();

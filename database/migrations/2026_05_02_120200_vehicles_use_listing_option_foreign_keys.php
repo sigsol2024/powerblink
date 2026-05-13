@@ -85,6 +85,13 @@ return new class extends Migration
             }
         });
 
+        // SQLite keeps standalone indexes on dropped columns; drop them first or ALTER fails.
+        if (DB::getDriverName() === 'sqlite') {
+            foreach (['vehicles_condition_index', 'vehicles_location_index'] as $indexName) {
+                DB::statement('DROP INDEX IF EXISTS '.$indexName);
+            }
+        }
+
         Schema::table('vehicles', function (Blueprint $table) {
             $table->dropColumn([
                 'make',
@@ -203,7 +210,7 @@ return new class extends Migration
             }
 
             return $default;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $default;
         }
     }

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ListingOption extends Model
 {
+    public const EXTERNAL_SOURCE_VPIC = 'vpic';
+
     protected $fillable = [
         'category_id',
         'parent_id',
@@ -16,6 +18,10 @@ class ListingOption extends Model
         'flag_emoji',
         'sort_order',
         'is_active',
+        'external_source',
+        'external_id',
+        'last_synced_at',
+        'source_payload',
     ];
 
     protected function casts(): array
@@ -23,6 +29,8 @@ class ListingOption extends Model
         return [
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'source_payload' => 'array',
+            'last_synced_at' => 'datetime',
         ];
     }
 

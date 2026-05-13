@@ -25,7 +25,14 @@ return new class extends Migration
             })
             ->update(['show_financing_calculator' => false]);
 
-        DB::statement('UPDATE vehicles SET finance_min_down_payment = LEAST(COALESCE(finance_min_down_payment, finance_down_payment, 0), COALESCE(price, 0)) WHERE COALESCE(price, 0) > 0');
+        // Avoid SQL LEAST(): some SQLite builds used in CI/dev omit scalar LEAST().
+        DB::statement(
+            'UPDATE vehicles SET finance_min_down_payment = CASE '
+                .'WHEN COALESCE(finance_min_down_payment, finance_down_payment, 0) <= COALESCE(price, 0) '
+                .'THEN COALESCE(finance_min_down_payment, finance_down_payment, 0) '
+                .'ELSE COALESCE(price, 0) END '
+                .'WHERE COALESCE(price, 0) > 0'
+        );
         DB::statement('UPDATE vehicles SET finance_term_max_months = finance_term_min_months WHERE finance_term_min_months IS NOT NULL AND finance_term_max_months IS NOT NULL AND finance_term_max_months < finance_term_min_months');
     }
 
@@ -40,4 +47,3 @@ return new class extends Migration
         });
     }
 };
-
