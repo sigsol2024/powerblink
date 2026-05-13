@@ -29,7 +29,7 @@
   $currentTypeId = (int) request('type_listing_option_id', 0);
   $nigeriaActive = $inventoryActive && $nigerianTypeId && $currentTypeId === $nigerianTypeId;
   $foreignActive = $inventoryActive && $foreignTypeId && $currentTypeId === $foreignTypeId;
-  $navMakesTop = \App\Support\VehicleListingCatalog::activeMakeNavTopTiles(9);
+  $navMakesTop = \App\Support\VehicleListingCatalog::activeMakeNavTopTiles(6);
   $faqNavItems = $faqNavItems ?? [];
   $faqUrl = route('faq');
 @endphp

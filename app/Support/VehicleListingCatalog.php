@@ -81,7 +81,7 @@ final class VehicleListingCatalog
      *
      * @return Collection<int, ListingOption>
      */
-    public static function activeMakeNavTopTiles(int $limit = 9): Collection
+    public static function activeMakeNavTopTiles(int $limit = 6): Collection
     {
         $limit = max(1, min(50, $limit));
 

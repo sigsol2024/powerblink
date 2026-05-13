@@ -6,10 +6,10 @@
       <nav class="text-xs font-semibold text-zinc-500">
         <a href="{{ route('home') }}" class="hover:text-[#1280DF]">{{ __('Home') }}</a>
         <span class="mx-1.5">/</span>
-        <span class="text-zinc-800">{{ __('Shop by make') }}</span>
+        <span class="text-zinc-800">{{ __('Search by make') }}</span>
       </nav>
-      <h1 class="mt-3 font-headline text-3xl font-black uppercase tracking-tight text-zinc-900 sm:text-4xl">{{ __('Shop by make') }}</h1>
-      <p class="mt-2 max-w-2xl text-sm text-zinc-600">{{ __('Choose a brand to see matching inventory.') }}</p>
+      <h1 class="mt-3 font-headline text-3xl font-black uppercase tracking-tight text-zinc-900 sm:text-4xl">{{ __('Search by make') }}</h1>
+      <p class="mt-2 max-w-2xl text-sm text-zinc-600">{{ __('Choose a make to search inventory.') }}</p>
     </div>
   </div>
 

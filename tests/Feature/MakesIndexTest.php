@@ -24,6 +24,7 @@ class MakesIndexTest extends TestCase
 
         $response = $this->get('/makes');
         $response->assertOk();
+        $response->assertSee('Search by make', false);
         $response->assertSee('TestMake', false);
     }
 }

@@ -298,14 +298,14 @@ class PageController extends Controller
     public function makesIndex()
     {
         $makes = VehicleListingCatalog::activeMakeNavTiles();
-        $title = __('Shop by make');
+        $title = __('Search by make');
 
         return view('pages.makes', [
             'title' => $title,
-            'metaDescription' => __('Browse all vehicle makes and open matching inventory.'),
+            'metaDescription' => __('Browse vehicle makes and search inventory by brand.'),
             'canonicalUrl' => route('makes.index', [], true),
             'ogTitle' => $title,
-            'ogDescription' => __('Browse all vehicle makes and open matching inventory.'),
+            'ogDescription' => __('Browse vehicle makes and search inventory by brand.'),
             'ogUrl' => route('makes.index', [], true),
             'ogImage' => null,
             'makes' => $makes,
