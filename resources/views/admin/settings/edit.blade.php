@@ -13,6 +13,10 @@
       <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{{ session('status') }}</div>
     @endif
 
+    @if (session('mail_test_status'))
+      <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{{ session('mail_test_status') }}</div>
+    @endif
+
     @if ($errors->any())
       <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
         <ul class="list-disc pl-5">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
@@ -219,6 +223,26 @@
         <button type="submit" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">{{ __('Save settings') }}</button>
       </div>
     </form>
+
+    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+      <div class="border-b border-zinc-100 bg-zinc-50 px-6 py-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-700">{{ __('Test outbound email (PHPMailer)') }}</h2>
+        <p class="mt-1 text-xs text-zinc-500">{{ __('Sends a short message using MAIL_PHPMAILER_* and MAIL_FROM_* from .env (separate from the contact notification fields above).') }}</p>
+      </div>
+      <div class="px-6 py-5">
+        <form action="{{ route('admin.settings.mail-test') }}" method="post" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+          @csrf
+          <div class="min-w-0 flex-1">
+            <label for="test_email" class="block text-sm font-medium text-zinc-700">{{ __('Recipient email') }}</label>
+            <input type="email" name="test_email" id="test_email" value="{{ old('test_email', auth()->user()->email ?? '') }}" required class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('test_email') border-red-400 @enderror"/>
+            @error('test_email')
+              <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+          </div>
+          <button type="submit" class="inline-flex shrink-0 items-center justify-center rounded-md bg-zinc-800 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2">{{ __('Send test email') }}</button>
+        </form>
+      </div>
+    </section>
   </div>
   <script>
     (() => {

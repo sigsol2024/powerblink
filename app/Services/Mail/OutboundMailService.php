@@ -2,23 +2,16 @@
 
 namespace App\Services\Mail;
 
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 /**
- * Outbound mail: ZeptoMail API first (when configured), then PHPMailer SMTP backup.
- * All settings come from .env via config/mail.php (Resmenu-style chain).
+ * Outbound mail via PHPMailer SMTP only (.env: MAIL_PHPMAILER_* and MAIL_FROM_*).
  */
 class OutboundMailService
 {
-    private readonly ZeptoMailApiService $zepto;
-
-    private readonly PhpMailerService $phpmailer;
-
-    public function __construct(ZeptoMailApiService $zepto, PhpMailerService $phpmailer)
-    {
-        $this->zepto = $zepto;
-        $this->phpmailer = $phpmailer;
+    public function __construct(
+        private readonly PhpMailerService $phpmailer,
+    ) {
     }
 
     public function send(
@@ -29,28 +22,12 @@ class OutboundMailService
         ?string $replyToEmail = null,
         ?string $replyToName = null,
     ): void {
-        if ($this->zepto->isEnabled()) {
-            $result = $this->zepto->sendHtml($toEmail, $toName, $subject, $html, $replyToEmail, $replyToName);
-            if (! empty($result['ok'])) {
-                return;
-            }
-
-            Log::warning('ZeptoMail send failed; trying PHPMailer backup', [
-                'http_code' => $result['http_code'] ?? null,
-                'curl_errno' => $result['curl_errno'] ?? null,
-                'request_id' => $result['request_id'] ?? null,
-                'error_message' => $result['error_message'] ?? null,
-            ]);
+        if (! $this->phpmailer->isConfigured()) {
+            throw new RuntimeException(
+                'Mail is not configured: set MAIL_PHPMAILER_ENABLED=true, MAIL_PHPMAILER_HOST, and credentials (MAIL_PHPMAILER_*), plus MAIL_FROM_ADDRESS and MAIL_FROM_NAME in .env.'
+            );
         }
 
-        if ($this->phpmailer->isConfigured()) {
-            $this->phpmailer->send($toEmail, $toName, $subject, $html, $replyToEmail, $replyToName);
-
-            return;
-        }
-
-        throw new RuntimeException(
-            'Mail is not configured: set ZEPTOMAIL_SENDMAIL_TOKEN for ZeptoMail API, or set MAIL_PHPMAILER_* for SMTP backup.'
-        );
+        $this->phpmailer->send($toEmail, $toName, $subject, $html, $replyToEmail, $replyToName);
     }
 }

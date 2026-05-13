@@ -259,6 +259,9 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
 
     Route::get('/settings', [AdminSiteSettingsController::class, 'edit'])->name('admin.settings.edit');
     Route::put('/settings', [AdminSiteSettingsController::class, 'update'])->name('admin.settings.update');
+    Route::post('/settings/mail-test', [AdminSiteSettingsController::class, 'sendTestMail'])
+        ->middleware('throttle:10,1')
+        ->name('admin.settings.mail-test');
 
     Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->name('admin.listing-options.index');
     Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->name('admin.listing-options.show');

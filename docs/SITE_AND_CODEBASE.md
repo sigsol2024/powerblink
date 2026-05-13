@@ -27,7 +27,7 @@ There is **no separate JSON API surface** used by a SPA: pages are **server-rend
 | Auth | Session-based; Laravel Breeze-derived flows, extended |
 | Roles | [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) (`admin`, `user`) |
 | OAuth | Laravel Socialite (Google sign-in) |
-| Mail | ZeptoMail HTTP API first; PHPMailer SMTP as fallback |
+| Mail | PHPMailer SMTP (`MAIL_PHPMAILER_*`, `MAIL_FROM_*`) |
 
 ---
 
@@ -176,10 +176,7 @@ Exact columns are defined in **`database/migrations/`**.
 
 ## 8. Email and notifications
 
-Outbound email is centralized in **`App\Services\Mail\OutboundMailService`**, implementing the pattern described in **`README.md`**:
-
-1. Try **ZeptoMail HTTP API** if configured (`ZEPTOMAIL_*`).
-2. Fall back to **PHPMailer** SMTP when enabled and needed (`MAIL_PHPMAILER_*`).
+Outbound email is centralized in **`App\Services\Mail\OutboundMailService`**, which sends via **PHPMailer** when **`MAIL_PHPMAILER_*`** is set (see **`README.md`**). Admins can send a test message from **Site settings** (`POST /admin/settings/mail-test`, throttled).
 
 Blade layouts under **`resources/views/emails/`** render branded messages (OTP, password reset, contact, inquiries, listing approved/rejected, etc.—see filenames there).
 
@@ -212,7 +209,7 @@ Do **not** commit secrets. Typical keys (details in **`README.md`** and **`.env.
 
 - **App**: `APP_NAME`, `APP_URL`, `APP_ENV`, `APP_DEBUG`
 - **DB**: `DB_CONNECTION`, `DB_HOST`, etc.
-- **Mail / Zepto / PHPMailer**: documented in `README.md` table
+- **Mail / PHPMailer**: documented in `README.md` table; test send from Admin → Site settings
 - **Google OAuth**: Socialite/Google client ID/secret (see Laravel/Socialite docs + `config/services.php`)
 - **Admin bootstrap**: `ADMIN_BOOTSTRAP_ENABLED`
 - **Proxies**: `TRUSTED_PROXIES` (see `bootstrap/app.php`)

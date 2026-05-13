@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
+use App\Services\Mail\OutboundMailService;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use PHPMailer\PHPMailer\Exception as PhpMailerException;
+use RuntimeException;
 
 class AdminSiteSettingsController extends Controller
 {
@@ -122,6 +125,34 @@ class AdminSiteSettingsController extends Controller
         return redirect()
             ->route('admin.settings.edit')
             ->with('status', __('Site settings saved.'));
+    }
+
+    public function sendTestMail(Request $request, OutboundMailService $mailer): RedirectResponse
+    {
+        $validated = $request->validate([
+            'test_email' => ['required', 'email', 'max:255'],
+        ]);
+
+        $to = $validated['test_email'];
+        $user = $request->user();
+        $subject = '[' . config('app.name') . '] ' . __('Test email');
+        $html = '<p>' . e(__('This is a test message from the site admin. If you received it, PHPMailer SMTP is working.')) . '</p>';
+
+        try {
+            $mailer->send($to, $to, $subject, $html, $user?->email, $user?->name);
+        } catch (RuntimeException $e) {
+            return back()->withErrors(['test_email' => $e->getMessage()]);
+        } catch (PhpMailerException $e) {
+            report($e);
+
+            return back()->withErrors(['test_email' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withErrors(['test_email' => __('Could not send test email. Check SMTP settings and logs.')]);
+        }
+
+        return back()->with('mail_test_status', __('Test email sent to :email.', ['email' => $to]));
     }
 
     private function storeBrandAsset(\Illuminate\Http\UploadedFile $file, string $prefix): string

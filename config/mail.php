@@ -117,14 +117,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Zoho ZeptoMail (transactional email) + SMTP backup
+    | Outbound SMTP (PHPMailer)
     |--------------------------------------------------------------------------
     |
-    | ZeptoMail is Zoho’s email API — same stack as Resmenu (config.php there:
-    | ZEPTOMAIL_* only). Token from ZeptoMail → Agent → SMTP/API → Send Mail Token;
-    | optional full header "Zoho-enczapikey <token>" is normalized in code.
-    |
-    | Zoho CRM / Books OAuth is a different API — do not mix those keys here.
+    | Transactional mail from the app uses PHPMailer with these settings.
+    | From identity uses Laravel's mail.from (MAIL_FROM_ADDRESS / MAIL_FROM_NAME).
     |
     */
 
@@ -132,16 +129,7 @@ return [
         'admin_to' => env('MAIL_TO_ADMIN', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
     ],
 
-    'zeptomail' => [
-        'sendmail_token' => env('ZEPTOMAIL_SENDMAIL_TOKEN', ''),
-        'url' => env('ZEPTOMAIL_URL', 'https://api.zeptomail.com/v1.1/email'),
-        'timeout_seconds' => (int) env('ZEPTOMAIL_TIMEOUT_SECONDS', 30),
-        'from_address' => env('ZEPTOMAIL_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
-        'from_name' => env('ZEPTOMAIL_FROM_NAME', env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel'))),
-        'reply_to' => env('ZEPTOMAIL_REPLY_TO', ''),
-    ],
-
-    'phpmailer_backup' => [
+    'phpmailer' => [
         'enabled' => env('MAIL_PHPMAILER_ENABLED', true),
         'host' => env('MAIL_PHPMAILER_HOST', ''),
         'port' => (int) env('MAIL_PHPMAILER_PORT', 587),

@@ -32,17 +32,16 @@ php artisan schema:export-mysql --path=database/schema.mysql.sql
 
 The file `database/schema.sql` is **SQLite-only** (for local dev when `DB_CONNECTION=sqlite`). It is not “empty”; it uses SQLite syntax (`AUTOINCREMENT`, quoted identifiers). MySQL will not run that file.
 
-### Outbound mail (ZeptoMail API + PHPMailer backup)
+### Outbound mail (PHPMailer SMTP)
 
-This matches the **Resmenu** pattern: **ZeptoMail HTTP API first**, then **PHPMailer SMTP** as a separate backup if the API fails or is not configured.
+Transactional email from the app (contact, inquiries, OTP, password reset, etc.) is sent with **PHPMailer** using **`MAIL_PHPMAILER_*`** and the global from address **`MAIL_FROM_ADDRESS`** / **`MAIL_FROM_NAME`**. Admins can send a test message from **Admin → Site settings**.
 
 | Purpose | Environment variables |
 | --- | --- |
-| ZeptoMail API (primary) | `ZEPTOMAIL_SENDMAIL_TOKEN`, `ZEPTOMAIL_URL`, `ZEPTOMAIL_TIMEOUT_SECONDS`, `ZEPTOMAIL_FROM_ADDRESS`, `ZEPTOMAIL_FROM_NAME`, `ZEPTOMAIL_REPLY_TO` |
-| PHPMailer SMTP (backup) | `MAIL_PHPMAILER_ENABLED`, `MAIL_PHPMAILER_HOST`, `MAIL_PHPMAILER_PORT`, `MAIL_PHPMAILER_USERNAME`, `MAIL_PHPMAILER_PASSWORD`, `MAIL_PHPMAILER_ENCRYPTION` |
+| PHPMailer SMTP | `MAIL_PHPMAILER_ENABLED`, `MAIL_PHPMAILER_HOST`, `MAIL_PHPMAILER_PORT`, `MAIL_PHPMAILER_USERNAME`, `MAIL_PHPMAILER_PASSWORD`, `MAIL_PHPMAILER_ENCRYPTION` |
 | From + admin inbox | `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`, `MAIL_TO_ADMIN` |
 
-`ZEPTOMAIL_SENDMAIL_TOKEN` may be pasted as either the raw token or `Zoho-enczapikey <token>` (both are accepted).
+`MAIL_MAILER` applies to Laravel’s built-in mail stack only; outbound app mail uses the table above.
 
 ## Install and run locally
 

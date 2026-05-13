@@ -6,18 +6,18 @@ use PHPMailer\PHPMailer\Exception as PhpMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * PHPMailer over SMTP — backup transport only (separate credentials from ZeptoMail API).
+ * PHPMailer over SMTP — primary outbound transport for the app.
  * Configure via MAIL_PHPMAILER_* in .env.
  */
 class PhpMailerService
 {
     public function isConfigured(): bool
     {
-        if (! filter_var(config('mail.phpmailer_backup.enabled'), FILTER_VALIDATE_BOOL)) {
+        if (! filter_var(config('mail.phpmailer.enabled'), FILTER_VALIDATE_BOOL)) {
             return false;
         }
 
-        $host = trim((string) config('mail.phpmailer_backup.host'));
+        $host = trim((string) config('mail.phpmailer.host'));
 
         return $host !== '';
     }
@@ -35,13 +35,13 @@ class PhpMailerService
         try {
             $mail->CharSet = PHPMailer::CHARSET_UTF8;
             $mail->isSMTP();
-            $mail->Host = (string) config('mail.phpmailer_backup.host');
-            $mail->Port = (int) config('mail.phpmailer_backup.port');
+            $mail->Host = (string) config('mail.phpmailer.host');
+            $mail->Port = (int) config('mail.phpmailer.port');
             $mail->SMTPAuth = true;
-            $mail->Username = (string) config('mail.phpmailer_backup.username');
-            $mail->Password = (string) config('mail.phpmailer_backup.password');
+            $mail->Username = (string) config('mail.phpmailer.username');
+            $mail->Password = (string) config('mail.phpmailer.password');
 
-            $encryption = strtolower(trim((string) config('mail.phpmailer_backup.encryption')));
+            $encryption = strtolower(trim((string) config('mail.phpmailer.encryption')));
             if ($encryption === 'ssl') {
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             } elseif ($encryption === 'tls') {
