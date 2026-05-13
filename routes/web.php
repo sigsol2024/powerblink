@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\AdminSiteSettingsController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminVehicleController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CurrencyPreferenceController;
@@ -55,12 +56,13 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::post('/contact', [ContactController::class, 'submit'])->middleware('throttle:5,1')->name('contact.submit');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/auth/google/welcome', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'welcome'])->name('auth.google.welcome');
+    Route::get('/auth/google/welcome', [GoogleAuthController::class, 'welcome'])->name('auth.google.welcome');
 });
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:10,1')
     ->name('newsletter.subscribe');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/makes', [PageController::class, 'makesIndex'])->name('makes.index');
 Route::get('/inventory', [PageController::class, 'inventory'])->name('inventory.index');
 Route::post('/inventory/{slug}/inquiry', [VehicleInquiryController::class, 'store'])
     ->middleware('throttle:10,1')

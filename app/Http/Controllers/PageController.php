@@ -295,6 +295,23 @@ class PageController extends Controller
         ]);
     }
 
+    public function makesIndex()
+    {
+        $makes = VehicleListingCatalog::activeMakeNavTiles();
+        $title = __('Shop by make');
+
+        return view('pages.makes', [
+            'title' => $title,
+            'metaDescription' => __('Browse all vehicle makes and open matching inventory.'),
+            'canonicalUrl' => route('makes.index', [], true),
+            'ogTitle' => $title,
+            'ogDescription' => __('Browse all vehicle makes and open matching inventory.'),
+            'ogUrl' => route('makes.index', [], true),
+            'ogImage' => null,
+            'makes' => $makes,
+        ]);
+    }
+
     public function inventory(Request $request)
     {
         $page = CmsPage::query()->where('slug', 'inventory')->where('is_active', true)->first();

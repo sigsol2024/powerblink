@@ -25,11 +25,11 @@
   $foreignTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Foreign');
   $inventoryNigeriaUrl = $nigerianTypeId ? route('inventory.index', ['type_listing_option_id' => $nigerianTypeId]) : $inventoryUrl;
   $inventoryForeignUrl = $foreignTypeId ? route('inventory.index', ['type_listing_option_id' => $foreignTypeId]) : $inventoryUrl;
-  $inventoryActive = request()->routeIs('inventory.index');
+  $inventoryActive = request()->routeIs('inventory.index') || request()->routeIs('makes.index');
   $currentTypeId = (int) request('type_listing_option_id', 0);
   $nigeriaActive = $inventoryActive && $nigerianTypeId && $currentTypeId === $nigerianTypeId;
   $foreignActive = $inventoryActive && $foreignTypeId && $currentTypeId === $foreignTypeId;
-  $navMakes = \App\Support\VehicleListingCatalog::activeMakeNavTiles();
+  $navMakesTop = \App\Support\VehicleListingCatalog::activeMakeNavTopTiles(9);
   $faqNavItems = $faqNavItems ?? [];
   $faqUrl = route('faq');
 @endphp
@@ -162,11 +162,11 @@
                   <a href="{{ $inventoryUrl }}" class="inline-flex items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition-colors hover:text-[#0a5cb3]">{{ __('View full inventory') }}<span class="material-symbols-outlined text-base">arrow_forward</span></a>
                 </div>
               </div>
-              @if ($navMakes->isNotEmpty())
+              @if ($navMakesTop->isNotEmpty())
                 <div class="flex min-w-0 w-1/2 flex-col bg-slate-50 p-3 sm:p-4" aria-label="{{ __('Shop by make') }}">
                   <p class="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-zinc-500">{{ __('Shop by make') }}</p>
                   <div class="grid max-h-[min(22rem,55vh)] grid-cols-3 gap-x-2.5 gap-y-3.5 overflow-y-auto overscroll-contain pr-0.5">
-                    @foreach ($navMakes as $makeOpt)
+                    @foreach ($navMakesTop as $makeOpt)
                       <a href="{{ route('inventory.index', ['make_listing_option_id' => $makeOpt->id]) }}" class="group flex flex-col items-center gap-1.5 rounded-lg p-2 text-center transition hover:bg-white hover:shadow-sm">
                         @if (! empty($makeOpt->logo_path))
                           <span class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-white ring-1 ring-slate-200"><img src="{{ \App\Support\VehicleImageUrl::url($makeOpt->logo_path) }}" alt="" class="h-full w-full object-contain p-0.5" /></span>
@@ -178,6 +178,9 @@
                         <span class="line-clamp-2 w-full text-[10px] font-bold uppercase leading-snug text-zinc-800 transition group-hover:text-[#1280DF] sm:text-[11px]">{{ $makeOpt->value }}</span>
                       </a>
                     @endforeach
+                  </div>
+                  <div class="mt-3 border-t border-slate-200 pt-3">
+                    <a href="{{ route('makes.index') }}" class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition-colors hover:text-[#0a5cb3]">{{ __('All makes') }}<span class="material-symbols-outlined text-base">arrow_forward</span></a>
                   </div>
                 </div>
               @endif
@@ -279,11 +282,11 @@
           {{ __('Foreign Used') }}
         </a>
         <a href="{{ $inventoryUrl }}" class="block border-b border-slate-100 bg-slate-50/80 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition hover:bg-slate-100 hover:text-[#0a5cb3]">{{ __('View full inventory') }}</a>
-        @if ($navMakes->isNotEmpty())
+        @if ($navMakesTop->isNotEmpty())
           <div class="border-t border-slate-200 bg-slate-50">
             <p class="bg-slate-50 px-4 pb-1 pt-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-zinc-500">{{ __('Shop by make') }}</p>
             <div class="flex flex-col pb-2">
-              @foreach ($navMakes as $makeOpt)
+              @foreach ($navMakesTop as $makeOpt)
                 <a href="{{ route('inventory.index', ['make_listing_option_id' => $makeOpt->id]) }}" class="group flex items-center gap-3 border-t border-slate-100 px-4 py-2.5 transition hover:bg-white">
                   @if (! empty($makeOpt->logo_path))
                     <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white ring-1 ring-slate-200"><img src="{{ \App\Support\VehicleImageUrl::url($makeOpt->logo_path) }}" alt="" class="h-full w-full object-contain p-0.5" /></span>
@@ -295,6 +298,7 @@
                   <span class="text-left text-[11px] font-bold uppercase tracking-[0.05em] text-zinc-800 transition group-hover:text-[#1280DF]">{{ $makeOpt->value }}</span>
                 </a>
               @endforeach
+              <a href="{{ route('makes.index') }}" class="border-t border-slate-200 bg-white px-4 py-3 text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition hover:bg-slate-50">{{ __('All makes') }}</a>
             </div>
           </div>
         @endif

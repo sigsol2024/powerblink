@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\ListingOption;
 use App\Models\ListingOptionCategory;
 use App\Models\Vehicle;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
@@ -72,17 +73,37 @@ final class VehicleListingCatalog
      */
     public static function activeMakeNavTiles(): Collection
     {
+        return self::activeMakeNavTilesQuery()->get(['id', 'value', 'logo_path', 'flag_emoji']);
+    }
+
+    /**
+     * Top N active makes by {@see ListingOption::$sort_order} then name (header mega menu / mobile).
+     *
+     * @return Collection<int, ListingOption>
+     */
+    public static function activeMakeNavTopTiles(int $limit = 9): Collection
+    {
+        $limit = max(1, min(50, $limit));
+
+        return self::activeMakeNavTilesQuery()->limit($limit)->get(['id', 'value', 'logo_path', 'flag_emoji']);
+    }
+
+    /**
+     * @return Builder<ListingOption>
+     */
+    private static function activeMakeNavTilesQuery(): Builder
+    {
         try {
             if (! Schema::hasTable('listing_options') || ! Schema::hasTable('listing_option_categories')) {
-                return collect();
+                return ListingOption::query()->whereRaw('1 = 0');
             }
         } catch (\Throwable) {
-            return collect();
+            return ListingOption::query()->whereRaw('1 = 0');
         }
 
         $catId = ListingOptionCategory::query()->where('slug', 'make')->value('id');
         if (! $catId) {
-            return collect();
+            return ListingOption::query()->whereRaw('1 = 0');
         }
 
         return ListingOption::query()
@@ -90,8 +111,7 @@ final class VehicleListingCatalog
             ->whereNull('parent_id')
             ->where('is_active', true)
             ->orderBy('sort_order')
-            ->orderBy('value')
-            ->get(['id', 'value', 'logo_path', 'flag_emoji']);
+            ->orderBy('value');
     }
 
     /**
