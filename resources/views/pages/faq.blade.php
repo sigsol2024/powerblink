@@ -134,9 +134,6 @@
                     <a href="/contact" class="bg-primary text-slate-900 px-8 py-4 rounded-lg font-headline font-bold text-sm uppercase tracking-widest hover:bg-primary/90 transition-all flex items-center gap-2">
                         Contact Us <span class="material-symbols-outlined">mail</span>
                     </a>
-                    <button type="button" class="bg-white border-2 border-slate-900 text-slate-900 px-8 py-4 rounded-lg font-headline font-bold text-sm uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">
-                        Live Chat
-                    </button>
                 </div>
             </div>
             <div class="w-full md:w-1/2 relative">
