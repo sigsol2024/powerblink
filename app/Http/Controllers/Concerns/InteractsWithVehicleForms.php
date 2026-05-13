@@ -8,12 +8,13 @@ use App\Models\Vehicle;
 use App\Support\VehicleImageUrl;
 use App\Support\VehicleListingCatalog;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 trait InteractsWithVehicleForms
 {
@@ -94,7 +95,7 @@ trait InteractsWithVehicleForms
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'year' => ['nullable', 'integer', 'min:1900', 'max:' . (int) date('Y')],
+            'year' => ['nullable', 'integer', 'min:1900', 'max:'.(int) date('Y')],
             'make_listing_option_id' => $makeRequired ? $rootRule($makeCatId, true) : ['nullable', 'integer', Rule::exists('listing_options', 'id')->where(function ($q) use ($makeCatId) {
                 $q->where('category_id', $makeCatId)->whereNull('parent_id')->where('is_active', true);
             })],
@@ -197,6 +198,32 @@ trait InteractsWithVehicleForms
             'zero_to_70' => (string) ($data['tech_specs']['zero_to_70'] ?? $data['zero_to_sixty'] ?? ''),
             'transmission_gears' => (string) ($data['tech_specs']['transmission_gears'] ?? $data['number_of_gears'] ?? ''),
         ];
+
+        if ($vehicle instanceof Vehicle) {
+            $existing = is_array($vehicle->tech_specs) ? $vehicle->tech_specs : [];
+            $preserveFromStored = [
+                'engine_layout' => 'engine_layout',
+                'top_speed' => 'top_track_speed',
+                'zero_to_70' => 'zero_to_sixty',
+                'transmission_gears' => 'number_of_gears',
+            ];
+            foreach ($preserveFromStored as $specKey => $column) {
+                if (trim((string) ($rawTechSpecs[$specKey] ?? '')) !== '') {
+                    continue;
+                }
+                $fromJson = trim((string) ($existing[$specKey] ?? ''));
+                if ($fromJson !== '') {
+                    $rawTechSpecs[$specKey] = $fromJson;
+
+                    continue;
+                }
+                $fromCol = trim((string) ($vehicle->getAttribute($column) ?? ''));
+                if ($fromCol !== '') {
+                    $rawTechSpecs[$specKey] = $fromCol;
+                }
+            }
+        }
+
         $data['tech_specs'] = collect($rawTechSpecs)
             ->map(fn ($value) => trim($value))
             ->filter(fn ($value) => $value !== '')
@@ -242,7 +269,7 @@ trait InteractsWithVehicleForms
             ->where('slug', $slug)
             ->when($ignoreVehicleId, fn ($query) => $query->where('id', '!=', $ignoreVehicleId))
             ->exists()) {
-            $slug = $base . '-' . $i;
+            $slug = $base.'-'.$i;
             $i++;
         }
 
@@ -258,7 +285,7 @@ trait InteractsWithVehicleForms
             $vehicle->images()->increment('sort_order');
             $vehicle->images()->create([
                 'path' => $request->hasFile('main_image')
-                    ? 'storage/' . $this->storeImageOnPublicDisk($request->file('main_image'), $vehicle)
+                    ? 'storage/'.$this->storeImageOnPublicDisk($request->file('main_image'), $vehicle)
                     : $mainImagePath,
                 'sort_order' => 1,
             ]);
@@ -287,7 +314,7 @@ trait InteractsWithVehicleForms
             $nextSortOrder++;
             $stored = $this->storeImageOnPublicDisk($uploadedImage, $vehicle);
             $vehicle->images()->create([
-                'path' => 'storage/' . $stored,
+                'path' => 'storage/'.$stored,
                 'sort_order' => $nextSortOrder,
             ]);
         }
@@ -307,7 +334,7 @@ trait InteractsWithVehicleForms
         return ltrim($path, '/');
     }
 
-    protected function storeImageOnPublicDisk(\Illuminate\Http\UploadedFile $uploadedImage, Vehicle $vehicle): string
+    protected function storeImageOnPublicDisk(UploadedFile $uploadedImage, Vehicle $vehicle): string
     {
         $extension = match ($uploadedImage->getMimeType()) {
             'image/jpeg' => 'jpg',
@@ -315,10 +342,10 @@ trait InteractsWithVehicleForms
             'image/webp' => 'webp',
             default => 'jpg',
         };
-        $filename = (string) Str::uuid() . '.' . $extension;
+        $filename = (string) Str::uuid().'.'.$extension;
         $dir = config('media.listing_photos_directory', 'listings/vehicles').'/'.$vehicle->id;
         $stored = $uploadedImage->storePubliclyAs($dir, $filename, 'public');
-        if (!is_string($stored) || $stored === '') {
+        if (! is_string($stored) || $stored === '') {
             throw ValidationException::withMessages([
                 'images' => __('An image could not be uploaded. Please try again.'),
             ]);

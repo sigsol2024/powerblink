@@ -55,22 +55,7 @@
   $price = $vehicle->price;
   $overview = $vehicle->overview ?: $vehicle->description;
   $techSpecs = is_array($vehicle->tech_specs) ? $vehicle->tech_specs : [];
-  $pickMap = static function (?string ...$candidates): string {
-      foreach ($candidates as $c) {
-          $t = trim((string) $c);
-          if ($t !== '') {
-              return $t;
-          }
-      }
-
-      return '';
-  };
-  $mapQuery = $pickMap(
-    $sellerProfile['map_location'] ?? null,
-    $vehicle->map_location ?? null,
-    $vehicle->street_address ?? null,
-  );
-  // Financing calculator removed (plan requirement).
+  $siteContact = $siteContact ?? ['address' => '', 'phone' => '', 'email' => ''];
 @endphp
 
 <div class="vehicle-detail-page bg-black text-white font-['Open_Sans']">
@@ -213,10 +198,18 @@
         <div class="bg-[#191c1e] border border-white/5 p-8 rounded-sm">
           <h3 class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-6">Dealer info</h3>
           <div class="flex items-center gap-4 mb-6">
-            @php $sellerPhoto = trim((string) ($sellerProfile['photo_url'] ?? '')); @endphp
+            @php
+              $sellerPhoto = trim((string) ($sellerProfile['photo_url'] ?? ''));
+              $fallbackLogoPath = trim((string) ($sellerProfile['fallback_logo_path'] ?? ''));
+              $fallbackLogoUrl = trim((string) ($sellerProfile['fallback_logo_url'] ?? ''));
+            @endphp
             <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#ffb129] bg-[#30353a]">
               @if ($sellerPhoto !== '')
                 <img src="{{ \Illuminate\Support\Str::startsWith($sellerPhoto, ['http://', 'https://']) ? $sellerPhoto : \App\Support\VehicleImageUrl::url($sellerPhoto) }}" alt="" class="h-full w-full object-cover" />
+              @elseif ($fallbackLogoPath !== '')
+                <img src="{{ \App\Support\VehicleImageUrl::url($fallbackLogoPath) }}" alt="" class="h-full w-full object-cover" />
+              @elseif ($fallbackLogoUrl !== '')
+                <img src="{{ $fallbackLogoUrl }}" alt="" class="h-full w-full object-cover" />
               @else
                 <span class="material-symbols-outlined text-[28px] text-white/45" aria-hidden="true">person</span>
               @endif
@@ -228,12 +221,9 @@
           </div>
           @php
             $rawPhone = trim((string) ($sellerProfile['phone'] ?? ''));
-            $maskedPhone = $rawPhone !== '' ? (mb_substr($rawPhone, 0, 4) . str_repeat('•', max(0, mb_strlen($rawPhone) - 6)) . mb_substr($rawPhone, -2)) : '-';
           @endphp
-          <div class="w-full bg-[#1e2124] py-3 px-4 text-sm font-bold flex items-center justify-between" data-phone-reveal data-phone-revealed-label="{{ e(__('Number shown')) }}">
-            <span data-phone-mask>{{ $maskedPhone }}</span>
-            <span data-phone-full class="hidden">{{ $rawPhone }}</span>
-            <button class="text-[10px] text-[#ffb129] uppercase font-bold" type="button" data-phone-reveal-btn>{{ __('Show Number') }}</button>
+          <div class="w-full bg-[#1e2124] py-3 px-4 text-sm font-bold">
+            <span class="text-white">{{ $rawPhone !== '' ? $rawPhone : '—' }}</span>
           </div>
         </div>
 
@@ -250,67 +240,39 @@
           </table>
         </div>
 
-        <div class="flex items-center justify-center gap-8 py-6 border-y border-white/10">
-          <div class="text-center"><div class="text-3xl font-black">{{ $vehicle->city_mpg ?: 'N/A' }}</div><div class="text-[10px] font-bold text-gray-500 uppercase">City MPG</div></div>
-          <div class="bg-[#ffb129] p-4 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-3xl">local_gas_station</span></div>
-          <div class="text-center"><div class="text-3xl font-black">{{ $vehicle->hwy_mpg ?: 'N/A' }}</div><div class="text-[10px] font-bold text-gray-500 uppercase">HWY MPG</div></div>
-        </div>
-
         {{-- Financing calculator removed (plan requirement). --}}
       </aside>
     </section>
 
     <section class="mt-20 space-y-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         <div>
           <h3 class="flex items-center gap-2 text-sm font-black uppercase mb-6"><span class="material-symbols-outlined text-[#ffb129]">settings</span> Engine</h3>
           <div class="space-y-4 text-xs">
-            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Layout</span><span class="font-bold">{{ $techSpecs['engine_layout'] ?? $vehicle->engine_layout ?: 'N/A' }}</span></div>
             <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Engine volume</span><span class="font-bold">{{ $techSpecs['engine_volume'] ?? $vehicle->engine_size ?: 'N/A' }}</span></div>
             <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Type of drive</span><span class="font-bold">{{ $techSpecs['drive_type'] ?? $vehicle->driveOption?->value ?: 'N/A' }}</span></div>
-          </div>
-        </div>
-        <div>
-          <h3 class="flex items-center gap-2 text-sm font-black uppercase mb-6"><span class="material-symbols-outlined text-[#ffb129]">speed</span> Performance</h3>
-          <div class="space-y-4 text-xs">
-            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Top track speed</span><span class="font-bold">{{ $techSpecs['top_speed'] ?? $vehicle->top_track_speed ?: 'N/A' }}</span></div>
-            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">0 - 70 mph</span><span class="font-bold">{{ $techSpecs['zero_to_70'] ?? $vehicle->zero_to_sixty ?: 'N/A' }}</span></div>
           </div>
         </div>
         <div>
           <h3 class="flex items-center gap-2 text-sm font-black uppercase mb-6"><span class="material-symbols-outlined text-[#ffb129]">settings_input_component</span> Transmission</h3>
           <div class="space-y-4 text-xs">
             <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Type</span><span class="font-bold">{{ $vehicle->transmissionOption?->value ?: 'N/A' }}</span></div>
-            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500 uppercase font-bold">Number of gears</span><span class="font-bold">{{ $techSpecs['transmission_gears'] ?? $vehicle->number_of_gears ?: 'N/A' }}</span></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="mt-24">
-      <h2 class="text-3xl font-black uppercase mb-10 font-['Montserrat']">Location</h2>
-      @if ($mapQuery !== '')
-        <div class="w-full h-[400px] bg-[#232628] relative overflow-hidden">
-          <iframe
-            title="Dealer location map"
-            class="w-full h-full"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            src="https://maps.google.com/maps?q={{ urlencode($mapQuery) }}&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="bg-[#ffb129] text-[#191c1e] p-2 rounded-full"><span class="material-symbols-outlined text-4xl">location_on</span></div>
-          </div>
-        </div>
-      @endif
-      <div class="mt-16 bg-[#191c1e] p-8 md:p-12 border border-white/5">
+      <h2 class="text-3xl font-black uppercase mb-8 font-['Montserrat']">{{ __('Contact') }}</h2>
+      <div class="bg-[#191c1e] p-8 md:p-12 border border-white/5">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div class="space-y-8">
             <h3 class="text-2xl font-black uppercase font-['Montserrat']">Contact Information</h3>
-            <p class="text-gray-400 text-sm">{{ __('This vehicle listing reflects live listing data and is synced from the listing editor.') }}</p>
+            <p class="text-gray-400 text-sm">{{ __('Use the details below to reach us about this vehicle. Your message is delivered to our team.') }}</p>
             <div class="space-y-4">
-              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">location_on</span></div><span class="text-sm font-bold">{{ $sellerProfile['address'] ?? $vehicle->street_address ?: 'N/A' }}</span></div>
-              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">phone</span></div><span class="text-sm font-bold">{{ $sellerProfile['phone'] ?? 'N/A' }}</span></div>
-              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">mail</span></div><span class="text-sm font-bold">{{ $sellerProfile['email'] ?? 'N/A' }}</span></div>
+              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">location_on</span></div><span class="text-sm font-bold">{{ ($siteContact['address'] ?? '') !== '' ? $siteContact['address'] : 'N/A' }}</span></div>
+              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">phone</span></div><span class="text-sm font-bold">{{ ($siteContact['phone'] ?? '') !== '' ? $siteContact['phone'] : 'N/A' }}</span></div>
+              <div class="flex items-center gap-4"><div class="bg-[#ffb129] p-2 rounded-full"><span class="material-symbols-outlined text-[#191c1e] text-lg">mail</span></div><span class="text-sm font-bold">{{ ($siteContact['email'] ?? '') !== '' ? $siteContact['email'] : 'N/A' }}</span></div>
             </div>
           </div>
           @if ($vehicle->status === 'approved')

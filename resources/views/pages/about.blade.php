@@ -70,7 +70,7 @@
         <div class="w-full md:w-1/2 flex items-center px-12 md:px-24 py-20 bg-white">
             <div class="max-w-xl">
                 <h2 class="text-sm font-label font-bold text-primary tracking-[0.3em] uppercase mb-4">Established {{ $sections['established_year'] ?? '1999' }}</h2>
-                <h1 class="text-5xl md:text-6xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
+                <h1 class="text-4xl md:text-5xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
                     @php
                         $heading = $sections['heading'] ?? 'WELCOME TO THE MOTORS';
                         if (str_contains($heading, 'THE MOTORS')) {

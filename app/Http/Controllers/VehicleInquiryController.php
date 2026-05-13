@@ -8,6 +8,8 @@ use App\Services\Mail\OutboundMailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class VehicleInquiryController extends Controller
 {
@@ -25,6 +27,7 @@ class VehicleInquiryController extends Controller
         $data = $request->validate([
             'sender_name' => ['required', 'string', 'max:255'],
             'sender_email' => ['required', 'email', 'max:255'],
+            'sender_phone' => ['nullable', 'string', 'max:64'],
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
@@ -36,28 +39,52 @@ class VehicleInquiryController extends Controller
             'message' => $data['message'],
         ]);
 
-        $seller = $vehicle->user;
-        if ($seller && $seller->email) {
-            $subject = 'New inquiry: ' . $vehicle->title;
-            $html = view('emails.vehicle-inquiry', [
-                'vehicle' => $vehicle,
-                'seller' => $seller,
-                'senderName' => $data['sender_name'],
-                'senderEmail' => $data['sender_email'],
-                'body' => $data['message'],
-                'listingUrl' => route('inventory.show', ['slug' => $vehicle->slug]),
-            ])->render();
+        $adminRaw = (string) config('mail.outbound.admin_to', '');
+        $adminEmails = collect(preg_split('/\s*[,;]\s*/', $adminRaw, -1, PREG_SPLIT_NO_EMPTY))
+            ->map(fn (string $e) => trim($e))
+            ->filter()
+            ->unique()
+            ->values();
 
-            app(OutboundMailService::class)->send(
-                $seller->email,
-                $seller->name ?? 'Seller',
-                $subject,
-                $html,
-                $data['sender_email'],
-                $data['sender_name']
-            );
+        if ($adminEmails->isEmpty()) {
+            $fallback = (string) config('mail.from.address', '');
+            if ($fallback !== '') {
+                $adminEmails = collect([$fallback]);
+            }
         }
 
-        return back()->with('status', 'Your message was sent to the seller.');
+        $seller = $vehicle->user;
+        $subject = 'New inquiry: '.$vehicle->title;
+        $html = view('emails.vehicle-inquiry', [
+            'vehicle' => $vehicle,
+            'listingOwner' => $seller,
+            'senderName' => $data['sender_name'],
+            'senderEmail' => $data['sender_email'],
+            'senderPhone' => trim((string) ($data['sender_phone'] ?? '')),
+            'body' => $data['message'],
+            'listingUrl' => route('inventory.show', ['slug' => $vehicle->slug]),
+        ])->render();
+
+        $toName = (string) config('mail.from.name', config('app.name'));
+        foreach ($adminEmails as $adminEmail) {
+            try {
+                app(OutboundMailService::class)->send(
+                    $adminEmail,
+                    $toName,
+                    $subject,
+                    $html,
+                    $data['sender_email'],
+                    $data['sender_name']
+                );
+            } catch (Throwable $e) {
+                Log::warning('Vehicle inquiry email to admin failed', [
+                    'vehicle_id' => $vehicle->id,
+                    'admin_email' => $adminEmail,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return back()->with('status', __('Your message was sent to our team.'));
     }
 }

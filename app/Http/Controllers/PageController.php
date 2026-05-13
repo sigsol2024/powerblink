@@ -13,8 +13,8 @@ use App\Support\VehicleListingCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class PageController extends Controller
 {
@@ -92,7 +92,7 @@ class PageController extends Controller
         ]);
 
         return view('pages.home-luxemotive', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('home', [], true),
             'ogTitle' => $page->title,
@@ -160,7 +160,7 @@ class PageController extends Controller
         ]);
 
         return view('pages.about', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('about', [], true),
             'ogTitle' => $page->title,
@@ -177,7 +177,7 @@ class PageController extends Controller
         $siteName = config('app.name');
 
         return view('pages.contact', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('contact', [], true),
             'ogTitle' => $page->title,
@@ -242,7 +242,7 @@ class PageController extends Controller
         ]);
 
         return view('pages.faq', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('faq', [], true),
             'ogTitle' => $page->title,
@@ -263,7 +263,7 @@ class PageController extends Controller
         ]);
 
         return view('pages.legal', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('privacy-policy', [], true),
             'ogTitle' => $page->title,
@@ -284,7 +284,7 @@ class PageController extends Controller
         ]);
 
         return view('pages.legal', [
-            'title' => $page->title . ' | ' . $siteName,
+            'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('terms', [], true),
             'ogTitle' => $page->title,
@@ -341,13 +341,13 @@ class PageController extends Controller
         if ($mk > 0 && $md > 0 && ($filterOpts['model_matrix'] ?? collect()) instanceof Collection && $filterOpts['model_matrix']->isNotEmpty()) {
             VehicleListingCatalog::assertMakeModelPairById($filterOpts['model_matrix'], $mk, $md);
         }
-        if (!empty($filters['year_min']) && !empty($filters['year_max']) && (int) $filters['year_min'] > (int) $filters['year_max']) {
+        if (! empty($filters['year_min']) && ! empty($filters['year_max']) && (int) $filters['year_min'] > (int) $filters['year_max']) {
             throw ValidationException::withMessages(['year_min' => __('Minimum year cannot be greater than maximum year.')]);
         }
-        if (!empty($filters['mileage_min']) && !empty($filters['mileage_max']) && (int) $filters['mileage_min'] > (int) $filters['mileage_max']) {
+        if (! empty($filters['mileage_min']) && ! empty($filters['mileage_max']) && (int) $filters['mileage_min'] > (int) $filters['mileage_max']) {
             throw ValidationException::withMessages(['mileage_min' => __('Minimum mileage cannot be greater than maximum mileage.')]);
         }
-        if (!empty($filters['price_min']) && !empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
+        if (! empty($filters['price_min']) && ! empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
             throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
         }
 
@@ -420,7 +420,7 @@ class PageController extends Controller
         }
         $vin = isset($filters['vin']) ? trim((string) $filters['vin']) : '';
         if ($vin !== '') {
-            $query->where('vin', 'like', '%' . $vin . '%');
+            $query->where('vin', 'like', '%'.$vin.'%');
         }
 
         $yearMin = (int) ($filters['year_min'] ?? 0);
@@ -534,7 +534,7 @@ class PageController extends Controller
                 'typeOption',
             ])
             ->where('slug', $slug)
-            ->when(!($user && $user->hasRole('admin')), function ($query) use ($user) {
+            ->when(! ($user && $user->hasRole('admin')), function ($query) use ($user) {
                 $query->where(function ($visibility) use ($user) {
                     $visibility->where('status', 'approved');
 
@@ -547,40 +547,29 @@ class PageController extends Controller
 
         $siteMerged = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
 
-        if ($vehicle->isStaffListing()) {
-            $logoPath = trim((string) ($siteMerged['logo_path'] ?? ''));
-            $logoUrl = trim((string) ($siteMerged['logo_url'] ?? ''));
-            $sellerProfile = [
-                'name' => trim((string) ($siteMerged['site_display_name'] ?? '')) ?: (string) config('app.name'),
-                'email' => trim((string) ($siteMerged['dealer_public_email'] ?? '')) ?: (string) config('mail.from.address'),
-                'phone' => trim((string) ($siteMerged['dealer_phone'] ?? '')) ?: trim((string) ($siteMerged['dealer_sales_phone'] ?? '')),
-                'address' => (string) ($siteMerged['dealer_address'] ?? ''),
-                'map_location' => trim((string) ($vehicle->map_location ?? '')),
-                'photo_url' => $logoPath !== '' ? $logoPath : ($logoUrl !== '' ? $logoUrl : null),
-            ];
-        } else {
-            $vp = $vehicle->user?->vendorProfile;
-            $userAvatar = trim((string) ($vehicle->user?->avatar ?? ''));
-            if ($vp && $vp->show_on_listings) {
-                $sellerProfile = [
-                    'name' => trim((string) ($vp->business_name ?? '')) ?: ($vehicle->user?->name ?: 'Dealer'),
-                    'email' => trim((string) ($vp->public_email ?? '')) ?: ($vehicle->contact_email ?: $vehicle->user?->email),
-                    'phone' => trim((string) ($vp->public_phone ?? '')) ?: ($vehicle->contact_phone ?: trim((string) ($siteMerged['dealer_phone'] ?? ''))),
-                    'address' => trim((string) ($vp->public_address ?? '')) ?: trim((string) ($vehicle->street_address ?? '')),
-                    'map_location' => trim((string) ($vp->map_location ?? '')) ?: trim((string) ($vehicle->map_location ?? '')),
-                    'photo_url' => $userAvatar !== '' ? $userAvatar : null,
-                ];
-            } else {
-                $sellerProfile = [
-                    'name' => $vehicle->user?->name ?: 'Dealer',
-                    'email' => $vehicle->contact_email ?: $vehicle->user?->email,
-                    'phone' => $vehicle->contact_phone ?: SiteSetting::getValue('dealer_phone', ''),
-                    'address' => trim((string) ($vehicle->street_address ?? '')),
-                    'map_location' => trim((string) ($vehicle->map_location ?? '')),
-                    'photo_url' => $userAvatar !== '' ? $userAvatar : null,
-                ];
-            }
-        }
+        $logoPath = trim((string) ($siteMerged['logo_path'] ?? ''));
+        $logoUrl = trim((string) ($siteMerged['logo_url'] ?? ''));
+        $sitePhone = trim((string) ($siteMerged['dealer_phone'] ?? '')) ?: trim((string) ($siteMerged['dealer_sales_phone'] ?? ''));
+        $siteEmail = trim((string) ($siteMerged['dealer_public_email'] ?? '')) ?: (string) config('mail.from.address', '');
+        $siteAddress = trim((string) ($siteMerged['dealer_address'] ?? ''));
+
+        $posterName = trim((string) ($vehicle->user?->name ?? '')) ?: __('Dealer');
+        $userAvatar = trim((string) ($vehicle->user?->avatar ?? ''));
+
+        // Sidebar: always the account that posted the listing; phone = site default; avatar = user photo or site logo.
+        $sellerProfile = [
+            'name' => $posterName,
+            'phone' => $sitePhone,
+            'photo_url' => $userAvatar !== '' ? $userAvatar : null,
+            'fallback_logo_path' => $logoPath !== '' ? $logoPath : null,
+            'fallback_logo_url' => $logoUrl !== '' ? $logoUrl : null,
+        ];
+
+        $siteContact = [
+            'address' => $siteAddress !== '' ? $siteAddress : trim((string) ($vehicle->street_address ?? '')),
+            'phone' => $sitePhone,
+            'email' => $siteEmail,
+        ];
 
         $similarVehicles = Vehicle::query()
             ->with(['images', 'makeOption', 'modelOption'])
@@ -626,7 +615,7 @@ class PageController extends Controller
         $modelLabel = $vehicle->modelOption?->value ?? '';
         $plainDesc = $vehicle->description
             ? Str::limit(strip_tags($vehicle->description), 160)
-            : Str::limit(trim(($vehicle->title ?? '') . ' ' . $makeLabel . ' ' . $modelLabel), 160);
+            : Str::limit(trim(($vehicle->title ?? '').' '.$makeLabel.' '.$modelLabel), 160);
 
         $cover = $vehicle->images->first();
         $listingUrl = route('inventory.show', ['slug' => $vehicle->slug], true);
@@ -635,7 +624,7 @@ class PageController extends Controller
         $isFavorited = $user && $user->favoriteVehicles()->whereKey($vehicle->id)->exists();
 
         return view('pages.inventory.show', [
-            'title' => (($page?->title ?: $vehicle->title) . ' | ' . $siteName),
+            'title' => (($page?->title ?: $vehicle->title).' | '.$siteName),
             'metaDescription' => $page?->meta_description ?: $plainDesc,
             'canonicalUrl' => $listingUrl,
             'ogTitle' => $vehicle->title,
@@ -645,6 +634,7 @@ class PageController extends Controller
             'slug' => $slug,
             'vehicle' => $vehicle,
             'sellerProfile' => $sellerProfile,
+            'siteContact' => $siteContact,
             'similarVehicles' => $similarVehicles,
             'isFavorited' => $isFavorited,
             'page' => $page,
@@ -685,4 +675,3 @@ class PageController extends Controller
         ]);
     }
 }
-

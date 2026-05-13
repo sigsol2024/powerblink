@@ -82,58 +82,6 @@
                 <x-input-error :messages="$errors->get('overview')" class="mt-2" />
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <x-input-label for="video_url" value="Video URL (optional)" />
-                  <x-text-input id="video_url" name="video_url" type="url" class="mt-1 block w-full" value="{{ old('video_url', $vehicle->video_url) }}" />
-                  <x-input-error :messages="$errors->get('video_url')" class="mt-2" />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <x-input-label for="city_mpg" value="City MPG" />
-                  <x-text-input id="city_mpg" name="city_mpg" type="number" class="mt-1 block w-full" value="{{ old('city_mpg', $vehicle->city_mpg) }}" />
-                </div>
-                <div>
-                  <x-input-label for="hwy_mpg" value="Highway MPG" />
-                  <x-text-input id="hwy_mpg" name="hwy_mpg" type="number" class="mt-1 block w-full" value="{{ old('hwy_mpg', $vehicle->hwy_mpg) }}" />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <x-input-label for="contact_phone" value="Contact phone (listing detail)" />
-                  <x-text-input id="contact_phone" name="contact_phone" type="text" class="mt-1 block w-full" value="{{ old('contact_phone', $vehicle->contact_phone) }}" />
-                </div>
-                <div>
-                  <x-input-label for="contact_email" value="Contact email (listing detail)" />
-                  <x-text-input id="contact_email" name="contact_email" type="email" class="mt-1 block w-full" value="{{ old('contact_email', $vehicle->contact_email) }}" />
-                </div>
-                <div class="sm:col-span-2">
-                  <x-input-label for="map_location" value="Map location (pin / map query only)" />
-                  <x-text-input id="map_location" name="map_location" type="text" class="mt-1 block w-full" value="{{ old('map_location', $vehicle->map_location) }}" />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <x-input-label for="engine_layout" value="Tech spec: engine layout" />
-                  <x-text-input id="engine_layout" name="engine_layout" type="text" class="mt-1 block w-full" value="{{ old('engine_layout', $vehicle->engine_layout) }}" />
-                </div>
-                <div>
-                  <x-input-label for="top_track_speed" value="Tech spec: top track speed" />
-                  <x-text-input id="top_track_speed" name="top_track_speed" type="text" class="mt-1 block w-full" value="{{ old('top_track_speed', $vehicle->top_track_speed) }}" />
-                </div>
-                <div>
-                  <x-input-label for="zero_to_sixty" value="Tech spec: 0-70 / 0-60 time" />
-                  <x-text-input id="zero_to_sixty" name="zero_to_sixty" type="text" class="mt-1 block w-full" value="{{ old('zero_to_sixty', $vehicle->zero_to_sixty) }}" />
-                </div>
-                <div>
-                  <x-input-label for="number_of_gears" value="Tech spec: number of gears" />
-                  <x-text-input id="number_of_gears" name="number_of_gears" type="text" class="mt-1 block w-full" value="{{ old('number_of_gears', $vehicle->number_of_gears) }}" />
-                </div>
-              </div>
             </section>
 
             @if($isAdminEdit)

@@ -132,13 +132,6 @@
       <x-input-error :messages="$errors->get('country_listing_option_id')" class="mt-2" />
     </div>
   </div>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div class="sm:col-span-2">
-      <x-input-label for="map_location" :value="__('Map location (pin / map query only)')" />
-      <x-text-input id="map_location" name="map_location" type="text" class="mt-1 block w-full" value="{{ old('map_location', $vehicle->map_location ?? '') }}" />
-      <x-input-error :messages="$errors->get('map_location')" class="mt-2" />
-    </div>
-  </div>
   @push('body-end')
     <script>
       document.addEventListener('DOMContentLoaded', function () {
@@ -180,7 +173,7 @@
     </script>
   @endpush
 @else
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 gap-4">
   <div>
     <x-input-label for="country_listing_option_id">
       {{ __('Country') }}<span class="text-red-600" aria-hidden="true">*</span>
@@ -196,11 +189,6 @@
       <p class="text-sm text-red-700 font-medium">{{ __('No countries are configured. Listings cannot be saved until an administrator adds country options.') }}</p>
     @endif
     <x-input-error :messages="$errors->get('country_listing_option_id')" class="mt-2" />
-  </div>
-  <div>
-    <x-input-label for="map_location" :value="__('Map location (pin / map query only)')" />
-    <x-text-input id="map_location" name="map_location" type="text" class="mt-1 block w-full" value="{{ old('map_location', $vehicle->map_location ?? '') }}" />
-    <x-input-error :messages="$errors->get('map_location')" class="mt-2" />
   </div>
 </div>
 @endif
