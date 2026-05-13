@@ -11,40 +11,7 @@
   $serviceHoursLines = $splitHours((string) ($site['dealer_service_hours'] ?? ''));
   $partsHoursLines = $splitHours((string) ($site['dealer_parts_hours'] ?? ''));
 
-  // Footer “Top makes” column (public inventory only: approved listings).
-  $topMakes = collect();
-  try {
-      $makeCatId = \App\Models\ListingOptionCategory::query()->where('slug', 'make')->value('id');
-      if ($makeCatId) {
-          $rows = \App\Models\Vehicle::query()
-              ->where('status', 'approved')
-              ->whereNotNull('make_listing_option_id')
-              ->selectRaw('make_listing_option_id, COUNT(*) as listing_count')
-              ->groupBy('make_listing_option_id')
-              ->orderByDesc('listing_count')
-              ->limit(5)
-              ->get();
-
-          $ids = $rows->pluck('make_listing_option_id')->filter()->values()->all();
-          $optById = \App\Models\ListingOption::query()
-              ->where('category_id', $makeCatId)
-              ->whereIn('id', $ids)
-              ->get(['id', 'value'])
-              ->keyBy('id');
-
-          $topMakes = $rows->map(function ($r) use ($optById) {
-              $opt = $optById->get((int) $r->make_listing_option_id);
-              if (! $opt) return null;
-              return (object) [
-                  'id' => (int) $opt->id,
-                  'label' => (string) $opt->value,
-                  'count' => (int) $r->listing_count,
-              ];
-          })->filter()->values();
-      }
-  } catch (\Throwable) {
-      $topMakes = collect();
-  }
+  $footerTopMakeLabels = ['Toyota', 'Lexus', 'Mercedes Benz', 'Honda', 'BMW'];
 
   $aboutGalleryStr = \App\Models\PageSection::query()->where('page', 'about')->where('section_key', 'gallery')->value('content') ?? '[]';
   $aboutGallery = json_decode($aboutGalleryStr, true) ?? [];
@@ -90,21 +57,17 @@
     </div>
     <div class="space-y-6">
       <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Top 5 car makes') }}</h4>
-      @if ($topMakes->isNotEmpty())
-        <div class="space-y-3">
-          @foreach ($topMakes as $mk)
-            <a
-              href="{{ route('inventory.index', ['make_listing_option_id' => $mk->id]) }}"
-              class="flex items-center justify-between gap-4 text-slate-300 text-[13px] font-medium hover:text-white"
-            >
-              <span class="truncate">{{ $mk->label }}</span>
-              <span class="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/80">{{ number_format((int) $mk->count) }}</span>
-            </a>
-          @endforeach
-        </div>
-      @else
-        <p class="text-slate-400 text-[13px]">{{ __('Top makes will appear once listings are available.') }}</p>
-      @endif
+      <div class="space-y-3">
+        @foreach ($footerTopMakeLabels as $mkLabel)
+          @php
+            $mkId = \App\Support\VehicleListingCatalog::makeListingOptionIdByValueCi($mkLabel);
+            $mkHref = $mkId ? route('inventory.index', ['make_listing_option_id' => $mkId]) : route('inventory.index', ['q' => $mkLabel]);
+          @endphp
+          <a href="{{ $mkHref }}" class="block truncate text-slate-300 text-[13px] font-medium hover:text-white">
+            {{ $mkLabel }}
+          </a>
+        @endforeach
+      </div>
     </div>
     <div class="space-y-6">
       <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Social Network') }}</h4>

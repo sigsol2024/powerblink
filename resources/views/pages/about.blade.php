@@ -55,7 +55,7 @@
         <div class="w-full md:w-1/2 flex items-center px-12 md:px-24 py-20 bg-white">
             <div class="max-w-xl">
                 <h2 class="text-sm font-label font-bold text-primary tracking-[0.3em] uppercase mb-4">Established {{ $sections['established_year'] ?? '1999' }}</h2>
-                <h1 class="text-6xl md:text-7xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
+                <h1 class="text-5xl md:text-6xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
                     @php
                         $heading = $sections['heading'] ?? 'WELCOME TO THE MOTORS';
                         if (str_contains($heading, 'THE MOTORS')) {
@@ -71,9 +71,13 @@
                     {!! nl2br(e($firstPart)) !!} <br/>
                     <span class="text-primary">{{ $lastPart }}</span>
                 </h1>
-                <p class="text-lg font-body text-slate-600 leading-relaxed mb-10">
-                    {{ $sections['intro'] ?? 'Experience the pinnacle of automotive engineering and white-glove service.' }}
-                </p>
+                <div class="text-base font-body text-slate-600 leading-relaxed mb-10 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline">
+                    @if (trim((string) ($sections['intro'] ?? '')) !== '')
+                        {!! $sections['intro'] !!}
+                    @else
+                        <p>{{ __('Experience the pinnacle of automotive engineering and white-glove service.') }}</p>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

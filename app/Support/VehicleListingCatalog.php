@@ -228,4 +228,36 @@ final class VehicleListingCatalog
 
         return null;
     }
+
+    /**
+     * Active make option id for a display label (case-insensitive; hyphens vs spaces normalized).
+     */
+    public static function makeListingOptionIdByValueCi(string $label): ?int
+    {
+        $label = trim($label);
+        if ($label === '') {
+            return null;
+        }
+        $rows = self::activeRootOptionRows('make');
+        $needle = mb_strtolower($label);
+        foreach ($rows as $row) {
+            if (mb_strtolower(trim((string) ($row->value ?? ''))) === $needle) {
+                return (int) $row->id;
+            }
+        }
+        $normalize = static function (string $s): string {
+            $s = str_replace(['-', '_'], ' ', $s);
+
+            return trim(preg_replace('/\s+/', ' ', $s) ?? '');
+        };
+        $needleNorm = mb_strtolower($normalize($label));
+        foreach ($rows as $row) {
+            $v = mb_strtolower($normalize((string) ($row->value ?? '')));
+            if ($v === $needleNorm) {
+                return (int) $row->id;
+            }
+        }
+
+        return null;
+    }
 }
