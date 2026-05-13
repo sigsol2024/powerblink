@@ -34,6 +34,21 @@
       ->map(fn ($p) => \App\Support\VehicleImageUrl::url($p))
       ->values();
 
+    // Hero intro: plain text from the editor has no HTML tags — browsers collapse newlines, so we
+    // render it as GitHub-flavored Markdown (paragraphs, * / - lists). If it already contains real
+    // markup from a rich editor, output that HTML unchanged.
+    $aboutIntroRaw = trim((string) ($sections['intro'] ?? ''));
+    $aboutIntroHtml = '';
+    if ($aboutIntroRaw !== '') {
+        $looksLikeHtml = (bool) preg_match(
+            '/<\s*(?:p|div|span|br|strong|em|b|i|u|ul|ol|li|h[1-6]|a|img|section|article|blockquote)\b/i',
+            $aboutIntroRaw
+        );
+        $aboutIntroHtml = $looksLikeHtml
+            ? $aboutIntroRaw
+            : \Illuminate\Support\Str::markdown($aboutIntroRaw);
+    }
+
 @endphp
 
 <style>
@@ -71,9 +86,9 @@
                     {!! nl2br(e($firstPart)) !!} <br/>
                     <span class="text-primary">{{ $lastPart }}</span>
                 </h1>
-                <div class="text-base font-body text-slate-600 leading-relaxed mb-10 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline">
-                    @if (trim((string) ($sections['intro'] ?? '')) !== '')
-                        {!! $sections['intro'] !!}
+                <div class="about-intro text-base font-body text-slate-600 leading-relaxed mb-10 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_li:last-child]:mb-0 [&_a]:text-primary [&_a]:underline">
+                    @if ($aboutIntroHtml !== '')
+                        {!! $aboutIntroHtml !!}
                     @else
                         <p>{{ __('Experience the pinnacle of automotive engineering and white-glove service.') }}</p>
                     @endif
