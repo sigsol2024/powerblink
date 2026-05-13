@@ -47,13 +47,13 @@ class VpicPruneListingOptionsTest extends TestCase
 
         $this->artisan('listing-options:prune-vpic', ['--dry-run' => true])
             ->assertSuccessful()
-            ->expectsOutputToContain('models deactivated: 1')
-            ->expectsOutputToContain('makes deactivated: 1');
+            ->expectsOutputToContain('models deleted: 1')
+            ->expectsOutputToContain('makes deleted: 1');
 
-        $this->assertTrue($junkMake->fresh()->is_active);
+        $this->assertDatabaseHas('listing_options', ['id' => $junkMake->id]);
     }
 
-    public function test_prune_deactivates_unused_non_allowlisted_vpic_rows(): void
+    public function test_prune_deletes_unused_non_allowlisted_vpic_rows(): void
     {
         Config::set('vpic.allowed_make_ids', [448]);
 
@@ -87,8 +87,8 @@ class VpicPruneListingOptionsTest extends TestCase
         $this->artisan('listing-options:prune-vpic')
             ->assertSuccessful();
 
-        $this->assertFalse($junkMake->fresh()->is_active);
-        $this->assertFalse($junkModel->fresh()->is_active);
+        $this->assertDatabaseMissing('listing_options', ['id' => $junkMake->id]);
+        $this->assertDatabaseMissing('listing_options', ['id' => $junkModel->id]);
     }
 
     public function test_prune_does_not_touch_make_referenced_by_vehicle(): void
@@ -119,7 +119,42 @@ class VpicPruneListingOptionsTest extends TestCase
         $this->artisan('listing-options:prune-vpic')
             ->assertSuccessful();
 
-        $this->assertTrue($usedMake->fresh()->is_active);
+        $this->assertDatabaseHas('listing_options', ['id' => $usedMake->id]);
+    }
+
+    public function test_prune_does_not_delete_make_with_manual_model_child(): void
+    {
+        Config::set('vpic.allowed_make_ids', [448]);
+
+        $makeCatId = (int) ListingOptionCategory::query()->where('slug', 'make')->value('id');
+        $modelCatId = (int) ListingOptionCategory::query()->where('slug', 'model')->value('id');
+
+        $vpicMake = ListingOption::query()->create([
+            'category_id' => $makeCatId,
+            'parent_id' => null,
+            'value' => 'VpicParent',
+            'sort_order' => 1,
+            'is_active' => true,
+            'external_source' => ListingOption::EXTERNAL_SOURCE_VPIC,
+            'external_id' => '888001',
+            'last_synced_at' => now(),
+            'source_payload' => [],
+        ]);
+
+        ListingOption::query()->create([
+            'category_id' => $modelCatId,
+            'parent_id' => $vpicMake->id,
+            'value' => 'Manual Model',
+            'sort_order' => 1,
+            'is_active' => true,
+            'external_source' => null,
+            'external_id' => null,
+        ]);
+
+        $this->artisan('listing-options:prune-vpic')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('listing_options', ['id' => $vpicMake->id]);
     }
 
     public function test_prune_fails_when_allowlist_empty(): void

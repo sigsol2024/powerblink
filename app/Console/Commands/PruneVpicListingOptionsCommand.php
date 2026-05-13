@@ -8,15 +8,17 @@ use Illuminate\Console\Command;
 class PruneVpicListingOptionsCommand extends Command
 {
     protected $signature = 'listing-options:prune-vpic
-                            {--dry-run : Report counts without deactivating rows}';
+                            {--dry-run : Report counts without deleting rows}';
 
-    protected $description = 'Deactivate unused vPIC makes/models outside config/vpic.php allowed_make_ids (manual rows untouched)';
+    protected $description = 'Delete unused vPIC makes/models outside config/vpic.php allowed_make_ids (manual rows untouched; irreversible)';
 
     public function handle(VpicListingCatalogPruneService $prune): int
     {
         $dryRun = (bool) $this->option('dry-run');
         if ($dryRun) {
             $this->warn('Dry run: no database writes.');
+        } else {
+            $this->warn('This permanently deletes unused vPIC rows outside the allowlist.');
         }
 
         $result = $prune->prune($dryRun);
@@ -27,8 +29,8 @@ class PruneVpicListingOptionsCommand extends Command
         }
 
         $this->info('Prune finished.');
-        $this->line('  models deactivated: '.$result['models_deactivated']);
-        $this->line('  makes deactivated: '.$result['makes_deactivated']);
+        $this->line('  models deleted: '.$result['models_deleted']);
+        $this->line('  makes deleted: '.$result['makes_deleted']);
 
         return self::SUCCESS;
     }
