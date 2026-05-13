@@ -7,6 +7,13 @@ use App\Models\ListingOptionCategory;
 use App\Support\ListingOptionNormalizer;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * NHTSA vPIC catalog sync into {@see ListingOption} (make/model categories only).
+ *
+ * Make rows are matched by stable vPIC Make_ID values stored in {@see ListingOption::$external_id}.
+ * Curated IDs live in config `vpic.allowed_make_ids`; validate or extend that list against
+ * GET /vehicles/GetAllMakes?format=json before production changes.
+ */
 final class VpicListingCatalogSyncService
 {
     public function __construct(private readonly VpicClient $client) {}
@@ -16,11 +23,17 @@ final class VpicListingCatalogSyncService
      */
     public function syncMakes(bool $dryRun = false): array
     {
-        $stats = ['inserted' => 0, 'updated' => 0, 'skipped_manual_duplicate' => 0, 'skipped_bad' => 0];
+        $stats = ['inserted' => 0, 'updated' => 0, 'skipped_manual_duplicate' => 0, 'skipped_bad' => 0, 'skipped_not_allowlisted' => 0];
         $makeCatId = (int) ListingOptionCategory::query()->where('slug', 'make')->value('id');
         if ($makeCatId <= 0) {
             return array_merge($stats, ['error' => 'Make category missing']);
         }
+
+        $allowErr = $this->allowlistEmptyError();
+        if ($allowErr !== null) {
+            return array_merge($stats, ['error' => $allowErr]);
+        }
+        $allowedSet = $this->allowlistExternalIdSet();
 
         $rows = $this->client->getResults('vehicles/GetAllMakes');
         foreach ($rows as $raw) {
@@ -29,6 +42,11 @@ final class VpicListingCatalogSyncService
             $makeName = isset($payload['Make_Name']) ? (string) $payload['Make_Name'] : '';
             if ($makeId === '' || trim($makeName) === '') {
                 $stats['skipped_bad']++;
+
+                continue;
+            }
+            if (! isset($allowedSet[$makeId])) {
+                $stats['skipped_not_allowlisted']++;
 
                 continue;
             }
@@ -106,11 +124,18 @@ final class VpicListingCatalogSyncService
             return array_merge($stats, ['error' => 'Make/model category missing']);
         }
 
+        $allowErr = $this->allowlistEmptyError();
+        if ($allowErr !== null) {
+            return array_merge($stats, ['error' => $allowErr]);
+        }
+        $allowedStrings = $this->allowlistExternalIdStrings();
+
         $vpicMakes = ListingOption::query()
             ->where('category_id', $makeCatId)
             ->whereNull('parent_id')
             ->where('external_source', ListingOption::EXTERNAL_SOURCE_VPIC)
             ->whereNotNull('external_id')
+            ->whereIn('external_id', $allowedStrings)
             ->orderBy('id')
             ->get(['id', 'external_id', 'value']);
 
@@ -197,6 +222,46 @@ final class VpicListingCatalogSyncService
         }
 
         return $stats;
+    }
+
+    /**
+     * @return array<string, true>
+     */
+    private function allowlistExternalIdSet(): array
+    {
+        $set = [];
+        foreach ($this->allowlistExternalIdStrings() as $id) {
+            $set[$id] = true;
+        }
+
+        return $set;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function allowlistExternalIdStrings(): array
+    {
+        $raw = config('vpic.allowed_make_ids', []);
+        if (! is_array($raw)) {
+            return [];
+        }
+        $out = [];
+        foreach ($raw as $id) {
+            $s = trim((string) $id);
+            if ($s !== '' && ctype_digit($s)) {
+                $out[] = $s;
+            }
+        }
+
+        return array_values(array_unique($out));
+    }
+
+    private function allowlistEmptyError(): ?string
+    {
+        return $this->allowlistExternalIdStrings() === []
+            ? 'vpic.allowed_make_ids is empty. Set IDs in config/vpic.php or VPIC_ALLOWED_MAKE_IDS in .env (comma-separated vPIC Make_ID integers).'
+            : null;
     }
 
     /**

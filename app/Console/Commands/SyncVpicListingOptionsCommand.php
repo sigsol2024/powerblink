@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use App\Services\Vpic\VpicListingCatalogSyncService;
 use Illuminate\Console\Command;
 
+/**
+ * Sync vPIC makes/models. Only Make_IDs listed in config/vpic.php `allowed_make_ids` (or VPIC_ALLOWED_MAKE_IDS) are imported.
+ */
 class SyncVpicListingOptionsCommand extends Command
 {
     protected $signature = 'listing-options:sync-vpic
@@ -13,7 +16,7 @@ class SyncVpicListingOptionsCommand extends Command
                             {--models-only : Sync models for existing vPIC makes only}
                             {--no-models : Alias for --makes-only}';
 
-    protected $description = 'Sync NHTSA vPIC makes/models into listing_options (no deletes; manual rows preserved)';
+    protected $description = 'Sync NHTSA vPIC makes/models into listing_options (curated allowed_make_ids only; no deletes; manual rows preserved)';
 
     public function handle(VpicListingCatalogSyncService $sync): int
     {

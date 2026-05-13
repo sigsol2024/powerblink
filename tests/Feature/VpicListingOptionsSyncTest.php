@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ListingOption;
 use App\Models\ListingOptionCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -30,6 +31,8 @@ class VpicListingOptionsSyncTest extends TestCase
 
     public function test_sync_creates_vpic_make_with_source_payload(): void
     {
+        Config::set('vpic.allowed_make_ids', [999991]);
+
         Http::fake([
             '*vpic.nhtsa.dot.gov*GetAllMakes*' => Http::response([
                 'Count' => 1,
@@ -60,6 +63,8 @@ class VpicListingOptionsSyncTest extends TestCase
 
     public function test_sync_skips_insert_when_manual_make_name_collides(): void
     {
+        Config::set('vpic.allowed_make_ids', [474]);
+
         $makeCatId = $this->makeCategoryId();
 
         ListingOption::query()->create([
@@ -98,6 +103,8 @@ class VpicListingOptionsSyncTest extends TestCase
 
     public function test_sync_models_for_vpic_parent_make(): void
     {
+        Config::set('vpic.allowed_make_ids', [474]);
+
         $makeCatId = $this->makeCategoryId();
         $modelCatId = $this->modelCategoryId();
 
@@ -140,6 +147,8 @@ class VpicListingOptionsSyncTest extends TestCase
 
     public function test_dry_run_does_not_persist_makes(): void
     {
+        Config::set('vpic.allowed_make_ids', [888881]);
+
         Http::fake([
             '*vpic.nhtsa.dot.gov*GetAllMakes*' => Http::response([
                 'Results' => [
@@ -156,5 +165,80 @@ class VpicListingOptionsSyncTest extends TestCase
                 ->where('external_id', '888881')
                 ->value('id')
         );
+    }
+
+    public function test_sync_skips_makes_not_on_allowlist(): void
+    {
+        Config::set('vpic.allowed_make_ids', [111]);
+
+        Http::fake([
+            '*vpic.nhtsa.dot.gov*GetAllMakes*' => Http::response([
+                'Results' => [
+                    ['Make_ID' => 111, 'Make_Name' => 'ALLOWEDMAKE'],
+                    ['Make_ID' => 222, 'Make_Name' => 'NOTALLOWED'],
+                ],
+            ], 200),
+        ]);
+
+        $this->artisan('listing-options:sync-vpic', ['--makes-only' => true])
+            ->expectsOutputToContain('skipped not allowlisted');
+
+        $this->assertNotNull(ListingOption::query()->where('external_id', '111')->first());
+        $this->assertNull(ListingOption::query()->where('external_id', '222')->first());
+    }
+
+    public function test_models_sync_only_queries_allowlisted_parents(): void
+    {
+        Config::set('vpic.allowed_make_ids', [474]);
+
+        $makeCatId = $this->makeCategoryId();
+        $modelCatId = $this->modelCategoryId();
+
+        ListingOption::query()->create([
+            'category_id' => $makeCatId,
+            'parent_id' => null,
+            'value' => 'Disallowed',
+            'sort_order' => 1,
+            'is_active' => true,
+            'external_source' => ListingOption::EXTERNAL_SOURCE_VPIC,
+            'external_id' => '999888',
+            'last_synced_at' => now(),
+            'source_payload' => [],
+        ]);
+
+        ListingOption::query()->create([
+            'category_id' => $makeCatId,
+            'parent_id' => null,
+            'value' => 'Honda',
+            'sort_order' => 2,
+            'is_active' => true,
+            'external_source' => ListingOption::EXTERNAL_SOURCE_VPIC,
+            'external_id' => '474',
+            'last_synced_at' => now(),
+            'source_payload' => [],
+        ]);
+
+        Http::fake([
+            '*vpic.nhtsa.dot.gov*GetModelsForMakeId*474*' => Http::response([
+                'Results' => [
+                    ['Model_ID' => 1, 'Model_Name' => 'Civic'],
+                ],
+            ], 200),
+        ]);
+
+        $this->artisan('listing-options:sync-vpic', ['--models-only' => true])
+            ->assertSuccessful();
+    }
+
+    public function test_sync_fails_when_allowlist_empty(): void
+    {
+        Config::set('vpic.allowed_make_ids', []);
+
+        Http::fake([
+            '*vpic.nhtsa.dot.gov*GetAllMakes*' => Http::response(['Results' => []], 200),
+        ]);
+
+        $this->artisan('listing-options:sync-vpic', ['--makes-only' => true])
+            ->assertFailed();
     }
 }
