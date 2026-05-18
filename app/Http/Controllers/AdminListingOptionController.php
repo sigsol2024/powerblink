@@ -80,10 +80,15 @@ class AdminListingOptionController extends Controller
             ->where('parent_id', $parentId)
             ->max('sort_order');
 
+        $value = trim($data['value']);
+        if ($isMake) {
+            $value = ListingOption::normalizeMake($value);
+        }
+
         $option = ListingOption::query()->create([
             'category_id' => $category->id,
             'parent_id' => $parentId,
-            'value' => trim($data['value']),
+            'value' => $value,
             'sort_order' => $maxSort + 1,
             'is_active' => (bool) ($data['is_active'] ?? true),
         ]);
@@ -184,8 +189,13 @@ class AdminListingOptionController extends Controller
             'value' => ['required', 'string', 'max:255'],
         ]);
 
+        $value = trim((string) $request->input('value'));
+        if ($category->slug === 'make') {
+            $value = ListingOption::normalizeMake($value);
+        }
+
         $option->update([
-            'value' => trim((string) $request->input('value')),
+            'value' => $value,
             'is_active' => $request->boolean('is_active'),
         ]);
 

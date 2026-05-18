@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\BrandedMailContext;
 use App\Support\SiteSettingDefaults;
 use App\Services\Mail\OutboundMailService;
 use Illuminate\Http\RedirectResponse;
@@ -59,7 +60,14 @@ class ContactController extends Controller
             NewsletterController::notifyIfEnabled($mailer, $validated['email']);
         }
 
-        return back()->with('status', 'Message sent.');
+        $siteName = BrandedMailContext::forEmail()['siteName'];
+
+        return back()->with(
+            'status',
+            __('Thank you for contacting :site. Our customer representative will contact you soon. Thank you.', [
+                'site' => $siteName,
+            ])
+        );
     }
 }
 

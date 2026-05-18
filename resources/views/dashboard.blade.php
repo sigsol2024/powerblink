@@ -1,8 +1,8 @@
 @php $adminOverview = $adminOverview ?? false; @endphp
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="text-xl font-semibold text-slate-800">
+        <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+            <h2 class="admin-page-title">
                 {{ $adminOverview ? __('Overview') : __('Dashboard') }}
             </h2>
             @unless($adminOverview)

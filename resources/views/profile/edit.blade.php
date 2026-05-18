@@ -1,9 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-            <h2 class="text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl">
-                {{ __('Profile') }}
-            </h2>
+        <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+            <h2 class="admin-page-title">{{ __('Profile') }}</h2>
             <p class="text-xs font-medium uppercase tracking-wider text-zinc-500">{{ __('Account & security') }}</p>
         </div>
     </x-slot>

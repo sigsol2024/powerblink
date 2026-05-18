@@ -53,4 +53,9 @@ class ListingOption extends Model
     {
         return $this->children()->where('is_active', true);
     }
+
+    public static function normalizeMake(string $value): string
+    {
+        return mb_strtoupper(trim($value));
+    }
 }

@@ -1,8 +1,8 @@
 <x-app-layout>
   <x-slot name="header">
     <div>
-      <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Admin') }}</div>
-      <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Site settings') }}</div>
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Admin') }}</div>
+      <h2 class="admin-page-title">{{ __('Site settings') }}</div>
     </div>
   </x-slot>
 

@@ -4,9 +4,9 @@
 
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {{ __('Media Library') }}
-    </h2>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <h2 class="admin-page-title">{{ __('Media Library') }}</h2>
+    </div>
   </x-slot>
 
   <div
@@ -14,6 +14,8 @@
     x-data="{
       selected: [],
       allIds: @js($allItemIds),
+      openId: null,
+      toggleOpen(id) { this.openId = this.openId === id ? null : id; },
       view: (localStorage.getItem('admin_media_view') || 'grid'),
       toggleSelectAll() {
         this.selected = (this.selected.length === this.allIds.length) ? [] : [...this.allIds];
@@ -36,7 +38,7 @@
     <div class="rounded-lg bg-white p-6 shadow-sm sm:rounded-lg">
       <form method="get" action="{{ route('admin.media.index') }}" class="flex flex-wrap items-center gap-2">
         <input type="search" name="q" value="{{ $query }}" class="min-w-[16rem] flex-1 rounded border-gray-300" placeholder="Search media file name..." />
-        <button class="rounded bg-indigo-600 px-4 py-2 text-sm text-white">Search</button>
+        <button type="submit" class="admin-btn-primary">Search</button>
         @if ($query !== '')
           <a href="{{ route('admin.media.index') }}" class="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Clear</a>
         @endif
@@ -51,7 +53,7 @@
       <form method="post" action="{{ route('admin.media.upload') }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
         @csrf
         <input type="file" name="files[]" accept="image/jpeg,image/jpg,image/png,image/webp" class="block w-full max-w-lg text-sm text-gray-700" multiple required />
-        <button class="whitespace-nowrap rounded bg-indigo-600 px-4 py-2 text-sm text-white">Upload</button>
+        <button type="submit" class="admin-btn-primary whitespace-nowrap">Upload</button>
       </form>
     </div>
 
@@ -84,7 +86,7 @@
         </div>
       </div>
 
-      <div x-show="view === 'grid'" class="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+      <div x-show="view === 'grid'" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
         @forelse ($items as $item)
           <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
             <div class="flex items-center justify-between border-b border-gray-100 px-2 py-1.5">
@@ -116,7 +118,30 @@
         @endforelse
       </div>
 
-      <div x-show="view === 'list'" x-cloak class="overflow-x-auto rounded border border-gray-200">
+            <div x-show="view === 'list'" x-cloak class="lg:hidden space-y-3">
+        @foreach ($items as $item)
+          <article class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+            <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ (int) $item['id'] }})" :aria-expanded="openId === {{ (int) $item['id'] }} ? 'true' : 'false'">
+              <span class="min-w-0 flex-1 truncate font-medium text-gray-800">{{ $item['name'] }}</span>
+              <svg class="h-5 w-5 shrink-0 text-gray-400 transition-transform" :class="openId === {{ (int) $item['id'] }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="openId === {{ (int) $item['id'] }}" x-cloak class="border-t border-gray-100 bg-gray-50 px-4 py-4 text-sm">
+              <img src="{{ $item['url'] }}" alt="{{ $item['name'] }}" class="mb-3 h-24 w-full rounded border border-gray-200 object-cover" />
+              <p class="text-xs text-gray-600">{{ number_format($item['size'] / 1024, 1) }} KB</p>
+              <p class="mt-1 truncate text-xs text-gray-600" title="{{ $item['path'] }}">{{ $item['path'] }}</p>
+              <label class="mt-3 inline-flex items-center gap-2 text-xs text-gray-600"><input type="checkbox" class="rounded border-gray-300 text-indigo-600" :value="{{ (int) $item['id'] }}" x-model.number="selected"> Select</label>
+              <div class="mt-3 flex flex-col gap-2">
+                <button type="button" class="admin-btn" data-copy-url="{{ $item['url'] }}">Copy URL</button>
+                <form method="post" action="{{ route('admin.media.destroy.post', ['media' => $item['id']]) }}" onsubmit="return confirm('Delete this image? This cannot be undone.');">
+                  @csrf
+                  <button type="submit" class="admin-btn w-full text-rose-700">Delete</button>
+                </form>
+              </div>
+            </div>
+          </article>
+        @endforeach
+      </div>
+      <div x-show="view === 'list'" x-cloak class="hidden lg:block overflow-x-auto rounded border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200 text-sm">
           <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">
             <tr>

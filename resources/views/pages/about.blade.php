@@ -44,9 +44,18 @@
             '/<\s*(?:p|div|span|br|strong|em|b|i|u|ul|ol|li|h[1-6]|a|img|section|article|blockquote)\b/i',
             $aboutIntroRaw
         );
-        $aboutIntroHtml = $looksLikeHtml
-            ? $aboutIntroRaw
-            : \Illuminate\Support\Str::markdown($aboutIntroRaw);
+        if ($looksLikeHtml) {
+            $aboutIntroHtml = $aboutIntroRaw;
+            if (preg_match_all('/<p\b[^>]*>.*?<\/p>/is', $aboutIntroHtml, $introParagraphs) && count($introParagraphs[0]) > 2) {
+                $aboutIntroHtml = implode('', array_slice($introParagraphs[0], 0, 2));
+            }
+        } else {
+            $introChunks = preg_split('/\n\s*\n/', $aboutIntroRaw);
+            if (is_array($introChunks) && count($introChunks) > 2) {
+                $aboutIntroRaw = implode("\n\n", array_slice($introChunks, 0, 2));
+            }
+            $aboutIntroHtml = \Illuminate\Support\Str::markdown($aboutIntroRaw);
+        }
     }
 
 @endphp
@@ -70,7 +79,7 @@
         <div class="w-full md:w-1/2 flex items-center px-12 md:px-24 py-20 bg-white">
             <div class="max-w-xl">
                 <h2 class="text-sm font-label font-bold text-primary tracking-[0.3em] uppercase mb-4">Established {{ $sections['established_year'] ?? '1999' }}</h2>
-                <h1 class="text-4xl md:text-5xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
+                <h1 class="text-3xl md:text-4xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
                     @php
                         $heading = $sections['heading'] ?? 'WELCOME TO THE MOTORS';
                         if (str_contains($heading, 'THE MOTORS')) {
@@ -193,31 +202,5 @@
   </div>
 </section>
 @endif
-
-<!-- Quick Links -->
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-        @foreach([1, 2, 3] as $i)
-            @php
-                $qT = $sections['adv_'.$i.'_title'] ?? '';
-                $qB = $sections['adv_'.$i.'_body'] ?? '';
-                $qI = $sections['adv_'.$i.'_icon'] ?? 'directions_car';
-                $qH = $sections['adv_'.$i.'_href'] ?? '#';
-            @endphp
-            @if($qT)
-            <div class="bg-page_bg p-10 flex flex-col items-center text-center group hover:bg-white transition-all shadow-xl shadow-transparent hover:shadow-slate-200 @if($i == 2) border-b-4 border-primary @endif">
-                <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-primary mb-6 transition-colors group-hover:bg-primary group-hover:text-slate-900">
-                    <span class="material-symbols-outlined text-3xl">{{ $qI }}</span>
-                </div>
-                <h3 class="text-xl font-black font-headline mb-4 uppercase text-on_surface">{{ $qT }}</h3>
-                <p class="text-slate-600 font-body mb-8">{{ $qB }}</p>
-                <a class="font-label font-bold text-sm uppercase tracking-widest text-primary hover:underline flex items-center gap-2" href="{{ $qH }}">
-                    {{ str_contains($qT, 'sell') ? 'Appraise Now' : (str_contains($qT, 'new car') ? 'Browse Inventory' : 'Book Appointment') }} <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-            </div>
-            @endif
-        @endforeach
-    </div>
-</section>
 
 @endsection

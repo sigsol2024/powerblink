@@ -97,6 +97,57 @@
         width: 0;
         height: 0;
       }
+      .admin-page-header { min-width: 0; }
+      .admin-page-header h2,
+      .admin-page-header .admin-page-title {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.35;
+        color: #18181b;
+      }
+      @media (min-width: 640px) {
+        .admin-page-header h2,
+        .admin-page-header .admin-page-title {
+          font-size: 1.125rem;
+        }
+      }
+      .admin-btn,
+      .admin-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.25rem;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+      }
+      @media (min-width: 640px) {
+        .admin-btn,
+        .admin-btn-primary {
+          width: auto;
+        }
+      }
+      .admin-btn {
+        border: 1px solid #e4e4e7;
+        background-color: #fff;
+        color: #3f3f46;
+      }
+      .admin-btn:hover {
+        border-color: #d4d4d8;
+        background-color: #fafafa;
+      }
+      .admin-btn-primary {
+        border: 1px solid #f59e0b;
+        background-color: #f59e0b;
+        color: #0f172a;
+      }
+      .admin-btn-primary:hover {
+        background-color: #fbbf24;
+      }
     </style>
     @stack('scripts')
     @include('partials.vite-assets')
@@ -185,6 +236,21 @@
           <div class="my-3 shrink-0 border-t border-white/10"></div>
 
           <a
+            href="{{ route('home') }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="closeDrawer()"
+            class="flex items-center gap-3 rounded-lg py-2.5 pl-2.5 pr-2 text-[13px] font-medium text-zinc-500 transition hover:bg-white/[0.05] hover:text-zinc-200"
+            :class="railMode ? 'justify-center px-2' : ''"
+            title="{{ __('View site') }}"
+          >
+            <svg class="admin-nav-icon text-current" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+            </svg>
+            <span class="truncate" x-show="!railMode">{{ __('View site') }}</span>
+          </a>
+
+          <a
             href="{{ route('inventory.index') }}"
             target="_blank"
             rel="noopener noreferrer"
@@ -246,7 +312,7 @@
           </button>
           <div class="min-w-0 flex-1">
             @isset($header)
-              <div class="text-zinc-900">{{ $header }}</div>
+              <div class="admin-page-header text-zinc-900">{{ $header }}</div>
             @else
               <p class="truncate text-lg font-semibold tracking-tight text-zinc-900">{{ $brandName }}</p>
             @endif
@@ -255,7 +321,7 @@
             href="{{ route('home') }}"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
+            class="admin-btn hidden shrink-0 lg:inline-flex"
           >
             <svg class="h-4 w-4 shrink-0 text-zinc-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
@@ -265,7 +331,7 @@
         </header>
 
         <main class="admin-content-scroll admin-scrollbar min-w-0 bg-gradient-to-b from-zinc-100 to-zinc-50 overscroll-contain overflow-x-auto">
-          <div class="mx-auto max-w-[1600px] min-w-0 px-4 py-8 sm:px-6 lg:px-10">
+          <div class="mx-auto max-w-[1600px] min-w-0 px-4 py-6 sm:px-6 lg:px-10">
             {{ $slot }}
           </div>
         </main>

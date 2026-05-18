@@ -3,14 +3,14 @@
 @endphp
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex items-center justify-between gap-4">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <h2 class="admin-page-title">
         {{ $isAdminEdit ? __('Admin: Edit listing') : __('Edit Vehicle') }}
       </h2>
       @if($vehicle->status === 'approved')
-        <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}" class="text-sm text-indigo-600 hover:underline">
-          View public page
-        </a>
+        <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}" class="admin-btn">View public page</a>
+        </div>
       @endif
     </div>
   </x-slot>

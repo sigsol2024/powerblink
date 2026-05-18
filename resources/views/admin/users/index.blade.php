@@ -1,20 +1,18 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex flex-wrap items-start justify-between gap-4">
-      <h2 class="text-xl font-semibold tracking-tight text-zinc-900">{{ __('Users & dealers') }}</h2>
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800"
-        @click="$dispatch('open-invite-modal')"
-      >
-        {{ __('Invite or create account') }}
-      </button>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <h2 class="admin-page-title">{{ __('Users & dealers') }}</h2>
+      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <button type="button" class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800" @click="$dispatch('open-invite-modal')">
+          {{ __('Invite or create account') }}
+        </button>
+      </div>
     </div>
   </x-slot>
 
   <div
     class="w-full space-y-8"
-    x-data="{ inviteOpen: {{ $errors->any() ? 'true' : 'false' }} }"
+    x-data="{ inviteOpen: {{ $errors->any() ? 'true' : 'false' }}, openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }"
     @open-invite-modal.window="inviteOpen = true"
     @keydown.escape.window="inviteOpen = false"
   >
@@ -23,7 +21,7 @@
         <h3 class="text-base font-bold text-zinc-900">{{ __('All accounts') }}</h3>
         <p class="mt-1 text-sm text-zinc-600">{{ __('Admins manage the site; dealers own their listings.') }}</p>
       </div>
-      <div class="overflow-x-auto p-4 sm:p-6">
+      <div class="hidden lg:block overflow-x-auto p-4 sm:p-6">
         <table class="min-w-full divide-y divide-zinc-200 text-sm">
           <thead>
             <tr class="text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -66,6 +64,42 @@
             @endforeach
           </tbody>
         </table>
+      </div>
+
+      <div class="lg:hidden space-y-3 p-4 sm:p-6">
+        @foreach($users as $user)
+          <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+            <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $user->id }})" :aria-expanded="openId === {{ $user->id }} ? 'true' : 'false'">
+              <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ $user->name }}</span>
+              <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $user->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="openId === {{ $user->id }}" x-cloak class="border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
+              <p class="text-zinc-600">{{ $user->email }}</p>
+              <div class="mt-2 flex flex-wrap gap-1">
+                @foreach($user->roles as $role)
+                  @if($role->name === 'admin')
+                    <span class="inline-flex rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-semibold text-violet-800">{{ __('Admin') }}</span>
+                  @elseif($role->name === 'user')
+                    <span class="inline-flex rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">{{ __('Dealer') }}</span>
+                  @else
+                    <span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-700">{{ $role->name }}</span>
+                  @endif
+                @endforeach
+              </div>
+              <div class="mt-4 flex flex-col gap-2">
+                @if($user->id === auth()->id())
+                  <span class="text-xs text-zinc-400">{{ __('You') }}</span>
+                @else
+                  <form method="post" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm(@json(__('Delete this user?')));">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="admin-btn w-full justify-start text-rose-700">{{ __('Delete') }}</button>
+                  </form>
+                @endif
+              </div>
+            </div>
+          </article>
+        @endforeach
       </div>
       <div class="border-t border-zinc-100 px-6 py-4">
         {{ $users->links() }}
@@ -130,8 +164,8 @@
             </div>
           </div>
           <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
-            <button type="button" class="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 shadow-sm hover:bg-zinc-50" @click="inviteOpen = false">{{ __('Cancel') }}</button>
-            <x-primary-button class="bg-zinc-900 hover:bg-zinc-800 focus:ring-zinc-700">{{ __('Create user') }}</x-primary-button>
+            <button type="button" class="admin-btn" @click="inviteOpen = false">{{ __('Cancel') }}</button>
+            <x-primary-button class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800">{{ __('Create user') }}</x-primary-button>
           </div>
         </form>
       </div>

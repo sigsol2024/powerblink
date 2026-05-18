@@ -5,23 +5,18 @@
 @endphp
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3">
-      <div class="min-w-0">
-        <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Catalog') }}</div>
-        <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Listing options') }}: {{ $category->label }}</div>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Catalog') }}</p>
+      <h2 class="admin-page-title">{{ __('Listing options') }}: {{ $category->label }}</h2>
+      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <a href="{{ route('admin.listing-options.index') }}" class="admin-btn">{{ __('All categories') }}</a>
       </div>
-      <a
-        href="{{ route('admin.listing-options.index') }}"
-        class="inline-flex shrink-0 items-center rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50"
-      >
-        {{ __('All categories') }}
-      </a>
     </div>
   </x-slot>
 
   <div
     class="space-y-6"
-    x-data="{ addOpen: false }"
+    x-data="{ addOpen: false, openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }"
     @keydown.escape.window="addOpen = false"
   >
     @if ($errors->any())
@@ -44,7 +39,7 @@
       </p>
       <button
         type="button"
-        class="inline-flex items-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800"
+        class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white shadow-sm transition hover:bg-zinc-800"
         @click="addOpen = true"
       >
         {{ __('Add option') }}
@@ -130,7 +125,7 @@
         @method('PUT')
 
       <div class="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm ring-1 ring-black/[0.02]">
-        <div class="overflow-x-auto">
+        <div class="hidden lg:block overflow-x-auto">
           <table class="min-w-full divide-y divide-zinc-200 text-sm">
             <thead class="bg-zinc-50">
               <tr>
@@ -219,6 +214,27 @@
         </div>
       </div>
 
+
+        <div class="lg:hidden space-y-3 p-4">
+          @foreach ($options as $option)
+            <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+              <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $option->id }})" :aria-expanded="openId === {{ $option->id }} ? 'true' : 'false'">
+                <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ old('options.' . $option->id . '.value', $option->value) }}</span>
+                <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $option->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div x-show="openId === {{ $option->id }}" x-cloak class="space-y-3 border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
+                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" class="block w-full rounded-lg border-zinc-300 text-sm" required />
+                <input type="number" name="options[{{ $option->id }}][sort_order]" value="{{ old('options.' . $option->id . '.sort_order', $option->sort_order) }}" min="0" max="65535" class="w-full rounded-lg border-zinc-300 text-sm" />
+                <label class="inline-flex items-center gap-2"><input type="checkbox" name="options[{{ $option->id }}][is_active]" value="1" class="rounded border-zinc-300 text-amber-600" @checked(old('options.' . $option->id . '.is_active', $option->is_active)) /><span>{{ __('Visible') }}</span></label>
+                <div class="flex flex-col gap-2">
+                  <button type="submit" form="move-up-{{ $option->id }}" class="admin-btn">{{ __('Up') }}</button>
+                  <button type="submit" form="move-down-{{ $option->id }}" class="admin-btn">{{ __('Down') }}</button>
+                  <button type="submit" form="delete-option-{{ $option->id }}" class="admin-btn text-rose-700">{{ __('Delete') }}</button>
+                </div>
+              </div>
+            </article>
+          @endforeach
+        </div>
       <div class="mt-4 flex flex-col items-stretch gap-2 border-t border-zinc-200/90 pt-4 sm:flex-row sm:items-center sm:justify-between">
         @if ($isMake)
           <p class="text-xs text-zinc-500">{{ __('Logos are chosen from the media library. Saving applies the path for each make you changed.') }}</p>

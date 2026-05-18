@@ -50,7 +50,9 @@
 
 <x-app-layout>
   <x-slot name="header">
-    <h1 class="truncate text-lg font-bold tracking-tight text-zinc-900">{{ __('Analytics') }}</h1>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <h2 class="admin-page-title">{{ __('Analytics') }}</h2>
+    </div>
   </x-slot>
 
   <div
@@ -227,7 +229,17 @@
         <p class="mt-1.5 text-sm text-on-surface-variant">{{ __('Listing performance and viewer conversion') }}</p>
       </div>
       <div class="px-4 pb-6 pt-2 md:px-6">
-        <div class="overflow-x-auto rounded-xl border border-[#0a1628]/06 bg-white/50">
+        <ul class="lg:hidden space-y-2 rounded-xl border border-[#0a1628]/06 bg-white/50 p-3">
+          <template x-for="row in (state.topPages || []).slice(0, 10)" :key="row.path">
+            <li class="flex items-center justify-between gap-3 border-b border-[#0a1628]/06 py-3 last:border-0">
+              <span class="min-w-0 flex-1 truncate text-sm font-medium text-[#1a1d21]" x-text="pathTitle(row)"></span>
+              <span class="shrink-0 text-sm font-semibold tabular-nums text-[#061018]" x-text="num(row.views)"></span>
+            </li>
+          </template>
+          <li class="py-4 text-center text-sm text-on-surface-variant" x-show="!(state.topPages && state.topPages.length)">{{ __('No page data in this range yet') }}</li>
+        </ul>
+
+        <div class="hidden lg:block overflow-x-auto rounded-xl border border-[#0a1628]/06 bg-white/50">
           <table class="w-full min-w-[600px] border-collapse text-left">
             <thead>
               <tr class="anx-table-head border-b border-[#0a1628]/08 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
@@ -258,7 +270,7 @@
             </tbody>
           </table>
         </div>
-        <p class="px-2 py-6 text-center text-sm text-on-surface-variant" x-show="!(state.topPages && state.topPages.length)">{{ __('No page data in this range yet') }}</p>
+        <p class="hidden px-2 py-6 text-center text-sm text-on-surface-variant lg:block" x-show="!(state.topPages && state.topPages.length)">{{ __('No page data in this range yet') }}</p>
       </div>
     </section>
 

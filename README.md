@@ -41,7 +41,7 @@ Transactional email from the app (contact, inquiries, OTP, password reset, etc.)
 | PHPMailer SMTP | `MAIL_PHPMAILER_ENABLED`, `MAIL_PHPMAILER_HOST`, `MAIL_PHPMAILER_PORT`, `MAIL_PHPMAILER_USERNAME`, `MAIL_PHPMAILER_PASSWORD`, `MAIL_PHPMAILER_ENCRYPTION` |
 | From + admin inbox | `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`, `MAIL_TO_ADMIN` |
 
-`MAIL_MAILER` applies to Laravel’s built-in mail stack only; outbound app mail uses the table above.
+You do not need `MAIL_MAILER`, `MAIL_HOST`, or `MAIL_PORT` in `.env` for this app’s outbound mail; omit them unless you add code that uses Laravel’s `Mail` facade (then set `MAIL_MAILER` and the matching Laravel mailer keys as usual).
 
 ## Install and run locally
 

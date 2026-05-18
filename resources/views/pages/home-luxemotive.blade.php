@@ -89,7 +89,7 @@
             <select id="home-search-make" name="make_listing_option_id" class="appearance-none rounded border-none bg-white px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
               <option value="">Make</option>
               @foreach ($homeMakes as $row)
-                <option value="{{ $row->id }}" @selected((int) ($filters['make_listing_option_id'] ?? 0) === (int) $row->id)>{{ $row->value }}</option>
+                <option value="{{ $row->id }}" @selected((int) ($filters['make_listing_option_id'] ?? 0) === (int) $row->id)>{{ mb_strtoupper((string) $row->value) }}</option>
               @endforeach
             </select>
             <select id="home-search-model" name="model_listing_option_id" class="appearance-none rounded border-none bg-white px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-primary">

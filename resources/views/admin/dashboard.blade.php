@@ -1,8 +1,8 @@
 <x-app-layout>
   <x-slot name="header">
-    <div>
-      <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Admin') }}</div>
-      <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Overview') }}</div>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Admin') }}</p>
+      <h2 class="admin-page-title">{{ __('Overview') }}</h2>
     </div>
   </x-slot>
 
@@ -108,7 +108,7 @@
       </div>
     </div>
 
-    <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02]">
+    <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02]" x-data="{ openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500">{{ __('Audit trail') }}</h2>
         @php $audit = $auditSummary ?? []; @endphp
@@ -135,7 +135,7 @@
           <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($audit['delete_actions'] ?? 0)) }}</div>
         </div>
       </div>
-      <div class="mt-4 overflow-hidden rounded-xl border border-zinc-200">
+      <div class="hidden lg:block mt-4 overflow-hidden rounded-xl border border-zinc-200">
         <table class="min-w-full divide-y divide-zinc-200 text-sm">
           <thead class="bg-zinc-50 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">
             <tr>
@@ -165,6 +165,26 @@
           </tbody>
         </table>
       </div>
+      <div class="lg:hidden mt-4 space-y-3">
+        @forelse (($audit['recent'] ?? []) as $entry)
+          <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+            <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $entry->id }})" :aria-expanded="openId === {{ $entry->id }} ? 'true' : 'false'">
+              <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ $entry->path }}</span>
+              <span class="inline-flex shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-700">{{ $entry->method }}</span>
+              <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $entry->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="openId === {{ $entry->id }}" x-cloak class="border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm text-zinc-700">
+              <p><span class="font-medium text-zinc-500">{{ __('When') }}:</span> {{ optional($entry->created_at)->format('M j, Y g:i a') }}</p>
+              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Admin') }}:</span> {{ $entry->user?->name ?? __('Unknown') }}</p>
+              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Route') }}:</span> {{ $entry->route_name ?? '—' }}</p>
+              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Status') }}:</span> {{ $entry->status_code ?? '—' }}</p>
+            </div>
+          </article>
+        @empty
+          <p class="py-4 text-center text-sm text-zinc-500">{{ __('No audit actions yet.') }}</p>
+        @endforelse
+      </div>
+
     </div>
   </div>
 </x-app-layout>

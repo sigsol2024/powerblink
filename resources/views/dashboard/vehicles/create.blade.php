@@ -1,13 +1,13 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {{ __('New Vehicle Listing') }}
-    </h2>
+    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
+      <h2 class="admin-page-title">{{ __('New Vehicle Listing') }}</h2>
+    </div>
   </x-slot>
 
   <div class="w-full">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 text-gray-900">
+        <div class="p-4 text-gray-900 sm:p-6">
           <form method="post" action="{{ route('dashboard.vehicles.store') }}" class="space-y-4" enctype="multipart/form-data">
             @csrf
 
