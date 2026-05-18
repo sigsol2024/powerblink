@@ -4,6 +4,7 @@ namespace App\View\Composers;
 
 use App\Models\PageSection;
 use App\Models\SiteSetting;
+use App\Support\CmsNavigation;
 use Illuminate\View\View;
 
 /**
@@ -13,6 +14,12 @@ class FaqNavComposer
 {
     public function compose(View $view): void
     {
+        if (! CmsNavigation::isVisible('faq')) {
+            $view->with('faqNavItems', []);
+
+            return;
+        }
+
         $defaults = [
             'cat_1_title' => 'Buying & Inventory',
             'cat_1_icon' => 'directions_car',

@@ -32,6 +32,8 @@
   $navMakesTop = \App\Support\VehicleListingCatalog::activeMakeNavTopTiles(6);
   $faqNavItems = $faqNavItems ?? [];
   $faqUrl = route('faq');
+  $cmsNavActive = $cmsNavActive ?? [];
+  $navOn = static fn (string $slug): bool => (bool) ($cmsNavActive[$slug] ?? true);
 @endphp
 
 {{-- Motors dealer-two inspired public header: https://motors.stylemixthemes.com/elementor-dealer-two/ --}}
@@ -126,8 +128,11 @@
       </a>
 
       <nav class="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-6 xl:flex xl:px-2 w-max" aria-label="{{ __('Primary') }}">
+        @if ($navOn('home'))
         <a href="{{ route('home') }}" data-header-nav-link class="pointer-events-auto inline-flex items-center border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ request()->routeIs('home') ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}">{{ __('Home') }}</a>
+        @endif
 
+        @if ($navOn('inventory'))
         {{-- Inventory mega dropdown (Nigerian / Foreign live under here) --}}
         <div class="pointer-events-auto relative flex items-end" data-header-inventory-dropdown>
           <a href="{{ $inventoryUrl }}" data-header-inventory-trigger data-header-nav-link class="inline-flex items-center gap-0.5 border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ $inventoryActive ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}" aria-expanded="false" aria-haspopup="true">
@@ -187,9 +192,13 @@
             </div>
           </div>
         </div>
+        @endif
 
+        @if ($navOn('about'))
         <a href="{{ route('about') }}" data-header-nav-link class="pointer-events-auto inline-flex items-center border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ request()->routeIs('about') ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}">{{ __('About') }}</a>
+        @endif
 
+        @if ($navOn('faq'))
         @if (! empty($faqNavItems))
           <div class="pointer-events-auto relative flex items-end" data-header-faq-dropdown>
             <a href="{{ $faqUrl }}" data-header-faq-trigger data-header-nav-link class="inline-flex items-center gap-0.5 border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ request()->routeIs('faq') ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}" aria-expanded="false" aria-haspopup="true">
@@ -219,11 +228,16 @@
         @else
           <a href="{{ $faqUrl }}" data-header-nav-link class="pointer-events-auto inline-flex items-center border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ request()->routeIs('faq') ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}">{{ __('FAQ') }}</a>
         @endif
+        @endif
+
+        @if ($navOn('contact'))
         <a href="{{ route('contact') }}" data-header-nav-link class="pointer-events-auto inline-flex items-center border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ request()->routeIs('contact') ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}">{{ __('Contact') }}</a>
+        @endif
       </nav>
 
       <div class="relative z-20 flex shrink-0 items-center justify-end gap-2 sm:gap-4">
         {{-- Compare + My account: desktop xl+ only (mobile finds them inside the sidebar after nav links). --}}
+        @if ($navOn('compare'))
         <a href="{{ route('compare') }}" class="group hidden items-center gap-2 xl:inline-flex" title="{{ __('Compare vehicles') }}">
           <span data-header-action-text class="hidden text-[11px] font-extrabold uppercase tracking-[0.06em] text-white transition-colors group-hover:text-[#1280DF] xl:inline">{{ __('Compare') }}</span>
           <span class="relative ml-0 inline-flex">
@@ -267,8 +281,12 @@
         <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1280DF] px-2 text-xs font-extrabold text-white">{{ $compareCount }}</span>
       </a>
     </div>
+    @endif
 
+    @if ($navOn('home'))
     <a href="{{ route('home') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('Home') }}</a>
+    @endif
+    @if ($navOn('inventory'))
     <div class="shrink-0 rounded-sm border border-slate-200 bg-slate-50/80">
       <button type="button" class="flex w-full items-center justify-between px-3 py-3.5 text-left text-sm font-bold uppercase tracking-[0.06em] text-zinc-900 transition hover:bg-slate-100" data-mobile-inventory-toggle aria-expanded="false" aria-controls="mobile-inventory-subnav">
         <span>{{ __('Inventory') }}</span>
@@ -304,7 +322,11 @@
         @endif
       </div>
     </div>
+    @endif
+    @if ($navOn('about'))
     <a href="{{ route('about') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('About') }}</a>
+    @endif
+    @if ($navOn('faq'))
     @if (! empty($faqNavItems))
       <div class="shrink-0 rounded-sm border border-slate-200 bg-slate-50/80">
         <button type="button" class="flex w-full items-center justify-between px-3 py-3.5 text-left text-sm font-bold uppercase tracking-[0.06em] text-zinc-900 transition hover:bg-slate-100" data-mobile-faq-toggle aria-expanded="false" aria-controls="mobile-faq-subnav">
@@ -324,7 +346,10 @@
     @else
       <a href="{{ $faqUrl }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('FAQ') }}</a>
     @endif
+    @endif
+    @if ($navOn('contact'))
     <a href="{{ route('contact') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('Contact') }}</a>
+    @endif
 
     <div class="mt-auto shrink-0 border-t border-slate-200 pt-4">
       <div class="flex flex-col gap-2">

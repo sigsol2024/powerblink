@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CmsPage;
 use App\Models\PageSection;
+use App\Support\CmsNavigation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -303,6 +304,8 @@ class AdminPageController extends Controller
                 'is_active' => (bool) ($data['is_active'] ?? false),
             ]
         );
+
+        CmsNavigation::flushCache();
 
         foreach ($editable[$slug]['fields'] as $field) {
             $name = $field['name'];

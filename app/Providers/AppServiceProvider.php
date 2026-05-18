@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\SiteSetting;
 use App\Support\SiteSettingDefaults;
+use App\View\Composers\CmsNavComposer;
 use App\View\Composers\FaqNavComposer;
 use App\View\Composers\SiteCurrencyComposer;
 use Illuminate\Support\Facades\Schema;
@@ -48,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
 
         // currencyUi must be composed after StartSession — see SiteCurrencyComposer.
         View::composer('layouts.site', SiteCurrencyComposer::class);
+        View::composer('layouts.site', CmsNavComposer::class);
         View::composer('layouts.site', FaqNavComposer::class);
     }
 }

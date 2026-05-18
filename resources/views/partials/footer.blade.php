@@ -34,6 +34,8 @@
   if ($termsUrl === '') {
       $termsUrl = '#';
   }
+  $cmsNavActive = $cmsNavActive ?? [];
+  $navOn = static fn (string $slug): bool => (bool) ($cmsNavActive[$slug] ?? true);
 @endphp
 
 <footer class="bg-[#1e2229] text-white pt-20 pb-10">
@@ -55,6 +57,7 @@
         @endfor
       </div>
     </div>
+    @if ($navOn('inventory'))
     <div class="space-y-6">
       <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Top 5 car makes') }}</h4>
       <div class="space-y-3">
@@ -69,6 +72,7 @@
         @endforeach
       </div>
     </div>
+    @endif
     <div class="space-y-6">
       <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Social Network') }}</h4>
       <div class="flex flex-wrap gap-4">
@@ -131,8 +135,12 @@
   <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-500 font-medium">
     <p>&copy; {{ date('Y') }} {{ $copyrightName }}. {{ __('All rights reserved.') }}</p>
     <div class="flex items-center gap-6 mt-4 md:mt-0">
+      @if ($navOn('privacy-policy'))
       <a class="hover:text-white transition-colors" href="{{ $privacyUrl }}">{{ __('Privacy Policy') }}</a>
+      @endif
+      @if ($navOn('terms'))
       <a class="hover:text-white transition-colors" href="{{ $termsUrl }}">{{ __('Terms of Service') }}</a>
+      @endif
     </div>
   </div>
 </footer>

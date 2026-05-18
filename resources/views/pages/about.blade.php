@@ -56,14 +56,7 @@
         );
         if ($looksLikeHtml) {
             $aboutIntroHtml = $aboutIntroRaw;
-            if (preg_match_all('/<p\b[^>]*>.*?<\/p>/is', $aboutIntroHtml, $introParagraphs) && count($introParagraphs[0]) > 2) {
-                $aboutIntroHtml = implode('', array_slice($introParagraphs[0], 0, 2));
-            }
         } else {
-            $introChunks = preg_split('/\n\s*\n/', $aboutIntroRaw);
-            if (is_array($introChunks) && count($introChunks) > 2) {
-                $aboutIntroRaw = implode("\n\n", array_slice($introChunks, 0, 2));
-            }
             $aboutIntroHtml = \Illuminate\Support\Str::markdown($aboutIntroRaw);
         }
     }
