@@ -2,19 +2,18 @@
   $isAdminEdit = $isAdminEdit ?? false;
 @endphp
 <x-app-layout>
-  <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">
-        {{ $isAdminEdit ? __('Admin: Edit listing') : __('Edit Vehicle') }}
-      </h2>
-      @if($vehicle->status === 'approved')
-        <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}" class="admin-btn">View public page</a>
-        </div>
-      @endif
-    </div>
+    <x-slot name="header">
+    <h2 class="admin-page-title truncate">{{ $isAdminEdit ? __('Admin: Edit listing') : __('Edit Vehicle') }}</h2>
   </x-slot>
 
+
+  @if($vehicle->status === 'approved')
+  <div class="admin-content-toolbar">
+    <div class="admin-content-toolbar__actions">
+      <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}" class="admin-btn">{{ __('View public page') }}</a>
+    </div>
+  </div>
+  @endif
   <div class="w-full space-y-6">
       @if($isAdminEdit)
         @php $u = $vehicle->user; @endphp

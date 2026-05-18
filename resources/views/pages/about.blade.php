@@ -38,6 +38,16 @@
     // render it as GitHub-flavored Markdown (paragraphs, * / - lists). If it already contains real
     // markup from a rich editor, output that HTML unchanged.
     $aboutIntroRaw = trim((string) ($sections['intro'] ?? ''));
+    $heroWelcomeLine = '';
+    $heroBrandLine = '';
+    $headingRaw = trim((string) ($sections['heading'] ?? 'Welcome to Auto Torque Ltd'));
+    if (preg_match('/^(welcome\s+to)\s+(.+)$/iu', preg_replace('/\s+/', ' ', $headingRaw), $heroHeadingParts)) {
+        $heroWelcomeLine = mb_strtoupper(trim($heroHeadingParts[1]));
+        $heroBrandLine = mb_strtoupper(trim($heroHeadingParts[2]));
+    } else {
+        $heroBrandLine = mb_strtoupper($headingRaw);
+    }
+
     $aboutIntroHtml = '';
     if ($aboutIntroRaw !== '') {
         $looksLikeHtml = (bool) preg_match(
@@ -79,21 +89,13 @@
         <div class="w-full md:w-1/2 flex items-center px-12 md:px-24 py-20 bg-white">
             <div class="max-w-xl">
                 <h2 class="text-sm font-label font-bold text-primary tracking-[0.3em] uppercase mb-4">Established {{ $sections['established_year'] ?? '1999' }}</h2>
-                <h1 class="text-3xl md:text-4xl font-black font-headline text-on_surface leading-[0.9] mb-8 uppercase">
-                    @php
-                        $heading = $sections['heading'] ?? 'WELCOME TO THE MOTORS';
-                        if (str_contains($heading, 'THE MOTORS')) {
-                            $parts = explode('THE MOTORS', $heading);
-                            $firstPart = trim($parts[0]);
-                            $lastPart = 'THE MOTORS';
-                        } else {
-                            $words = explode(' ', $heading);
-                            $lastPart = array_pop($words);
-                            $firstPart = implode(' ', $words);
-                        }
-                    @endphp
-                    {!! nl2br(e($firstPart)) !!} <br/>
-                    <span class="text-primary">{{ $lastPart }}</span>
+                <h1 class="text-3xl md:text-4xl font-black font-headline text-on_surface leading-[1.05] mb-8 uppercase">
+                    @if ($heroWelcomeLine !== '')
+                        <span class="block text-primary">{{ $heroWelcomeLine }}</span>
+                        <span class="block text-on_surface">{{ $heroBrandLine }}</span>
+                    @else
+                        <span class="block text-on_surface">{{ $heroBrandLine }}</span>
+                    @endif
                 </h1>
                 <div class="about-intro text-base font-body text-slate-600 leading-relaxed mb-10 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_li:last-child]:mb-0 [&_a]:text-primary [&_a]:underline">
                     @if ($aboutIntroHtml !== '')

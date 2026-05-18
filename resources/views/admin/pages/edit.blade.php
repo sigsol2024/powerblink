@@ -482,15 +482,16 @@
 @endphp
 
 <x-app-layout>
-  <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">{{ __('Edit Page') }}: {{ $pageInfo['label'] }}</h2>
-      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <a href="{{ route('admin.pages.index') }}" class="admin-btn">{{ __('All pages') }}</a>
-      </div>
-    </div>
+    <x-slot name="header">
+    <h2 class="admin-page-title truncate">{{ __('Edit Page') }}: {{ $pageInfo['label'] }}</h2>
   </x-slot>
 
+
+  <div class="admin-content-toolbar">
+    <div class="admin-content-toolbar__actions">
+      <a href="{{ route('admin.pages.index') }}" class="admin-btn">{{ __('All pages') }}</a>
+    </div>
+  </div>
   <div class="w-full px-4 pb-10 sm:px-0">
     @if (session('status'))
       <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm">

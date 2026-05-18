@@ -1,15 +1,16 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">{{ __('Users & dealers') }}</h2>
-      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <button type="button" class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800" @click="$dispatch('open-invite-modal')">
-          {{ __('Invite or create account') }}
-        </button>
-      </div>
-    </div>
+    <h2 class="admin-page-title">{{ __('Users & dealers') }}</h2>
   </x-slot>
 
+
+  <div class="admin-content-toolbar">
+    <div class="admin-content-toolbar__actions">
+      <button type="button" class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800" @click="$dispatch('open-invite-modal')">
+        {{ __('Invite or create account') }}
+      </button>
+    </div>
+  </div>
   <div
     class="w-full space-y-8"
     x-data="{ inviteOpen: {{ $errors->any() ? 'true' : 'false' }}, openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }"

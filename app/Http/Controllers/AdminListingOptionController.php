@@ -137,8 +137,13 @@ class AdminListingOptionController extends Controller
             $isActive = array_key_exists('is_active', $payload)
                 && ($payload['is_active'] === '1' || $payload['is_active'] === true || $payload['is_active'] === 1);
 
+            $value = trim((string) ($payload['value'] ?? ''));
+            if ($category->slug === 'make') {
+                $value = ListingOption::normalizeMake($value);
+            }
+
             $option->update([
-                'value' => trim((string) ($payload['value'] ?? '')),
+                'value' => $value,
                 'sort_order' => isset($payload['sort_order']) ? (int) $payload['sort_order'] : $option->sort_order,
                 'is_active' => $isActive,
             ]);

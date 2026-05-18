@@ -1,8 +1,8 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Admin') }}</p>
-      <h2 class="admin-page-title">{{ __('Overview') }}</h2>
+    <x-slot name="header">
+    <div>
+      <p class="admin-page-eyebrow">{{ __('Admin') }}</p>
+      <h2 class="admin-page-title truncate">{{ __('Overview') }}</h2>
     </div>
   </x-slot>
 

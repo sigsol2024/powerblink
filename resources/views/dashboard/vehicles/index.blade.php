@@ -4,17 +4,16 @@
 @endphp
 <x-app-layout>
   <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">
-        {{ $isAdminList ? __('All listings') : __('My vehicles') }}
-      </h2>
-      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <a href="{{ route('dashboard.vehicles.create') }}" class="admin-btn-primary">
-          {{ __('New listing') }}
-        </a>
-      </div>
-    </div>
+    <h2 class="admin-page-title truncate">
+      {{ $isAdminList ? __('All listings') : __('My vehicles') }}
+    </h2>
   </x-slot>
+
+  <div class="admin-content-toolbar">
+    <div class="admin-content-toolbar__actions">
+      <a href="{{ route('dashboard.vehicles.create') }}" class="admin-btn-primary">{{ __('New listing') }}</a>
+    </div>
+  </div>
 
   <div
     class="w-full"

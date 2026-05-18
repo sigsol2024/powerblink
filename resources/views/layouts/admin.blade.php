@@ -97,18 +97,62 @@
         width: 0;
         height: 0;
       }
-      .admin-page-header { min-width: 0; }
-      .admin-page-header h2,
-      .admin-page-header .admin-page-title {
+      .admin-shell-header { min-width: 0; }
+      .admin-shell-header h2,
+      .admin-shell-header .admin-page-title,
+      .admin-shell-header p {
+        margin: 0;
+      }
+      .admin-shell-header .admin-page-title,
+      .admin-shell-header > h2 {
         font-size: 1rem;
         font-weight: 600;
         line-height: 1.35;
         color: #18181b;
       }
+      .admin-shell-header .admin-page-eyebrow {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #71717a;
+        margin-bottom: 0.125rem;
+      }
       @media (min-width: 640px) {
-        .admin-page-header h2,
-        .admin-page-header .admin-page-title {
+        .admin-shell-header .admin-page-title,
+        .admin-shell-header > h2 {
           font-size: 1.125rem;
+        }
+      }
+      .admin-content-toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      @media (min-width: 640px) {
+        .admin-content-toolbar {
+          flex-direction: row;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+      }
+      .admin-content-toolbar__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      @media (min-width: 640px) {
+        .admin-content-toolbar__actions {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: flex-end;
+          width: auto;
+          margin-left: auto;
+          flex-shrink: 0;
         }
       }
       .admin-btn,
@@ -312,7 +356,7 @@
           </button>
           <div class="min-w-0 flex-1">
             @isset($header)
-              <div class="admin-page-header text-zinc-900">{{ $header }}</div>
+              <div class="admin-shell-header text-zinc-900">{{ $header }}</div>
             @else
               <p class="truncate text-lg font-semibold tracking-tight text-zinc-900">{{ $brandName }}</p>
             @endif

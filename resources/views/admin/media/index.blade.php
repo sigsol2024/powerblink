@@ -4,9 +4,7 @@
 
 <x-app-layout>
   <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">{{ __('Media Library') }}</h2>
-    </div>
+    <h2 class="admin-page-title truncate">{{ __('Media Library') }}</h2>
   </x-slot>
 
   <div

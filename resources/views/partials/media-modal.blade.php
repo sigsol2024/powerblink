@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div id="media-grid" class="min-h-0 flex-1 overflow-auto p-4 grid grid-cols-2 gap-3 md:grid-cols-4"></div>
+    <div id="media-grid" class="min-h-0 flex-1 overflow-auto p-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4"></div>
     <div class="shrink-0 border-t border-gray-200 px-4 py-3 flex flex-wrap items-center justify-end gap-2">
       <button type="button" id="media-modal-insert" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500" disabled>
         {{ __('Use selected image') }}

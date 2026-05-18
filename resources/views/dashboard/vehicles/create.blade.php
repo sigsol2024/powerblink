@@ -1,8 +1,6 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">{{ __('New Vehicle Listing') }}</h2>
-    </div>
+    <x-slot name="header">
+    <h2 class="admin-page-title truncate">{{ __('New Vehicle Listing') }}</h2>
   </x-slot>
 
   <div class="w-full">

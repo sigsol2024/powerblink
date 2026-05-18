@@ -1,8 +1,6 @@
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {{ __('Page Editors') }}
-    </h2>
+    <x-slot name="header">
+    <h2 class="admin-page-title truncate">{{ __('Page editors') }}</h2>
   </x-slot>
 
   <div class="w-full">

@@ -1,13 +1,14 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <h2 class="admin-page-title">{{ __('Audit trail') }}</h2>
-      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <a href="{{ route('admin.dashboard') }}" class="admin-btn">{{ __('Back to overview') }}</a>
-      </div>
-    </div>
+    <h2 class="admin-page-title">{{ __('Audit trail') }}</h2>
   </x-slot>
 
+
+  <div class="admin-content-toolbar">
+    <div class="admin-content-toolbar__actions">
+      <a href="{{ route('admin.dashboard') }}" class="admin-btn">{{ __('Back to overview') }}</a>
+    </div>
+  </div>
   <div class="w-full space-y-6" x-data="{ openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }">
     <div class="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm ring-1 ring-black/[0.02] sm:p-5">
       <form method="get" action="{{ route('admin.audit.index') }}" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">

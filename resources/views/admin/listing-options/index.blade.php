@@ -1,10 +1,8 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div class="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3">
-      <div class="min-w-0">
-        <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Catalog') }}</div>
-        <div class="text-xl font-bold tracking-tight text-zinc-900">{{ __('Listing options') }}</div>
-      </div>
+    <x-slot name="header">
+    <div>
+      <p class="admin-page-eyebrow">{{ __('Catalog') }}</p>
+      <h2 class="admin-page-title truncate">{{ __('Listing options') }}</h2>
     </div>
   </x-slot>
 

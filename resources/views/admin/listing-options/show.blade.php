@@ -4,13 +4,10 @@
   $batchFormId = 'listing-options-batch-form';
 @endphp
 <x-app-layout>
-  <x-slot name="header">
-    <div class="admin-page-header flex flex-col gap-2 sm:gap-3">
-      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">{{ __('Catalog') }}</p>
-      <h2 class="admin-page-title">{{ __('Listing options') }}: {{ $category->label }}</h2>
-      <div class="admin-header-actions flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <a href="{{ route('admin.listing-options.index') }}" class="admin-btn">{{ __('All categories') }}</a>
-      </div>
+    <x-slot name="header">
+    <div>
+      <p class="admin-page-eyebrow">{{ __('Catalog') }}</p>
+      <h2 class="admin-page-title truncate">{{ __('Listing options') }}: {{ $category->label }}</h2>
     </div>
   </x-slot>
 
@@ -33,17 +30,14 @@
       <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">{{ session('status') }}</div>
     @endif
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="admin-content-toolbar">
       <p class="max-w-2xl text-sm leading-relaxed text-zinc-600">
         {{ __('Edit values, display order, and visibility. Use Save changes at the bottom to apply all edits at once.') }}
       </p>
-      <button
-        type="button"
-        class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white shadow-sm transition hover:bg-zinc-800"
-        @click="addOpen = true"
-      >
-        {{ __('Add option') }}
-      </button>
+      <div class="admin-content-toolbar__actions">
+        <a href="{{ route('admin.listing-options.index') }}" class="admin-btn">{{ __('All categories') }}</a>
+        <button type="button" class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white shadow-sm transition hover:bg-zinc-800" @click="addOpen = true">{{ __('Add option') }}</button>
+      </div>
     </div>
 
     {{-- Add option modal --}}
