@@ -31,7 +31,8 @@ class AdminListingOptionController extends Controller
             ->orderBy('parent_id')
             ->orderBy('sort_order')
             ->orderBy('value')
-            ->get();
+            ->paginate(100)
+            ->withQueryString();
 
         $makeOptions = $category->slug === 'model'
             ? ListingOption::query()
@@ -100,7 +101,7 @@ class AdminListingOptionController extends Controller
             }
         }
 
-        return back()->with('status', __('Option added.'));
+        return back()->with('status', __('Option added.'))->withQueryString();
     }
 
     public function batchUpdate(Request $request, ListingOptionCategory $category): RedirectResponse
@@ -183,7 +184,7 @@ class AdminListingOptionController extends Controller
             }
         }
 
-        return back()->with('status', __('Changes saved.'));
+        return back()->with('status', __('Changes saved.'))->withQueryString();
     }
 
     public function update(Request $request, ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -226,7 +227,7 @@ class AdminListingOptionController extends Controller
 
         $option->delete();
 
-        return back()->with('status', __('Option deleted.'));
+        return back()->with('status', __('Option deleted.'))->withQueryString();
     }
 
     public function move(Request $request, ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -253,7 +254,7 @@ class AdminListingOptionController extends Controller
             $swap->update(['sort_order' => $a]);
         }
 
-        return back();
+        return back()->withQueryString();
     }
 
     protected function assertOptionCategory(ListingOptionCategory $category, ListingOption $option): void

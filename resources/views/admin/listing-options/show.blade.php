@@ -1,7 +1,9 @@
 @php
   $isMake = $category->slug === 'make';
   $isCountry = $category->slug === 'country';
+  $isModel = $category->slug === 'model';
   $batchFormId = 'listing-options-batch-form';
+  $openAddModal = old('value') !== null || $errors->has('value') || $errors->has('parent_id');
 @endphp
 <x-app-layout>
     <x-slot name="header">
@@ -13,7 +15,19 @@
 
   <div
     class="space-y-6"
-    x-data="{ addOpen: false, openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }"
+    x-data="listingOptionsAdmin({
+      addOpenInitial: @json($openAddModal),
+      isModel: @json($isModel),
+      messages: {
+        valueRequired: @js(__('Value is required. Please enter a name for this option.')),
+        parentRequired: @js(__('Parent make is required. Choose which make this model belongs to.')),
+        batchValueRequired: @js(__('Each option must have a value before you can save.')),
+      },
+      serverErrors: {
+        value: @js($errors->first('value')),
+        parent_id: @js($errors->first('parent_id')),
+      },
+    })"
     @keydown.escape.window="addOpen = false"
   >
     @if ($errors->any())
@@ -61,21 +75,33 @@
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
-        <form method="post" action="{{ route('admin.listing-options.store', $category) }}" class="mt-5 space-y-4">
+        <form
+          method="post"
+          action="{{ route('admin.listing-options.store', $category) }}"
+          class="mt-5 space-y-4"
+          novalidate
+          @submit="submitAddForm($event)"
+        >
           @csrf
-          <div>
-            <x-input-label for="modal_value" :value="__('Value')" />
-            <x-text-input id="modal_value" name="value" type="text" class="mt-1 block w-full" required value="{{ old('value') }}" />
+          <div data-add-field="value" class="scroll-mt-4 rounded-lg" :class="fieldErrors.value ? 'ring-2 ring-red-400 ring-offset-2' : ''">
+            <label for="modal_value" class="block text-sm font-medium text-gray-700">
+              {{ __('Value') }}<span class="ml-0.5 font-bold text-red-600" aria-hidden="true">*</span>
+            </label>
+            <x-text-input id="modal_value" name="value" type="text" class="mt-1 block w-full" :class="fieldErrors.value ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''" value="{{ old('value') }}" @input="clearFieldError('value')" />
+            <p x-show="fieldErrors.value" x-text="fieldErrors.value" x-cloak class="mt-1.5 text-sm font-medium text-red-600"></p>
           </div>
-          @if ($category->slug === 'model')
-            <div>
-              <x-input-label for="modal_parent_id" :value="__('Parent make')" />
-              <select id="modal_parent_id" name="parent_id" class="mt-1 block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500" required>
+          @if ($isModel)
+            <div data-add-field="parent_id" class="scroll-mt-4 rounded-lg" :class="fieldErrors.parent_id ? 'ring-2 ring-red-400 ring-offset-2' : ''">
+              <label for="modal_parent_id" class="block text-sm font-medium text-gray-700">
+                {{ __('Parent make') }}<span class="ml-0.5 font-bold text-red-600" aria-hidden="true">*</span>
+              </label>
+              <select id="modal_parent_id" name="parent_id" class="mt-1 block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500" :class="fieldErrors.parent_id ? '!border-red-500 focus:!border-red-500 focus:!ring-red-500' : ''" @change="clearFieldError('parent_id')">
                 <option value="">{{ __('Select make') }}</option>
                 @foreach ($makeOptions as $m)
                   <option value="{{ $m->id }}" @selected((string) old('parent_id') === (string) $m->id)>{{ $m->value }}</option>
                 @endforeach
               </select>
+              <p x-show="fieldErrors.parent_id" x-text="fieldErrors.parent_id" x-cloak class="mt-1.5 text-sm font-medium text-red-600"></p>
             </div>
           @endif
           @if ($isMake)
@@ -109,12 +135,27 @@
       </div>
     </div>
 
-    @if ($options->isEmpty())
+    @if ($options->total() === 0)
       <div class="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60 px-6 py-10 text-center text-sm text-zinc-600">
         {{ __('No options yet. Use Add option to create the first value.') }}
       </div>
     @else
-      <form id="{{ $batchFormId }}" method="post" action="{{ route('admin.listing-options.batch-update', $category) }}">
+      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200/90 bg-zinc-50/80 px-4 py-3 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
+        <p>
+          {{ __('Showing :from–:to of :total options', [
+            'from' => $options->firstItem(),
+            'to' => $options->lastItem(),
+            'total' => $options->total(),
+          ]) }}
+        </p>
+        @if ($options->hasPages())
+          <p class="text-xs text-zinc-500">{{ __('Use pagination below to edit other pages. Save applies to the current page only.') }}</p>
+        @endif
+      </div>
+
+      <div x-show="batchFormError" x-cloak class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800" x-text="batchFormError"></div>
+
+      <form id="{{ $batchFormId }}" method="post" action="{{ route('admin.listing-options.batch-update', $category) }}" @submit="submitBatchForm($event)">
         @csrf
         @method('PUT')
 
@@ -164,13 +205,15 @@
                   @if ($isCountry)
                     <td class="px-4 py-3 text-2xl leading-none" title="{{ $option->value }}">{{ $option->flag_emoji ?? '—' }}</td>
                   @endif
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-batch-value-cell>
                     <input
                       type="text"
                       name="options[{{ $option->id }}][value]"
                       value="{{ old('options.'.$option->id.'.value', $option->value) }}"
+                      data-batch-value-input
                       class="block w-full min-w-[12rem] max-w-xs rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500"
-                      required
+                      aria-required="true"
+                      @input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')"
                     />
                   </td>
                   @if ($category->slug === 'model')
@@ -217,7 +260,8 @@
                 <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $option->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <div x-show="openId === {{ $option->id }}" x-cloak class="space-y-3 border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
-                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" class="block w-full rounded-lg border-zinc-300 text-sm" required />
+                <label class="block text-xs font-semibold uppercase tracking-wide text-zinc-500">{{ __('Value') }}<span class="text-red-600">*</span></label>
+                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" data-batch-value-input class="block w-full rounded-lg border-zinc-300 text-sm" aria-required="true" @input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')" />
                 <input type="number" name="options[{{ $option->id }}][sort_order]" value="{{ old('options.' . $option->id . '.sort_order', $option->sort_order) }}" min="0" max="65535" class="w-full rounded-lg border-zinc-300 text-sm" />
                 <label class="inline-flex items-center gap-2"><input type="checkbox" name="options[{{ $option->id }}][is_active]" value="1" class="rounded border-zinc-300 text-amber-600" @checked(old('options.' . $option->id . '.is_active', $option->is_active)) /><span>{{ __('Visible') }}</span></label>
                 <div class="flex flex-col gap-2">
@@ -238,6 +282,12 @@
         <x-primary-button type="submit" class="sm:ml-auto">{{ __('Save changes') }}</x-primary-button>
       </div>
       </form>
+
+      @if ($options->hasPages())
+        <div class="mt-4">
+          {{ $options->links() }}
+        </div>
+      @endif
 
       @foreach ($options as $option)
         <form id="move-up-{{ $option->id }}" method="post" action="{{ route('admin.listing-options.move', [$category, $option]) }}" class="hidden" aria-hidden="true">
@@ -262,4 +312,88 @@
       @endforeach
     @endif
   </div>
+
+  @push('scripts')
+    <script>
+      function listingOptionsAdmin(config) {
+        const serverErrors = config.serverErrors || {};
+        const fieldErrors = {};
+        if (serverErrors.value) fieldErrors.value = serverErrors.value;
+        if (serverErrors.parent_id) fieldErrors.parent_id = serverErrors.parent_id;
+
+        return {
+          addOpen: config.addOpenInitial || false,
+          openId: null,
+          isModel: config.isModel,
+          messages: config.messages,
+          fieldErrors,
+          batchFormError: '',
+          init() {
+            if (Object.keys(this.fieldErrors).length === 0) return;
+            this.addOpen = true;
+            this.$nextTick(() => {
+              const firstKey = this.fieldErrors.value ? 'value' : 'parent_id';
+              document.querySelector(`[data-add-field="${firstKey}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+          },
+          toggleOpen(id) {
+            this.openId = this.openId === id ? null : id;
+          },
+          clearFieldError(key) {
+            if (this.fieldErrors[key]) {
+              delete this.fieldErrors[key];
+              this.fieldErrors = { ...this.fieldErrors };
+            }
+          },
+          submitAddForm(event) {
+            const errors = {};
+            const valueEl = document.getElementById('modal_value');
+            const value = (valueEl?.value || '').trim();
+            if (!value) {
+              errors.value = this.messages.valueRequired;
+            }
+            if (this.isModel) {
+              const parentEl = document.getElementById('modal_parent_id');
+              const parentId = (parentEl?.value || '').trim();
+              if (!parentId) {
+                errors.parent_id = this.messages.parentRequired;
+              }
+            }
+            this.fieldErrors = errors;
+            if (Object.keys(this.fieldErrors).length > 0) {
+              event.preventDefault();
+              this.addOpen = true;
+              const firstKey = this.fieldErrors.value ? 'value' : 'parent_id';
+              document.querySelector(`[data-add-field="${firstKey}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+          },
+          submitBatchForm(event) {
+            this.batchFormError = '';
+            const form = event.target;
+            const inputs = form.querySelectorAll('[data-batch-value-input]');
+            let firstInvalid = null;
+            inputs.forEach((input) => {
+              input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+              if (!(input.value || '').trim()) {
+                input.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                if (!firstInvalid) firstInvalid = input;
+              }
+            });
+            if (firstInvalid) {
+              event.preventDefault();
+              this.batchFormError = this.messages.batchValueRequired;
+              firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              const panel = firstInvalid.closest('[x-show]');
+              if (panel && typeof Alpine !== 'undefined') {
+                const article = firstInvalid.closest('article');
+                const btn = article?.querySelector('button[type="button"]');
+                if (btn) btn.click();
+              }
+            }
+          },
+        };
+      }
+    </script>
+  @endpush
 </x-app-layout>
