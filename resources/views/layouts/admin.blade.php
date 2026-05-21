@@ -192,6 +192,44 @@
       .admin-btn-primary:hover {
         background-color: #fbbf24;
       }
+      .admin-listing-options-pagination nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.25rem;
+      }
+      .admin-listing-options-pagination nav a,
+      .admin-listing-options-pagination nav span {
+        display: inline-flex;
+        min-width: 2rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        border: 1px solid #e4e4e7;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+      .admin-listing-options-pagination nav a {
+        background: #fff;
+        color: #3f3f46;
+        text-decoration: none;
+      }
+      .admin-listing-options-pagination nav a:hover {
+        border-color: #f59e0b;
+        background: #fffbeb;
+      }
+      .admin-listing-options-pagination nav span[aria-current="page"] {
+        border-color: #18181b;
+        background: #18181b;
+        color: #fff;
+      }
+      .admin-listing-options-pagination nav span[aria-disabled="true"] {
+        color: #a1a1aa;
+        background: #f4f4f5;
+      }
     </style>
     @stack('scripts')
     @include('partials.vite-assets')

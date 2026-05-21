@@ -25,7 +25,14 @@
                 <div class="flex flex-wrap items-baseline gap-2">
                   <span class="text-base font-semibold text-zinc-900">{{ $cat->label }}</span>
                   <span class="rounded-md bg-zinc-200/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-600">{{ $cat->slug }}</span>
+                  @php $count = (int) ($optionCounts[$cat->id] ?? 0); @endphp
+                  @if ($count > 0)
+                    <span class="rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-600">{{ trans_choice(':count option|:count options', $count, ['count' => number_format($count)]) }}</span>
+                  @endif
                 </div>
+                @if ($count > $optionsPerPage)
+                  <p class="mt-2 text-xs text-zinc-500">{{ __('Large list — opens with pages of :size.', ['size' => $optionsPerPage]) }}</p>
+                @endif
               </div>
               <div class="mt-4 flex shrink-0 justify-end border-t border-zinc-200/80 pt-3">
                 <a

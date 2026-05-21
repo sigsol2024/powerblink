@@ -140,18 +140,7 @@
         {{ __('No options yet. Use Add option to create the first value.') }}
       </div>
     @else
-      <div class="flex flex-col gap-2 rounded-xl border border-zinc-200/90 bg-zinc-50/80 px-4 py-3 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          {{ __('Showing :from–:to of :total options', [
-            'from' => $options->firstItem(),
-            'to' => $options->lastItem(),
-            'total' => $options->total(),
-          ]) }}
-        </p>
-        @if ($options->hasPages())
-          <p class="text-xs text-zinc-500">{{ __('Use pagination below to edit other pages. Save applies to the current page only.') }}</p>
-        @endif
-      </div>
+      @include('admin.listing-options.partials.options-pagination', ['options' => $options])
 
       <div x-show="batchFormError" x-cloak class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800" x-text="batchFormError"></div>
 
@@ -255,13 +244,13 @@
         <div class="lg:hidden space-y-3 p-4">
           @foreach ($options as $option)
             <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
-              <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $option->id }})" :aria-expanded="openId === {{ $option->id }} ? 'true' : 'false'">
+              <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" x-on:click="toggleOpen({{ $option->id }})" x-bind:aria-expanded="openId === {{ $option->id }} ? 'true' : 'false'">
                 <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ old('options.' . $option->id . '.value', $option->value) }}</span>
-                <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $option->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" x-bind:class="openId === {{ $option->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <div x-show="openId === {{ $option->id }}" x-cloak class="space-y-3 border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
                 <label class="block text-xs font-semibold uppercase tracking-wide text-zinc-500">{{ __('Value') }}<span class="text-red-600">*</span></label>
-                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" data-batch-value-input class="block w-full rounded-lg border-zinc-300 text-sm" aria-required="true" @input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')" />
+                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" data-batch-value-input class="block w-full rounded-lg border-zinc-300 text-sm" aria-required="true" x-on:input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')" />
                 <input type="number" name="options[{{ $option->id }}][sort_order]" value="{{ old('options.' . $option->id . '.sort_order', $option->sort_order) }}" min="0" max="65535" class="w-full rounded-lg border-zinc-300 text-sm" />
                 <label class="inline-flex items-center gap-2"><input type="checkbox" name="options[{{ $option->id }}][is_active]" value="1" class="rounded border-zinc-300 text-amber-600" @checked(old('options.' . $option->id . '.is_active', $option->is_active)) /><span>{{ __('Visible') }}</span></label>
                 <div class="flex flex-col gap-2">
@@ -283,11 +272,9 @@
       </div>
       </form>
 
-      @if ($options->hasPages())
-        <div class="mt-4">
-          {{ $options->links() }}
-        </div>
-      @endif
+      <div class="mt-4">
+        @include('admin.listing-options.partials.options-pagination', ['options' => $options])
+      </div>
 
       @foreach ($options as $option)
         <form id="move-up-{{ $option->id }}" method="post" action="{{ route('admin.listing-options.move', [$category, $option]) }}" class="hidden" aria-hidden="true">

@@ -13,12 +13,22 @@ use Illuminate\View\View;
 
 class AdminListingOptionController extends Controller
 {
+    /** Max rows per page on make, model, and all other catalog option editors. */
+    public const OPTIONS_PER_PAGE = 100;
+
     public function index(): View
     {
         $categories = ListingOptionCategory::query()->orderBy('sort_order')->get();
 
+        $optionCounts = ListingOption::query()
+            ->selectRaw('category_id, count(*) as aggregate')
+            ->groupBy('category_id')
+            ->pluck('aggregate', 'category_id');
+
         return view('admin.listing-options.index', [
             'categories' => $categories,
+            'optionCounts' => $optionCounts,
+            'optionsPerPage' => self::OPTIONS_PER_PAGE,
         ]);
     }
 
@@ -31,7 +41,7 @@ class AdminListingOptionController extends Controller
             ->orderBy('parent_id')
             ->orderBy('sort_order')
             ->orderBy('value')
-            ->paginate(100)
+            ->paginate(self::OPTIONS_PER_PAGE)
             ->withQueryString();
 
         $makeCategoryId = ListingOptionCategory::query()->where('slug', 'make')->value('id');
@@ -72,7 +82,7 @@ class AdminListingOptionController extends Controller
             $makeCategory = ListingOptionCategory::query()->where('slug', 'make')->firstOrFail();
             $parent = ListingOption::query()->whereKey((int) $parentId)->firstOrFail();
             if ((int) $parent->category_id !== (int) $makeCategory->id || $parent->parent_id !== null) {
-                return back()->withErrors(['parent_id' => __('Choose a valid Make as parent.')])->withInput();
+                return back()->withErrors(['parent_id' => __('Choose a valid Make as parent.')])->withInput()->withQueryString();
             }
         } else {
             $parentId = null;
@@ -206,7 +216,7 @@ class AdminListingOptionController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        return back()->with('status', __('Option updated.'));
+        return back()->with('status', __('Option updated.'))->withQueryString();
     }
 
     public function destroy(ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -214,12 +224,12 @@ class AdminListingOptionController extends Controller
         $this->assertOptionCategory($category, $option);
 
         if ($option->children()->exists()) {
-            return back()->withErrors(['option' => __('Remove or reassign child model options first.')]);
+            return back()->withErrors(['option' => __('Remove or reassign child model options first.')])->withQueryString();
         }
 
         $usage = $this->usageCount($category->slug, $option);
         if ($usage > 0) {
-            return back()->withErrors(['option' => __('Cannot delete: :count listing(s) still use this value.', ['count' => $usage])]);
+            return back()->withErrors(['option' => __('Cannot delete: :count listing(s) still use this value.', ['count' => $usage])])->withQueryString();
         }
 
         if ($category->slug === 'make' && $option->logo_path && str_starts_with((string) $option->logo_path, 'storage/')) {
