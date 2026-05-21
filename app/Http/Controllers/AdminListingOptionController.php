@@ -34,14 +34,15 @@ class AdminListingOptionController extends Controller
             ->paginate(100)
             ->withQueryString();
 
-        $makeOptions = $category->slug === 'model'
+        $makeCategoryId = ListingOptionCategory::query()->where('slug', 'make')->value('id');
+        $makeOptions = ($category->slug === 'model' && $makeCategoryId)
             ? ListingOption::query()
-                ->where('category_id', ListingOptionCategory::query()->where('slug', 'make')->value('id'))
+                ->where('category_id', (int) $makeCategoryId)
                 ->whereNull('parent_id')
                 ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->orderBy('value')
-                ->get()
+                ->get(['id', 'value'])
             : collect();
 
         return view('admin.listing-options.show', [

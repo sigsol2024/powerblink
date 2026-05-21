@@ -19,13 +19,13 @@
       addOpenInitial: @json($openAddModal),
       isModel: @json($isModel),
       messages: {
-        valueRequired: @js(__('Value is required. Please enter a name for this option.')),
-        parentRequired: @js(__('Parent make is required. Choose which make this model belongs to.')),
-        batchValueRequired: @js(__('Each option must have a value before you can save.')),
+        valueRequired: @json(__('Value is required. Please enter a name for this option.')),
+        parentRequired: @json(__('Parent make is required. Choose which make this model belongs to.')),
+        batchValueRequired: @json(__('Each option must have a value before you can save.')),
       },
       serverErrors: {
-        value: @js($errors->first('value')),
-        parent_id: @js($errors->first('parent_id')),
+        value: @json($errors->first('value')),
+        parent_id: @json($errors->first('parent_id')),
       },
     })"
     @keydown.escape.window="addOpen = false"
@@ -83,19 +83,19 @@
           @submit="submitAddForm($event)"
         >
           @csrf
-          <div data-add-field="value" class="scroll-mt-4 rounded-lg" :class="fieldErrors.value ? 'ring-2 ring-red-400 ring-offset-2' : ''">
+          <div data-add-field="value" class="scroll-mt-4 rounded-lg" x-bind:class="fieldErrors.value ? 'ring-2 ring-red-400 ring-offset-2' : ''">
             <label for="modal_value" class="block text-sm font-medium text-gray-700">
               {{ __('Value') }}<span class="ml-0.5 font-bold text-red-600" aria-hidden="true">*</span>
             </label>
-            <x-text-input id="modal_value" name="value" type="text" class="mt-1 block w-full" :class="fieldErrors.value ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''" value="{{ old('value') }}" @input="clearFieldError('value')" />
+            <x-text-input id="modal_value" name="value" type="text" class="mt-1 block w-full" value="{{ old('value') }}" x-on:input="clearFieldError('value')" />
             <p x-show="fieldErrors.value" x-text="fieldErrors.value" x-cloak class="mt-1.5 text-sm font-medium text-red-600"></p>
           </div>
           @if ($isModel)
-            <div data-add-field="parent_id" class="scroll-mt-4 rounded-lg" :class="fieldErrors.parent_id ? 'ring-2 ring-red-400 ring-offset-2' : ''">
+            <div data-add-field="parent_id" class="scroll-mt-4 rounded-lg" x-bind:class="fieldErrors.parent_id ? 'ring-2 ring-red-400 ring-offset-2' : ''">
               <label for="modal_parent_id" class="block text-sm font-medium text-gray-700">
                 {{ __('Parent make') }}<span class="ml-0.5 font-bold text-red-600" aria-hidden="true">*</span>
               </label>
-              <select id="modal_parent_id" name="parent_id" class="mt-1 block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500" :class="fieldErrors.parent_id ? '!border-red-500 focus:!border-red-500 focus:!ring-red-500' : ''" @change="clearFieldError('parent_id')">
+              <select id="modal_parent_id" name="parent_id" class="mt-1 block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500" x-bind:class="fieldErrors.parent_id ? '!border-red-500 focus:!border-red-500 focus:!ring-red-500' : ''" x-on:change="clearFieldError('parent_id')">
                 <option value="">{{ __('Select make') }}</option>
                 @foreach ($makeOptions as $m)
                   <option value="{{ $m->id }}" @selected((string) old('parent_id') === (string) $m->id)>{{ $m->value }}</option>
@@ -213,7 +213,7 @@
                       data-batch-value-input
                       class="block w-full min-w-[12rem] max-w-xs rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500"
                       aria-required="true"
-                      @input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')"
+                      x-on:input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')"
                     />
                   </td>
                   @if ($category->slug === 'model')
