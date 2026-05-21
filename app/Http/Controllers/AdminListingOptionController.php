@@ -82,7 +82,9 @@ class AdminListingOptionController extends Controller
             $makeCategory = ListingOptionCategory::query()->where('slug', 'make')->firstOrFail();
             $parent = ListingOption::query()->whereKey((int) $parentId)->firstOrFail();
             if ((int) $parent->category_id !== (int) $makeCategory->id || $parent->parent_id !== null) {
-                return back()->withErrors(['parent_id' => __('Choose a valid Make as parent.')])->withInput()->withQueryString();
+                return $this->redirectToCategoryIndex($category)
+                    ->withErrors(['parent_id' => __('Choose a valid Make as parent.')])
+                    ->withInput();
             }
         } else {
             $parentId = null;
@@ -112,7 +114,7 @@ class AdminListingOptionController extends Controller
             }
         }
 
-        return back()->with('status', __('Option added.'))->withQueryString();
+        return $this->redirectToCategoryIndex($category)->with('status', __('Option added.'));
     }
 
     public function batchUpdate(Request $request, ListingOptionCategory $category): RedirectResponse
@@ -195,7 +197,7 @@ class AdminListingOptionController extends Controller
             }
         }
 
-        return back()->with('status', __('Changes saved.'))->withQueryString();
+        return $this->redirectToCategoryIndex($category)->with('status', __('Changes saved.'));
     }
 
     public function update(Request $request, ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -216,7 +218,7 @@ class AdminListingOptionController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        return back()->with('status', __('Option updated.'))->withQueryString();
+        return $this->redirectToCategoryIndex($category)->with('status', __('Option updated.'));
     }
 
     public function destroy(ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -224,12 +226,14 @@ class AdminListingOptionController extends Controller
         $this->assertOptionCategory($category, $option);
 
         if ($option->children()->exists()) {
-            return back()->withErrors(['option' => __('Remove or reassign child model options first.')])->withQueryString();
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['option' => __('Remove or reassign child model options first.')]);
         }
 
         $usage = $this->usageCount($category->slug, $option);
         if ($usage > 0) {
-            return back()->withErrors(['option' => __('Cannot delete: :count listing(s) still use this value.', ['count' => $usage])])->withQueryString();
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['option' => __('Cannot delete: :count listing(s) still use this value.', ['count' => $usage])]);
         }
 
         if ($category->slug === 'make' && $option->logo_path && str_starts_with((string) $option->logo_path, 'storage/')) {
@@ -238,7 +242,7 @@ class AdminListingOptionController extends Controller
 
         $option->delete();
 
-        return back()->with('status', __('Option deleted.'))->withQueryString();
+        return $this->redirectToCategoryIndex($category)->with('status', __('Option deleted.'));
     }
 
     public function move(Request $request, ListingOptionCategory $category, ListingOption $option): RedirectResponse
@@ -265,7 +269,30 @@ class AdminListingOptionController extends Controller
             $swap->update(['sort_order' => $a]);
         }
 
-        return back()->withQueryString();
+        return $this->redirectToCategoryIndex($category);
+    }
+
+    /**
+     * Redirect to the category editor, keeping ?page= from the previous listing-options URL.
+     * (Paginator::withQueryString() does not apply to RedirectResponse.)
+     */
+    protected function redirectToCategoryIndex(ListingOptionCategory $category): RedirectResponse
+    {
+        $url = route('admin.listing-options.show', $category);
+        $previous = url()->previous();
+
+        if ($previous !== '' && $previous !== $url) {
+            $previousPath = parse_url($previous, PHP_URL_PATH) ?? '';
+            $targetPath = parse_url($url, PHP_URL_PATH) ?? '';
+            if ($previousPath === $targetPath) {
+                $query = parse_url($previous, PHP_URL_QUERY);
+                if (is_string($query) && $query !== '') {
+                    $url .= '?'.$query;
+                }
+            }
+        }
+
+        return redirect()->to($url);
     }
 
     protected function assertOptionCategory(ListingOptionCategory $category, ListingOption $option): void
