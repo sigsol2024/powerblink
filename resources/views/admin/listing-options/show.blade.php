@@ -4,6 +4,19 @@
   $isModel = $category->slug === 'model';
   $batchFormId = 'listing-options-batch-form';
   $openAddModal = old('value') !== null || $errors->has('value') || $errors->has('parent_id');
+  $listingOptionsAdminConfig = [
+      'addOpenInitial' => $openAddModal,
+      'isModel' => $isModel,
+      'messages' => [
+          'valueRequired' => __('Value is required. Please enter a name for this option.'),
+          'parentRequired' => __('Parent make is required. Choose which make this model belongs to.'),
+          'batchValueRequired' => __('Each option must have a value before you can save.'),
+      ],
+      'serverErrors' => [
+          'value' => $errors->first('value'),
+          'parent_id' => $errors->first('parent_id'),
+      ],
+  ];
 @endphp
 <x-app-layout>
     <x-slot name="header">
@@ -15,19 +28,7 @@
 
   <div
     class="space-y-6"
-    x-data="listingOptionsAdmin({
-      addOpenInitial: @json($openAddModal),
-      isModel: @json($isModel),
-      messages: {
-        valueRequired: @json(__('Value is required. Please enter a name for this option.')),
-        parentRequired: @json(__('Parent make is required. Choose which make this model belongs to.')),
-        batchValueRequired: @json(__('Each option must have a value before you can save.')),
-      },
-      serverErrors: {
-        value: @json($errors->first('value')),
-        parent_id: @json($errors->first('parent_id')),
-      },
-    })"
+    x-data="listingOptionsAdmin(@js($listingOptionsAdminConfig))"
     @keydown.escape.window="addOpen = false"
   >
     @if ($errors->any())
