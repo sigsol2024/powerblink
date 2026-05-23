@@ -10,7 +10,6 @@ use App\Http\Controllers\AdminVehicleController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\CurrencyPreferenceController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ListingOptionLookupController;
 use App\Http\Controllers\MediaLibraryController;
@@ -69,10 +68,6 @@ Route::post('/inventory/{slug}/inquiry', [VehicleInquiryController::class, 'stor
     ->name('inventory.inquiry');
 Route::get('/inventory/{slug?}', [PageController::class, 'vehicleShow'])->name('inventory.show');
 Route::get('/compare', [PageController::class, 'compare'])->name('compare');
-Route::post('/currency/select', [CurrencyPreferenceController::class, 'update'])
-    ->middleware('throttle:20,1')
-    ->name('currency.select');
-
 Route::post('/compare/add/{vehicle}', [CompareController::class, 'add'])->name('compare.add');
 Route::post('/compare/remove/{vehicle}', [CompareController::class, 'remove'])->name('compare.remove');
 Route::post('/compare/clear', [CompareController::class, 'clear'])->name('compare.clear');

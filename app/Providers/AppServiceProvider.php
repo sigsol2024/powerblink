@@ -6,7 +6,6 @@ use App\Models\SiteSetting;
 use App\Support\SiteSettingDefaults;
 use App\View\Composers\CmsNavComposer;
 use App\View\Composers\FaqNavComposer;
-use App\View\Composers\SiteCurrencyComposer;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -47,8 +46,6 @@ class AppServiceProvider extends ServiceProvider
         $site = SiteSettingDefaults::mergeWithDatabase($fromDb);
         View::share('site', $site);
 
-        // currencyUi must be composed after StartSession — see SiteCurrencyComposer.
-        View::composer('layouts.site', SiteCurrencyComposer::class);
         View::composer('layouts.site', CmsNavComposer::class);
         View::composer('layouts.site', FaqNavComposer::class);
     }

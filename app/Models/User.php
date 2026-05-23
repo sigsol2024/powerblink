@@ -30,7 +30,6 @@ class User extends Authenticatable
         'google_id',
         'avatar',
         'email_login_otp_enabled',
-        'preferred_currency',
         'currency_selection_prompt_dismissed',
         'email_verified_at',
     ];

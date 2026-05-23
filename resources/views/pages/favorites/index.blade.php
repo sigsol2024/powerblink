@@ -63,7 +63,7 @@
               <span class="inv-card__eyebrow">Buy online</span>
               <span class="inv-card__price">
                 @if(!is_null($vehicle->price))
-                  @include('partials.currency-amount', ['amount' => $vehicle->price, 'decimals' => 0])
+                  {{ format_currency($vehicle->price) }}
                 @endif
               </span>
             </div>

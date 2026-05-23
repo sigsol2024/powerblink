@@ -116,7 +116,7 @@
                 <div class="bg-brand_blue px-4 py-2 rounded-sm text-white font-bold text-xs uppercase text-right">
                   <span class="opacity-70 font-normal">Our Price</span>
                   @if (!is_null($vehicle->price))
-                    @include('partials.currency-amount', ['amount' => $vehicle->price, 'decimals' => 0])
+                    {{ format_currency($vehicle->price) }}
                   @else
                     Ask
                   @endif

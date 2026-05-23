@@ -30,7 +30,7 @@
             <div class="h-56 w-full overflow-hidden">@if ($img?->path)<img src="{{ \App\Support\VehicleImageUrl::url($img->path) }}" alt="{{ $vehicle->title }}" class="w-full h-full object-cover" />@else<div class="w-full h-full bg-slate-700 flex items-center justify-center text-slate-300">No image</div>@endif</div>
             <div class="p-6 space-y-4">
               <h2 class="font-headline text-xl font-bold uppercase">{{ $vehicle->title }}</h2>
-              <p class="text-primary font-bold text-2xl">@if(!is_null($vehicle->price))@include('partials.currency-amount', ['amount' => $vehicle->price, 'decimals' => 0])@else Ask @endif</p>
+              <p class="text-primary font-bold text-2xl">@if(!is_null($vehicle->price)){{ format_currency($vehicle->price) }}@else Ask @endif</p>
               {{-- Fixed key-fields schema: always render same rows in same order --}}
               <div class="text-xs text-slate-300 space-y-1 uppercase tracking-wide">
                 <p><span class="text-slate-400">Year:</span> {{ $vehicle->year ?: 'N/A' }}</p>

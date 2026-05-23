@@ -61,7 +61,7 @@
     @stack('head')
   </head>
 
-  <body class="bg-page_bg font-body text-on_surface selection:bg-brand_blue/20 {{ $bodyClass ?? '' }}" data-currency-label-prefix="{{ e(__('Currency')) }}" data-currency-ui="{{ e(json_encode($currencyUi ?? ['default' => 'USD', 'selected' => 'USD', 'symbols' => ['USD' => '$'], 'rates' => ['USD' => 1.0]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) }}">
+  <body class="bg-page_bg font-body text-on_surface selection:bg-brand_blue/20 {{ $bodyClass ?? '' }}">
     <!-- Global Loading Screen: logo centered; only outer ring animates (no box behind logo) -->
     <div id="global-loader" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#1E2229] transition-opacity duration-700 ease-in-out">
       <div class="relative flex h-36 w-36 items-center justify-center">
@@ -103,17 +103,6 @@
     @include('partials.footer')
     @include('partials.whatsapp-widget')
     <script src="{{ asset('asset/js/main.js') }}" defer></script>
-    <script>
-      const bodyEl = document.body;
-      let parsedCurrencyUi = {default: 'USD', selected: 'USD', symbols: {USD: '$'}, rates: {USD: 1}};
-      try {
-        const rawCurrencyUi = bodyEl?.getAttribute('data-currency-ui') || '{}';
-        parsedCurrencyUi = JSON.parse(rawCurrencyUi);
-      } catch (_) {
-        parsedCurrencyUi = {default: 'USD', selected: 'USD', symbols: {USD: '$'}, rates: {USD: 1}};
-      }
-      window.siteCurrency = parsedCurrencyUi;
-    </script>
     @stack('scripts')
   </body>
 </html>

@@ -66,7 +66,6 @@
   @endif
   <div class="h-10 border-b border-white/10 bg-[#232628]">
     <div class="mx-auto flex h-full w-full max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
-      {{-- Currency system remains enabled, but the top-bar switcher is intentionally hidden (UX requirement). --}}
       <div></div>
 
       <div class="hidden xl:flex items-center gap-6 text-[12px] font-semibold tracking-[0.01em] text-white/90">
@@ -376,4 +375,4 @@
   </nav>
 </div>
 
-{{-- Currency is admin-controlled: switcher disabled. --}}
+

@@ -23,8 +23,6 @@ final class SiteSettingDefaults
             'logo_light_path' => '',
             'favicon_path' => '',
             'auth_panel_image_path' => '',
-            'currency_code' => 'USD',
-            'currency_label' => 'Currency (USD)',
             'dealer_phone' => '+1 212-226-3126',
             'dealer_sales_phone' => '',
             'dealer_address' => '1840 E Garvey Ave South West Covina, CA 91791',

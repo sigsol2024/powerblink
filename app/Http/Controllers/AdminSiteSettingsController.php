@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
 use App\Services\Mail\OutboundMailService;
-use App\Support\SiteCurrencyPreference;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,16 +14,6 @@ use RuntimeException;
 
 class AdminSiteSettingsController extends Controller
 {
-    /** @var array<string, string> */
-    private const SUPPORTED_CURRENCIES = [
-        'USD' => 'US Dollar ($)',
-        'EUR' => 'Euro (€)',
-        'GBP' => 'British Pound (£)',
-        'NGN' => 'Nigerian Naira (NGN)',
-        'CAD' => 'Canadian Dollar (C$)',
-        'AED' => 'UAE Dirham (AED)',
-    ];
-
     public function edit(Request $request): View
     {
         $settings = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
@@ -32,7 +21,6 @@ class AdminSiteSettingsController extends Controller
         return view('admin.settings.edit', [
             'title' => __('Site settings'),
             'settings' => $settings,
-            'supportedCurrencies' => self::SUPPORTED_CURRENCIES,
         ]);
     }
 
@@ -48,8 +36,6 @@ class AdminSiteSettingsController extends Controller
             'logo_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:5120'],
             'logo_light_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:5120'],
             'favicon_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,ico', 'max:2048'],
-            'currency_code' => ['nullable', 'string', 'in:' . implode(',', array_keys(self::SUPPORTED_CURRENCIES))],
-            'currency_label' => ['nullable', 'string', 'max:100'],
             'dealer_phone' => ['nullable', 'string', 'max:64'],
             'dealer_sales_phone' => ['nullable', 'string', 'max:64'],
             'dealer_address' => ['nullable', 'string', 'max:500'],
@@ -86,13 +72,6 @@ class AdminSiteSettingsController extends Controller
             $validated['auth_panel_image_path'] = $this->storeBrandAsset($request->file('auth_panel_image_file'), 'auth-panel');
         }
 
-        $settingsBefore = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
-        $oldCurrencyCode = strtoupper(trim((string) ($settingsBefore['currency_code'] ?? 'USD')));
-
-        $currencyCode = strtoupper(trim((string) ($validated['currency_code'] ?? 'USD')));
-        $validated['currency_code'] = array_key_exists($currencyCode, self::SUPPORTED_CURRENCIES) ? $currencyCode : 'USD';
-        $validated['currency_label'] = 'Currency (' . $validated['currency_code'] . ')';
-
         $blogJson = (string) ($validated['footer_blog_entries_json'] ?? '');
         if (trim($blogJson) !== '') {
             $decoded = json_decode($blogJson, true);
@@ -124,13 +103,6 @@ class AdminSiteSettingsController extends Controller
             }
             $value = trim($value);
             $this->persistKey($key, $value);
-        }
-
-        if ($validated['currency_code'] !== $oldCurrencyCode) {
-            SiteCurrencyPreference::applySiteDefaultCurrencyChange($oldCurrencyCode, $validated['currency_code']);
-            if ($request->user()) {
-                $request->user()->forceFill(['preferred_currency' => $validated['currency_code']])->save();
-            }
         }
 
         return redirect()

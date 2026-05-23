@@ -1,57 +1,6 @@
 (function () {
   'use strict';
 
-  /**
-   * Format every [data-currency-amount] using window.siteCurrency (amounts stored in site's default/base currency).
-   */
-  window.applySiteCurrencyFormatting = function applySiteCurrencyFormatting() {
-    var cfg = typeof window.siteCurrency === 'object' && window.siteCurrency ? window.siteCurrency : {};
-    var selected = String(cfg.selected || cfg.default || 'USD').toUpperCase();
-    var base = String(cfg.default || 'USD').toUpperCase();
-    var rates = cfg.rates || {};
-    var symbols = cfg.symbols || {};
-    var r = rates[selected];
-    var rate = Number(r);
-    if (!isFinite(rate) || rate <= 0) {
-      rate = selected === base ? 1 : 1;
-    }
-    var symbol = symbols[selected] || (selected + ' ');
-    document.querySelectorAll('[data-currency-amount]').forEach(function (el) {
-      var raw = parseFloat(String(el.getAttribute('data-currency-amount') || '').replace(/,/g, ''));
-      if (!isFinite(raw)) return;
-      var dec = parseInt(String(el.getAttribute('data-currency-decimals') ?? '0'), 10);
-      if (!isFinite(dec) || dec < 0) dec = 0;
-      var converted = raw * rate;
-      el.textContent = symbol + converted.toLocaleString(undefined, {
-        minimumFractionDigits: dec,
-        maximumFractionDigits: dec,
-      });
-    });
-
-    var label = document.querySelector('[data-currency-label]');
-    if (label) {
-      var prefix = (document.body && document.body.getAttribute('data-currency-label-prefix')) || 'Currency';
-      label.textContent = prefix + ' (' + selected + ')';
-    }
-
-    if (document.body && typeof window.siteCurrency === 'object' && window.siteCurrency) {
-      try {
-        document.body.setAttribute('data-currency-ui', JSON.stringify(window.siteCurrency));
-      } catch (_) {
-        /* noop */
-      }
-    }
-
-    document.dispatchEvent(new CustomEvent('mt:site-currency-updated'));
-
-    document.querySelectorAll('[data-finance-calculator]').forEach(function (root) {
-      ['price', 'down', 'rate', 'term'].forEach(function (field) {
-        var inp = root.querySelector('[data-finance-input="' + field + '"]');
-        if (inp) inp.dispatchEvent(new Event('input', { bubbles: true }));
-      });
-    });
-  };
-
   var menuToggle = document.querySelector('[data-mobile-menu-toggle]');
   var menuPanel = document.querySelector('[data-mobile-menu-panel]');
   var menuOverlay = document.querySelector('[data-mobile-menu-overlay]');
@@ -1016,14 +965,4 @@
   bindPhoneReveal();
   bindFavoriteToggles();
 
-  function runSiteCurrencyFormatting() {
-    if (typeof window.applySiteCurrencyFormatting === 'function') {
-      window.applySiteCurrencyFormatting();
-    }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runSiteCurrencyFormatting);
-  } else {
-    runSiteCurrencyFormatting();
-  }
 })();

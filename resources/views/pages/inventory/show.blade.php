@@ -68,7 +68,7 @@
       <div class="flex flex-wrap md:flex-nowrap items-stretch shadow-xl w-full md:w-auto">
         <div class="bg-[#3b5998] p-4 flex flex-col justify-center min-w-[140px] text-center border-r border-white/10">
           <div class="text-[10px] uppercase font-bold opacity-70">Buy for</div>
-          <div class="text-2xl font-black">@if(!is_null($price))@include('partials.currency-amount', ['amount' => $price, 'decimals' => 0])@else ASK @endif</div>
+          <div class="text-2xl font-black">@if(!is_null($price)){{ format_currency($price) }}@else ASK @endif</div>
         </div>
       </div>
     </section>
@@ -318,7 +318,7 @@
                         <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="{{ \App\Support\VehicleImageUrl::url($itemCover->path) }}" alt="{{ $item->title }}">
                       @endif
                       <div class="absolute bottom-0 left-0 right-0 bg-[#3b5998]/90 p-2 text-center">
-                        <span class="text-[10px] font-bold">Our price @if(!is_null($item->price))@include('partials.currency-amount', ['amount' => $item->price, 'decimals' => 0])@else ASK @endif</span>
+                        <span class="text-[10px] font-bold">Our price @if(!is_null($item->price)){{ format_currency($item->price) }}@else ASK @endif</span>
                       </div>
                     </div>
                     <div class="p-4"><h4 class="text-xs font-bold uppercase">{{ trim(($item->makeOption?->value ?: '').' '.($item->modelOption?->value ?: '').' '.($item->year ?: '')) }}</h4></div>

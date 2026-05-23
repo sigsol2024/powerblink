@@ -103,19 +103,10 @@
         </div>
         <div class="grid gap-4 px-6 py-5 md:grid-cols-2">
           <div>
-            <label for="currency_code" class="block text-sm font-medium text-zinc-700">{{ __('Default currency') }}</label>
-            <select name="currency_code" id="currency_code" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm">
-              @foreach (($supportedCurrencies ?? ['USD' => 'US Dollar ($)']) as $code => $label)
-                <option value="{{ $code }}" @selected(old('currency_code', $settings['currency_code'] ?? 'USD') === $code)>{{ $code }} - {{ $label }}</option>
-              @endforeach
-            </select>
-            <p class="mt-1 text-xs text-zinc-500">{{ __('Prices are stored and shown in this currency. Visitors can still switch display currency from the header; changing this resets saved USD (or other) preferences that matched the previous default.') }}</p>
-          </div>
-          <div>
             <label for="dealer_hours_label" class="block text-sm font-medium text-zinc-700">{{ __('Hours label') }}</label>
             <input type="text" name="dealer_hours_label" id="dealer_hours_label" value="{{ old('dealer_hours_label', $settings['dealer_hours_label']) }}" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm"/>
           </div>
-          <div class="md:col-span-2">
+          <div>
             <label for="dealer_address" class="block text-sm font-medium text-zinc-700">{{ __('Address') }}</label>
             <input type="text" name="dealer_address" id="dealer_address" value="{{ old('dealer_address', $settings['dealer_address']) }}" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm"/>
           </div>
