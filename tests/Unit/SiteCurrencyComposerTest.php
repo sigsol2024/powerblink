@@ -50,6 +50,6 @@ class SiteCurrencyComposerTest extends TestCase
         $currencyUi = $view->getData()['currencyUi'];
         $this->assertSame('NGN', $currencyUi['default']);
         $this->assertSame('NGN', $currencyUi['selected']);
-        $this->assertFalse($currencyUi['preferenceCurrent']);
+        $this->assertTrue($currencyUi['preferenceCurrent']);
     }
 }

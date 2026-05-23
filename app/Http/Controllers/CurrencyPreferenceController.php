@@ -15,18 +15,11 @@ class CurrencyPreferenceController extends Controller
 {
     public function update(Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'currency' => ['required', 'string', 'size:3'],
-            'markAsShown' => ['sometimes', 'boolean'],
-        ]);
-
-        $currency = strtoupper($data['currency']);
-        if (! array_key_exists($currency, CurrencyCatalog::supported())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unsupported currency.',
-            ], 422);
-        }
+        // Admin-controlled default currency: public currency switching is disabled.
+        return response()->json([
+            'success' => false,
+            'message' => 'Currency switching is disabled.',
+        ], 403);
 
         $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
         $displayVersion = SiteCurrencyPreference::displayVersion($site);

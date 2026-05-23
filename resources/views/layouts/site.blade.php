@@ -102,26 +102,6 @@
     </main>
     @include('partials.footer')
     @include('partials.whatsapp-widget')
-    <div id="currencySelectionModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/65 p-4">
-      <div class="w-full max-w-xl rounded-xl bg-white p-6 text-zinc-900 shadow-2xl">
-        <h2 class="text-xl font-black">{{ __('Use your local currency?') }}</h2>
-        <p class="mt-2 text-sm text-zinc-600">{{ __('We detected your likely currency. You can always change this later from the header switcher.') }}</p>
-        <div class="mt-5 space-y-3 rounded-lg bg-zinc-50 p-4">
-          <div class="flex items-center justify-between text-sm">
-            <span class="font-semibold">{{ __('Detected') }}</span>
-            <span id="detectedCurrencyDisplay" class="font-black">—</span>
-          </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="font-semibold">{{ __('Site default') }}</span>
-            <span id="defaultCurrencyDisplay" class="font-black">—</span>
-          </div>
-        </div>
-        <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
-          <button type="button" id="currencyKeepDefaultBtn" class="rounded-md border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">{{ __('Keep default') }}</button>
-          <button type="button" id="currencyUseDetectedBtn" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">{{ __('Use detected currency') }}</button>
-        </div>
-      </div>
-    </div>
     <script src="{{ asset('asset/js/main.js') }}" defer></script>
     <script>
       const bodyEl = document.body;
@@ -133,64 +113,6 @@
         parsedCurrencyUi = {default: 'USD', selected: 'USD', symbols: {USD: '$'}, rates: {USD: 1}};
       }
       window.siteCurrency = parsedCurrencyUi;
-
-      (() => {
-        const cfg = window.siteCurrency || {};
-        const modal = document.getElementById('currencySelectionModal');
-        if (!modal) return;
-
-        const supported = cfg.supported || {};
-        const defaultCurrency = String(cfg.default || 'USD').toUpperCase();
-        const selectedCurrency = String(cfg.selected || defaultCurrency).toUpperCase();
-        const promptDismissed = Boolean(cfg.promptDismissed);
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        const shouldSkip = promptDismissed || localStorage.getItem('currency_modal_dismissed') === '1';
-        if (shouldSkip) return;
-
-        const locale = Intl.DateTimeFormat().resolvedOptions().locale || '';
-        const localeCountry = locale.includes('-') ? locale.split('-').pop().toUpperCase() : '';
-        const countryToCurrency = {
-          US: 'USD', GB: 'GBP', NG: 'NGN', CA: 'CAD', AE: 'AED',
-          IE: 'EUR', DE: 'EUR', FR: 'EUR', ES: 'EUR', IT: 'EUR', NL: 'EUR', BE: 'EUR'
-        };
-        const detectedCurrency = countryToCurrency[localeCountry] || defaultCurrency;
-        if (!supported[detectedCurrency] || detectedCurrency === selectedCurrency) return;
-
-        const detectedEl = document.getElementById('detectedCurrencyDisplay');
-        const defaultEl = document.getElementById('defaultCurrencyDisplay');
-        const useBtn = document.getElementById('currencyUseDetectedBtn');
-        const keepBtn = document.getElementById('currencyKeepDefaultBtn');
-        if (!detectedEl || !defaultEl || !useBtn || !keepBtn) return;
-
-        detectedEl.textContent = detectedCurrency + ' - ' + (supported[detectedCurrency] || detectedCurrency);
-        defaultEl.textContent = defaultCurrency + ' - ' + (supported[defaultCurrency] || defaultCurrency);
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        const persist = async (currency) => {
-          const endpointEl = document.getElementById('currency-select-endpoint');
-          const endpoint = endpointEl?.value || '';
-          if (!endpoint) return;
-          useBtn.setAttribute('disabled', 'disabled');
-          keepBtn.setAttribute('disabled', 'disabled');
-          try {
-            await fetch(endpoint, {
-              method: 'POST',
-              credentials: 'same-origin',
-              headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json'},
-              body: JSON.stringify({ currency, markAsShown: true }),
-            });
-            localStorage.setItem('currency_modal_dismissed', '1');
-            window.location.reload();
-          } finally {
-            useBtn.removeAttribute('disabled');
-            keepBtn.removeAttribute('disabled');
-          }
-        };
-
-        useBtn.addEventListener('click', () => persist(detectedCurrency));
-        keepBtn.addEventListener('click', () => persist(defaultCurrency));
-      })();
     </script>
     @stack('scripts')
   </body>
