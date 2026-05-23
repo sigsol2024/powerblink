@@ -31,12 +31,10 @@ final class SiteCurrencyUi
             $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
         }
 
-        $defaultCurrency = strtoupper(trim((string) ($site['currency_code'] ?? 'USD')));
-        if (! array_key_exists($defaultCurrency, CurrencyCatalog::supported())) {
-            $defaultCurrency = 'USD';
-        }
+        // Website currency is fixed to NGN (₦) everywhere.
+        $defaultCurrency = 'NGN';
 
-        $displayVersion = SiteCurrencyPreference::displayVersion($site);
+        $displayVersion = 1;
         // Admin default ALWAYS wins: no user/session/cookie/region overrides.
         $selectedCurrency = $defaultCurrency;
         $promptDismissed = true;

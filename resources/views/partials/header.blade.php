@@ -1,6 +1,5 @@
 @php
   $site = $site ?? [];
-  $currencyUi = $currencyUi ?? ['default' => 'USD', 'selected' => 'USD', 'supported' => ['USD' => 'US Dollar'], 'symbols' => ['USD' => '$']];
   $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : config('app.name', 'Site');
   $logoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
   $hoursLabel = trim((string) ($site['dealer_hours_label'] ?? '')) ?: __('Work Hours');
@@ -11,9 +10,6 @@
   if ($phone === '') {
       $phone = trim((string) ($site['dealer_sales_phone'] ?? ''));
   }
-  $currencyCode = strtoupper((string) ($currencyUi['selected'] ?? 'USD'));
-  $currencySymbols = is_array($currencyUi['symbols'] ?? null) ? $currencyUi['symbols'] : ['USD' => '$'];
-  $currencyLabel = __('Currency') . ' (' . $currencyCode . ')';
   $socialFacebook = trim((string) ($site['social_facebook'] ?? ''));
   $socialInstagram = trim((string) ($site['social_instagram'] ?? ''));
   $socialLinkedin = trim((string) ($site['social_linkedin'] ?? ''));
