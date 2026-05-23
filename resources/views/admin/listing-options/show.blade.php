@@ -1,16 +1,32 @@
 @php
+  use App\Models\ListingOption;
+
   $isMake = $category->slug === 'make';
   $isCountry = $category->slug === 'country';
   $isModel = $category->slug === 'model';
   $batchFormId = 'listing-options-batch-form';
   $openAddModal = old('value') !== null || $errors->has('value') || $errors->has('parent_id');
+  $existingOptionKeys = ListingOption::query()
+      ->where('category_id', $category->id)
+      ->get(['parent_id', 'value'])
+      ->map(fn ($o) => [
+          'parentId' => $o->parent_id,
+          'key' => ListingOption::valueComparisonKey($category->slug, $o->value),
+      ])
+      ->values()
+      ->all();
   $listingOptionsAdminConfig = [
       'addOpenInitial' => $openAddModal,
       'isModel' => $isModel,
+      'isMake' => $isMake,
+      'existingOptionKeys' => $existingOptionKeys,
       'messages' => [
           'valueRequired' => __('Value is required. Please enter a name for this option.'),
           'parentRequired' => __('Parent make is required. Choose which make this model belongs to.'),
+          'valueDuplicate' => __('This option already exists.'),
+          'modelDuplicate' => __('This model already exists for the selected make.'),
           'batchValueRequired' => __('Each option must have a value before you can save.'),
+          'batchValueDuplicate' => __('Duplicate value in your changes. Each option must have a unique name.'),
       ],
       'serverErrors' => [
           'value' => $errors->first('value'),
@@ -201,6 +217,7 @@
                       name="options[{{ $option->id }}][value]"
                       value="{{ old('options.'.$option->id.'.value', $option->value) }}"
                       data-batch-value-input
+                      data-batch-parent-id="{{ $option->parent_id ?? '' }}"
                       class="block w-full min-w-[12rem] max-w-xs rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500"
                       aria-required="true"
                       x-on:input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')"
@@ -251,7 +268,7 @@
               </button>
               <div x-show="openId === {{ $option->id }}" x-cloak class="space-y-3 border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
                 <label class="block text-xs font-semibold uppercase tracking-wide text-zinc-500">{{ __('Value') }}<span class="text-red-600">*</span></label>
-                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" data-batch-value-input class="block w-full rounded-lg border-zinc-300 text-sm" aria-required="true" x-on:input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')" />
+                <input type="text" name="options[{{ $option->id }}][value]" value="{{ old('options.' . $option->id . '.value', $option->value) }}" data-batch-value-input data-batch-parent-id="{{ $option->parent_id ?? '' }}" class="block w-full rounded-lg border-zinc-300 text-sm" aria-required="true" x-on:input="$el.classList.remove('border-red-500', 'ring-2', 'ring-red-200')" />
                 <input type="number" name="options[{{ $option->id }}][sort_order]" value="{{ old('options.' . $option->id . '.sort_order', $option->sort_order) }}" min="0" max="65535" class="w-full rounded-lg border-zinc-300 text-sm" />
                 <label class="inline-flex items-center gap-2"><input type="checkbox" name="options[{{ $option->id }}][is_active]" value="1" class="rounded border-zinc-300 text-amber-600" @checked(old('options.' . $option->id . '.is_active', $option->is_active)) /><span>{{ __('Visible') }}</span></label>
                 <div class="flex flex-col gap-2">
@@ -308,6 +325,24 @@
         const fieldErrors = {};
         if (serverErrors.value) fieldErrors.value = serverErrors.value;
         if (serverErrors.parent_id) fieldErrors.parent_id = serverErrors.parent_id;
+        const existingOptionKeys = config.existingOptionKeys || [];
+
+        const valueComparisonKey = (value) => {
+          const v = (value || '').trim();
+          if (!v) return '';
+          return config.isMake ? v.toUpperCase() : v.toLowerCase();
+        };
+
+        const optionGroupKey = (parentId, key) => `${parentId ?? ''}|${key}`;
+
+        const isDuplicateAdd = (value, parentId) => {
+          const key = valueComparisonKey(value);
+          if (!key) return false;
+          const groupKey = optionGroupKey(parentId || null, key);
+          return existingOptionKeys.some(
+            (entry) => optionGroupKey(entry.parentId, entry.key) === groupKey,
+          );
+        };
 
         return {
           addOpen: config.addOpenInitial || false,
@@ -345,7 +380,11 @@
               const parentId = (parentEl?.value || '').trim();
               if (!parentId) {
                 errors.parent_id = this.messages.parentRequired;
+              } else if (value && isDuplicateAdd(value, parentId)) {
+                errors.value = this.messages.modelDuplicate;
               }
+            } else if (value && isDuplicateAdd(value, null)) {
+              errors.value = this.messages.valueDuplicate;
             }
             this.fieldErrors = errors;
             if (Object.keys(this.fieldErrors).length > 0) {
@@ -378,6 +417,29 @@
                 const btn = article?.querySelector('button[type="button"]');
                 if (btn) btn.click();
               }
+              return;
+            }
+
+            const seenInForm = new Map();
+            let duplicateInput = null;
+            inputs.forEach((input) => {
+              const val = (input.value || '').trim();
+              if (!val) return;
+              const parentId = input.dataset.batchParentId || '';
+              const groupKey = optionGroupKey(parentId || null, valueComparisonKey(val));
+              if (seenInForm.has(groupKey)) {
+                if (!duplicateInput) duplicateInput = input;
+                input.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                const other = seenInForm.get(groupKey);
+                if (other) other.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+              } else {
+                seenInForm.set(groupKey, input);
+              }
+            });
+            if (duplicateInput) {
+              event.preventDefault();
+              this.batchFormError = this.messages.batchValueDuplicate;
+              duplicateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
           },
         };

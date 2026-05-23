@@ -94,9 +94,17 @@ class AdminListingOptionController extends Controller
             ->where('parent_id', $parentId)
             ->max('sort_order');
 
-        $value = trim($data['value']);
-        if ($isMake) {
-            $value = ListingOption::normalizeMake($value);
+        $value = ListingOption::normalizedValue($category->slug, $data['value']);
+        if ($value === '') {
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['value' => __('Value is required. Please enter a name for this option.')])
+                ->withInput();
+        }
+
+        if ($duplicateMessage = $this->duplicateOptionMessage($category, $value, $parentId)) {
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['value' => $duplicateMessage])
+                ->withInput();
         }
 
         $option = ListingOption::query()->create([
@@ -139,6 +147,13 @@ class AdminListingOptionController extends Controller
 
         $validated = $request->validate($rules);
 
+        $duplicateErrors = $this->validateBatchNoDuplicates($category, $validated['options'], $allowedIds);
+        if ($duplicateErrors !== []) {
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors($duplicateErrors)
+                ->withInput();
+        }
+
         foreach ($validated['options'] as $idStr => $payload) {
             $id = (int) $idStr;
             if (! in_array($id, $allowedIds, true)) {
@@ -151,10 +166,7 @@ class AdminListingOptionController extends Controller
             $isActive = array_key_exists('is_active', $payload)
                 && ($payload['is_active'] === '1' || $payload['is_active'] === true || $payload['is_active'] === 1);
 
-            $value = trim((string) ($payload['value'] ?? ''));
-            if ($category->slug === 'make') {
-                $value = ListingOption::normalizeMake($value);
-            }
+            $value = ListingOption::normalizedValue($category->slug, (string) ($payload['value'] ?? ''));
 
             $option->update([
                 'value' => $value,
@@ -208,9 +220,15 @@ class AdminListingOptionController extends Controller
             'value' => ['required', 'string', 'max:255'],
         ]);
 
-        $value = trim((string) $request->input('value'));
-        if ($category->slug === 'make') {
-            $value = ListingOption::normalizeMake($value);
+        $value = ListingOption::normalizedValue($category->slug, (string) $request->input('value'));
+        if ($value === '') {
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['value' => __('Value is required.')]);
+        }
+
+        if ($duplicateMessage = $this->duplicateOptionMessage($category, $value, $option->parent_id, $option->id)) {
+            return $this->redirectToCategoryIndex($category)
+                ->withErrors(['value' => $duplicateMessage]);
         }
 
         $option->update([
@@ -298,6 +316,69 @@ class AdminListingOptionController extends Controller
     protected function assertOptionCategory(ListingOptionCategory $category, ListingOption $option): void
     {
         abort_if((int) $option->category_id !== (int) $category->id, 404);
+    }
+
+    protected function duplicateOptionMessage(
+        ListingOptionCategory $category,
+        string $rawValue,
+        ?int $parentId,
+        ?int $ignoreOptionId = null,
+    ): ?string {
+        if (! ListingOption::duplicateExists($category->id, $category->slug, $rawValue, $parentId, $ignoreOptionId)) {
+            return null;
+        }
+
+        return $category->slug === 'model'
+            ? __('This model already exists for the selected make.')
+            : __('This option already exists.');
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>>  $optionsPayload
+     * @param  list<int>  $allowedIds
+     * @return array<string, string>
+     */
+    protected function validateBatchNoDuplicates(
+        ListingOptionCategory $category,
+        array $optionsPayload,
+        array $allowedIds,
+    ): array {
+        $errors = [];
+        $seenInRequest = [];
+
+        foreach ($optionsPayload as $idStr => $payload) {
+            $id = (int) $idStr;
+            if (! in_array($id, $allowedIds, true)) {
+                continue;
+            }
+
+            $option = ListingOption::query()->whereKey($id)->first();
+            if (! $option) {
+                continue;
+            }
+
+            $raw = (string) ($payload['value'] ?? '');
+            $comparisonKey = ListingOption::valueComparisonKey($category->slug, $raw);
+            if ($comparisonKey === '') {
+                continue;
+            }
+
+            $parentId = $option->parent_id;
+            $groupKey = ($parentId ?? 'root').'|'.$comparisonKey;
+
+            if (isset($seenInRequest[$groupKey])) {
+                $errors["options.{$idStr}.value"] = __('Duplicate value in your changes. Each option must have a unique name.');
+
+                continue;
+            }
+            $seenInRequest[$groupKey] = true;
+
+            if ($duplicateMessage = $this->duplicateOptionMessage($category, $raw, $parentId, $id)) {
+                $errors["options.{$idStr}.value"] = $duplicateMessage;
+            }
+        }
+
+        return $errors;
     }
 
     protected function usageCount(string $categorySlug, ListingOption $option): int

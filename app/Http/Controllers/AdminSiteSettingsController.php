@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
 use App\Services\Mail\OutboundMailService;
+use App\Support\SiteCurrencyPreference;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,6 +86,9 @@ class AdminSiteSettingsController extends Controller
             $validated['auth_panel_image_path'] = $this->storeBrandAsset($request->file('auth_panel_image_file'), 'auth-panel');
         }
 
+        $settingsBefore = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
+        $oldCurrencyCode = strtoupper(trim((string) ($settingsBefore['currency_code'] ?? 'USD')));
+
         $currencyCode = strtoupper(trim((string) ($validated['currency_code'] ?? 'USD')));
         $validated['currency_code'] = array_key_exists($currencyCode, self::SUPPORTED_CURRENCIES) ? $currencyCode : 'USD';
         $validated['currency_label'] = 'Currency (' . $validated['currency_code'] . ')';
@@ -120,6 +124,13 @@ class AdminSiteSettingsController extends Controller
             }
             $value = trim($value);
             $this->persistKey($key, $value);
+        }
+
+        if ($validated['currency_code'] !== $oldCurrencyCode) {
+            SiteCurrencyPreference::applySiteDefaultCurrencyChange($oldCurrencyCode, $validated['currency_code']);
+            if ($request->user()) {
+                $request->user()->forceFill(['preferred_currency' => $validated['currency_code']])->save();
+            }
         }
 
         return redirect()

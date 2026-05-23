@@ -116,7 +116,7 @@
                 <div class="bg-brand_blue px-4 py-2 rounded-sm text-white font-bold text-xs uppercase text-right">
                   <span class="opacity-70 font-normal">Our Price</span>
                   @if (!is_null($vehicle->price))
-                    <span data-currency-amount="{{ (float) $vehicle->price }}" data-currency-decimals="0">${{ number_format((float) $vehicle->price, 0, '.', ' ') }}</span>
+                    @include('partials.currency-amount', ['amount' => $vehicle->price, 'decimals' => 0])
                   @else
                     Ask
                   @endif

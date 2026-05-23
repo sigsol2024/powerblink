@@ -5,6 +5,7 @@ namespace App\View\Composers;
 use App\Models\User;
 use App\Services\CurrencyRateService;
 use App\Support\CurrencyCatalog;
+use App\Support\SiteCurrencyPreference;
 use Illuminate\View\View;
 
 /**
@@ -21,11 +22,13 @@ class SiteCurrencyComposer
             $defaultCurrency = 'USD';
         }
 
+        $displayVersion = SiteCurrencyPreference::displayVersion($site);
         $selectedCurrency = $defaultCurrency;
         $promptDismissed = false;
+        $preferenceCurrent = false;
 
         try {
-            $cookieRaw = request()->cookie('site_currency_pref');
+            $cookieRaw = request()->cookie(SiteCurrencyPreference::COOKIE_CURRENCY);
             $cookieCurrency = strtoupper(trim((string) ($cookieRaw ?? '')));
             if ($cookieCurrency !== '' && ! array_key_exists($cookieCurrency, CurrencyCatalog::supported())) {
                 $cookieCurrency = '';
@@ -46,24 +49,29 @@ class SiteCurrencyComposer
                 $promptDismissed = (bool) $authUser->currency_selection_prompt_dismissed;
             }
 
-            // Logged-in users: DB preference wins when set; otherwise session, then cookie.
+            $preferenceCurrent = SiteCurrencyPreference::visitorPreferenceIsCurrent(request(), $displayVersion);
+
+            // Logged-in: DB preference wins when set.
             if ($userCurrency !== '') {
                 $selectedCurrency = $userCurrency;
                 if (request()->hasSession()) {
-                    request()->session()->put('site_currency', $userCurrency);
+                    SiteCurrencyPreference::storeVisitorPreference(request(), $userCurrency, $displayVersion);
+                }
+            } elseif ($preferenceCurrent && request()->hasSession() && request()->session()->has(SiteCurrencyPreference::SESSION_CURRENCY)) {
+                $sessionCurrency = strtoupper(trim((string) request()->session()->get(SiteCurrencyPreference::SESSION_CURRENCY)));
+                if ($sessionCurrency !== '' && array_key_exists($sessionCurrency, CurrencyCatalog::supported())) {
+                    $selectedCurrency = $sessionCurrency;
+                }
+            } elseif ($preferenceCurrent && $cookieCurrency !== '') {
+                $selectedCurrency = $cookieCurrency;
+                if (request()->hasSession()) {
+                    SiteCurrencyPreference::storeVisitorPreference(request(), $cookieCurrency, $displayVersion);
                 }
             } elseif (request()->hasSession()) {
-                if (request()->session()->has('site_currency')) {
-                    $sessionCurrency = strtoupper(trim((string) request()->session()->get('site_currency')));
-                    if ($sessionCurrency !== '' && array_key_exists($sessionCurrency, CurrencyCatalog::supported())) {
-                        $selectedCurrency = $sessionCurrency;
-                    }
-                } elseif ($cookieCurrency !== '') {
-                    $selectedCurrency = $cookieCurrency;
-                    request()->session()->put('site_currency', $cookieCurrency);
-                }
-            } elseif ($cookieCurrency !== '') {
-                $selectedCurrency = $cookieCurrency;
+                request()->session()->forget([
+                    SiteCurrencyPreference::SESSION_CURRENCY,
+                    SiteCurrencyPreference::SESSION_VERSION,
+                ]);
             }
         } catch (\Throwable) {
             $selectedCurrency = $defaultCurrency;
@@ -83,6 +91,8 @@ class SiteCurrencyComposer
             'symbols' => CurrencyCatalog::symbols(),
             'rates' => $rates,
             'promptDismissed' => $promptDismissed,
+            'displayVersion' => $displayVersion,
+            'preferenceCurrent' => $preferenceCurrent,
         ]);
     }
 }

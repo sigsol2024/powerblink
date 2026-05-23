@@ -109,7 +109,7 @@
                 <option value="{{ $code }}" @selected(old('currency_code', $settings['currency_code'] ?? 'USD') === $code)>{{ $code }} - {{ $label }}</option>
               @endforeach
             </select>
-            <p class="mt-1 text-xs text-zinc-500">{{ __('This controls the header currency switch label.') }}</p>
+            <p class="mt-1 text-xs text-zinc-500">{{ __('Prices are stored and shown in this currency. Visitors can still switch display currency from the header; changing this resets saved USD (or other) preferences that matched the previous default.') }}</p>
           </div>
           <div>
             <label for="dealer_hours_label" class="block text-sm font-medium text-zinc-700">{{ __('Hours label') }}</label>

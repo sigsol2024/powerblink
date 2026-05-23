@@ -168,7 +168,7 @@
                 <h3 class="line-clamp-1 min-w-0 flex-1 pr-1 font-headline text-[18px] md:text-[20px] font-black leading-tight text-white uppercase tracking-tight">{{ $vehicle->title }}</h3>
                 <div class="shrink-0 rounded-sm bg-[#3b63d6] px-2 py-1 text-right text-white shadow-sm">
                   <div class="text-[8px] font-bold uppercase leading-none tracking-wide opacity-85">Buy online</div>
-                  <div class="mt-0.5 text-[18px] font-black leading-none"><span data-currency-amount="{{ (float) $vehicle->price }}" data-currency-decimals="0">${{ number_format((float) $vehicle->price, 0, '.', ',') }}</span></div>
+                  <div class="mt-0.5 text-[18px] font-black leading-none">@include('partials.currency-amount', ['amount' => $vehicle->price, 'decimals' => 0])</div>
                 </div>
               </div>
               <div class="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-500/40 pt-2 text-[10px] md:text-[11px] font-semibold text-slate-300/95">
