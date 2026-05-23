@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ShareSiteCurrencyUi;
 use App\Http\Middleware\EnsureLoginOtpPending;
 use App\Http\Middleware\EnsurePendingRegistration;
 use App\Http\Middleware\EnsureUserHasRole;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', '*'));
         $middleware->web(append: [
+            ShareSiteCurrencyUi::class,
             TrackPublicTraffic::class,
         ]);
 

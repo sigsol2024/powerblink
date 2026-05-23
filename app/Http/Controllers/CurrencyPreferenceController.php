@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
-use App\Services\CurrencyRateService;
 use App\Support\CurrencyCatalog;
 use App\Support\SiteCurrencyPreference;
+use App\Support\SiteCurrencyUi;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,24 +41,10 @@ class CurrencyPreferenceController extends Controller
             $request->session()->put('currency_selection_prompt_dismissed', true);
         }
 
-        $base = strtoupper(trim((string) ($site['currency_code'] ?? 'USD')));
-        if (! array_key_exists($base, CurrencyCatalog::supported())) {
-            $base = 'USD';
-        }
-        try {
-            $rates = app(CurrencyRateService::class)->ratesFrom($base);
-        } catch (\Throwable) {
-            $rates = [$base => 1.0];
-        }
-
-        $currencyUi = [
-            'default' => $base,
-            'selected' => $currency,
-            'supported' => CurrencyCatalog::supported(),
-            'symbols' => CurrencyCatalog::symbols(),
-            'rates' => $rates,
-            'promptDismissed' => (bool) $request->session()->get('currency_selection_prompt_dismissed', false),
-        ];
+        SiteCurrencyUi::flush();
+        $currencyUi = SiteCurrencyUi::resolve();
+        $currencyUi['selected'] = $currency;
+        $currencyUi['promptDismissed'] = (bool) $request->session()->get('currency_selection_prompt_dismissed', false);
 
         foreach (SiteCurrencyPreference::preferenceCookies($currency, $displayVersion) as $cookie) {
             Cookie::queue($cookie['name'], $cookie['value'], $cookie['minutes']);

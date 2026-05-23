@@ -3,16 +3,24 @@
 namespace App\Support;
 
 /**
- * Server-side price formatting aligned with {@see SiteCurrencyComposer} / main.js currency logic.
+ * Server-side price formatting aligned with {@see SiteCurrencyUi} / main.js currency logic.
  */
 final class CurrencyDisplay
 {
+    public static function formatForSite(float $amount, int $decimals = 0): string
+    {
+        return self::formatAmount($amount, SiteCurrencyUi::resolve(), $decimals);
+    }
+
     /**
      * @param  array<string, mixed>|null  $currencyUi
      */
     public static function formatAmount(float $amount, ?array $currencyUi = null, int $decimals = 0): string
     {
-        $currencyUi = is_array($currencyUi) ? $currencyUi : [];
+        if (! is_array($currencyUi) || ! isset($currencyUi['selected'])) {
+            $currencyUi = SiteCurrencyUi::resolve();
+        }
+
         $base = strtoupper((string) ($currencyUi['default'] ?? 'USD'));
         $selected = strtoupper((string) ($currencyUi['selected'] ?? $base));
         $symbols = is_array($currencyUi['symbols'] ?? null) ? $currencyUi['symbols'] : CurrencyCatalog::symbols();
