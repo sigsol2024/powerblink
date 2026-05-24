@@ -1,113 +1,111 @@
 <x-app-layout>
-    <x-slot name="header">
-    <h2 class="admin-page-title truncate">{{ __('New Vehicle Listing') }}</h2>
-  </x-slot>
+  @component('dashboard.vehicles.partials.luxe-form-shell', [
+    'title' => __('Add New Product'),
+    'formAction' => route('dashboard.vehicles.store'),
+    'cancelUrl' => route('dashboard.vehicles.index'),
+    'submitLabel' => __('Create'),
+    'formMethod' => 'post',
+  ])
+    @csrf
 
-  <div class="w-full">
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-4 text-gray-900 sm:p-6">
-          <form method="post" action="{{ route('dashboard.vehicles.store') }}" class="space-y-4" enctype="multipart/form-data">
-            @csrf
-
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+      <div class="space-y-10">
+        <section class="space-y-6">
+          <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Core Identity') }}</h3>
+          <div>
+            <x-input-label for="title" :value="__('Product Name')" />
+            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" required />
+            <x-input-error :messages="$errors->get('title')" class="mt-2" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div>
-              <x-input-label for="title" value="Title" />
-              <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" required />
-              <x-input-error :messages="$errors->get('title')" class="mt-2" />
+              <x-input-label for="year" :value="__('Year')" />
+              <x-text-input id="year" name="year" type="number" class="mt-1 block w-full" />
+              <x-input-error :messages="$errors->get('year')" class="mt-2" />
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <x-input-label for="year" value="Year" />
-                <x-text-input id="year" name="year" type="number" class="mt-1 block w-full" />
-                <x-input-error :messages="$errors->get('year')" class="mt-2" />
-              </div>
-              <div>
-                <x-input-label for="price" value="Price" />
-                <x-text-input id="price" name="price" type="number" class="mt-1 block w-full" />
-                <x-input-error :messages="$errors->get('price')" class="mt-2" />
-              </div>
-            </div>
-
-            @include('dashboard.vehicles.partials.listing-catalog-fields', [
-              'listingOptions' => $listingOptions ?? [],
-              'makeRows' => $makeRows ?? collect(),
-              'vehicle' => null,
-            ])
-
             <div>
-              <x-input-label for="features_text" value="Features (one per line)" />
-              <textarea id="features_text" name="features_text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="4" placeholder="Leather seats&#10;Sunroof">{{ old('features_text') }}</textarea>
-              <x-input-error :messages="$errors->get('features_text')" class="mt-2" />
+              <x-input-label for="price" :value="__('Price')" />
+              <x-text-input id="price" name="price" type="number" class="mt-1 block w-full" />
+              <x-input-error :messages="$errors->get('price')" class="mt-2" />
             </div>
+          </div>
+        </section>
 
-            <section class="rounded-lg border border-gray-200 p-4 space-y-4">
-              <h3 class="text-base font-semibold text-gray-900">Detail page configuration</h3>
+        @include('dashboard.vehicles.partials.listing-catalog-fields', [
+          'listingOptions' => $listingOptions ?? [],
+          'makeRows' => $makeRows ?? collect(),
+          'vehicle' => null,
+        ])
 
-              <div>
-                <x-input-label for="overview" value="Vehicle overview (long-form text)" />
-                <textarea id="overview" name="overview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="5">{{ old('overview') }}</textarea>
-                <x-input-error :messages="$errors->get('overview')" class="mt-2" />
-              </div>
-
-            </section>
-
-            @if(auth()->user()?->hasRole('admin'))
-              <div class="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50/80 px-3 py-2">
-                <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('is_special')) />
-                <x-input-label for="is_special" value="{{ __('Special listing (shows “Special” ribbon on homepage cards)') }}" class="!mb-0" />
-              </div>
-            @endif
-
-            @if(auth()->user()?->hasRole('admin'))
-              <div class="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-2">
-                <input id="approve_listing" name="approve_listing" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('approve_listing')) />
-                <x-input-label for="approve_listing" value="{{ __('Approve immediately (live on public inventory)') }}" class="!mb-0" />
-              </div>
-            @endif
-
-            <section class="rounded-lg border border-gray-200 p-4">
-              <h3 class="text-base font-semibold text-gray-900">Images</h3>
-              <p class="mt-1 text-sm text-gray-600">Use one featured image plus gallery images. Click any preview to open it larger.</p>
-
-              <div class="mt-4 grid gap-4 lg:grid-cols-2">
-                <div class="rounded-md border border-gray-200 p-3">
-                  <x-input-label value="Main image" />
-                  <input type="hidden" id="main_image_path" name="main_image_path" value="{{ old('main_image_path', '') }}" />
-                  <p class="mt-1 text-xs text-gray-500">{{ __('Choose a featured image from the media library (upload new files inside the library).') }}</p>
-                  <div class="mt-3 flex flex-wrap items-center gap-3">
-                    <button type="button" id="main-image-library" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">{{ __('Media library') }}</button>
-                    <button type="button" id="main-image-clear" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50" disabled>Clear selection</button>
-                  </div>
-                  <x-input-error :messages="$errors->get('main_image')" class="mt-2" />
-                  <x-input-error :messages="$errors->get('main_image_path')" class="mt-2" />
-                  <div id="main-image-preview" class="mt-3 hidden"></div>
-                </div>
-
-                <div class="rounded-md border border-gray-200 p-3">
-                  <x-input-label value="Gallery images" />
-                  <div id="gallery-paths-holder"></div>
-                  <p class="mt-1 text-xs text-gray-500">{{ __('Add images from the media library (Ctrl/Cmd-click, Shift-click range).') }}</p>
-                  <div class="mt-3 flex flex-wrap items-center gap-3">
-                    <button type="button" id="gallery-library" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">{{ __('Media library') }}</button>
-                    <button type="button" id="gallery-clear-all" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50" disabled>Clear selection</button>
-                  </div>
-                  <x-input-error :messages="$errors->get('images')" class="mt-2" />
-                  <x-input-error :messages="$errors->get('images.*')" class="mt-2" />
-                  <x-input-error :messages="$errors->get('gallery_image_paths')" class="mt-2" />
-                  <x-input-error :messages="$errors->get('gallery_image_paths.*')" class="mt-2" />
-                  <div id="gallery-preview" class="mt-3 hidden grid grid-cols-2 gap-3 sm:grid-cols-3"></div>
-                </div>
-              </div>
-            </section>
-
-            <div class="flex items-center gap-3">
-              <x-primary-button>Create</x-primary-button>
-              <a href="{{ route('dashboard.vehicles.index') }}" class="text-sm text-gray-600 hover:underline">Cancel</a>
-            </div>
-          </form>
-        </div>
+        <section class="space-y-6">
+          <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('The Story') }}</h3>
+          <div>
+            <x-input-label for="features_text" :value="__('Features (one per line)')" />
+            <textarea id="features_text" name="features_text" class="mt-1 block w-full" rows="4" placeholder="Leather seats&#10;Sunroof">{{ old('features_text') }}</textarea>
+            <x-input-error :messages="$errors->get('features_text')" class="mt-2" />
+          </div>
+          <div>
+            <x-input-label for="overview" :value="__('Description')" />
+            <textarea id="overview" name="overview" class="mt-1 block w-full" rows="5">{{ old('overview') }}</textarea>
+            <x-input-error :messages="$errors->get('overview')" class="mt-2" />
+          </div>
+        </section>
       </div>
-    @include('dashboard.vehicles.partials.image-manager', ['supportsExistingGalleryDelete' => false])
-  </div>
-</x-app-layout>
 
+      <div class="space-y-10">
+        @if(auth()->user()?->hasRole('admin'))
+          <section class="space-y-4">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Visibility') }}</h3>
+            <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">
+              <div>
+                <p class="font-body-md font-medium text-primary">{{ __('Special listing') }}</p>
+                <p class="text-xs text-on-surface-variant">{{ __('Shows “Special” ribbon on homepage cards.') }}</p>
+              </div>
+              <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded-none border-outline-variant text-primary focus:ring-primary" @checked(old('is_special')) />
+            </div>
+            <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">
+              <div>
+                <p class="font-body-md font-medium text-primary">{{ __('Approve immediately') }}</p>
+                <p class="text-xs text-on-surface-variant">{{ __('Live on public shop when saved.') }}</p>
+              </div>
+              <input id="approve_listing" name="approve_listing" type="checkbox" value="1" class="rounded-none border-outline-variant text-primary focus:ring-primary" @checked(old('approve_listing')) />
+            </div>
+          </section>
+        @endif
+
+        <section class="space-y-6 border border-outline-variant p-4 md:p-6">
+          <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Product Visuals') }}</h3>
+          <p class="text-xs text-on-surface-variant">{{ __('Use one featured image plus gallery images from the media library.') }}</p>
+
+          <div class="space-y-4">
+            <div class="border border-dashed border-outline-variant p-4 bg-surface-container-lowest">
+              <x-input-label :value="__('Main image')" />
+              <input type="hidden" id="main_image_path" name="main_image_path" value="{{ old('main_image_path', '') }}" />
+              <div class="mt-3 flex flex-wrap items-center gap-3">
+                <button type="button" id="main-image-library" class="admin-luxe-btn-primary !py-2 !px-4 text-xs">{{ __('Media library') }}</button>
+                <button type="button" id="main-image-clear" class="border border-outline-variant px-4 py-2 font-label-caps text-[11px] hover:bg-surface-container-high disabled:opacity-50" disabled>{{ __('Clear') }}</button>
+              </div>
+              <x-input-error :messages="$errors->get('main_image')" class="mt-2" />
+              <x-input-error :messages="$errors->get('main_image_path')" class="mt-2" />
+              <div id="main-image-preview" class="mt-3 hidden"></div>
+            </div>
+
+            <div class="border border-dashed border-outline-variant p-4 bg-surface-container-lowest">
+              <x-input-label :value="__('Gallery images')" />
+              <div id="gallery-paths-holder"></div>
+              <div class="mt-3 flex flex-wrap items-center gap-3">
+                <button type="button" id="gallery-library" class="admin-luxe-btn-primary !py-2 !px-4 text-xs">{{ __('Media library') }}</button>
+                <button type="button" id="gallery-clear-all" class="border border-outline-variant px-4 py-2 font-label-caps text-[11px] hover:bg-surface-container-high disabled:opacity-50" disabled>{{ __('Clear') }}</button>
+              </div>
+              <x-input-error :messages="$errors->get('images')" class="mt-2" />
+              <x-input-error :messages="$errors->get('gallery_image_paths')" class="mt-2" />
+              <div id="gallery-preview" class="mt-3 hidden grid grid-cols-2 gap-3 sm:grid-cols-3"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  @endcomponent
+
+  @include('dashboard.vehicles.partials.image-manager', ['supportsExistingGalleryDelete' => false])
+</x-app-layout>

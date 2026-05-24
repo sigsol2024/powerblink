@@ -549,6 +549,8 @@ class PageController extends Controller
                 'driveOption',
                 'countryOption',
                 'typeOption',
+                'variants.sizeOption',
+                'variants.colorOption',
             ])
             ->where('slug', $slug)
             ->when(! ($user && $user->hasRole('admin')), function ($query) use ($user) {
@@ -635,7 +637,9 @@ class PageController extends Controller
             : Str::limit(trim(($vehicle->title ?? '').' '.$makeLabel.' '.$modelLabel), 160);
 
         $cover = $vehicle->images->first();
-        $listingUrl = route('inventory.show', ['slug' => $vehicle->slug], true);
+        $listingUrl = request()->routeIs('product.show')
+            ? route('product.show', ['slug' => $vehicle->slug], true)
+            : route('inventory.show', ['slug' => $vehicle->slug], true);
         $ogImage = $cover ? url(VehicleImageUrl::url($cover->path)) : null;
 
         $isFavorited = $user && $user->favoriteVehicles()->whereKey($vehicle->id)->exists();
@@ -654,6 +658,7 @@ class PageController extends Controller
             'siteContact' => $siteContact,
             'similarVehicles' => $similarVehicles,
             'isFavorited' => $isFavorited,
+            'productVariants' => $vehicle->variants,
             'page' => $page,
             'sections' => $this->pageSections('listing-detail', [
                 'heading' => 'Vehicle Detail',

@@ -3,11 +3,16 @@
 use App\Http\Controllers\AdminAnalyticsController;
 use App\Http\Controllers\AdminListingOptionController;
 use App\Http\Controllers\AdminMediaController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\AdminSiteSettingsController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminVehicleController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderLookupController;
+use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FavoriteController;
@@ -22,6 +27,7 @@ use App\Http\Controllers\UserVehicleController;
 use App\Http\Controllers\VehicleInquiryController;
 use App\Http\Controllers\VendorSettingsController;
 use App\Models\AdminAuditTrail;
+use App\Models\Order;
 use App\Models\SiteTrafficEvent;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -62,11 +68,27 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->name('newsletter.subscribe');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 Route::get('/makes', [PageController::class, 'makesIndex'])->name('makes.index');
+Route::get('/shop', [PageController::class, 'inventory'])->name('shop.index');
+Route::get('/product/{slug}', [PageController::class, 'vehicleShow'])->name('product.show');
 Route::get('/inventory', [PageController::class, 'inventory'])->name('inventory.index');
 Route::post('/inventory/{slug}/inquiry', [VehicleInquiryController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('inventory.inquiry');
 Route::get('/inventory/{slug?}', [PageController::class, 'vehicleShow'])->name('inventory.show');
+
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/payment/paystack/callback', [CheckoutController::class, 'paystackCallback'])->name('payment.paystack.callback');
+Route::post('/payment/paystack/webhook', PaystackWebhookController::class)->name('payment.paystack.webhook');
+Route::get('/orders/lookup', [OrderLookupController::class, 'index'])->name('orders.lookup.index');
+Route::post('/orders/lookup', [OrderLookupController::class, 'lookup'])->middleware('throttle:10,1')->name('orders.lookup');
+Route::get('/order/confirmed/{order}', [CheckoutController::class, 'confirmed'])->name('order.confirmed');
+Route::get('/order/{order}', [CheckoutController::class, 'show'])->name('order.show');
 Route::get('/compare', [PageController::class, 'compare'])->name('compare');
 Route::post('/compare/add/{vehicle}', [CompareController::class, 'add'])->name('compare.add');
 Route::post('/compare/remove/{vehicle}', [CompareController::class, 'remove'])->name('compare.remove');
@@ -159,6 +181,8 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
                 'pending_listings' => Vehicle::query()->where('status', 'pending')->count(),
                 'approved_listings' => Vehicle::query()->where('status', 'approved')->count(),
                 'users_count' => User::query()->count(),
+                'orders_count' => Order::query()->count(),
+                'paid_orders_count' => Order::query()->where('status', 'paid')->count(),
             ],
             'analyticsSummary' => [
                 'range_days' => 90,
@@ -257,6 +281,10 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
     Route::post('/settings/mail-test', [AdminSiteSettingsController::class, 'sendTestMail'])
         ->middleware('throttle:10,1')
         ->name('admin.settings.mail-test');
+
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
+    Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.status');
 
     Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->name('admin.listing-options.index');
     Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->name('admin.listing-options.show');

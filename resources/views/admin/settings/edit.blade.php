@@ -1,12 +1,10 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div>
-      <p class="admin-page-eyebrow">{{ __('Admin') }}</p>
-      <h2 class="admin-page-title truncate">{{ __('Site settings') }}</h2>
-    </div>
-  </x-slot>
+  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">{{ __('Admin') }}</p>
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Site settings') }}</h2>
+  </header>
 
-  <div class="mx-auto max-w-5xl space-y-8">
+  <div class="mx-auto max-w-5xl space-y-8 px-margin-mobile md:px-gutter py-8 md:py-10">
     <p class="text-sm text-zinc-600">{{ __('Branding, login page background, footer, top bar, and contact/newsletter routing. Upload logos/favicons directly here, or paste media library paths if needed.') }}</p>
 
     @if (session('status'))
@@ -262,4 +260,5 @@
       wirePreview('auth_panel_image_file', 'auth-panel-preview-live');
     })();
   </script>
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

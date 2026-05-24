@@ -49,9 +49,9 @@
 @endpush
 
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="admin-page-title truncate">{{ __('Analytics') }}</h2>
-  </x-slot>
+  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Analytics') }}</h2>
+  </header>
 
   <div
     class="anx-canvas text-on-surface relative w-full min-h-0 antialiased"
@@ -308,4 +308,5 @@
     </section>
   </div>
 
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

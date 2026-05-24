@@ -3,12 +3,12 @@
 @endphp
 
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="admin-page-title truncate">{{ __('Media Library') }}</h2>
-  </x-slot>
+  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Media Library') }}</h2>
+  </header>
 
   <div
-    class="w-full space-y-6"
+    class="w-full space-y-6 px-margin-mobile md:px-gutter py-8 max-w-max-container mx-auto"
     x-data="{
       selected: [],
       allIds: @js($allItemIds),
@@ -179,6 +179,7 @@
       </div>
     </div>
   </div>
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>
 
 @push('body-end')

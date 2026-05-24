@@ -54,6 +54,7 @@
         },
       };
     </script>
+    @include('partials.luxe-public-theme')
     <link rel="stylesheet" href="{{ asset('asset/css/site.css') }}" />
     @if (!empty($site['favicon_path'] ?? ''))
       <link rel="icon" href="{{ \App\Support\VehicleImageUrl::url($site['favicon_path']) }}" />
@@ -61,7 +62,15 @@
     @stack('head')
   </head>
 
-  <body class="bg-page_bg font-body text-on_surface selection:bg-brand_blue/20 {{ $bodyClass ?? '' }}">
+  @php
+    $luxeStorefront = request()->routeIs([
+      'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
+      'cart.*', 'checkout.*', 'order.confirmed', 'order.show',
+    ]);
+    $luxeHome = request()->routeIs('home');
+    $luxeShopPage = request()->routeIs('shop.index', 'inventory.index');
+  @endphp
+  <body class="{{ $luxeStorefront ? 'bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store' : 'bg-page_bg font-body text-on_surface selection:bg-brand_blue/20' }} {{ $bodyClass ?? '' }}">
     <!-- Global Loading Screen: logo centered; only outer ring animates (no box behind logo) -->
     <div id="global-loader" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#1E2229] transition-opacity duration-700 ease-in-out">
       <div class="relative flex h-36 w-36 items-center justify-center">
@@ -95,12 +104,25 @@
       });
     </script>
 
-    @include('partials.header')
-    {{-- Header is sticky (dealer-style top strip + nav); no artificial pt-* needed — avoids hero/content hiding under a fixed bar --}}
-    <main id="main">
+    @if ($luxeStorefront)
+      @include('partials.luxe-store-header')
+    @else
+      @include('partials.header')
+    @endif
+    <main id="main" class="{{ $luxeStorefront ? 'pt-0' : '' }}">
       @yield('content')
     </main>
-    @include('partials.footer')
+    @if ($luxeHome)
+      @include('partials.luxe-home-footer', ['site' => $site ?? []])
+    @elseif ($luxeShopPage)
+      @include('partials.luxe-shop-footer', ['site' => $site ?? []])
+    @elseif ($luxeStorefront)
+      <footer class="luxe-store border-t border-outline-variant py-8 px-margin-mobile md:px-gutter text-center font-label-caps text-label-caps text-on-surface-variant">
+        <p>© {{ date('Y') }} {{ config('app.name') }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
+      </footer>
+    @else
+      @include('partials.footer')
+    @endif
     @include('partials.whatsapp-widget')
     <script src="{{ asset('asset/js/main.js') }}" defer></script>
     @stack('scripts')

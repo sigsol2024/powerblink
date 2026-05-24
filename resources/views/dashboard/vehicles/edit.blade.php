@@ -2,10 +2,20 @@
   $isAdminEdit = $isAdminEdit ?? false;
 @endphp
 <x-app-layout>
-    <x-slot name="header">
-    <h2 class="admin-page-title truncate">{{ $isAdminEdit ? __('Admin: Edit listing') : __('Edit Vehicle') }}</h2>
-  </x-slot>
+  @push('head')
+    @include('dashboard.vehicles.partials.luxe-form-styles')
+  @endpush
 
+  <div class="min-h-full flex flex-col">
+    <header class="sticky top-0 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-margin-mobile md:px-gutter py-6 border-b border-outline-variant bg-background/95 backdrop-blur-md shrink-0">
+      <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ $isAdminEdit ? __('Edit Product') : __('Edit listing') }}</h2>
+      <div class="flex items-center gap-3">
+        <a href="{{ route('dashboard.vehicles.index') }}" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">{{ __('Cancel') }}</a>
+        <button type="submit" form="luxe-product-edit-form" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 bg-primary text-on-primary hover:scale-105 transition-transform">{{ __('Save Product') }}</button>
+      </div>
+    </header>
+
+    <div class="max-w-[1000px] mx-auto py-10 md:py-16 px-margin-mobile md:px-gutter w-full flex-1 space-y-6">
 
   @if($vehicle->status === 'approved')
   <div class="admin-content-toolbar">
@@ -35,9 +45,9 @@
           </div>
         </div>
       @endif
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 text-gray-900">
-          <form method="post" action="{{ route('dashboard.vehicles.update', $vehicle) }}" class="space-y-4" enctype="multipart/form-data">
+      <div class="border border-outline-variant bg-surface-container-lowest">
+        <div class="p-6 text-on-background luxe-product-form">
+          <form id="luxe-product-edit-form" method="post" action="{{ route('dashboard.vehicles.update', $vehicle) }}" class="space-y-4" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -228,6 +238,9 @@
         </div>
       </div>
       @include('dashboard.vehicles.partials.image-manager', ['supportsExistingGalleryDelete' => true])
+      </div>
+    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
+    </div>
   </div>
 </x-app-layout>
 

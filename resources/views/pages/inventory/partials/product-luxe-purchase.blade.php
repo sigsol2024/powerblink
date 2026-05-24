@@ -1,0 +1,139 @@
+@php
+  $hasVariants = $productVariants->isNotEmpty();
+  $defaultSizes = collect(['XS', 'S', 'M', 'L', 'XL']);
+  $inStock = $vehicle->status === 'approved' && (! is_null($price) && $price > 0);
+@endphp
+
+<div class="mb-8">
+  <div class="flex items-center justify-between mb-2 gap-4">
+    <span class="font-label-caps text-label-caps text-custom-accent tracking-[0.3em] uppercase">
+      {{ $inStock ? __('In Stock') : __('Unavailable') }}
+    </span>
+    @if ($vehicle->vin)
+      <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('SKU') }}: {{ $vehicle->vin }}</span>
+    @endif
+  </div>
+  <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">{{ $vehicle->title }}</h1>
+  <p class="font-body-lg text-body-lg text-primary font-semibold">
+    @if (! is_null($price)){{ format_currency($price) }}@else {{ __('Price on request') }}@endif
+  </p>
+</div>
+
+@if ($overview)
+  <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-10">{{ \Illuminate\Support\Str::limit(strip_tags($overview), 320) }}</p>
+@endif
+
+@if (session('status'))
+  <p class="mb-4 text-sm text-custom-accent">{{ session('status') }}</p>
+@endif
+@if ($errors->any())
+  <ul class="mb-4 text-sm text-error list-disc pl-4">
+    @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+  </ul>
+@endif
+
+@if ($inStock)
+  <form id="add-to-cart-form" method="post" action="{{ route('cart.add') }}" class="space-y-6 mb-10">
+    @csrf
+    <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}" />
+
+    @if ($hasVariants)
+      <div class="border-t border-outline-variant pt-6">
+        <div class="flex justify-between items-center mb-4">
+          <span class="font-label-caps text-label-caps text-primary uppercase">{{ __('Select variant') }}</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          @foreach ($productVariants as $variant)
+            <label class="cursor-pointer">
+              <input type="radio" name="vehicle_variant_id" value="{{ $variant->id }}" class="peer sr-only" @checked($loop->first && (int) $variant->stock > 0) @disabled((int) $variant->stock <= 0) required />
+              <span class="w-14 h-12 inline-flex items-center justify-center border font-label-caps text-label-caps transition-all peer-checked:border-primary peer-checked:bg-primary peer-checked:text-on-primary border-outline-variant hover:border-primary peer-disabled:opacity-40">
+                {{ $variant->displayLabel() }}
+              </span>
+            </label>
+          @endforeach
+        </div>
+      </div>
+    @else
+      <div class="border-t border-outline-variant pt-6">
+        <div class="flex justify-between items-center mb-4">
+          <span class="font-label-caps text-label-caps text-primary uppercase">{{ __('Select Size') }}</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          @foreach ($defaultSizes as $i => $size)
+            <span class="w-14 h-12 flex items-center justify-center border {{ $i === 0 ? 'border-primary bg-primary text-on-primary' : 'border-outline-variant' }} font-label-caps text-label-caps opacity-60">{{ $size }}</span>
+          @endforeach
+        </div>
+      </div>
+      @if ($displayColors->isNotEmpty())
+        <div class="border-t border-outline-variant pt-6">
+          <span class="font-label-caps text-label-caps text-primary uppercase block mb-4">{{ __('Textile & Color') }}</span>
+          <div class="flex flex-wrap gap-4">
+            @foreach ($displayColors as $i => $color)
+              <div class="flex items-center gap-2 {{ $i > 0 ? 'opacity-50' : '' }}">
+                <div class="w-8 h-8 rounded-full bg-on-surface border border-outline-variant {{ $i === 0 ? 'ring-1 ring-offset-2 ring-primary' : '' }}"></div>
+                <span class="font-label-caps text-[10px] text-primary tracking-widest uppercase">{{ $color }}</span>
+              </div>
+            @endforeach
+          </div>
+        </div>
+      @endif
+    @endif
+
+    <div class="flex items-center gap-4">
+      <label class="font-label-caps text-label-caps text-primary uppercase" for="qty">{{ __('Qty') }}</label>
+      <input id="qty" name="qty" type="number" min="1" max="99" value="1" class="w-20 border-b border-outline-variant bg-transparent py-2 font-body-md focus:border-primary focus:outline-none" />
+    </div>
+
+    <button type="submit" class="w-full bg-primary text-on-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300">
+      {{ __('Add to Shopping Bag') }}
+    </button>
+  </form>
+  <div class="mt-4">
+    @auth
+      <form method="post" action="{{ route('favorites.toggle', ['vehicle' => $vehicle->id]) }}">
+        @csrf
+        <button type="submit" class="w-full border border-primary text-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:bg-primary hover:text-on-primary transition-all duration-300">
+          {{ $isFavorited ? __('Saved to wishlist') : __('Wishlist') }}
+        </button>
+      </form>
+    @else
+      <a href="{{ route('login') }}" class="block w-full text-center border border-primary text-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:bg-primary hover:text-on-primary transition-all duration-300">
+        {{ __('Wishlist') }}
+      </a>
+    @endauth
+  </div>
+@endif
+
+<div class="space-y-4">
+  <details class="group border-b border-outline-variant pb-4" open>
+    <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+      {{ __('Composition & Care') }}
+      <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+    </summary>
+    <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed whitespace-pre-line">
+      {{ $overview ?: __('Contact us for material and care details for this piece.') }}
+    </div>
+  </details>
+  <details class="group border-b border-outline-variant pb-4">
+    <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+      {{ __('Shipping & Returns') }}
+      <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+    </summary>
+    <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed">
+      {{ __('Complimentary shipping on qualifying orders. Returns accepted within 14 days of receipt where applicable.') }}
+    </div>
+  </details>
+  @if (($vehicle->features ?? []) !== [])
+    <details class="group border-b border-outline-variant pb-4">
+      <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+        {{ __('Features') }}
+        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+      </summary>
+      <ul class="pt-4 space-y-2 text-sm text-on-surface-variant">
+        @foreach ($vehicle->features as $feature)
+          <li class="flex gap-2"><span class="text-custom-accent">•</span> {{ $feature }}</li>
+        @endforeach
+      </ul>
+    </details>
+  @endif
+</div>

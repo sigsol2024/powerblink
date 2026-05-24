@@ -1,15 +1,14 @@
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="admin-page-title">{{ __('Audit trail') }}</h2>
-  </x-slot>
+  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Audit trail') }}</h2>
+  </header>
 
-
-  <div class="admin-content-toolbar">
+  <div class="admin-content-toolbar px-margin-mobile md:px-gutter max-w-max-container mx-auto w-full">
     <div class="admin-content-toolbar__actions">
       <a href="{{ route('admin.dashboard') }}" class="admin-btn">{{ __('Back to overview') }}</a>
     </div>
   </div>
-  <div class="w-full space-y-6" x-data="{ openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }">
+  <div class="w-full space-y-6 px-margin-mobile md:px-gutter py-8 max-w-max-container mx-auto" x-data="{ openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }">
     <div class="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm ring-1 ring-black/[0.02] sm:p-5">
       <form method="get" action="{{ route('admin.audit.index') }}" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
         <input type="search" name="q" value="{{ $search }}" class="rounded border-zinc-300 sm:col-span-2" placeholder="Path, route, IP..." />
@@ -95,4 +94,5 @@
       </div>
     </div>
   </div>
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

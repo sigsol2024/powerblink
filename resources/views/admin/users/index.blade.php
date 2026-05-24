@@ -1,12 +1,11 @@
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="admin-page-title">{{ __('Users & dealers') }}</h2>
-  </x-slot>
+  <header class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Customers') }}</h2>
+  </header>
 
-
-  <div class="admin-content-toolbar">
+  <div class="admin-content-toolbar px-margin-mobile md:px-gutter max-w-max-container mx-auto w-full">
     <div class="admin-content-toolbar__actions">
-      <button type="button" class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800" @click="$dispatch('open-invite-modal')">
+      <button type="button" class="admin-luxe-btn-primary" @click="$dispatch('open-invite-modal')">
         {{ __('Invite or create account') }}
       </button>
     </div>
@@ -172,4 +171,5 @@
       </div>
     </div>
   </div>
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

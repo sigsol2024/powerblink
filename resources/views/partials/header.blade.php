@@ -14,14 +14,15 @@
   $socialInstagram = trim((string) ($site['social_instagram'] ?? ''));
   $socialLinkedin = trim((string) ($site['social_linkedin'] ?? ''));
   $socialYoutube = trim((string) ($site['social_youtube'] ?? ''));
-  $compareCount = \App\Support\Compare::count();
+  $cartCount = \App\Support\Cart::count();
   $isHome = request()->routeIs('home') || request()->routeIs('faq') || request()->routeIs('about');
-  $inventoryUrl = route('inventory.index');
+  $shopUrl = route('shop.index');
+  $inventoryUrl = $shopUrl;
   $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
   $foreignTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Foreign');
-  $inventoryNigeriaUrl = $nigerianTypeId ? route('inventory.index', ['type_listing_option_id' => $nigerianTypeId]) : $inventoryUrl;
-  $inventoryForeignUrl = $foreignTypeId ? route('inventory.index', ['type_listing_option_id' => $foreignTypeId]) : $inventoryUrl;
-  $inventoryActive = request()->routeIs('inventory.index') || request()->routeIs('makes.index');
+  $inventoryNigeriaUrl = $nigerianTypeId ? route('shop.index', ['type_listing_option_id' => $nigerianTypeId]) : $shopUrl;
+  $inventoryForeignUrl = $foreignTypeId ? route('shop.index', ['type_listing_option_id' => $foreignTypeId]) : $shopUrl;
+  $inventoryActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show') || request()->routeIs('makes.index');
   $currentTypeId = (int) request('type_listing_option_id', 0);
   $nigeriaActive = $inventoryActive && $nigerianTypeId && $currentTypeId === $nigerianTypeId;
   $foreignActive = $inventoryActive && $foreignTypeId && $currentTypeId === $foreignTypeId;
@@ -131,7 +132,7 @@
         {{-- Inventory mega dropdown (Nigerian / Foreign live under here) --}}
         <div class="pointer-events-auto relative flex items-end" data-header-inventory-dropdown>
           <a href="{{ $inventoryUrl }}" data-header-inventory-trigger data-header-nav-link class="inline-flex items-center gap-0.5 border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ $inventoryActive ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}" aria-expanded="false" aria-haspopup="true">
-            <span>{{ __('Inventory') }}</span>
+            <span>{{ __('Shop') }}</span>
             <span class="material-symbols-outlined text-[18px] leading-none text-inherit" aria-hidden="true">expand_more</span>
           </a>
           <div class="absolute left-1/2 top-full z-[60] hidden w-max -translate-x-1/2 pt-2" data-header-inventory-panel role="region" aria-label="{{ __('Inventory categories') }}">
@@ -232,12 +233,13 @@
 
       <div class="relative z-20 flex shrink-0 items-center justify-end gap-2 sm:gap-4">
         {{-- Compare + My account: desktop xl+ only (mobile finds them inside the sidebar after nav links). --}}
-        @if ($navOn('compare'))
-        <a href="{{ route('compare') }}" class="group hidden items-center gap-2 xl:inline-flex" title="{{ __('Compare vehicles') }}">
-          <span data-header-action-text class="hidden text-[11px] font-extrabold uppercase tracking-[0.06em] text-white transition-colors group-hover:text-[#1280DF] xl:inline">{{ __('Compare') }}</span>
+        <a href="{{ route('cart.index') }}" class="group hidden items-center gap-2 xl:inline-flex" title="{{ __('Shopping bag') }}">
+          <span data-header-action-text class="hidden text-[11px] font-extrabold uppercase tracking-[0.06em] text-white transition-colors group-hover:text-[#1280DF] xl:inline">{{ __('Bag') }}</span>
           <span class="relative ml-0 inline-flex">
-            <span data-header-icon class="material-symbols-outlined text-[24px] text-white transition-colors group-hover:text-[#1280DF] xl:text-[24px]">speed</span>
-            <span class="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1280DF] px-1 text-[10px] font-extrabold text-white">{{ $compareCount }}</span>
+            <span data-header-icon class="material-symbols-outlined text-[24px] text-white transition-colors group-hover:text-[#1280DF] xl:text-[24px]">shopping_bag</span>
+            @if ($cartCount > 0)
+              <span class="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1280DF] px-1 text-[10px] font-extrabold text-white">{{ $cartCount }}</span>
+            @endif
           </span>
         </a>
 
@@ -268,15 +270,16 @@
   </div>
   <nav class="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden px-4 py-4 text-zinc-800" aria-label="{{ __('Mobile') }}">
     <div class="shrink-0 border-b border-slate-200 pb-4">
-      <a href="{{ route('compare') }}" class="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-black uppercase tracking-[0.06em] text-zinc-900 transition hover:border-slate-300 hover:bg-slate-100">
+      <a href="{{ route('cart.index') }}" class="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-black uppercase tracking-[0.06em] text-zinc-900 transition hover:border-slate-300 hover:bg-slate-100">
         <span class="inline-flex items-center gap-2">
-          <span class="material-symbols-outlined text-[22px] text-[#1280DF]">speed</span>
-          {{ __('Compare') }}
+          <span class="material-symbols-outlined text-[22px] text-[#1280DF]">shopping_bag</span>
+          {{ __('Bag') }}
         </span>
-        <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1280DF] px-2 text-xs font-extrabold text-white">{{ $compareCount }}</span>
+        @if ($cartCount > 0)
+          <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1280DF] px-2 text-xs font-extrabold text-white">{{ $cartCount }}</span>
+        @endif
       </a>
     </div>
-    @endif
 
     @if ($navOn('home'))
     <a href="{{ route('home') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('Home') }}</a>
@@ -284,7 +287,7 @@
     @if ($navOn('inventory'))
     <div class="shrink-0 rounded-sm border border-slate-200 bg-slate-50/80">
       <button type="button" class="flex w-full items-center justify-between px-3 py-3.5 text-left text-sm font-bold uppercase tracking-[0.06em] text-zinc-900 transition hover:bg-slate-100" data-mobile-inventory-toggle aria-expanded="false" aria-controls="mobile-inventory-subnav">
-        <span>{{ __('Inventory') }}</span>
+        <span>{{ __('Shop') }}</span>
         <span class="material-symbols-outlined text-[22px] text-zinc-500 transition-transform duration-200" data-mobile-inventory-chevron aria-hidden="true">expand_more</span>
       </button>
       <div id="mobile-inventory-subnav" class="hidden max-h-[min(78dvh,36rem)] overflow-y-auto overscroll-y-contain border-t border-slate-200 bg-white" data-mobile-inventory-panel>

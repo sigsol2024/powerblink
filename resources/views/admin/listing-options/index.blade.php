@@ -1,12 +1,10 @@
 <x-app-layout>
-    <x-slot name="header">
-    <div>
-      <p class="admin-page-eyebrow">{{ __('Catalog') }}</p>
-      <h2 class="admin-page-title truncate">{{ __('Listing options') }}</h2>
-    </div>
-  </x-slot>
+  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">{{ __('Catalog') }}</p>
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Listing options') }}</h2>
+  </header>
 
-  <div class="space-y-6">
+  <div class="space-y-6 px-margin-mobile md:px-gutter py-8 max-w-max-container mx-auto">
     <div class="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02] sm:p-8">
       <h2 class="text-base font-semibold text-zinc-900">{{ __('Controlled values') }}</h2>
       <p class="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-600">
@@ -49,4 +47,5 @@
       @endif
     </div>
   </div>
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

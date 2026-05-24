@@ -97,6 +97,16 @@ class Vehicle extends Model
         return $this->hasMany(VehicleImage::class)->orderBy('sort_order');
     }
 
+    public function variants(): HasMany
+    {
+        return $this->hasMany(VehicleVariant::class)->where('is_active', true)->orderBy('id');
+    }
+
+    public function allVariants(): HasMany
+    {
+        return $this->hasMany(VehicleVariant::class)->orderBy('id');
+    }
+
     public function inquiries(): HasMany
     {
         return $this->hasMany(VehicleInquiry::class);

@@ -1,190 +1,135 @@
 <x-app-layout>
-    <x-slot name="header">
-    <div>
-      <p class="admin-page-eyebrow">{{ __('Admin') }}</p>
-      <h2 class="admin-page-title truncate">{{ __('Overview') }}</h2>
-    </div>
-  </x-slot>
+  @php
+    $traffic = $analyticsSummary ?? [];
+    $audit = $auditSummary ?? [];
+    $totalOrders = (int) ($stats['orders_count'] ?? 0);
+    $paidOrders = (int) ($stats['paid_orders_count'] ?? 0);
+    $activeProducts = (int) ($stats['approved_listings'] ?? 0);
+    $ordersPct = $totalOrders > 0 ? min(100, (int) round(($paidOrders / $totalOrders) * 100)) : 0;
+    $productsPct = ($stats['total_listings'] ?? 0) > 0 ? min(100, (int) round(($activeProducts / max(1, $stats['total_listings'])) * 100)) : 0;
+  @endphp
 
-  <div class="space-y-10">
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-      <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02] transition hover:shadow-md">
-        <div class="flex items-start justify-between gap-3">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Total listings') }}</span>
-          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 012.25-2.25h9.75A2.25 2.25 0 0120.25 6v.878m-15.75 1.5h15m-15 0a2.25 2.25 0 00-2.25 2.25v9.75A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25v-9.75a2.25 2.25 0 00-2.25-2.25h-15z"/></svg>
-          </span>
-        </div>
-        <p class="mt-4 text-4xl font-bold tabular-nums tracking-tight text-zinc-900">{{ $stats['total_listings'] ?? 0 }}</p>
-      </div>
-      <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02] transition hover:shadow-md">
-        <div class="flex items-start justify-between gap-3">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Pending review') }}</span>
-          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </span>
-        </div>
-        <p class="mt-4 text-4xl font-bold tabular-nums tracking-tight text-zinc-900">{{ $stats['pending_listings'] ?? 0 }}</p>
-      </div>
-      <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02] transition hover:shadow-md">
-        <div class="flex items-start justify-between gap-3">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Approved live') }}</span>
-          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </span>
-        </div>
-        <p class="mt-4 text-4xl font-bold tabular-nums tracking-tight text-zinc-900">{{ $stats['approved_listings'] ?? 0 }}</p>
-      </div>
-      <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02] transition hover:shadow-md">
-        <div class="flex items-start justify-between gap-3">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Users') }}</span>
-          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
-          </span>
-        </div>
-        <p class="mt-4 text-4xl font-bold tabular-nums tracking-tight text-zinc-900">{{ $stats['users_count'] ?? 0 }}</p>
-      </div>
+  <header class="flex justify-between items-center px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant sticky top-0 bg-background/95 backdrop-blur-md z-40 shrink-0">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter">{{ __('Dashboard Overview') }}</h2>
+    <div class="flex items-center gap-4 md:gap-6">
+      <button type="button" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="{{ __('Notifications') }}">notifications</button>
+      <span class="font-label-caps text-label-caps tracking-widest text-on-surface-variant hidden sm:inline">{{ now()->format('M j, Y') }}</span>
     </div>
+  </header>
 
-    <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02]">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 class="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500">{{ __('Traffic summary') }}</h2>
-        <a href="{{ route('admin.analytics.index') }}" class="inline-flex items-center rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-50">{{ __('Open analytics') }}</a>
+  <div class="px-margin-mobile md:px-gutter py-8 md:py-0 md:pb-gutter max-w-max-container mx-auto w-full">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+        <div>
+          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Total Orders') }}</span>
+          <div class="flex items-baseline gap-3 mt-4">
+            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format($totalOrders) }}</h3>
+            <span class="text-secondary font-body-md text-sm font-medium">{{ number_format($paidOrders) }} {{ __('paid') }}</span>
+          </div>
+        </div>
+        <div class="mt-8 h-1 bg-surface-container">
+          <div class="h-full bg-primary" style="width: {{ $ordersPct }}%"></div>
+        </div>
       </div>
-      @php $traffic = $analyticsSummary ?? []; @endphp
-      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Views (:days days)', ['days' => $traffic['range_days'] ?? 90]) }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($traffic['total_views'] ?? 0)) }}</div>
+
+      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+        <div>
+          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Active Products') }}</span>
+          <div class="flex items-baseline gap-3 mt-4">
+            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format($activeProducts) }}</h3>
+            <span class="text-on-surface-variant font-body-md text-sm">{{ __('live') }}</span>
+          </div>
         </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Unique sessions') }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($traffic['unique_sessions'] ?? 0)) }}</div>
+        <div class="mt-8 h-1 bg-surface-container">
+          <div class="h-full bg-primary" style="width: {{ $productsPct }}%"></div>
         </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Top page') }}</div>
-          <div class="mt-1 truncate text-sm font-semibold text-zinc-800">{{ $traffic['top_page_label'] ?? __('No data yet') }}</div>
+      </div>
+
+      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+        <div>
+          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Pending Review') }}</span>
+          <div class="flex items-baseline gap-3 mt-4">
+            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format((int) ($stats['pending_listings'] ?? 0)) }}</h3>
+            <span class="text-on-surface-variant font-body-md text-sm">{{ __('products') }}</span>
+          </div>
         </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Top listing') }}</div>
-          <div class="mt-1 truncate text-sm font-semibold text-zinc-800">{{ $traffic['top_listing']->vehicle_slug ?? __('No data yet') }}</div>
+        <div class="mt-8 h-1 bg-surface-container">
+          <div class="h-full" style="width: {{ ($stats['total_listings'] ?? 0) > 0 ? min(100, (int) round((($stats['pending_listings'] ?? 0) / max(1, $stats['total_listings'])) * 100)) : 0 }}%; background-color: #C19A6B;"></div>
         </div>
       </div>
     </div>
 
-    <div>
-      <h2 class="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500">{{ __('Shortcuts') }}</h2>
-      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <a href="{{ route('dashboard.vehicles.index') }}" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-amber-300/80 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Inventory') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('All vehicle listings') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-amber-600 group-hover:text-amber-700">{{ __('Open →') }}</span>
-        </a>
-        <a href="{{ route('admin.users.index') }}" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-violet-300/80 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Accounts') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('Users & dealers') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-violet-600 group-hover:text-violet-700">{{ __('Open →') }}</span>
-        </a>
-        <a href="{{ route('admin.pages.index') }}" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-sky-300/80 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Content') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('Page editors') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-sky-600 group-hover:text-sky-700">{{ __('Open →') }}</span>
-        </a>
-        <a href="{{ route('admin.audit.index') }}" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-indigo-300/80 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Governance') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('Audit trail log') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:text-indigo-700">{{ __('Open →') }}</span>
-        </a>
-        <a href="{{ route('admin.media.index') }}" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-zinc-400 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Assets') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('Media library') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-zinc-600 group-hover:text-zinc-800">{{ __('Open →') }}</span>
-        </a>
-        <a href="{{ route('inventory.index') }}" target="_blank" rel="noopener" class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm ring-1 ring-black/[0.03] transition hover:border-emerald-300/80 hover:shadow-lg">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Public') }}</span>
-          <span class="mt-2 block text-lg font-bold text-zinc-900">{{ __('Live inventory') }}</span>
-          <span class="mt-4 inline-flex items-center text-sm font-semibold text-emerald-600 group-hover:text-emerald-700">{{ __('Open site →') }}</span>
-        </a>
-      </div>
-    </div>
-
-    <div class="rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm ring-1 ring-black/[0.02]" x-data="{ openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 class="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500">{{ __('Audit trail') }}</h2>
-        @php $audit = $auditSummary ?? []; @endphp
-        <div class="flex items-center gap-3">
-          <span class="text-xs font-semibold text-zinc-500">{{ __('Last :days days', ['days' => $audit['range_days'] ?? 30]) }}</span>
-          <a href="{{ route('admin.audit.index') }}" class="inline-flex items-center rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-50">{{ __('Open full log') }}</a>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant">
+        <div class="p-8 border-b border-outline-variant flex justify-between items-center">
+          <h4 class="font-headline-md text-headline-md">{{ __('Recent Admin Activity') }}</h4>
+          <a href="{{ route('admin.audit.index') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors flex items-center">
+            {{ __('VIEW ALL') }}
+            <span class="material-symbols-outlined ml-2 text-sm">arrow_forward</span>
+          </a>
         </div>
-      </div>
-      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Total actions') }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($audit['total_actions'] ?? 0)) }}</div>
-        </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Create (POST)') }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($audit['create_actions'] ?? 0)) }}</div>
-        </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Update (PUT/PATCH)') }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($audit['update_actions'] ?? 0)) }}</div>
-        </div>
-        <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{{ __('Delete (DELETE)') }}</div>
-          <div class="mt-1 text-2xl font-bold tracking-tight text-zinc-900">{{ number_format((int) ($audit['delete_actions'] ?? 0)) }}</div>
-        </div>
-      </div>
-      <div class="hidden lg:block mt-4 overflow-hidden rounded-xl border border-zinc-200">
-        <table class="min-w-full divide-y divide-zinc-200 text-sm">
-          <thead class="bg-zinc-50 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">
-            <tr>
-              <th class="px-3 py-2">{{ __('When') }}</th>
-              <th class="px-3 py-2">{{ __('Admin') }}</th>
-              <th class="px-3 py-2">{{ __('Method') }}</th>
-              <th class="px-3 py-2">{{ __('Route') }}</th>
-              <th class="px-3 py-2">{{ __('Path') }}</th>
-              <th class="px-3 py-2">{{ __('Status') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-100 bg-white">
-            @forelse (($audit['recent'] ?? []) as $entry)
-              <tr>
-                <td class="px-3 py-2 text-zinc-700">{{ optional($entry->created_at)->format('M j, Y g:i a') }}</td>
-                <td class="px-3 py-2 text-zinc-700">{{ $entry->user?->name ?? __('Unknown') }}</td>
-                <td class="px-3 py-2"><span class="inline-flex rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-700">{{ $entry->method }}</span></td>
-                <td class="px-3 py-2 text-zinc-600">{{ $entry->route_name ?? '—' }}</td>
-                <td class="max-w-xs truncate px-3 py-2 text-zinc-600" title="{{ $entry->path }}">{{ $entry->path }}</td>
-                <td class="px-3 py-2 text-zinc-700">{{ $entry->status_code ?? '—' }}</td>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-low">
+                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('WHEN') }}</th>
+                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('ADMIN') }}</th>
+                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('METHOD') }}</th>
+                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('PATH') }}</th>
+                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant text-right">{{ __('STATUS') }}</th>
               </tr>
-            @empty
-              <tr>
-                <td colspan="6" class="px-3 py-4 text-center text-zinc-500">{{ __('No audit actions yet.') }}</td>
-              </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-      <div class="lg:hidden mt-4 space-y-3">
-        @forelse (($audit['recent'] ?? []) as $entry)
-          <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
-            <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $entry->id }})" :aria-expanded="openId === {{ $entry->id }} ? 'true' : 'false'">
-              <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ $entry->path }}</span>
-              <span class="inline-flex shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-700">{{ $entry->method }}</span>
-              <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $entry->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div x-show="openId === {{ $entry->id }}" x-cloak class="border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm text-zinc-700">
-              <p><span class="font-medium text-zinc-500">{{ __('When') }}:</span> {{ optional($entry->created_at)->format('M j, Y g:i a') }}</p>
-              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Admin') }}:</span> {{ $entry->user?->name ?? __('Unknown') }}</p>
-              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Route') }}:</span> {{ $entry->route_name ?? '—' }}</p>
-              <p class="mt-1"><span class="font-medium text-zinc-500">{{ __('Status') }}:</span> {{ $entry->status_code ?? '—' }}</p>
-            </div>
-          </article>
-        @empty
-          <p class="py-4 text-center text-sm text-zinc-500">{{ __('No audit actions yet.') }}</p>
-        @endforelse
+            </thead>
+            <tbody class="font-body-md text-body-md">
+              @forelse (($audit['recent'] ?? []) as $entry)
+                <tr class="hover:bg-surface-container transition-colors">
+                  <td class="px-8 py-6 border-b border-outline-variant text-on-surface-variant">{{ optional($entry->created_at)->format('M j, Y') }}</td>
+                  <td class="px-8 py-6 border-b border-outline-variant">{{ $entry->user?->name ?? __('Unknown') }}</td>
+                  <td class="px-8 py-6 border-b border-outline-variant">
+                    <span class="inline-block px-2 py-1 bg-surface-container text-[10px] font-bold tracking-widest uppercase">{{ $entry->method }}</span>
+                  </td>
+                  <td class="px-8 py-6 border-b border-outline-variant max-w-xs truncate" title="{{ $entry->path }}">{{ $entry->path }}</td>
+                  <td class="px-8 py-6 border-b border-outline-variant text-right font-medium">{{ $entry->status_code ?? '—' }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="5" class="px-8 py-12 text-center text-on-surface-variant">{{ __('No audit actions yet.') }}</td>
+                </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
       </div>
 
+      <div class="bg-surface-container-lowest border border-outline-variant p-8">
+        <div class="flex justify-between items-start mb-10">
+          <div>
+            <h4 class="font-headline-md text-headline-md leading-tight">{{ __('Site Traffic') }}</h4>
+            <p class="font-label-caps text-[10px] text-on-surface-variant mt-1">{{ __('LAST :days DAYS', ['days' => $traffic['range_days'] ?? 90]) }}</p>
+          </div>
+          <a href="{{ route('admin.analytics.index') }}" class="material-symbols-outlined text-on-surface-variant hover:text-primary">arrow_forward</a>
+        </div>
+        <div class="space-y-6">
+          <div>
+            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Total views') }}</p>
+            <p class="font-headline-md text-primary mt-1">{{ number_format((int) ($traffic['total_views'] ?? 0)) }}</p>
+          </div>
+          <div>
+            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Unique sessions') }}</p>
+            <p class="font-headline-md text-primary mt-1">{{ number_format((int) ($traffic['unique_sessions'] ?? 0)) }}</p>
+          </div>
+          <div class="pt-8 border-t border-outline-variant">
+            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Top page') }}</p>
+            <p class="font-body-md text-sm mt-1">{{ $traffic['top_page_label'] ?? __('No data yet') }}</p>
+          </div>
+        </div>
+        <div class="mt-10 grid grid-cols-1 gap-3">
+          <a href="{{ route('admin.orders.index') }}" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('Manage orders') }}</a>
+          <a href="{{ route('dashboard.vehicles.index') }}" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('Product management') }}</a>
+          <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('View shop') }}</a>
+        </div>
+      </div>
     </div>
+
+    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-16 border-t-0 opacity-60'])
   </div>
 </x-app-layout>
