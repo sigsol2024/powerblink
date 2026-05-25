@@ -124,7 +124,7 @@
                     @if($vT)
                     <div class="flex items-start gap-6 group">
                         <div class="mt-1 flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-slate-900">
-                            <span class="material-symbols-outlined font-bold">check</span>
+                            <x-icon name="check" class="w-5 h-5" />
                         </div>
                         <div>
                             <h3 class="text-xl font-bold font-headline mb-2 uppercase tracking-wide">{{ $vT }}</h3>
@@ -186,11 +186,11 @@
 
       <div class="flex items-center justify-center mt-12 gap-8">
         <button type="button" class="motors-gallery-chevron" data-carousel-prev aria-label="{{ __('Previous') }}">
-          <span class="material-symbols-outlined text-3xl">chevron_left</span>
+          <x-icon name="chevron-left" class="w-7 h-7" />
         </button>
         <div class="motors-gallery-dots flex items-center gap-3" data-carousel-dots></div>
         <button type="button" class="motors-gallery-chevron" data-carousel-next aria-label="{{ __('Next') }}">
-          <span class="material-symbols-outlined text-3xl">chevron_right</span>
+          <x-icon name="chevron-right" class="w-7 h-7" />
         </button>
       </div>
     </div>

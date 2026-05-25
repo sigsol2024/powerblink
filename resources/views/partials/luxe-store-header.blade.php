@@ -5,6 +5,16 @@
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
 @endphp
+@push('head')
+<style>
+  .luxe-cart-pulse { animation: luxe-cart-pulse 600ms ease-out; }
+  @keyframes luxe-cart-pulse {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+</style>
+@endpush
 <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter py-4 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store">
   <div class="flex items-center gap-4 md:gap-8 min-w-0">
     <a href="{{ route('home') }}" class="font-display-lg text-[22px] sm:text-display-lg-mobile md:text-display-lg text-primary uppercase tracking-tighter truncate">
@@ -17,17 +27,25 @@
     </nav>
   </div>
   <div class="flex items-center gap-4 md:gap-6 shrink-0">
-    <a href="{{ route('shop.index') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform hidden sm:inline" aria-label="{{ __('Search') }}">search</a>
-    <button type="button" class="material-symbols-outlined text-primary hover:scale-110 transition-transform relative {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}" data-cart-toggle>
-      shopping_bag
+    <a href="{{ route('shop.index') }}" class="text-primary hover:scale-110 transition-transform hidden sm:inline-flex items-center justify-center" aria-label="{{ __('Search') }}">
+      <x-icon name="search" class="w-5 h-5" />
+    </a>
+    <button type="button" class="text-primary hover:scale-110 transition-transform relative inline-flex items-center justify-center {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}" data-cart-toggle>
+      <x-icon name="shopping-bag" class="w-6 h-6" />
       <span class="luxe-cart-badge absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}" data-cart-count-badge>{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
     </button>
     @auth
-      <a href="{{ route('dashboard') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform hidden md:inline" aria-label="{{ __('Account') }}">person</a>
+      <a href="{{ route('dashboard') }}" class="text-primary hover:scale-110 transition-transform hidden md:inline-flex items-center justify-center" aria-label="{{ __('Account') }}">
+        <x-icon name="user" class="w-5 h-5" />
+      </a>
     @else
-      <a href="{{ route('login') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform hidden md:inline" aria-label="{{ __('Sign in') }}">person</a>
+      <a href="{{ route('login') }}" class="text-primary hover:scale-110 transition-transform hidden md:inline-flex items-center justify-center" aria-label="{{ __('Sign in') }}">
+        <x-icon name="user" class="w-5 h-5" />
+      </a>
     @endauth
-    <button type="button" class="material-symbols-outlined text-primary md:hidden" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav">menu</button>
+    <button type="button" class="text-primary md:hidden inline-flex items-center justify-center" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav" aria-label="{{ __('Menu') }}">
+      <x-icon name="menu" class="w-6 h-6" />
+    </button>
   </div>
 </header>
 <nav id="luxe-mobile-nav" class="luxe-store fixed top-[65px] inset-x-0 z-40 bg-background border-b border-outline-variant px-margin-mobile py-4 flex flex-col gap-3 md:hidden hidden" data-luxe-mobile-nav>
@@ -47,7 +65,9 @@
   <aside class="absolute top-0 right-0 h-full w-full sm:max-w-md bg-background shadow-2xl flex flex-col" role="dialog" aria-label="{{ __('Shopping bag') }}">
     <header class="flex items-center justify-between px-5 py-5 border-b border-outline-variant">
       <h2 class="font-headline-md text-headline-md uppercase tracking-widest text-primary">{{ __('Shopping bag') }}</h2>
-      <button type="button" class="material-symbols-outlined text-primary" aria-label="{{ __('Close') }}" data-cart-close>close</button>
+      <button type="button" class="text-primary inline-flex items-center justify-center" aria-label="{{ __('Close') }}" data-cart-close>
+        <x-icon name="close" class="w-6 h-6" />
+      </button>
     </header>
 
     <div class="flex-1 overflow-y-auto px-5 py-4" data-cart-lines>
@@ -82,6 +102,7 @@
     'empty'      => __('Your bag is empty.'),
     'qty'        => __('Qty'),
     'remove'     => __('Remove'),
+    'added'      => __('Added').' ✓',
     'errorAdd'   => __('Could not add to bag.'),
     'errorOther' => __('Could not update bag.'),
   ],
@@ -222,17 +243,34 @@
       if (e.key === 'Escape') closeDrawer();
     });
 
+    function flashAdded() {
+      // Quick pulse on the bag icon so the user sees something happened without taking over the page.
+      var btn = qs('[data-cart-toggle]');
+      if (!btn) return;
+      btn.classList.add('luxe-cart-pulse');
+      setTimeout(function () { btn.classList.remove('luxe-cart-pulse'); }, 700);
+    }
+
     document.addEventListener('submit', function (e) {
       var form = e.target.closest('[data-cart-add-form]');
       if (!form) return;
       e.preventDefault();
       var submit = form.querySelector('[type="submit"]');
-      if (submit) { submit.disabled = true; submit.classList.add('opacity-60'); }
+      var originalLabel = submit ? submit.innerHTML : '';
+      if (submit) {
+        submit.disabled = true;
+        submit.classList.add('opacity-60');
+      }
       var fd = new FormData(form);
       postForm(form.action, fd)
         .then(function (state) {
           applyState(state);
-          openDrawer();
+          flashAdded();
+          // Briefly confirm the action inline on the button itself rather than opening the drawer.
+          if (submit) {
+            submit.innerHTML = I18N.added || originalLabel;
+            setTimeout(function () { submit.innerHTML = originalLabel; }, 1400);
+          }
         })
         .catch(function (err) {
           alert((err && err.message) || I18N.errorAdd);

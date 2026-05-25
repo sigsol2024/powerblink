@@ -105,7 +105,7 @@
           @csrf
           <div class="flex">
             <input name="email" value="{{ old('email') }}" class="bg-white text-slate-900 border-none px-4 py-3 text-[13px] w-full rounded-l-sm" placeholder="{{ __('Enter your email...') }}" type="email" autocomplete="email" required />
-            <button type="submit" class="bg-brand_orange text-white px-4 flex items-center justify-center rounded-r-sm shrink-0" aria-label="{{ __('Subscribe') }}"><span class="material-symbols-outlined">send</span></button>
+            <button type="submit" class="bg-brand_orange text-white px-4 flex items-center justify-center rounded-r-sm shrink-0" aria-label="{{ __('Subscribe') }}"><x-icon name="paper-plane" class="w-5 h-5" /></button>
           </div>
           @if ($newsletterNote !== '')
             <p class="text-[11px] text-slate-500">{{ $newsletterNote }}</p>

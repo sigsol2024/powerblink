@@ -125,7 +125,7 @@
     <details class="group border-t border-outline-variant pt-6">
       <summary class="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps text-primary uppercase tracking-widest">
         {{ __('Refine') }}
-        <span class="material-symbols-outlined text-sm group-open:rotate-180 transition-transform">expand_more</span>
+        <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
       </summary>
       <div class="mt-6 space-y-4 font-body-md">
         <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Search collection...') }}" class="shop-luxe-field w-full border-b border-outline-variant bg-transparent py-2 font-label-caps text-[11px] focus:border-primary focus:outline-none" />

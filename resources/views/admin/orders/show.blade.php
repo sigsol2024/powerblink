@@ -1,11 +1,11 @@
 <x-app-layout>
-  <header class="flex flex-wrap items-center justify-between gap-4 px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant bg-background/95 backdrop-blur-md sticky top-0 z-40">
+  <header class="flex flex-wrap items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40">
     <div class="min-w-0">
-      <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Order details') }}</p>
-      <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight truncate">#{{ $order->order_number }}</h2>
+      <p class="text-xs text-wp-text-muted">{{ __('Order details') }}</p>
+      <h2 class="text-lg font-semibold text-wp-text truncate">#{{ $order->order_number }}</h2>
     </div>
-    <a href="{{ route('admin.orders.index') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary flex items-center gap-2 shrink-0">
-      <span class="material-symbols-outlined text-sm">arrow_back</span>
+    <a href="{{ route('admin.orders.index') }}" class="text-sm text-wp-link hover:text-wp-link-hover flex items-center gap-1.5 shrink-0">
+      <x-icon name="arrow-left" class="w-4 h-4" />
       {{ __('All orders') }}
     </a>
   </header>

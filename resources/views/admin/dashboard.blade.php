@@ -9,11 +9,13 @@
     $productsPct = ($stats['total_listings'] ?? 0) > 0 ? min(100, (int) round(($activeProducts / max(1, $stats['total_listings'])) * 100)) : 0;
   @endphp
 
-  <header class="flex justify-between items-center px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant sticky top-0 bg-background/95 backdrop-blur-md z-40 shrink-0">
-    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter">{{ __('Dashboard Overview') }}</h2>
-    <div class="flex items-center gap-4 md:gap-6">
-      <button type="button" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="{{ __('Notifications') }}">notifications</button>
-      <span class="font-label-caps text-label-caps tracking-widest text-on-surface-variant hidden sm:inline">{{ now()->format('M j, Y') }}</span>
+  <header class="flex justify-between items-center px-4 md:px-6 py-3 border-b border-wp-border sticky top-0 bg-white z-40 shrink-0">
+    <h2 class="text-lg font-semibold text-wp-text">{{ __('Dashboard') }}</h2>
+    <div class="flex items-center gap-4">
+      <button type="button" class="text-wp-text-muted hover:text-wp-link transition-colors inline-flex items-center" aria-label="{{ __('Notifications') }}">
+        <x-icon name="bell" class="w-5 h-5" />
+      </button>
+      <span class="text-xs text-wp-text-muted hidden sm:inline">{{ now()->format('M j, Y') }}</span>
     </div>
   </header>
 
@@ -63,9 +65,9 @@
       <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant">
         <div class="p-8 border-b border-outline-variant flex justify-between items-center">
           <h4 class="font-headline-md text-headline-md">{{ __('Recent Admin Activity') }}</h4>
-          <a href="{{ route('admin.audit.index') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors flex items-center">
-            {{ __('VIEW ALL') }}
-            <span class="material-symbols-outlined ml-2 text-sm">arrow_forward</span>
+          <a href="{{ route('admin.audit.index') }}" class="text-xs text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1">
+            {{ __('View all') }}
+            <x-icon name="arrow-right" class="w-3.5 h-3.5" />
           </a>
         </div>
         <div class="overflow-x-auto">
@@ -106,7 +108,9 @@
             <h4 class="font-headline-md text-headline-md leading-tight">{{ __('Site Traffic') }}</h4>
             <p class="font-label-caps text-[10px] text-on-surface-variant mt-1">{{ __('LAST :days DAYS', ['days' => $traffic['range_days'] ?? 90]) }}</p>
           </div>
-          <a href="{{ route('admin.analytics.index') }}" class="material-symbols-outlined text-on-surface-variant hover:text-primary">arrow_forward</a>
+          <a href="{{ route('admin.analytics.index') }}" class="text-wp-text-muted hover:text-wp-link inline-flex items-center" aria-label="{{ __('Open analytics') }}">
+            <x-icon name="arrow-right" class="w-4 h-4" />
+          </a>
         </div>
         <div class="space-y-6">
           <div>

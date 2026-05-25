@@ -54,7 +54,7 @@
             <option value="year_new" @selected(($filters['sort'] ?? '') === 'year_new')>{{ __('YEAR: NEWEST') }}</option>
             <option value="year_old" @selected(($filters['sort'] ?? '') === 'year_old')>{{ __('YEAR: OLDEST') }}</option>
           </select>
-          <span class="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-sm">expand_more</span>
+          <span class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"><x-icon name="chevron-down" class="w-3.5 h-3.5" /></span>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@
     type="button"
     class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-primary text-on-primary px-6 py-4 font-button-text text-button-text uppercase tracking-widest shadow-[0_-4px_24px_rgba(0,0,0,0.12)] flex items-center justify-center gap-2"
   >
-    <span class="material-symbols-outlined text-lg">filter_list</span>
+    <x-icon name="filter" class="w-4 h-4" />
     {{ __('Filters') }}@if ($activeFilterCount > 0) ({{ $activeFilterCount }})@endif
   </button>
 
@@ -135,7 +135,7 @@
     <div class="absolute inset-x-0 bottom-0 top-16 bg-background border-t border-outline-variant flex flex-col max-h-[92vh] rounded-t-lg overflow-hidden">
       <div class="flex items-center justify-between px-margin-mobile py-4 border-b border-outline-variant shrink-0">
         <h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">{{ __('Filters') }}</h3>
-        <button id="mobile-filter-close" type="button" class="material-symbols-outlined text-primary p-2" aria-label="{{ __('Close') }}">close</button>
+        <button id="mobile-filter-close" type="button" class="text-primary p-2 inline-flex items-center" aria-label="{{ __('Close') }}"><x-icon name="close" class="w-5 h-5" /></button>
       </div>
       <div class="flex-1 overflow-y-auto luxe-hide-scrollbar px-margin-mobile py-6 pb-24">
         @include('pages.inventory.partials.shop-luxe-sidebar', [

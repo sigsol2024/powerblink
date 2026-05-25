@@ -33,7 +33,7 @@
           @endif
           <span class="absolute inset-0 bg-black/35"></span>
           <span class="relative flex h-20 w-20 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm ring-1 ring-white/20">
-            <span class="material-symbols-outlined ml-1 text-5xl text-white" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+            <span class="text-white inline-flex"><x-icon name="play" class="w-10 h-10" /></span>
           </span>
         </button>
         <div class="absolute inset-0 z-[3] hidden items-center justify-center bg-black/60" data-vehicle-detail-video-loading>
@@ -69,7 +69,7 @@
             <span class="absolute inset-0 flex items-center justify-center font-label-caps text-[10px] text-on-surface-variant">{{ __('Video') }}</span>
           @endif
           <span class="absolute inset-0 flex items-center justify-center">
-            <span class="material-symbols-outlined text-on-primary bg-primary/80 rounded-full p-1 text-sm">play_arrow</span>
+            <span class="text-on-primary bg-primary/80 rounded-full p-1 inline-flex"><x-icon name="play" class="w-3.5 h-3.5" /></span>
           </span>
         </button>
       @endif

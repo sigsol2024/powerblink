@@ -30,7 +30,14 @@
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Work+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    {{-- High-visibility icons have been migrated to inline SVGs (<x-icon>). Anything that still
+         uses the legacy icon-font class loads the webfont with `block` so the glyph either
+         renders or stays invisible — never as raw words during the font load. --}}
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet" />
+    <style>
+      /* Hide the icon-font slot until the font has rendered glyphs (extra belt-and-braces). */
+      .material-symbols-outlined { font-feature-settings: 'liga'; line-height: 1; }
+    </style>
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: 'class',

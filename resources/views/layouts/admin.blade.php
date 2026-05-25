@@ -10,23 +10,24 @@
   $isAdminRole = $user && $user->hasRole('admin');
   $dashboardHomeRoute = $isAdminRole ? 'admin.dashboard' : 'dashboard';
 
+  // WooCommerce-style sidebar. Listing Options is removed (catalog options are managed alongside
+  // each product, not as a separate top-level menu).
   $navItems = $isAdminRole
       ? [
-          ['route' => 'admin.dashboard', 'match' => 'admin.dashboard', 'label' => __('Dashboard'), 'icon' => 'dashboard'],
-          ['route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*', 'label' => __('Products'), 'icon' => 'inventory_2'],
-          ['route' => 'admin.orders.index', 'match' => 'admin.orders.*', 'label' => __('Orders'), 'icon' => 'shopping_cart'],
-          ['route' => 'admin.users.index', 'match' => 'admin.users.*', 'label' => __('Customers'), 'icon' => 'group'],
-          ['route' => 'admin.analytics.index', 'match' => 'admin.analytics.*', 'label' => __('Analytics'), 'icon' => 'monitoring'],
-          ['route' => 'admin.pages.index', 'match' => 'admin.pages.*', 'label' => __('Pages'), 'icon' => 'article'],
-          ['route' => 'admin.listing-options.index', 'match' => 'admin.listing-options.*', 'label' => __('Listing options'), 'icon' => 'tune'],
-          ['route' => 'admin.media.index', 'match' => 'admin.media.*', 'label' => __('Media'), 'icon' => 'perm_media'],
-          ['route' => 'admin.audit.index', 'match' => 'admin.audit.*', 'label' => __('Audit trail'), 'icon' => 'history'],
+          ['route' => 'admin.dashboard',          'match' => 'admin.dashboard',          'label' => __('Dashboard'),  'icon' => 'grid'],
+          ['route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*',     'label' => __('Products'),   'icon' => 'box'],
+          ['route' => 'admin.orders.index',       'match' => 'admin.orders.*',           'label' => __('Orders'),     'icon' => 'shopping-cart'],
+          ['route' => 'admin.users.index',        'match' => 'admin.users.*',            'label' => __('Customers'),  'icon' => 'users'],
+          ['route' => 'admin.analytics.index',    'match' => 'admin.analytics.*',        'label' => __('Analytics'),  'icon' => 'chart'],
+          ['route' => 'admin.pages.index',        'match' => 'admin.pages.*',            'label' => __('Pages'),      'icon' => 'document'],
+          ['route' => 'admin.media.index',        'match' => 'admin.media.*',            'label' => __('Media'),      'icon' => 'photo'],
+          ['route' => 'admin.audit.index',        'match' => 'admin.audit.*',            'label' => __('Audit log'),  'icon' => 'clock'],
       ]
       : [
-          ['route' => 'dashboard', 'match' => 'dashboard', 'label' => __('Overview'), 'icon' => 'dashboard'],
-          ['route' => 'dashboard.vehicles.index', 'match' => 'dealer.vehicles.list', 'label' => __('My products'), 'icon' => 'inventory_2'],
-          ['route' => 'dashboard.vendor-settings.edit', 'match' => 'dashboard.vendor-settings.*', 'label' => __('Dealer contact'), 'icon' => 'storefront'],
-          ['route' => 'dashboard.favorites.index', 'match' => 'dashboard.favorites.*', 'label' => __('Saved'), 'icon' => 'favorite'],
+          ['route' => 'dashboard',                        'match' => 'dashboard',                       'label' => __('Overview'),       'icon' => 'grid'],
+          ['route' => 'dashboard.vehicles.index',         'match' => 'dealer.vehicles.list',            'label' => __('My products'),    'icon' => 'box'],
+          ['route' => 'dashboard.vendor-settings.edit',   'match' => 'dashboard.vendor-settings.*',     'label' => __('Store contact'),  'icon' => 'storefront'],
+          ['route' => 'dashboard.favorites.index',        'match' => 'dashboard.favorites.*',           'label' => __('Saved'),          'icon' => 'heart'],
       ];
 
   $mediaUploadUrl = $isAdminRole ? route('admin.media.upload') : route('dashboard.api.media.upload');
@@ -58,13 +59,11 @@
   @stack('scripts')
 </head>
 <body
-  class="admin-luxe-root font-body-md text-on-background antialiased h-full overflow-hidden selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed"
+  class="admin-luxe-root font-body-md text-on-background antialiased h-full overflow-hidden"
   x-data="{ drawerOpen: false }"
   @keydown.escape.window="drawerOpen = false"
 >
   <div class="flex h-screen w-full overflow-hidden relative">
-    <div class="absolute inset-0 luxe-grid-pattern pointer-events-none" aria-hidden="true"></div>
-
     <div
       class="fixed inset-0 z-40 bg-black/50 lg:hidden"
       x-show="drawerOpen"
@@ -74,15 +73,16 @@
       aria-hidden="true"
     ></div>
 
-    <aside class="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-outline-variant bg-surface-container-low z-50">
-      <div class="px-6 py-10 shrink-0">
-        <a href="{{ route($dashboardHomeRoute) }}">
-          <h1 class="font-headline-md text-headline-md text-primary uppercase tracking-widest">ADÉ ADMIN</h1>
-          <p class="font-label-caps text-label-caps text-on-surface-variant mt-1">{{ __('Luxury Management') }}</p>
+    {{-- Desktop sidebar (dark, WordPress-admin-style) --}}
+    <aside class="admin-sidebar hidden lg:flex flex-col h-screen w-60 shrink-0 z-50">
+      <div class="px-5 py-5 shrink-0 border-b border-black/30">
+        <a href="{{ route($dashboardHomeRoute) }}" class="block sidebar-brand">
+          <h1 class="text-base font-semibold tracking-tight">{{ $brandName }}</h1>
+          <p class="text-[11px] sidebar-meta mt-0.5">{{ __('Admin') }}</p>
         </a>
       </div>
 
-      <nav class="flex-1 flex flex-col space-y-1 min-h-0 overflow-y-auto custom-scrollbar" aria-label="{{ $isAdminRole ? __('Admin') : __('Account') }}">
+      <nav class="flex-1 flex flex-col py-2 min-h-0 overflow-y-auto custom-scrollbar text-[13px]" aria-label="{{ $isAdminRole ? __('Admin') : __('Account') }}">
         @foreach ($navItems as $item)
           @php
             $match = $item['match'];
@@ -94,51 +94,58 @@
           @endphp
           <a
             href="{{ route($item['route']) }}"
-            class="flex items-center px-6 py-4 transition-all {{ $active ? 'bg-primary text-on-primary font-medium' : 'text-on-surface-variant hover:bg-surface-container-high' }}"
+            @if ($active) aria-current="page" @endif
+            class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ $active ? 'is-active' : '' }}"
           >
-            <span class="material-symbols-outlined mr-4 {{ $active ? 'filled' : '' }}">{{ $item['icon'] }}</span>
-            <span class="font-body-md">{{ $item['label'] }}</span>
+            <x-icon :name="$item['icon']" class="w-4 h-4" />
+            <span>{{ $item['label'] }}</span>
           </a>
         @endforeach
       </nav>
 
-      <div class="mt-auto border-t border-outline-variant py-6 shrink-0">
-        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all">
-          <span class="material-symbols-outlined mr-4">settings</span>
-          <span class="font-body-md">{{ __('Settings') }}</span>
+      <div class="mt-auto py-3 border-t border-black/30 shrink-0 text-[13px]">
+        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors">
+          <x-icon name="cog" class="w-4 h-4" />
+          <span>{{ __('Settings') }}</span>
+        </a>
+        <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-5 py-2.5 transition-colors">
+          <x-icon name="storefront" class="w-4 h-4" />
+          <span>{{ __('View site') }}</span>
         </a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="flex w-full items-center px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-left">
-            <span class="material-symbols-outlined mr-4">logout</span>
-            <span class="font-body-md">{{ __('Logout') }}</span>
+          <button type="submit" class="flex w-full items-center gap-3 px-5 py-2.5 transition-colors text-left">
+            <x-icon name="logout" class="w-4 h-4" />
+            <span>{{ __('Logout') }}</span>
           </button>
         </form>
-        <div class="px-6 mt-6 flex items-center gap-3">
+        <div class="px-5 mt-3 flex items-center gap-3">
           @if (!empty($logoPath))
-            <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="" class="w-10 h-10 rounded-full object-cover grayscale shrink-0" />
+            <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="" class="w-8 h-8 rounded-full object-cover shrink-0" />
           @else
-            <span class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-label-caps text-[10px] font-bold shrink-0">{{ $initials }}</span>
+            <span class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[11px] font-semibold text-white shrink-0">{{ $initials }}</span>
           @endif
           <div class="min-w-0">
-            <p class="font-label-caps text-[10px] uppercase tracking-tighter opacity-70 truncate">{{ __('Admin User') }}</p>
-            <p class="font-body-md text-sm font-medium truncate">{{ $user->name }}</p>
+            <p class="text-[11px] sidebar-meta truncate">{{ __('Signed in') }}</p>
+            <p class="text-[12px] font-medium truncate text-white">{{ $user->name }}</p>
           </div>
         </div>
       </div>
     </aside>
 
-    {{-- Mobile drawer (same structure) --}}
+    {{-- Mobile drawer --}}
     <aside
-      class="fixed inset-y-0 left-0 z-50 flex h-full w-[min(18rem,calc(100vw-2rem))] flex-col border-r border-outline-variant bg-surface-container-low lg:hidden transition-transform duration-300"
+      class="admin-sidebar fixed inset-y-0 left-0 z-50 flex h-full w-[min(16rem,calc(100vw-2rem))] flex-col lg:hidden transition-transform duration-200 text-[13px]"
       :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
     >
-      <div class="px-6 py-8 flex items-center justify-between shrink-0 border-b border-outline-variant">
-        <div>
-          <h1 class="font-headline-md text-primary uppercase tracking-widest text-lg">ADÉ ADMIN</h1>
-          <p class="font-label-caps text-[10px] text-on-surface-variant mt-1">{{ __('Luxury Management') }}</p>
+      <div class="px-5 py-5 flex items-center justify-between shrink-0 border-b border-black/30">
+        <div class="sidebar-brand">
+          <h1 class="text-base font-semibold">{{ $brandName }}</h1>
+          <p class="text-[11px] sidebar-meta mt-0.5">{{ __('Admin') }}</p>
         </div>
-        <button type="button" class="material-symbols-outlined text-primary p-2" @click="drawerOpen = false" aria-label="{{ __('Close') }}">close</button>
+        <button type="button" class="text-white p-1.5" @click="drawerOpen = false" aria-label="{{ __('Close') }}">
+          <x-icon name="close" class="w-5 h-5" />
+        </button>
       </div>
       <nav class="flex-1 overflow-y-auto custom-scrollbar py-2">
         @foreach ($navItems as $item)
@@ -150,30 +157,38 @@
                 $active = request()->routeIs($match);
             }
           @endphp
-          <a href="{{ route($item['route']) }}" @click="drawerOpen = false" class="flex items-center px-6 py-4 {{ $active ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
-            <span class="material-symbols-outlined mr-4 {{ $active ? 'filled' : '' }}">{{ $item['icon'] }}</span>
-            <span class="font-body-md">{{ $item['label'] }}</span>
+          <a href="{{ route($item['route']) }}" @click="drawerOpen = false"
+             @if ($active) aria-current="page" @endif
+             class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ $active ? 'is-active' : '' }}">
+            <x-icon :name="$item['icon']" class="w-4 h-4" />
+            <span>{{ $item['label'] }}</span>
           </a>
         @endforeach
       </nav>
-      <div class="border-t border-outline-variant p-4 shrink-0">
-        <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center px-4 py-3 text-on-surface-variant text-sm" @click="drawerOpen = false">{{ __('View site') }}</a>
-        <form method="POST" action="{{ route('logout') }}" class="mt-2">
+      <div class="border-t border-black/30 p-2 shrink-0">
+        <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
+          <x-icon name="storefront" class="w-4 h-4" /> {{ __('View site') }}
+        </a>
+        <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="w-full text-left px-4 py-3 text-error text-sm font-label-caps">{{ __('Logout') }}</button>
+          <button type="submit" class="flex w-full items-center gap-3 px-4 py-2.5 text-left">
+            <x-icon name="logout" class="w-4 h-4" /> {{ __('Logout') }}
+          </button>
         </form>
       </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-background relative z-10">
-      <header class="lg:hidden flex justify-between items-center px-margin-mobile py-4 border-b border-outline-variant bg-background/95 backdrop-blur-sm shrink-0 z-40">
-        <h1 class="font-headline-md text-primary uppercase tracking-widest text-lg">ADÉ ADMIN</h1>
-        <button type="button" class="material-symbols-outlined text-primary p-2 -mr-2" @click="drawerOpen = true" aria-label="{{ __('Menu') }}">menu</button>
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-wp-bg relative z-10">
+      <header class="lg:hidden flex justify-between items-center px-4 py-3 border-b border-wp-border bg-white shrink-0 z-40">
+        <h1 class="text-sm font-semibold text-wp-text">{{ $brandName }} <span class="text-wp-text-muted font-normal">· {{ __('Admin') }}</span></h1>
+        <button type="button" class="text-wp-text p-1.5" @click="drawerOpen = true" aria-label="{{ __('Menu') }}">
+          <x-icon name="menu" class="w-5 h-5" />
+        </button>
       </header>
 
       <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
         @if (isset($header) && ! $fullBleedRoutes)
-          <div class="shrink-0 border-b border-outline-variant bg-surface-container-lowest/95 px-margin-mobile md:px-gutter py-6 backdrop-blur-sm">
+          <div class="shrink-0 border-b border-wp-border bg-white px-4 md:px-6 py-3">
             <div class="max-w-max-container mx-auto w-full">{{ $header }}</div>
           </div>
         @endif

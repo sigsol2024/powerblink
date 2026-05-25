@@ -50,92 +50,89 @@
     @scroll.window="openMenuId != null && closeMenus()"
   >
     @if ($isAdminList)
-      <div class="flex flex-col md:flex-row md:items-end justify-between px-margin-mobile md:px-gutter pt-8 md:pt-12 pb-6 md:pb-8 gap-6 max-w-max-container w-full mx-auto shrink-0">
+      <div class="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-6 pt-4 md:pt-5 pb-3 gap-3 max-w-max-container w-full mx-auto shrink-0">
         <div>
-          <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Product Management') }}</h2>
-          <p class="text-on-surface-variant font-body-md mt-2 max-w-xl">{{ __('Curate and manage the collection. High-precision control over inventory and digital presentation.') }}</p>
+          <h2 class="text-lg font-semibold text-wp-text">{{ __('Products') }}</h2>
+          <p class="text-wp-text-muted text-xs mt-0.5">{{ __('Manage your catalog.') }}</p>
         </div>
         <div>
           <a href="{{ route('dashboard.vehicles.create') }}" class="admin-luxe-btn-primary">
-            <span class="material-symbols-outlined text-lg">add</span>
-            {{ __('Add New Product') }}
+            <x-icon name="plus" class="w-4 h-4" /> {{ __('Add product') }}
           </a>
         </div>
       </div>
 
-      <div class="flex-1 px-margin-mobile md:px-gutter pb-section-py-mobile md:pb-section-py-desktop overflow-y-auto">
+      <div class="flex-1 px-4 md:px-6 pb-8 overflow-y-auto">
         <div class="max-w-max-container mx-auto">
           @if (session('status'))
-            <div class="mb-6 border border-secondary/30 bg-secondary-fixed/20 px-4 py-3 text-sm text-on-surface">{{ session('status') }}</div>
+            <div class="mb-4 border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-900 rounded">{{ session('status') }}</div>
           @endif
 
           @if ($stats)
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-8 border-b border-outline-variant pb-6">
-              <div class="flex gap-6 md:gap-8 flex-wrap">
+            <div class="bg-white border border-wp-border rounded p-3 md:p-4 mb-4 flex flex-col gap-3">
+              <div class="flex flex-wrap gap-4 md:gap-6">
                 <div class="flex flex-col">
-                  <span class="font-label-caps text-on-surface-variant text-[10px]">{{ __('TOTAL PRODUCTS') }}</span>
-                  <span class="font-headline-md">{{ $stats['total'] }}</span>
+                  <span class="text-[11px] text-wp-text-muted">{{ __('Total') }}</span>
+                  <span class="text-base font-semibold text-wp-text">{{ $stats['total'] }}</span>
                 </div>
                 <div class="flex flex-col">
-                  <span class="font-label-caps text-on-surface-variant text-[10px]">{{ __('PENDING REVIEW') }}</span>
-                  <span class="font-headline-md">{{ $stats['pending'] }}</span>
+                  <span class="text-[11px] text-wp-text-muted">{{ __('Pending') }}</span>
+                  <span class="text-base font-semibold text-wp-text">{{ $stats['pending'] }}</span>
                 </div>
                 <div class="flex flex-col">
-                  <span class="font-label-caps text-on-surface-variant text-[10px]">{{ __('APPROVED LIVE') }}</span>
-                  <span class="font-headline-md">{{ $stats['approved'] }}</span>
+                  <span class="text-[11px] text-wp-text-muted">{{ __('Approved') }}</span>
+                  <span class="text-base font-semibold text-wp-text">{{ $stats['approved'] }}</span>
                 </div>
               </div>
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <div class="relative flex-1 sm:flex-initial">
-                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                  <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none"><x-icon name="search" class="w-4 h-4" /></span>
                   <input
                     type="search"
                     x-model="searchQuery"
-                    class="w-full sm:w-64 pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant focus:ring-0 focus:border-primary font-label-caps text-[11px] placeholder:text-on-surface-variant"
-                    placeholder="{{ __('SEARCH COLLECTION...') }}"
+                    class="w-full sm:w-64 pl-8 text-sm"
+                    placeholder="{{ __('Search products…') }}"
                     aria-label="{{ __('Search products') }}"
                   />
                 </div>
-                <button type="button" class="border border-outline-variant px-4 py-2 font-label-caps text-[11px] hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2" @click="selectedStatus = selectedStatus === '' ? 'pending' : ''">
-                  <span class="material-symbols-outlined text-sm">filter_list</span>
-                  {{ __('FILTERS') }}
-                </button>
               </div>
-              <div class="flex flex-wrap items-center gap-2 w-full">
-                <span class="font-label-caps text-[10px] text-on-surface-variant w-full sm:w-auto">{{ __('FILTER') }}:</span>
-                <button type="button" @click="selectedStatus = ''" :class="selectedStatus === '' ? 'bg-primary text-on-primary border-primary' : 'border-outline-variant hover:bg-surface-container-high'" class="border px-3 py-2 font-label-caps text-[11px]">{{ __('ALL') }} (<span x-text="countFor('')"></span>)</button>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-[11px] text-wp-text-muted mr-1">{{ __('Filter') }}:</span>
+                <button type="button" @click="selectedStatus = ''" :class="selectedStatus === '' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'" class="border px-2.5 py-1 text-xs rounded">{{ __('All') }} (<span x-text="countFor('')"></span>)</button>
                 @foreach (['pending' => __('Pending'), 'approved' => __('Approved'), 'draft' => __('Draft'), 'rejected' => __('Rejected')] as $st => $label)
-                  <button type="button" @click="selectedStatus = '{{ $st }}'" :class="selectedStatus === '{{ $st }}' ? 'bg-primary text-on-primary border-primary' : 'border-outline-variant hover:bg-surface-container-high'" class="border px-3 py-2 font-label-caps text-[11px]">{{ $label }} (<span x-text="countFor('{{ $st }}')"></span>)</button>
+                  <button type="button" @click="selectedStatus = '{{ $st }}'" :class="selectedStatus === '{{ $st }}' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'" class="border px-2.5 py-1 text-xs rounded">{{ $label }} (<span x-text="countFor('{{ $st }}')"></span>)</button>
                 @endforeach
               </div>
             </div>
           @endif
 
           @if ($vehicles->total() === 0)
-            <p class="text-on-surface-variant py-12 text-center">{{ __('No products match this filter.') }}</p>
+            <p class="text-wp-text-muted py-12 text-center text-sm">{{ __('No products match this filter.') }}</p>
           @else
-            <div class="overflow-x-auto -mx-margin-mobile md:mx-0 px-margin-mobile md:px-0">
-              <table class="w-full border-collapse text-left admin-luxe-table min-w-[640px]">
-                <thead>
-                  <tr class="border-b border-outline-variant">
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em] w-24">{{ __('IMAGE') }}</th>
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('PRODUCT NAME') }}</th>
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('CATEGORY') }}</th>
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('PRICE') }}</th>
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('STATUS') }}</th>
-                    <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em] text-right">{{ __('ACTIONS') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant">
-                  @foreach ($vehicles as $vehicle)
-                    @include('dashboard.vehicles.partials.index-row-luxe', ['vehicle' => $vehicle, 'isAdminList' => $isAdminList])
-                  @endforeach
-                </tbody>
-              </table>
+            <div class="bg-white border border-wp-border rounded overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-left admin-luxe-table min-w-[640px]">
+                  <thead>
+                    <tr>
+                      <th class="w-20">{{ __('Image') }}</th>
+                      <th>{{ __('Product') }}</th>
+                      <th>{{ __('Category') }}</th>
+                      <th>{{ __('Price') }}</th>
+                      <th>{{ __('Status') }}</th>
+                      <th class="text-right">{{ __('Actions') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($vehicles as $vehicle)
+                      @include('dashboard.vehicles.partials.index-row-luxe', ['vehicle' => $vehicle, 'isAdminList' => $isAdminList])
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div class="flex items-center justify-between py-10 border-t border-outline-variant mt-8 admin-luxe-pagination">
-              <span class="text-label-caps text-[10px] text-on-surface-variant">
+            <div class="flex items-center justify-between py-4 mt-3 admin-luxe-pagination">
+              <span class="text-xs text-wp-text-muted">
                 {{ __('Showing :from–:to of :total products', [
                   'from' => $vehicles->firstItem() ?? 0,
                   'to' => $vehicles->lastItem() ?? 0,
@@ -150,46 +147,47 @@
 
       @include('admin.partials.luxe-footer')
     @else
-      {{-- Dealer: luxe shell with simplified listing table (same CRUD partials) --}}
-      <div class="flex flex-col md:flex-row md:items-end justify-between px-gutter pt-12 pb-8 gap-6 max-w-max-container w-full mx-auto">
+      {{-- Dealer view (non-admin): same WooCommerce-style shell, scoped to the dealer's products. --}}
+      <div class="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-6 pt-4 pb-3 gap-3 max-w-max-container w-full mx-auto">
         <div>
-          <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('My Products') }}</h2>
-          <p class="text-on-surface-variant font-body-md mt-2">{{ __('Manage your product listings.') }}</p>
+          <h2 class="text-lg font-semibold text-wp-text">{{ __('My products') }}</h2>
+          <p class="text-wp-text-muted text-xs mt-0.5">{{ __('Manage your product listings.') }}</p>
         </div>
         <a href="{{ route('dashboard.vehicles.create') }}" class="admin-luxe-btn-primary">
-          <span class="material-symbols-outlined text-lg">add</span>
-          {{ __('New product') }}
+          <x-icon name="plus" class="w-4 h-4" /> {{ __('New product') }}
         </a>
       </div>
 
-      <div class="flex-1 px-gutter pb-12 max-w-max-container mx-auto w-full">
+      <div class="flex-1 px-4 md:px-6 pb-8 max-w-max-container mx-auto w-full">
         @if (session('status'))
-          <div class="mb-6 border border-secondary/30 bg-secondary-fixed/20 px-4 py-3 text-sm">{{ session('status') }}</div>
+          <div class="mb-4 border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-900 rounded">{{ session('status') }}</div>
         @endif
 
         @if ($vehicles->total() === 0)
-          <p class="text-on-surface-variant py-12">{{ __('You have no listings yet.') }}</p>
+          <p class="text-wp-text-muted py-12 text-sm text-center">{{ __('You have no listings yet.') }}</p>
         @else
-          <div class="overflow-x-auto bg-surface-container-lowest border border-outline-variant">
-            <table class="w-full border-collapse text-left">
-              <thead>
-                <tr class="border-b border-outline-variant bg-surface-container-low">
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em] w-24">{{ __('IMAGE') }}</th>
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('PRODUCT NAME') }}</th>
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('CATEGORY') }}</th>
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('PRICE') }}</th>
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em]">{{ __('STATUS') }}</th>
-                  <th class="py-4 font-label-caps text-[11px] text-on-surface-variant tracking-[0.25em] text-right">{{ __('ACTIONS') }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-outline-variant">
-                @foreach ($vehicles as $vehicle)
-                  @include('dashboard.vehicles.partials.index-row-luxe', ['vehicle' => $vehicle, 'isAdminList' => false])
-                @endforeach
-              </tbody>
-            </table>
+          <div class="bg-white border border-wp-border rounded overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse text-left">
+                <thead>
+                  <tr>
+                    <th class="w-20">{{ __('Image') }}</th>
+                    <th>{{ __('Product') }}</th>
+                    <th>{{ __('Category') }}</th>
+                    <th>{{ __('Price') }}</th>
+                    <th>{{ __('Status') }}</th>
+                    <th class="text-right">{{ __('Actions') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($vehicles as $vehicle)
+                    @include('dashboard.vehicles.partials.index-row-luxe', ['vehicle' => $vehicle, 'isAdminList' => false])
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="mt-8 admin-luxe-pagination">{{ $vehicles->links() }}</div>
+          <div class="py-4 admin-luxe-pagination">{{ $vehicles->links() }}</div>
         @endif
       </div>
     @endif

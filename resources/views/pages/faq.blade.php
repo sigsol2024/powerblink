@@ -66,12 +66,12 @@
 
                     <div class="mt-12 p-8 bg-slate-800 rounded-2xl text-white overflow-hidden relative group">
                         <div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined text-9xl">support_agent</span>
+                            <x-icon name="lifebuoy" class="w-32 h-32" />
                         </div>
                         <h3 class="font-headline font-bold text-xl mb-3">Priority Support</h3>
                         <p class="font-body text-sm text-slate-400 mb-6">Concierge assistance for collectors and serious enthusiasts.</p>
                         <a class="inline-flex items-center text-primary font-bold text-sm uppercase tracking-wider hover:gap-2 transition-all" href="/contact">
-                            Open a Ticket <span class="material-symbols-outlined ml-2">arrow_forward</span>
+                            Open a Ticket <x-icon name="arrow-right" class="w-4 h-4 ml-2" />
                         </a>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                                         <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" data-accordion-item>
                                             <button type="button" class="w-full p-6 text-left flex justify-between items-center hover:bg-slate-50 transition-colors" data-accordion-btn>
                                                 <h4 class="font-headline font-bold text-lg text-on_surface pr-8">{{ $q }}</h4>
-                                                <span class="material-symbols-outlined chevron text-primary transition-transform duration-300">expand_more</span>
+                                                <span class="chevron text-primary transition-transform duration-300 inline-flex"><x-icon name="chevron-down" class="w-5 h-5" /></span>
                                             </button>
                                             <div class="accordion-content" data-accordion-content>
                                                 <div class="p-6 pt-0 text-slate-600 font-body leading-relaxed border-t border-slate-50">
@@ -132,7 +132,7 @@
                 </p>
                 <div class="flex flex-wrap gap-4">
                     <a href="/contact" class="bg-primary text-slate-900 px-8 py-4 rounded-lg font-headline font-bold text-sm uppercase tracking-widest hover:bg-primary/90 transition-all flex items-center gap-2">
-                        Contact Us <span class="material-symbols-outlined">mail</span>
+                        Contact Us <x-icon name="envelope" class="w-5 h-5 ml-2" />
                     </a>
                 </div>
             </div>

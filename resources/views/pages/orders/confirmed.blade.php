@@ -3,7 +3,7 @@
 @section('content')
   <div class="luxe-store bg-background text-on-background min-h-screen luxe-geometric-bg font-body-md">
     <div class="max-w-max-container mx-auto px-margin-mobile md:px-gutter pt-24 md:pt-28 pb-section-py-mobile md:pb-section-py-desktop text-center">
-      <span class="material-symbols-outlined text-5xl text-secondary mb-6">check_circle</span>
+      <span class="text-secondary mb-6 inline-flex"><x-icon name="check-circle" class="w-12 h-12" /></span>
       <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase mb-4">{{ __('Thank you') }}</h1>
       <p class="font-body-md text-on-surface-variant mb-2">{{ __('Your order has been confirmed.') }}</p>
       <p class="font-label-caps text-label-caps text-on-surface-variant mb-10">{{ __('Order') }} #{{ $order->order_number }}</p>

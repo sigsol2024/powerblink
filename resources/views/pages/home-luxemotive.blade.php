@@ -168,7 +168,7 @@
           @endif
         </div>
         <div class="mt-12">
-          <span class="material-symbols-outlined text-4xl text-primary">auto_awesome</span>
+          <span class="text-primary inline-flex"><x-icon name="sparkles" class="w-10 h-10" /></span>
         </div>
       </div>
     </section>

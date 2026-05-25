@@ -108,7 +108,7 @@
   <details class="group border-b border-outline-variant pb-4" open>
     <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
       {{ __('Composition & Care') }}
-      <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+      <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
     </summary>
     <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed whitespace-pre-line">
       {{ $overview ?: __('Contact us for material and care details for this piece.') }}
@@ -117,7 +117,7 @@
   <details class="group border-b border-outline-variant pb-4">
     <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
       {{ __('Shipping & Returns') }}
-      <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+      <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
     </summary>
     <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed">
       {{ __('Complimentary shipping on qualifying orders. Returns accepted within 14 days of receipt where applicable.') }}
@@ -127,7 +127,7 @@
     <details class="group border-b border-outline-variant pb-4">
       <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
         {{ __('Features') }}
-        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+        <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
       </summary>
       <ul class="pt-4 space-y-2 text-sm text-on-surface-variant">
         @foreach ($vehicle->features as $feature)

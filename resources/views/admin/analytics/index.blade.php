@@ -88,14 +88,14 @@
           :href="`{{ route('admin.analytics.index') }}?range=${range}&export=csv&start_date=${startDate}&end_date=${endDate}`"
           class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-primary-container px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#0b1f3a]/25 transition hover:brightness-110 sm:mt-0.5"
         >
-          <span class="material-symbols-outlined text-sm">download</span>
+          <x-icon name="download" class="w-4 h-4" />
           <span>{{ __('Export Data') }}</span>
         </a>
       </div>
 
       <div class="anx-glass-toolbar w-full min-w-0 rounded-2xl border border-[#0a1628]/10 p-4">
         <div class="mb-3 flex items-center gap-2">
-          <span class="material-symbols-outlined text-base text-primary-container">filter_list</span>
+          <x-icon name="filter" class="w-4 h-4 text-primary-container" />
           <span class="text-xs font-semibold uppercase tracking-wider text-[#0b1f3a]">{{ __('Date Range') }}</span>
         </div>
         <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-4 lg:gap-y-3">

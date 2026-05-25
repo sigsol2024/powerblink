@@ -4,37 +4,36 @@
     $totalShown = $orders->total();
   @endphp
 
-  <main class="flex-1 flex flex-col h-full min-h-0 overflow-hidden luxe-pattern-bg relative">
-    <header class="h-20 flex items-center justify-between px-margin-mobile md:px-gutter border-b border-outline-variant bg-white/80 backdrop-blur-md sticky top-0 z-40 shrink-0 gap-4">
-      <div class="flex items-center gap-4 min-w-0">
-        <h2 class="font-headline-md text-headline-lg-mobile md:text-headline-md tracking-tight truncate">{{ __('Order Management') }}</h2>
-        <div class="h-4 w-px bg-outline-variant hidden md:block shrink-0"></div>
-        <p class="text-on-surface-variant text-sm font-body-md hidden md:block">{{ trans_choice(':count order processed|:count orders processed', $totalShown, ['count' => number_format($totalShown)]) }}</p>
+  <main class="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative bg-wp-bg">
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0 gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <h2 class="text-lg font-semibold text-wp-text">{{ __('Orders') }}</h2>
+        <span class="text-xs text-wp-text-muted">{{ trans_choice(':count order|:count orders', $totalShown, ['count' => number_format($totalShown)]) }}</span>
       </div>
-      <div class="flex items-center gap-3 shrink-0">
+      <div class="flex items-center gap-2 shrink-0">
         <div class="relative hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-          <input type="search" class="pl-10 pr-4 py-2 bg-surface-container-low border-none focus:ring-1 focus:ring-primary font-body-md text-sm w-48 lg:w-64 transition-all" placeholder="{{ __('Search orders...') }}" aria-label="{{ __('Search orders') }}" />
+          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none"><x-icon name="search" class="w-4 h-4" /></span>
+          <input type="search" class="pl-8 pr-3 py-1.5 text-sm w-48 lg:w-64" placeholder="{{ __('Search orders…') }}" aria-label="{{ __('Search orders') }}" />
         </div>
-        <button type="button" class="bg-primary text-on-primary px-4 md:px-6 py-2.5 font-button-text text-button-text uppercase tracking-widest hover:scale-105 transition-transform text-xs md:text-sm whitespace-nowrap">
-          {{ __('Export CSV') }}
+        <button type="button" class="admin-luxe-btn-primary">
+          <x-icon name="download" class="w-4 h-4" /> {{ __('Export CSV') }}
         </button>
       </div>
     </header>
 
-    <section class="flex-1 overflow-y-auto px-margin-mobile md:px-gutter py-8 md:py-10 max-w-max-container mx-auto w-full custom-scrollbar">
-      <div class="flex flex-wrap items-center gap-2 mb-8 border-b border-outline-variant">
+    <section class="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-5 max-w-max-container mx-auto w-full custom-scrollbar">
+      <div class="flex flex-wrap items-center gap-1 mb-4 border-b border-wp-border">
         @foreach ($statusTabs as $st)
           <a
             href="{{ route('admin.orders.index', $st !== '' ? ['status' => $st] : []) }}"
-            class="px-6 py-3 font-label-caps text-label-caps border-b-2 tracking-widest transition-all {{ ($status ?? '') === $st ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary' }}"
+            class="px-3 py-2 text-sm border-b-2 transition-colors {{ ($status ?? '') === $st ? 'border-wp-link text-wp-link font-medium' : 'border-transparent text-wp-text-muted hover:text-wp-text' }}"
           >
-            {{ $st === '' ? __('ALL') : strtoupper(str_replace('_', ' ', $st)) }}
+            {{ $st === '' ? __('All') : ucfirst(str_replace('_', ' ', $st)) }}
           </a>
         @endforeach
       </div>
 
-      <div class="bg-white border border-outline-variant overflow-hidden">
+      <div class="bg-white border border-wp-border overflow-hidden rounded">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -71,8 +70,8 @@
                     @include('admin.partials.order-status-badge', ['status' => $order->status])
                   </td>
                   <td class="px-6 py-6 text-right">
-                    <a href="{{ route('admin.orders.show', $order) }}" class="text-on-surface-variant hover:text-primary transition-colors inline-flex" title="{{ __('View order') }}">
-                      <span class="material-symbols-outlined">visibility</span>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1 text-sm" title="{{ __('View order') }}">
+                      <x-icon name="eye" class="w-4 h-4" /> {{ __('View') }}
                     </a>
                   </td>
                 </tr>
@@ -99,19 +98,21 @@
         @endif
       </div>
 
-      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-8 bg-surface-container-lowest border border-outline-variant flex flex-col justify-between min-h-[12rem]">
-          <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('TOTAL ORDERS') }}</p>
-          <h4 class="font-headline-lg text-headline-md mt-4">{{ number_format($totalShown) }}</h4>
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-white border border-wp-border rounded">
+          <p class="text-xs text-wp-text-muted">{{ __('Total orders') }}</p>
+          <h4 class="text-2xl font-semibold mt-1 text-wp-text">{{ number_format($totalShown) }}</h4>
         </div>
-        <div class="p-8 bg-primary text-on-primary flex flex-col justify-between min-h-[12rem]">
-          <p class="font-label-caps text-label-caps opacity-70">{{ __('FILTER') }}</p>
-          <h4 class="font-headline-lg text-headline-md mt-4 uppercase">{{ ($status ?? '') !== '' ? str_replace('_', ' ', $status) : __('All statuses') }}</h4>
+        <div class="p-4 bg-white border border-wp-border rounded">
+          <p class="text-xs text-wp-text-muted">{{ __('Current filter') }}</p>
+          <h4 class="text-base font-semibold mt-1 text-wp-text">{{ ($status ?? '') !== '' ? ucfirst(str_replace('_', ' ', $status)) : __('All statuses') }}</h4>
         </div>
-        <div class="p-8 bg-surface-container-lowest border border-outline-variant flex flex-col justify-between min-h-[12rem] relative overflow-hidden">
-          <p class="font-label-caps text-label-caps text-on-surface-variant z-10">{{ __('QUICK LINK') }}</p>
-          <a href="{{ route('dashboard.vehicles.index') }}" class="font-headline-md text-headline-md mt-4 z-10 hover:opacity-80">{{ __('Products') }} →</a>
-          <span class="material-symbols-outlined absolute -bottom-6 -right-6 text-[120px] opacity-10">shopping_bag</span>
+        <div class="p-4 bg-white border border-wp-border rounded flex items-start gap-3">
+          <span class="text-wp-link"><x-icon name="shopping-bag" class="w-5 h-5" /></span>
+          <div>
+            <p class="text-xs text-wp-text-muted">{{ __('Quick link') }}</p>
+            <a href="{{ route('dashboard.vehicles.index') }}" class="text-sm font-medium text-wp-link hover:text-wp-link-hover">{{ __('Manage products') }}</a>
+          </div>
         </div>
       </div>
     </section>

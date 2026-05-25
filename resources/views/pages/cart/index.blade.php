@@ -56,12 +56,12 @@
                       @if (!empty($line['vehicle_variant_id']))
                         <input type="hidden" name="vehicle_variant_id" value="{{ $line['vehicle_variant_id'] }}" />
                       @endif
-                      <button type="submit" name="qty" value="{{ max(1, (int) $line['qty'] - 1) }}" class="hover:text-black" aria-label="{{ __('Decrease quantity') }}">
-                        <span class="material-symbols-outlined text-[18px]">remove</span>
+                      <button type="submit" name="qty" value="{{ max(1, (int) $line['qty'] - 1) }}" class="hover:text-black inline-flex items-center" aria-label="{{ __('Decrease quantity') }}">
+                        <x-icon name="minus" class="w-4 h-4" />
                       </button>
                       <span class="mx-6 min-w-[20px] text-center text-sm">{{ $line['qty'] }}</span>
-                      <button type="submit" name="qty" value="{{ min(99, (int) $line['qty'] + 1) }}" class="hover:text-black" aria-label="{{ __('Increase quantity') }}">
-                        <span class="material-symbols-outlined text-[18px]">add</span>
+                      <button type="submit" name="qty" value="{{ min(99, (int) $line['qty'] + 1) }}" class="hover:text-black inline-flex items-center" aria-label="{{ __('Increase quantity') }}">
+                        <x-icon name="plus" class="w-4 h-4" />
                       </button>
                     </form>
                     <form method="post" action="{{ route('cart.remove') }}">
@@ -70,8 +70,8 @@
                       @if (!empty($line['vehicle_variant_id']))
                         <input type="hidden" name="vehicle_variant_id" value="{{ $line['vehicle_variant_id'] }}" />
                       @endif
-                      <button type="submit" class="text-[10px] font-bold uppercase tracking-widest text-[#4c4546] hover:text-[#ba1a1a] flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[16px]">close</span> {{ __('Remove') }}
+                      <button type="submit" class="text-[10px] font-bold uppercase tracking-widest text-[#4c4546] hover:text-[#ba1a1a] flex items-center gap-1.5">
+                        <x-icon name="close" class="w-3.5 h-3.5" /> {{ __('Remove') }}
                       </button>
                     </form>
                   </div>

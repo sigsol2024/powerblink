@@ -105,7 +105,7 @@
 <div class="space-y-10 pt-4 {{ $loop->first ? '' : 'hidden' }}" data-contact-panel="{{ $panel }}">
 <div class="flex items-start gap-6">
 <div class="w-12 h-12 shrink-0 border-2 border-[#f9a825] rounded-full flex items-center justify-center text-[#f9a825]">
-<span class="material-symbols-outlined text-2xl">location_on</span>
+<x-icon name="map-pin" class="w-6 h-6" />
 </div>
 <div>
 <h4 class="font-bold text-[14px] text-slate-900 mb-1 uppercase">Address</h4>
@@ -114,7 +114,7 @@
 </div>
 <div class="flex items-start gap-6">
 <div class="w-12 h-12 shrink-0 border-2 border-[#f9a825] rounded-full flex items-center justify-center text-[#f9a825]">
-<span class="material-symbols-outlined text-2xl">call</span>
+<x-icon name="phone" class="w-6 h-6" />
 </div>
 <div>
 <h4 class="font-bold text-[14px] text-slate-900 mb-1 uppercase">{{ $panel === 'parts' ? __('Telephone') : ($panelTitle . ' ' . __('Phone')) }}</h4>
@@ -123,7 +123,7 @@
 </div>
 <div class="flex items-start gap-6">
 <div class="w-12 h-12 shrink-0 border-2 border-[#f9a825] rounded-full flex items-center justify-center text-[#f9a825]">
-<span class="material-symbols-outlined text-2xl">schedule</span>
+<x-icon name="clock" class="w-6 h-6" />
 </div>
 <div>
 <h4 class="font-bold text-[14px] text-slate-900 mb-1 uppercase">{{ $panelTitle }} Hours</h4>
