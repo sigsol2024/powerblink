@@ -18,12 +18,16 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesSeeder::class);
 
         foreach (DemoData::users() as $demoUser) {
+            // User has `password` / `remember_token` hidden, so ->toArray() drops them.
+            // Use ->getAttributes() to preserve password (and remember_token) for firstOrCreate.
+            $factoryAttributes = User::factory()->make([
+                'name' => $demoUser['name'],
+                'email' => $demoUser['email'],
+            ])->getAttributes();
+
             $user = User::query()->firstOrCreate(
                 ['email' => $demoUser['email']],
-                User::factory()->make([
-                    'name' => $demoUser['name'],
-                    'email' => $demoUser['email'],
-                ])->toArray()
+                $factoryAttributes
             );
 
             if (! $user->hasRole($demoUser['role'])) {
