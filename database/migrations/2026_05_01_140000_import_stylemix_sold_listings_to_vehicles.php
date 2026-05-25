@@ -41,8 +41,14 @@ return new class extends Migration
             return;
         }
 
-        $admin = User::query()->role('admin')->orderBy('id')->first()
-            ?: User::query()->orderBy('id')->first();
+        try {
+            $admin = User::query()->role('admin')->orderBy('id')->first()
+                ?: User::query()->orderBy('id')->first();
+        } catch (\Throwable $e) {
+            Log::warning('Stylemix sold import skipped: roles/users not seeded yet ('.$e->getMessage().').');
+
+            return;
+        }
 
         if ($admin === null) {
             Log::warning('Stylemix sold import skipped: no users exist yet. Run migrations after seeding/bootstrapping a user or run `php artisan db:seed` then re-invoke imports manually.');
@@ -154,11 +160,9 @@ return new class extends Migration
 
     private function shouldRunImport(): bool
     {
-        if (app()->environment('testing')) {
-            return filter_var(env('IMPORT_STYLEMIX_SOLD_LISTINGS', false), FILTER_VALIDATE_BOOL);
-        }
-
-        return filter_var(env('IMPORT_STYLEMIX_SOLD_LISTINGS', true), FILTER_VALIDATE_BOOL);
+        // Default OFF everywhere. This migration is from the legacy Auto Torque project and is
+        // only relevant for that car dealership demo. Opt in explicitly with IMPORT_STYLEMIX_SOLD_LISTINGS=true.
+        return filter_var(env('IMPORT_STYLEMIX_SOLD_LISTINGS', false), FILTER_VALIDATE_BOOL);
     }
 
     /**
