@@ -6,6 +6,15 @@
     Options -Indexes +FollowSymLinks
     RewriteEngine On
 
+    # ---- Force HTTPS ----
+    # `SESSION_SECURE_COOKIE=true` means the session cookie is HTTPS-only. Any visit over plain
+    # HTTP gets no session cookie, so CSRF tokens never match (419 on every POST including login
+    # and add-to-cart). cPanel terminates SSL at the proxy and forwards X-Forwarded-Proto, so we
+    # detect either the direct HTTPS env var OR the proxied header.
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
     # Already targeting /public/ — do not rewrite again
     RewriteCond %{REQUEST_URI} ^/public/
     RewriteRule ^ - [L]

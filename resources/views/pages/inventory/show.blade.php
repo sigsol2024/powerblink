@@ -128,28 +128,5 @@
     </section>
   @endif
 
-  @if ($vehicle->status === 'approved')
-    <section class="border-t border-outline-variant pt-10 md:pt-12 mt-8">
-      <h2 class="font-headline-md text-headline-md text-primary uppercase mb-6">{{ __('Contact') }}</h2>
-      <form method="post" action="{{ route('inventory.inquiry', ['slug' => $vehicle->slug]) }}" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
-        @csrf
-        <div>
-          <label class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-2">{{ __('Your name') }}*</label>
-          <input class="w-full bg-transparent border-b border-outline-variant py-3 font-body-md focus:border-primary focus:outline-none" type="text" name="sender_name" value="{{ old('sender_name', auth()->user()?->name) }}" required />
-        </div>
-        <div>
-          <label class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-2">{{ __('Email') }}*</label>
-          <input class="w-full bg-transparent border-b border-outline-variant py-3 font-body-md focus:border-primary focus:outline-none" type="email" name="sender_email" value="{{ old('sender_email', auth()->user()?->email) }}" required />
-        </div>
-        <div class="md:col-span-2">
-          <label class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-2">{{ __('Message') }}</label>
-          <textarea class="w-full bg-transparent border-b border-outline-variant py-3 font-body-md focus:border-primary focus:outline-none resize-none" rows="4" name="message" required>{{ old('message') }}</textarea>
-        </div>
-        <div class="md:col-span-2">
-          <button type="submit" class="bg-primary text-on-primary px-10 py-4 font-button-text uppercase tracking-widest hover:opacity-90 transition-opacity">{{ __('Send message') }}</button>
-        </div>
-      </form>
-    </section>
-  @endif
 </main>
 @endsection
