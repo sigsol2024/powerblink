@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Shared hosting MySQL (utf8mb4): varchar(255) unique/primary keys exceed index limits.
+        Schema::defaultStringLength(191);
+
         Password::defaults(function () {
             return Password::min(10)
                 ->letters()

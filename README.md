@@ -20,6 +20,9 @@ Create tables on the server:
 
 ```bash
 php artisan migrate --force
+```
+
+If migrate fails with **“Specified key was too long; max key length is 1000 bytes”** on cPanel/MySQL, ensure `AppServiceProvider` sets `Schema::defaultStringLength(191)` (included in this repo), redeploy, then on a **new empty database** run `php artisan migrate:fresh --force`. If the first migrate attempt stopped halfway, drop partial tables or use `migrate:fresh` before retrying.
 php artisan db:seed --force
 php artisan storage:link
 ```
@@ -63,3 +66,44 @@ Defined in `database/seeders/DemoData.php` (run via `DatabaseSeeder`):
 
 - Admin: `admin@example.com` / `password`
 - User: `demo@example.com` / `password`
+
+## Deploy via GitHub / cPanel (no npm on server)
+
+This project **builds frontend assets locally** and **commits the compiled output** so production only needs PHP + Composer.
+
+| In Git | Not in Git (never upload) |
+| --- | --- |
+| `public/build/` (Vite manifest + JS/CSS) | `node_modules/` |
+| Application code, `vendor/` if you commit it | `public/hot` (dev server only) |
+| `.env.example` (template) | `.env` (create on server) |
+
+### Before you push (developer machine)
+
+Whenever `resources/css`, `resources/js`, or Tailwind/Vite config change:
+
+```bash
+npm ci
+npm run build
+git add public/build
+git commit -m "Build frontend assets for production"
+git push
+```
+
+`public/build` is **not** gitignored — it is the production asset bundle Laravel serves via `@vite` in production mode.
+
+### On the server (cPanel / SSH)
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+You do **not** need `npm install` or `npm run build` on the server if `public/build` is already in the deployed branch.
+
+### `.env` on the server
+
+Copy from `.env.example`, set `APP_KEY`, `DB_*`, mail, and Paystack. `.env` stays out of Git.
