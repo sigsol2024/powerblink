@@ -1,6 +1,6 @@
 @php
   $site = $site ?? [];
-  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : 'ADÉ LUXE';
+  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : 'VOGUE DRESS';
   $cartCount = \App\Support\Cart::count();
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
@@ -18,12 +18,10 @@
   </div>
   <div class="flex items-center gap-4 md:gap-6 shrink-0">
     <a href="{{ route('shop.index') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform hidden sm:inline" aria-label="{{ __('Search') }}">search</a>
-    <a href="{{ route('cart.index') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform relative {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}">
+    <button type="button" class="material-symbols-outlined text-primary hover:scale-110 transition-transform relative {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}" data-cart-toggle>
       shopping_bag
-      @if ($cartCount > 0)
-        <span class="absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-      @endif
-    </a>
+      <span class="luxe-cart-badge absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}" data-cart-count-badge>{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+    </button>
     @auth
       <a href="{{ route('dashboard') }}" class="material-symbols-outlined text-primary hover:scale-110 transition-transform hidden md:inline" aria-label="{{ __('Account') }}">person</a>
     @else
@@ -42,14 +40,218 @@
     <a href="{{ route('login') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('SIGN IN') }}</a>
   @endauth
 </nav>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const btn = document.querySelector('[data-luxe-mobile-nav-toggle]');
-    const nav = document.querySelector('[data-luxe-mobile-nav]');
-    if (!btn || !nav) return;
-    btn.addEventListener('click', function () {
-      nav.classList.toggle('hidden');
-      btn.setAttribute('aria-expanded', nav.classList.contains('hidden') ? 'false' : 'true');
-    });
-  });
+
+{{-- Cart slide-over drawer (right side, mobile-first) --}}
+<div class="luxe-store fixed inset-0 z-[60] hidden" data-cart-drawer aria-hidden="true">
+  <div class="absolute inset-0 bg-black/40" data-cart-overlay></div>
+  <aside class="absolute top-0 right-0 h-full w-full sm:max-w-md bg-background shadow-2xl flex flex-col" role="dialog" aria-label="{{ __('Shopping bag') }}">
+    <header class="flex items-center justify-between px-5 py-5 border-b border-outline-variant">
+      <h2 class="font-headline-md text-headline-md uppercase tracking-widest text-primary">{{ __('Shopping bag') }}</h2>
+      <button type="button" class="material-symbols-outlined text-primary" aria-label="{{ __('Close') }}" data-cart-close>close</button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-5 py-4" data-cart-lines>
+      {{-- Lines injected by JS --}}
+      <p class="py-12 text-center text-on-surface-variant font-body-md text-body-md" data-cart-empty>{{ __('Your bag is empty.') }}</p>
+    </div>
+
+    <footer class="border-t border-outline-variant px-5 py-5 space-y-4 bg-background">
+      <div class="flex justify-between items-center">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Subtotal') }}</span>
+        <span class="font-body-lg text-body-lg font-semibold text-primary" data-cart-subtotal>{{ format_currency(\App\Support\Cart::subtotal()) }}</span>
+      </div>
+      <a href="{{ route('checkout.index') }}" class="block w-full text-center bg-primary text-on-primary py-4 font-button-text text-button-text uppercase tracking-[0.25em] hover:opacity-90 transition-opacity">
+        {{ __('Checkout') }}
+      </a>
+      <a href="{{ route('cart.index') }}" class="block w-full text-center border border-primary text-primary py-4 font-button-text text-button-text uppercase tracking-[0.25em] hover:bg-primary hover:text-on-primary transition-colors">
+        {{ __('View bag') }}
+      </a>
+    </footer>
+  </aside>
+</div>
+
+@push('scripts')
+<script id="luxe-cart-config" type="application/json">
+{!! json_encode([
+  'urls' => [
+    'state'  => route('cart.state'),
+    'add'    => route('cart.add'),
+    'remove' => route('cart.remove'),
+  ],
+  'i18n' => [
+    'empty'      => __('Your bag is empty.'),
+    'qty'        => __('Qty'),
+    'remove'     => __('Remove'),
+    'errorAdd'   => __('Could not add to bag.'),
+    'errorOther' => __('Could not update bag.'),
+  ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </script>
+<script>
+  (function () {
+    var cfg = {};
+    try { cfg = JSON.parse(document.getElementById('luxe-cart-config').textContent); } catch (e) { return; }
+    var URLS = cfg.urls;
+    var I18N = cfg.i18n;
+    var csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+
+    function qs(sel, root) { return (root || document).querySelector(sel); }
+    function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    function updateBadge(count) {
+      qsa('[data-cart-count-badge]').forEach(function (el) {
+        el.textContent = count > 9 ? '9+' : String(count);
+        el.classList.toggle('hidden', !(count > 0));
+      });
+    }
+
+    function openDrawer() {
+      var d = qs('[data-cart-drawer]');
+      if (!d) return;
+      d.classList.remove('hidden');
+      d.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      var d = qs('[data-cart-drawer]');
+      if (!d) return;
+      d.classList.add('hidden');
+      d.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function renderLines(state) {
+      var container = qs('[data-cart-lines]');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!state.lines || state.lines.length === 0) {
+        var empty = document.createElement('p');
+        empty.className = 'py-12 text-center text-on-surface-variant font-body-md text-body-md';
+        empty.textContent = I18N.empty;
+        container.appendChild(empty);
+        return;
+      }
+
+      state.lines.forEach(function (line) {
+        var imgHtml = line.image ? '<img src="' + escapeHtml(line.image) + '" alt="" class="w-full h-full object-cover">' : '';
+        var variantHtml = line.variant_label ? '<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">' + escapeHtml(line.variant_label) + '</p>' : '';
+        var variantAttr = line.vehicle_variant_id ? ' data-variant-id="' + line.vehicle_variant_id + '"' : '';
+
+        var row = document.createElement('div');
+        row.className = 'flex gap-4 py-4 border-b border-outline-variant';
+        row.innerHTML =
+          '<div class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden">' + imgHtml + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex justify-between gap-2">' +
+              '<h4 class="font-body-md text-body-md text-primary uppercase truncate">' + escapeHtml(line.name) + '</h4>' +
+              '<p class="font-body-md font-semibold whitespace-nowrap">' + escapeHtml(line.line_total_formatted) + '</p>' +
+            '</div>' +
+            variantHtml +
+            '<div class="mt-3 flex justify-between items-center gap-3">' +
+              '<span class="text-xs text-on-surface-variant">' + escapeHtml(I18N.qty) + ': ' + line.qty + '</span>' +
+              '<button type="button" class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant hover:text-error" data-cart-remove data-vehicle-id="' + line.vehicle_id + '"' + variantAttr + '>' + escapeHtml(I18N.remove) + '</button>' +
+            '</div>' +
+          '</div>';
+        container.appendChild(row);
+      });
+    }
+
+    function applyState(state) {
+      updateBadge(state.count || 0);
+      renderLines(state);
+      var sub = qs('[data-cart-subtotal]');
+      if (sub && state.subtotal_formatted) sub.textContent = state.subtotal_formatted;
+    }
+
+    function fetchState() {
+      return fetch(URLS.state, {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin'
+      }).then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) { if (data) applyState(data); })
+        .catch(function () { /* ignore */ });
+    }
+
+    function postForm(url, formData) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrf },
+        body: formData,
+        credentials: 'same-origin'
+      }).then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (j) {
+            throw new Error((j && j.message) || I18N.errorOther);
+          });
+        }
+        return res.json();
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var toggle = e.target.closest('[data-cart-toggle]');
+      if (toggle) {
+        e.preventDefault();
+        fetchState();
+        openDrawer();
+        return;
+      }
+      if (e.target.closest('[data-cart-close]') || e.target.matches('[data-cart-overlay]')) {
+        closeDrawer();
+        return;
+      }
+      var removeBtn = e.target.closest('[data-cart-remove]');
+      if (removeBtn) {
+        e.preventDefault();
+        var fd = new FormData();
+        fd.append('vehicle_id', removeBtn.dataset.vehicleId);
+        if (removeBtn.dataset.variantId) fd.append('vehicle_variant_id', removeBtn.dataset.variantId);
+        postForm(URLS.remove, fd).then(applyState).catch(function () {});
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    document.addEventListener('submit', function (e) {
+      var form = e.target.closest('[data-cart-add-form]');
+      if (!form) return;
+      e.preventDefault();
+      var submit = form.querySelector('[type="submit"]');
+      if (submit) { submit.disabled = true; submit.classList.add('opacity-60'); }
+      var fd = new FormData(form);
+      postForm(form.action, fd)
+        .then(function (state) {
+          applyState(state);
+          openDrawer();
+        })
+        .catch(function (err) {
+          alert((err && err.message) || I18N.errorAdd);
+        })
+        .then(function () {
+          if (submit) { submit.disabled = false; submit.classList.remove('opacity-60'); }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var btn = document.querySelector('[data-luxe-mobile-nav-toggle]');
+      var nav = document.querySelector('[data-luxe-mobile-nav]');
+      if (btn && nav) {
+        btn.addEventListener('click', function () {
+          nav.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', nav.classList.contains('hidden') ? 'false' : 'true');
+        });
+      }
+    });
+  })();
+</script>
+@endpush

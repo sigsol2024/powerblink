@@ -33,7 +33,7 @@
 @endif
 
 @if ($inStock)
-  <form id="add-to-cart-form" method="post" action="{{ route('cart.add') }}" class="space-y-6 mb-10">
+  <form id="add-to-cart-form" method="post" action="{{ route('cart.add') }}" class="space-y-6 mb-10" data-cart-add-form>
     @csrf
     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}" />
 

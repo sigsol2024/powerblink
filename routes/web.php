@@ -78,6 +78,7 @@ Route::get('/inventory/{slug?}', [PageController::class, 'vehicleShow'])->name('
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart/state', [CartController::class, 'index'])->name('cart.state');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 

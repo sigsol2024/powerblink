@@ -65,51 +65,25 @@
   @php
     $luxeStorefront = request()->routeIs([
       'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
-      'cart.*', 'checkout.*', 'order.confirmed', 'order.show',
+      'cart.*', 'checkout.*', 'order.confirmed', 'order.show', 'orders.lookup.index', 'orders.lookup',
+      'about', 'contact', 'faq', 'privacy-policy', 'terms', 'makes.index',
     ]);
     $luxeHome = request()->routeIs('home');
     $luxeShopPage = request()->routeIs('shop.index', 'inventory.index');
+    // Pages that already handle their own top padding (or full-bleed hero). Everything else under
+    // the luxe header needs a default offset so content isn't hidden behind the fixed bar.
+    $luxeSelfPadded = request()->routeIs(
+      'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
+      'cart.*', 'checkout.*', 'order.confirmed', 'order.show', 'orders.lookup.index', 'orders.lookup'
+    );
   @endphp
   <body class="{{ $luxeStorefront ? 'bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store' : 'bg-page_bg font-body text-on_surface selection:bg-brand_blue/20' }} {{ $bodyClass ?? '' }}">
-    <!-- Global Loading Screen: logo centered; only outer ring animates (no box behind logo) -->
-    <div id="global-loader" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#1E2229] transition-opacity duration-700 ease-in-out">
-      <div class="relative flex h-36 w-36 items-center justify-center">
-        <div
-          class="pointer-events-none absolute inset-0 rounded-full border-2 border-transparent border-t-white border-r-white/25 border-b-white/10 border-l-white/40 animate-spin"
-          style="animation-duration: 0.95s; animation-timing-function: linear;"
-          aria-hidden="true"
-        ></div>
-        <div class="relative z-10 flex h-24 w-24 items-center justify-center">
-          @if (! empty($loaderLogoPath))
-            <img src="{{ \App\Support\VehicleImageUrl::url($loaderLogoPath) }}" alt="" class="h-[4.5rem] w-[4.5rem] max-h-[90%] max-w-[90%] object-contain bg-transparent" />
-          @else
-            <span class="max-w-[90%] truncate px-1 text-center font-headline text-sm font-black uppercase tracking-tight text-white">{{ $siteDisplayName }}</span>
-          @endif
-        </div>
-      </div>
-      <!-- Fading Site Name -->
-      <div class="mt-8 animate-pulse text-center font-headline text-2xl font-black italic tracking-widest text-white uppercase">
-        {{ strtoupper($siteDisplayName) }}
-      </div>
-    </div>
-    <script>
-      window.addEventListener('load', function() {
-        const loader = document.getElementById('global-loader');
-        if (loader) {
-          loader.classList.add('opacity-0');
-          setTimeout(() => {
-              loader.style.display = 'none';
-          }, 700);
-        }
-      });
-    </script>
-
     @if ($luxeStorefront)
       @include('partials.luxe-store-header')
     @else
       @include('partials.header')
     @endif
-    <main id="main" class="{{ $luxeStorefront ? 'pt-0' : '' }}">
+    <main id="main" class="{{ $luxeStorefront && ! $luxeSelfPadded ? 'pt-20 md:pt-24' : '' }}">
       @yield('content')
     </main>
     @if ($luxeHome)
