@@ -1,14 +1,14 @@
+{{--
+  Inline-SVG icon set (Heroicons-style strokes). Replaces Material Symbols font
+  icons so nothing renders as text while a webfont is still loading.
+
+  Usage:  <x-icon name="search" class="w-5 h-5 text-primary" />
+
+  `name` accepts either the Heroicons name OR the legacy Material Symbols name,
+  so we can swap call sites incrementally without breaking pages.
+--}}
+@props(['name' => ''])
 @php
-  /**
-   * Inline-SVG icon set (Heroicons-style strokes). Replaces Material Symbols font
-   * icons so nothing renders as text while a webfont is still loading.
-   *
-   * Usage:  <x-icon name="search" class="w-5 h-5 text-primary" />
-   *
-   * `name` accepts either the Heroicons name OR the legacy Material Symbols name,
-   * so we can swap call sites incrementally without breaking pages.
-   */
-  $name = $name ?? '';
   $alias = [
     // legacy Material Symbols → canonical icon key
     'search' => 'search',

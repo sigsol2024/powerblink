@@ -256,8 +256,14 @@
       if (!form) return;
       e.preventDefault();
       var submit = form.querySelector('[type="submit"]');
-      var originalLabel = submit ? submit.innerHTML : '';
+      // Cache the real label ONCE per button — rapid re-submits during the 'Added ✓' confirmation
+      // would otherwise capture the confirmation text and leave the button permanently stuck.
+      if (submit && typeof submit.dataset.originalLabel === 'undefined') {
+        submit.dataset.originalLabel = submit.innerHTML;
+      }
+      var originalLabel = submit ? submit.dataset.originalLabel : '';
       if (submit) {
+        if (submit._addedTimer) { clearTimeout(submit._addedTimer); submit._addedTimer = null; }
         submit.disabled = true;
         submit.classList.add('opacity-60');
       }
@@ -269,10 +275,14 @@
           // Briefly confirm the action inline on the button itself rather than opening the drawer.
           if (submit) {
             submit.innerHTML = I18N.added || originalLabel;
-            setTimeout(function () { submit.innerHTML = originalLabel; }, 1400);
+            submit._addedTimer = setTimeout(function () {
+              submit.innerHTML = originalLabel;
+              submit._addedTimer = null;
+            }, 1400);
           }
         })
         .catch(function (err) {
+          if (submit) submit.innerHTML = originalLabel;
           alert((err && err.message) || I18N.errorAdd);
         })
         .then(function () {
