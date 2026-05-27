@@ -216,7 +216,7 @@
             <input type="checkbox" name="payment_paystack_enabled" id="payment_paystack_enabled" value="1" class="mt-1 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" @checked(old('payment_paystack_enabled', $settings['payment_paystack_enabled'] ?? '1') === '1') />
             <div class="min-w-0 flex-1">
               <label for="payment_paystack_enabled" class="block text-sm font-semibold text-zinc-900">{{ __('Paystack (card, bank, USSD)') }}</label>
-              <p class="mt-1 text-xs text-zinc-500">{{ __('Redirects customers to Paystack checkout. Requires secret key in .env.') }}</p>
+              <p class="mt-1 text-xs text-zinc-500">{{ __('Shows Paystack on checkout when enabled. Set PAYSTACK_SECRET_KEY and PAYSTACK_PUBLIC_KEY in .env to process payments.') }}</p>
             </div>
           </div>
           <div class="rounded-lg border border-zinc-200 p-4 space-y-4">

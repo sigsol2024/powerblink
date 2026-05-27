@@ -404,7 +404,7 @@ class PageController extends Controller
                 default => $query->latest(),
             };
 
-            $vehicles = $query->paginate(9)->withQueryString();
+            $vehicles = $query->paginate(30)->withQueryString();
 
             return view('pages.inventory.index', [
                 'title' => ($page?->title ?: 'Shop'),
@@ -422,7 +422,7 @@ class PageController extends Controller
 
             return view('pages.inventory.index', [
                 'title' => 'Shop',
-                'vehicles' => Vehicle::query()->whereRaw('1=0')->paginate(9),
+                'vehicles' => Vehicle::query()->whereRaw('1=0')->paginate(30),
                 'filters' => $this->defaultInventoryFilters(),
                 'filterOptions' => ['categories' => collect()],
                 'page' => null,

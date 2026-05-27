@@ -43,10 +43,14 @@ final class CheckoutPaymentMethods
      */
     public static function isPaystackEnabled(array $site): bool
     {
-        if (! self::flagEnabled($site, 'payment_paystack_enabled')) {
-            return false;
-        }
+        // Admin toggle controls checkout visibility; .env keys are checked when starting payment.
+        $value = strtolower(trim((string) ($site['payment_paystack_enabled'] ?? '1')));
 
+        return ! in_array($value, ['0', 'false', 'no', 'off'], true);
+    }
+
+    public static function isPaystackConfigured(): bool
+    {
         $secret = trim((string) config('services.paystack.secret_key', ''));
 
         return $secret !== '';

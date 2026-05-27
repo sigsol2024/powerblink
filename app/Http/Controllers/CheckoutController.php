@@ -33,13 +33,8 @@ class CheckoutController extends Controller
         $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
         $paymentMethods = CheckoutPaymentMethods::enabledForCheckout();
 
-        if ($paymentMethods === []) {
-            return redirect()->route('cart.index')->withErrors([
-                'checkout' => __('No payment methods are enabled. Please contact the store.'),
-            ]);
-        }
-
         return view('pages.checkout.index', [
+            'paymentMethodsEnabled' => $paymentMethods !== [],
             'title' => __('Checkout'),
             'lines' => Cart::lines(),
             'subtotal' => Cart::subtotal(),
@@ -58,6 +53,11 @@ class CheckoutController extends Controller
         }
 
         $enabledIds = array_column(CheckoutPaymentMethods::enabledForCheckout(), 'id');
+        if ($enabledIds === []) {
+            return back()->withErrors([
+                'checkout' => __('No payment methods are enabled. Please contact the store.'),
+            ])->withInput();
+        }
 
         $data = $request->validate([
             'payment_method' => ['required', 'string', Rule::in($enabledIds)],
@@ -86,6 +86,12 @@ class CheckoutController extends Controller
         $paymentMethod = (string) $data['payment_method'];
 
         if ($paymentMethod === 'paystack') {
+            if (! CheckoutPaymentMethods::isPaystackConfigured()) {
+                return back()
+                    ->withErrors(['checkout' => __('Paystack is enabled but API keys are missing. Add PAYSTACK_SECRET_KEY to .env.')])
+                    ->withInput();
+            }
+
             return $this->redirectToPaystack($order, $data['customer_email'], $paystack);
         }
 

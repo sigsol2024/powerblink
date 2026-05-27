@@ -60,6 +60,9 @@ class AdminSiteSettingsController extends Controller
             'dealer_public_email' => ['nullable', 'email', 'max:255'],
             'payment_bank_transfer_details' => ['nullable', 'string', 'max:10000'],
             'payment_pay_on_delivery_note' => ['nullable', 'string', 'max:5000'],
+            'payment_paystack_enabled' => ['nullable', 'string', 'max:1'],
+            'payment_bank_transfer_enabled' => ['nullable', 'string', 'max:1'],
+            'payment_pay_on_delivery_enabled' => ['nullable', 'string', 'max:1'],
         ]);
 
         if ($request->hasFile('logo_file')) {

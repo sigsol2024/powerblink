@@ -18,6 +18,12 @@
 
       <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase mb-8 md:mb-10">{{ __('Checkout') }}</h1>
 
+      @if (empty($paymentMethods))
+        <div class="mb-8 rounded border border-[#ba1a1a]/30 bg-[#ffdad6]/40 px-4 py-3 text-sm text-[#93000a]">
+          {{ __('No payment methods are enabled yet. Please contact the store or try again later.') }}
+        </div>
+      @endif
+
       @if ($errors->any())
         <div class="mb-8 rounded border border-[#ba1a1a]/30 bg-[#ffdad6]/40 px-4 py-3 text-sm text-[#93000a]">
           <ul class="list-disc pl-5 space-y-1">
@@ -77,39 +83,39 @@
 
           <section>
             <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4c4546] mb-6">{{ __('Payment method') }}</h2>
-            <div class="space-y-3" role="radiogroup" aria-label="{{ __('Payment method') }}">
+            <div class="flex flex-col md:flex-row md:flex-wrap gap-3" role="radiogroup" aria-label="{{ __('Payment method') }}" data-payment-method-group>
               @if ($hasPaystack)
-                <label class="flex items-center gap-4 p-4 border cursor-pointer transition-colors bg-white/90 has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary {{ old('payment_method', $defaultPaymentMethod) === 'paystack' ? 'border-primary ring-1 ring-primary' : 'border-outline-variant' }}">
+                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
                   <input type="radio" name="payment_method" value="paystack" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'paystack') required />
-                  <img src="https://assets.paystack.com/assets/img/logos/Paystack_Logo_Midnight.png" alt="Paystack" class="h-6 w-auto object-contain shrink-0" width="120" height="24" loading="lazy" />
-                  <span class="text-sm text-on-surface-variant">{{ __('Card, bank transfer & USSD via Paystack') }}</span>
+                  <img src="{{ asset('asset/images/brands/paystack-logo.png') }}" alt="Paystack" class="h-7 w-auto max-w-[140px] object-contain object-left" width="140" height="25" />
+                  <span class="text-[10px] uppercase tracking-widest text-center text-on-surface-variant leading-snug">{{ __('Card & online') }}</span>
                 </label>
               @endif
               @if ($hasBank)
-                <label class="flex items-center gap-4 p-4 border cursor-pointer transition-colors bg-white/90 has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary {{ old('payment_method', $defaultPaymentMethod) === 'bank_transfer' ? 'border-primary ring-1 ring-primary' : 'border-outline-variant' }}">
-                  <input type="radio" name="payment_method" value="bank_transfer" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'bank_transfer') />
-                  <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-primary shrink-0">
-                    <x-icon name="building-library" class="w-5 h-5" />
+                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
+                  <input type="radio" name="payment_method" value="bank_transfer" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'bank_transfer') @if(! $hasPaystack) required @endif />
+                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
+                    <x-icon name="building-library" class="w-6 h-6" />
                   </span>
-                  <span class="text-sm font-medium text-primary">{{ __('Bank transfer') }}</span>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-center text-primary">{{ __('Bank transfer') }}</span>
                 </label>
-                @if ($bankTransferDetails !== '')
-                  <div class="ml-14 text-sm text-on-surface-variant whitespace-pre-line border-l-2 border-outline-variant pl-4 payment-hint hidden" data-payment-hint="bank_transfer">{{ $bankTransferDetails }}</div>
-                @endif
               @endif
               @if ($hasCod)
-                <label class="flex items-center gap-4 p-4 border cursor-pointer transition-colors bg-white/90 has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary {{ old('payment_method', $defaultPaymentMethod) === 'pay_on_delivery' ? 'border-primary ring-1 ring-primary' : 'border-outline-variant' }}">
-                  <input type="radio" name="payment_method" value="pay_on_delivery" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'pay_on_delivery') />
-                  <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-primary shrink-0">
-                    <x-icon name="truck" class="w-5 h-5" />
+                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
+                  <input type="radio" name="payment_method" value="pay_on_delivery" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'pay_on_delivery') @if(! $hasPaystack && ! $hasBank) required @endif />
+                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
+                    <x-icon name="truck" class="w-6 h-6" />
                   </span>
-                  <span class="text-sm font-medium text-primary">{{ __('Pay on delivery') }}</span>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-center text-primary">{{ __('Pay on delivery') }}</span>
                 </label>
-                @if ($payOnDeliveryNote !== '')
-                  <div class="ml-14 text-sm text-on-surface-variant border-l-2 border-outline-variant pl-4 payment-hint hidden" data-payment-hint="pay_on_delivery">{{ $payOnDeliveryNote }}</div>
-                @endif
               @endif
             </div>
+            @if ($bankTransferDetails !== '')
+              <div class="mt-4 text-sm text-on-surface-variant whitespace-pre-line border-l-2 border-[#3A3C94] pl-4 payment-hint hidden" data-payment-hint="bank_transfer">{{ $bankTransferDetails }}</div>
+            @endif
+            @if ($payOnDeliveryNote !== '')
+              <div class="mt-4 text-sm text-on-surface-variant border-l-2 border-[#3A3C94] pl-4 payment-hint hidden" data-payment-hint="pay_on_delivery">{{ $payOnDeliveryNote }}</div>
+            @endif
           </section>
         </div>
 
@@ -137,7 +143,7 @@
             <a href="{{ route('cart.index') }}" class="block w-full text-center border border-outline-variant text-on-surface-variant py-3 text-xs font-bold uppercase tracking-[0.2em] hover:border-primary hover:text-primary transition-colors">
               {{ __('Back to bag') }}
             </a>
-            <button type="submit" class="w-full bg-black text-white py-5 text-xs font-bold uppercase tracking-[0.25em] hover:opacity-90" id="checkout-submit-btn">
+            <button type="submit" class="w-full bg-black text-white py-5 text-xs font-bold uppercase tracking-[0.25em] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed" id="checkout-submit-btn" @disabled(empty($paymentMethods))>
               {{ __('Place order') }}
             </button>
           </div>
@@ -152,9 +158,19 @@
       var btn = document.getElementById('checkout-submit-btn');
       if (!form || !btn) return;
 
-      function syncHints() {
+      var selectedColor = '#3A3C94';
+      var selectedBg = 'rgba(58, 60, 148, 0.08)';
+
+      function syncPaymentCards() {
         var selected = form.querySelector('input[name="payment_method"]:checked');
         var val = selected ? selected.value : '';
+        form.querySelectorAll('[data-payment-method-card]').forEach(function (card) {
+          var input = card.querySelector('input[type="radio"]');
+          var on = input && input.checked;
+          card.style.borderColor = on ? selectedColor : '#cfc4c5';
+          card.style.backgroundColor = on ? selectedBg : 'rgba(255, 255, 255, 0.9)';
+          card.style.boxShadow = on ? '0 0 0 1px ' + selectedColor : 'none';
+        });
         form.querySelectorAll('.payment-hint').forEach(function (el) {
           el.classList.toggle('hidden', el.getAttribute('data-payment-hint') !== val);
         });
@@ -166,9 +182,18 @@
       }
 
       form.querySelectorAll('input[name="payment_method"]').forEach(function (radio) {
-        radio.addEventListener('change', syncHints);
+        radio.addEventListener('change', syncPaymentCards);
       });
-      syncHints();
+      form.querySelectorAll('[data-payment-method-card]').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var input = card.querySelector('input[type="radio"]');
+          if (input) {
+            input.checked = true;
+            syncPaymentCards();
+          }
+        });
+      });
+      syncPaymentCards();
     })();
   </script>
   @endpush
