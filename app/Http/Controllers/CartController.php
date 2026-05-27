@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Vehicle;
 use App\Support\Cart;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -33,10 +34,13 @@ class CartController extends Controller
 
         $variantId = isset($data['vehicle_variant_id']) ? (int) $data['vehicle_variant_id'] : null;
 
-        Cart::add((int) $data['vehicle_id'], (int) ($data['qty'] ?? 1), $variantId);
+        $vehicleId = (int) $data['vehicle_id'];
+        Cart::add($vehicleId, (int) ($data['qty'] ?? 1), $variantId);
 
         if ($request->wantsJson()) {
-            return $this->jsonState(__('Added to your bag.'));
+            $productName = (string) (Vehicle::query()->whereKey($vehicleId)->value('title') ?? '');
+
+            return $this->jsonState(__('Added to your bag.'), $productName);
         }
 
         return back()->with('status', __('Added to your bag.'));
@@ -79,11 +83,12 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('status', __('Item removed.'));
     }
 
-    private function jsonState(?string $message = null): JsonResponse
+    private function jsonState(?string $message = null, ?string $addedProductName = null): JsonResponse
     {
         return response()->json([
             'ok' => true,
             'message' => $message,
+            'added_product_name' => $addedProductName,
             'count' => Cart::count(),
             'item_count' => Cart::itemCount(),
             'subtotal' => Cart::subtotal(),

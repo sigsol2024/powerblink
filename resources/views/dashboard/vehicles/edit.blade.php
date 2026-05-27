@@ -97,14 +97,23 @@
             </div>
 
             <section class="rounded-lg border border-gray-200 p-4 space-y-4">
-              <h3 class="text-base font-semibold text-gray-900">Detail page configuration</h3>
+              <h3 class="text-base font-semibold text-gray-900">{{ __('Product page details') }}</h3>
 
               <div>
-                <x-input-label for="overview" value="Vehicle overview (long-form text)" />
-                <textarea id="overview" name="overview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="5">{{ old('overview', $vehicle->overview) }}</textarea>
+                <x-input-label for="overview" :value="__('Short description')" />
+                <textarea id="overview" name="overview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="4">{{ old('overview', $vehicle->overview) }}</textarea>
                 <x-input-error :messages="$errors->get('overview')" class="mt-2" />
               </div>
-
+              <div>
+                <x-input-label for="composition_care" :value="__('Composition & care')" />
+                <textarea id="composition_care" name="composition_care" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="4">{{ old('composition_care', $vehicle->composition_care ?? '') }}</textarea>
+                <x-input-error :messages="$errors->get('composition_care')" class="mt-2" />
+              </div>
+              <div>
+                <x-input-label for="shipping_returns" :value="__('Shipping & returns')" />
+                <textarea id="shipping_returns" name="shipping_returns" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="4">{{ old('shipping_returns', $vehicle->shipping_returns ?? '') }}</textarea>
+                <x-input-error :messages="$errors->get('shipping_returns')" class="mt-2" />
+              </div>
             </section>
 
             @if($isAdminEdit)

@@ -83,12 +83,13 @@
     // the luxe header needs a default offset so content isn't hidden behind the fixed bar.
     $luxeSelfPadded = request()->routeIs(
       'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
-      'cart.*', 'checkout.*', 'order.confirmed', 'order.show', 'orders.lookup.index', 'orders.lookup'
+      'cart.*', 'checkout.*', 'order.confirmed', 'order.placed', 'order.show', 'orders.lookup.index', 'orders.lookup'
     );
   @endphp
   <body class="{{ $luxeStorefront ? 'bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store' : 'bg-page_bg font-body text-on_surface selection:bg-brand_blue/20' }} {{ $bodyClass ?? '' }}">
     @if ($luxeStorefront)
       @include('partials.luxe-store-header')
+      @include('partials.luxe-cart-widget')
     @else
       @include('partials.header')
     @endif
@@ -100,8 +101,12 @@
     @elseif ($luxeShopPage)
       @include('partials.luxe-shop-footer', ['site' => $site ?? []])
     @elseif ($luxeStorefront)
-      <footer class="luxe-store border-t border-outline-variant py-8 px-margin-mobile md:px-gutter text-center font-label-caps text-label-caps text-on-surface-variant">
-        <p>© {{ date('Y') }} {{ \App\Support\SiteBrand::displayName($site ?? []) }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
+      <footer class="luxe-store border-t border-outline-variant py-10 px-margin-mobile md:px-gutter font-label-caps text-label-caps text-on-surface-variant">
+        <div class="max-w-max-container mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-6">
+          <a href="{{ route('about') }}" class="hover:text-primary transition-colors">{{ __('ABOUT US') }}</a>
+          <a href="{{ route('contact') }}" class="hover:text-primary transition-colors">{{ __('CONTACT US') }}</a>
+        </div>
+        <p class="text-center">© {{ date('Y') }} {{ \App\Support\SiteBrand::displayName($site ?? []) }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
       </footer>
     @else
       @include('partials.footer')

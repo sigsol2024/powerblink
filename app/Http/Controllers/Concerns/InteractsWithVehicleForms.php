@@ -42,6 +42,8 @@ trait InteractsWithVehicleForms
             'price' => ['nullable', 'integer', 'min:0'],
             'stock' => ['nullable', 'integer', 'min:0'],
             'overview' => ['nullable', 'string', 'max:50000'],
+            'composition_care' => ['nullable', 'string', 'max:50000'],
+            'shipping_returns' => ['nullable', 'string', 'max:50000'],
             'description' => ['nullable', 'string', 'max:50000'],
             'features_text' => ['nullable', 'string', 'max:10000'],
             'vin' => ['nullable', 'string', 'max:255'],

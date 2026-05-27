@@ -29,6 +29,8 @@ class Vehicle extends Model
         'vin',
         'description',
         'overview',
+        'composition_care',
+        'shipping_returns',
         'is_special',
         'submitted_at',
         'approved_at',

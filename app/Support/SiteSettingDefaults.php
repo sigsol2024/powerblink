@@ -45,6 +45,11 @@ final class SiteSettingDefaults
             'contact_notify_email' => '',
             'contact_from_name' => '',
             'dealer_public_email' => '',
+            'payment_paystack_enabled' => '1',
+            'payment_bank_transfer_enabled' => '0',
+            'payment_bank_transfer_details' => '',
+            'payment_pay_on_delivery_enabled' => '0',
+            'payment_pay_on_delivery_note' => '',
         ];
     }
 

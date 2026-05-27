@@ -37,23 +37,5 @@
     border: none;
     cursor: pointer;
   }
-  .luxe-store .luxe-pagination nav { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-  .luxe-store .luxe-pagination nav a,
-  .luxe-store .luxe-pagination nav span {
-    font-family: 'Hanken Grotesk', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #4c4546;
-    text-decoration: none;
-    padding: 0.25rem 0;
-    border-bottom: 2px solid transparent;
-  }
-  .luxe-store .luxe-pagination nav a:hover { color: #000; }
-  .luxe-store .luxe-pagination nav span[aria-current="page"] span,
-  .luxe-store .luxe-pagination nav span[aria-current="page"] {
-    color: #000;
-    border-bottom-color: #000;
-  }
+  .luxe-store .luxe-pagination { width: 100%; }
 </style>

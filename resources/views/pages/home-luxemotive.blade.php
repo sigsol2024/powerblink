@@ -52,12 +52,12 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           <div class="min-w-0 order-2 lg:order-1">
             <p class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase mb-3">{{ __('New season') }}</p>
-            <h2 class="font-display-md md:font-display-lg text-primary uppercase mb-5 tracking-tighter">{{ $heroTitle }}</h2>
+            <h2 class="font-body-md text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-5 leading-tight">{{ $heroTitle }}</h2>
             @if (! empty($s['hero_subtitle']))
               <p class="font-body-lg text-on-surface-variant mb-7 max-w-xl">{{ $s['hero_subtitle'] }}</p>
             @endif
             <div class="flex flex-wrap gap-3">
-              <a href="{{ $heroCtaUrl }}" class="inline-block bg-primary text-on-primary font-button-text px-8 md:px-10 py-4 uppercase tracking-widest luxe-scale-hover luxe-transition-standard">
+              <a href="{{ $heroCtaUrl }}" class="inline-block text-white font-button-text font-semibold px-8 md:px-10 py-4 uppercase tracking-widest luxe-scale-hover luxe-transition-standard" style="background-color:#3A3C94">
                 {{ $s['hero_cta_text'] ?? __('Explore Collection') }}
               </a>
               <a href="{{ route('shop.index') }}" class="inline-block border border-outline-variant text-primary font-button-text px-8 md:px-10 py-4 uppercase tracking-widest hover:bg-surface-container-high luxe-transition-standard">
@@ -127,20 +127,23 @@
                         $cover = $vehicle->images->first();
                         $img = $cover ? \App\Support\VehicleImageUrl::url($cover->path) : $heroBg;
                       @endphp
-                      <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="w-full shrink-0 relative block">
-                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy" />
-                        <div class="absolute inset-0 bg-black/10"></div>
+                      @php $productUrl = route('product.show', ['slug' => $vehicle->slug]); @endphp
+                      <div class="w-full shrink-0 relative block">
+                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none" loading="lazy" />
+                        <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/60 via-black/15 to-transparent">
                           <p class="font-label-caps text-label-caps text-white/90 tracking-widest">{{ $vehicle->categoryOption?->value ?: __('Collection') }}</p>
-                          <h3 class="mt-2 font-headline-md text-headline-md text-white">{{ $vehicle->title }}</h3>
+                          <h3 class="mt-2 font-headline-md text-headline-md text-white">
+                            <a href="{{ $productUrl }}" class="hover:underline underline-offset-2">{{ $vehicle->title }}</a>
+                          </h3>
                           <div class="mt-4">
-                            <span class="inline-flex items-center gap-2 border border-white/70 bg-white/10 px-4 py-2 font-label-caps text-[11px] text-white hover:bg-white/15">
+                            <a href="{{ $productUrl }}" class="inline-flex items-center gap-2 border border-white/70 bg-white/10 px-4 py-2 font-label-caps text-[11px] text-white hover:bg-white/15 transition-colors">
                               {{ __('View product') }}
                               <x-icon name="arrow-right" class="w-4 h-4" />
-                            </span>
+                            </a>
                           </div>
                         </div>
-                      </a>
+                      </div>
                     @endforeach
                   </div>
                 @else

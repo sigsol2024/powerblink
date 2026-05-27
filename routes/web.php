@@ -91,6 +91,7 @@ Route::post('/payment/paystack/webhook', PaystackWebhookController::class)->name
 Route::get('/orders/lookup', [OrderLookupController::class, 'index'])->name('orders.lookup.index');
 Route::post('/orders/lookup', [OrderLookupController::class, 'lookup'])->middleware('throttle:10,1')->name('orders.lookup');
 Route::get('/order/confirmed/{order}', [CheckoutController::class, 'confirmed'])->name('order.confirmed');
+Route::get('/order/placed/{order}', [CheckoutController::class, 'placed'])->name('order.placed');
 Route::get('/order/{order}', [CheckoutController::class, 'show'])->name('order.show');
 Route::get('/compare', [PageController::class, 'compare'])->name('compare');
 Route::post('/compare/add/{vehicle}', [CompareController::class, 'add'])->name('compare.add');

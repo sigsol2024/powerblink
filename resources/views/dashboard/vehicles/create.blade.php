@@ -56,9 +56,19 @@
             <x-input-error :messages="$errors->get('features_text')" class="mt-2" />
           </div>
           <div>
-            <x-input-label for="overview" :value="__('Description')" />
-            <textarea id="overview" name="overview" class="mt-1 block w-full" rows="5">{{ old('overview') }}</textarea>
+            <x-input-label for="overview" :value="__('Short description')" />
+            <textarea id="overview" name="overview" class="mt-1 block w-full" rows="4" placeholder="{{ __('Shown under the product title on the shop page.') }}">{{ old('overview') }}</textarea>
             <x-input-error :messages="$errors->get('overview')" class="mt-2" />
+          </div>
+          <div>
+            <x-input-label for="composition_care" :value="__('Composition & care')" />
+            <textarea id="composition_care" name="composition_care" class="mt-1 block w-full" rows="4" placeholder="{{ __('Materials, care instructions…') }}">{{ old('composition_care') }}</textarea>
+            <x-input-error :messages="$errors->get('composition_care')" class="mt-2" />
+          </div>
+          <div>
+            <x-input-label for="shipping_returns" :value="__('Shipping & returns')" />
+            <textarea id="shipping_returns" name="shipping_returns" class="mt-1 block w-full" rows="4" placeholder="{{ __('Delivery times, return policy…') }}">{{ old('shipping_returns') }}</textarea>
+            <x-input-error :messages="$errors->get('shipping_returns')" class="mt-2" />
           </div>
         </section>
       </div>

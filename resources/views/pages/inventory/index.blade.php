@@ -64,7 +64,7 @@
               $invFallback = \App\Support\PlaceholderMedia::url($sections['fallback_image'] ?? 'asset/images/media/inventory-listing-fallback.jpg');
             @endphp
             <article class="group cursor-pointer">
-              <a href="{{ $vehicleUrl }}" class="block relative aspect-[3/4] overflow-hidden bg-surface-container mb-4">
+              <a href="{{ $vehicleUrl }}" class="block relative aspect-[4/5] max-h-[340px] overflow-hidden bg-surface-container mb-4">
                 @include('partials.vehicle-hover-gallery', [
                   'vehicle' => $vehicle,
                   'fallback' => $invFallback,

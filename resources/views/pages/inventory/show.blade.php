@@ -55,12 +55,6 @@
   $price = $vehicle->price;
   $overview = $vehicle->overview ?: $vehicle->description;
   $productVariants = $productVariants ?? collect();
-  $displayColors = $productVariants->isNotEmpty()
-    ? $productVariants->map(fn ($v) => $v->colorOption?->value)->filter()->unique()->values()
-    : collect();
-  if ($displayColors->isEmpty()) {
-    $displayColors = collect([__('Onyx'), __('Ivory')]);
-  }
   $categoryCrumb = $vehicle->categoryOption?->value ?: __('Collections');
 @endphp
 
@@ -91,7 +85,6 @@
         'price' => $price,
         'overview' => $overview,
         'productVariants' => $productVariants,
-        'displayColors' => $displayColors,
         'isFavorited' => $isFavorited ?? false,
       ])
     </div>

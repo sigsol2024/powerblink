@@ -58,6 +58,8 @@ class AdminSiteSettingsController extends Controller
             'contact_notify_email' => ['nullable', 'email', 'max:255'],
             'contact_from_name' => ['nullable', 'string', 'max:255'],
             'dealer_public_email' => ['nullable', 'email', 'max:255'],
+            'payment_bank_transfer_details' => ['nullable', 'string', 'max:10000'],
+            'payment_pay_on_delivery_note' => ['nullable', 'string', 'max:5000'],
         ]);
 
         if ($request->hasFile('logo_file')) {
@@ -96,6 +98,9 @@ class AdminSiteSettingsController extends Controller
         }
 
         $validated['newsletter_enabled'] = $request->boolean('newsletter_enabled') ? '1' : '0';
+        $validated['payment_paystack_enabled'] = $request->boolean('payment_paystack_enabled') ? '1' : '0';
+        $validated['payment_bank_transfer_enabled'] = $request->boolean('payment_bank_transfer_enabled') ? '1' : '0';
+        $validated['payment_pay_on_delivery_enabled'] = $request->boolean('payment_pay_on_delivery_enabled') ? '1' : '0';
 
         foreach (SiteSettingDefaults::managedKeys() as $key) {
             $value = $validated[$key] ?? '';

@@ -1,7 +1,9 @@
 @php
   $hasVariants = $productVariants->isNotEmpty();
-  $defaultSizes = collect(['XS', 'S', 'M', 'L', 'XL']);
   $inStock = $vehicle->status === 'approved' && (! is_null($price) && $price > 0);
+  $compositionCare = trim((string) ($vehicle->composition_care ?? ''));
+  $shippingReturns = trim((string) ($vehicle->shipping_returns ?? ''));
+  $featuresList = is_array($vehicle->features) ? array_filter($vehicle->features) : [];
 @endphp
 
 <div class="mb-8">
@@ -33,7 +35,7 @@
 @endif
 
 @if ($inStock)
-  <form id="add-to-cart-form" method="post" action="{{ route('cart.add') }}" class="space-y-6 mb-10" data-cart-add-form>
+  <form id="add-to-cart-form" method="post" action="{{ route('cart.add') }}" class="space-y-6 mb-6" data-cart-add-form>
     @csrf
     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}" />
 
@@ -53,87 +55,69 @@
           @endforeach
         </div>
       </div>
-    @else
-      <div class="border-t border-outline-variant pt-6">
-        <div class="flex justify-between items-center mb-4">
-          <span class="font-label-caps text-label-caps text-primary uppercase">{{ __('Select Size') }}</span>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          @foreach ($defaultSizes as $i => $size)
-            <span class="w-14 h-12 flex items-center justify-center border {{ $i === 0 ? 'border-primary bg-primary text-on-primary' : 'border-outline-variant' }} font-label-caps text-label-caps opacity-60">{{ $size }}</span>
-          @endforeach
-        </div>
-      </div>
-      @if ($displayColors->isNotEmpty())
-        <div class="border-t border-outline-variant pt-6">
-          <span class="font-label-caps text-label-caps text-primary uppercase block mb-4">{{ __('Textile & Color') }}</span>
-          <div class="flex flex-wrap gap-4">
-            @foreach ($displayColors as $i => $color)
-              <div class="flex items-center gap-2 {{ $i > 0 ? 'opacity-50' : '' }}">
-                <div class="w-8 h-8 rounded-full bg-on-surface border border-outline-variant {{ $i === 0 ? 'ring-1 ring-offset-2 ring-primary' : '' }}"></div>
-                <span class="font-label-caps text-[10px] text-primary tracking-widest uppercase">{{ $color }}</span>
-              </div>
-            @endforeach
-          </div>
-        </div>
-      @endif
     @endif
 
     <div class="flex items-center gap-4">
       <label class="font-label-caps text-label-caps text-primary uppercase" for="qty">{{ __('Qty') }}</label>
       <input id="qty" name="qty" type="number" min="1" max="99" value="1" class="w-20 border-b border-outline-variant bg-transparent py-2 font-body-md focus:border-primary focus:outline-none" />
     </div>
-
-    <button type="submit" class="w-full bg-primary text-on-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300">
-      {{ __('Add to Shopping Bag') }}
-    </button>
   </form>
-  <div class="mt-4">
+
+  <div class="grid grid-cols-2 gap-3 mb-6">
+    <button type="submit" form="add-to-cart-form" class="bg-primary text-on-primary py-4 px-3 font-button-text text-button-text uppercase tracking-[0.2em] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 text-center">
+      {{ __('Add to bag') }}
+    </button>
     @auth
-      <form method="post" action="{{ route('favorites.toggle', ['vehicle' => $vehicle->id]) }}">
+      <form method="post" action="{{ route('favorites.toggle', ['vehicle' => $vehicle->id]) }}" class="contents">
         @csrf
-        <button type="submit" class="w-full border border-primary text-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:bg-primary hover:text-on-primary transition-all duration-300">
-          {{ $isFavorited ? __('Saved to wishlist') : __('Wishlist') }}
+        <button type="submit" class="w-full border border-primary text-primary py-4 px-3 font-button-text text-button-text uppercase tracking-[0.2em] hover:bg-primary hover:text-on-primary transition-all duration-300 text-center">
+          {{ $isFavorited ? __('Saved') : __('Wishlist') }}
         </button>
       </form>
     @else
-      <a href="{{ route('login') }}" class="block w-full text-center border border-primary text-primary py-5 font-button-text text-button-text uppercase tracking-[0.25em] hover:bg-primary hover:text-on-primary transition-all duration-300">
+      <a href="{{ route('login') }}" class="flex items-center justify-center border border-primary text-primary py-4 px-3 font-button-text text-button-text uppercase tracking-[0.2em] hover:bg-primary hover:text-on-primary transition-all duration-300 text-center">
         {{ __('Wishlist') }}
       </a>
     @endauth
   </div>
 @endif
 
-<div class="space-y-4">
-  <details class="group border-b border-outline-variant pb-4" open>
-    <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
-      {{ __('Composition & Care') }}
-      <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
-    </summary>
-    <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed whitespace-pre-line">
-      {{ $overview ?: __('Contact us for material and care details for this piece.') }}
-    </div>
-  </details>
-  <details class="group border-b border-outline-variant pb-4">
-    <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
-      {{ __('Shipping & Returns') }}
-      <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
-    </summary>
-    <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed">
-      {{ __('Complimentary shipping on qualifying orders. Returns accepted within 14 days of receipt where applicable.') }}
-    </div>
-  </details>
-  @if (($vehicle->features ?? []) !== [])
-    <details class="group border-b border-outline-variant pb-4">
-      <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
-        {{ __('Features') }}
-        <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
-      </summary>
-      <ul class="pt-4 space-y-2 text-sm text-on-surface-variant">
-        @foreach ($vehicle->features as $feature)
-          <li class="flex gap-2"><span class="text-custom-accent">•</span> {{ $feature }}</li>
-        @endforeach
-      </ul>
-    </details>
-  @endif
-</div>
+@if ($compositionCare !== '' || $shippingReturns !== '' || $featuresList !== [])
+  <div class="space-y-4 mt-10">
+    @if ($compositionCare !== '')
+      <details class="group border-b border-outline-variant pb-4" open>
+        <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+          {{ __('Composition & Care') }}
+          <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
+        </summary>
+        <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed whitespace-pre-line">
+          {{ $compositionCare }}
+        </div>
+      </details>
+    @endif
+    @if ($shippingReturns !== '')
+      <details class="group border-b border-outline-variant pb-4">
+        <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+          {{ __('Shipping & Returns') }}
+          <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
+        </summary>
+        <div class="pt-4 text-on-surface-variant font-body-md text-sm leading-relaxed whitespace-pre-line">
+          {{ $shippingReturns }}
+        </div>
+      </details>
+    @endif
+    @if ($featuresList !== [])
+      <details class="group border-b border-outline-variant pb-4">
+        <summary class="flex justify-between items-center cursor-pointer list-none font-label-caps text-label-caps text-primary uppercase tracking-widest">
+          {{ __('Features') }}
+          <x-icon name="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform" />
+        </summary>
+        <ul class="pt-4 space-y-2 text-sm text-on-surface-variant">
+          @foreach ($featuresList as $feature)
+            <li class="flex gap-2"><span class="text-custom-accent">•</span> {{ $feature }}</li>
+          @endforeach
+        </ul>
+      </details>
+    @endif
+  </div>
+@endif

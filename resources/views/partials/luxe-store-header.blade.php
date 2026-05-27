@@ -11,6 +11,8 @@
   $cartCount = \App\Support\Cart::count();
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
+  $navCategories = collect(\App\Support\VehicleListingCatalog::filterOptions()['categories'] ?? [])->take(4);
+  $activeCategoryId = (int) request('product_category_listing_option_id', 0);
 @endphp
 @push('head')
 <style>
@@ -33,10 +35,16 @@
         </span>
       @endif
     </a>
-    <nav class="hidden md:flex gap-6 lg:gap-8">
-      <a href="{{ route('shop.index') }}" class="font-body-md text-body-md tracking-widest py-1 {{ $shopActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('COLLECTIONS') }}</a>
-      <a href="{{ route('about') }}" class="font-body-md text-body-md tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300 py-1">{{ __('STORY') }}</a>
-      <a href="{{ route('contact') }}" class="font-body-md text-body-md tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300 py-1">{{ __('CONTACT') }}</a>
+    <nav class="hidden md:flex gap-5 lg:gap-7 flex-wrap">
+      @forelse ($navCategories as $cat)
+        @php
+          $catActive = $shopActive && $activeCategoryId === (int) $cat->id;
+          $catUrl = route('shop.index', ['product_category_listing_option_id' => $cat->id]);
+        @endphp
+        <a href="{{ $catUrl }}" class="font-body-md text-body-md tracking-widest py-1 whitespace-nowrap {{ $catActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ strtoupper($cat->value) }}</a>
+      @empty
+        <a href="{{ route('shop.index') }}" class="font-body-md text-body-md tracking-widest py-1 {{ $shopActive && $activeCategoryId === 0 ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('SHOP') }}</a>
+      @endforelse
     </nav>
   </div>
   <div class="flex items-center gap-4 md:gap-6 shrink-0">
@@ -53,9 +61,12 @@
   </div>
 </header>
 <nav id="luxe-mobile-nav" class="luxe-store fixed top-[65px] inset-x-0 z-40 bg-background border-b border-outline-variant px-margin-mobile py-4 flex flex-col gap-3 md:hidden hidden" data-luxe-mobile-nav>
-  <a href="{{ route('shop.index') }}" class="font-label-caps text-label-caps tracking-widest {{ $shopActive ? 'text-primary' : 'text-on-surface-variant' }}">{{ __('COLLECTIONS') }}</a>
-  <a href="{{ route('about') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('STORY') }}</a>
-  <a href="{{ route('contact') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('CONTACT') }}</a>
+  @foreach ($navCategories as $cat)
+    <a href="{{ route('shop.index', ['product_category_listing_option_id' => $cat->id]) }}" class="font-label-caps text-label-caps tracking-widest {{ $shopActive && $activeCategoryId === (int) $cat->id ? 'text-primary' : 'text-on-surface-variant' }}">{{ strtoupper($cat->value) }}</a>
+  @endforeach
+  @if ($navCategories->isEmpty())
+    <a href="{{ route('shop.index') }}" class="font-label-caps text-label-caps tracking-widest {{ $shopActive ? 'text-primary' : 'text-on-surface-variant' }}">{{ __('SHOP') }}</a>
+  @endif
   @auth
     <a href="{{ route('dashboard') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('ACCOUNT') }}</a>
   @else
@@ -107,6 +118,9 @@
     'qty'        => __('Qty'),
     'remove'     => __('Remove'),
     'added'      => __('Added').' ✓',
+    'addedToCart' => __(':product has been added to cart'),
+    'item'       => __('item'),
+    'items'      => __('items'),
     'errorAdd'   => __('Could not add to bag.'),
     'errorOther' => __('Could not update bag.'),
   ],
@@ -189,9 +203,43 @@
       });
     }
 
+    function updateFloatingWidget(state) {
+      var w = qs('[data-luxe-cart-widget]');
+      if (!w) return;
+      var count = state.count || 0;
+      if (count <= 0) {
+        w.classList.add('hidden');
+        w.setAttribute('aria-hidden', 'true');
+        return;
+      }
+      w.classList.remove('hidden');
+      w.setAttribute('aria-hidden', 'false');
+      var countEl = qs('[data-luxe-cart-widget-count]', w);
+      var totalEl = qs('[data-luxe-cart-widget-total]', w);
+      if (countEl) {
+        countEl.textContent = count + ' ' + (count === 1 ? (I18N.item || 'item') : (I18N.items || 'items'));
+      }
+      if (totalEl && state.subtotal_formatted) {
+        totalEl.textContent = state.subtotal_formatted;
+      }
+    }
+
+    var toastTimer = null;
+    function showAddedToast(productName) {
+      var toast = qs('[data-luxe-cart-toast]');
+      var msg = qs('[data-luxe-cart-toast-message]', toast);
+      if (!toast || !msg || !productName) return;
+      var tpl = I18N.addedToCart || ':product has been added to cart';
+      msg.textContent = tpl.replace(':product', productName);
+      toast.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.classList.add('hidden'); }, 4500);
+    }
+
     function applyState(state) {
       updateBadge(state.count || 0);
       renderLines(state);
+      updateFloatingWidget(state);
       var sub = qs('[data-cart-subtotal]');
       if (sub && state.subtotal_formatted) sub.textContent = state.subtotal_formatted;
     }
@@ -276,7 +324,9 @@
         .then(function (state) {
           applyState(state);
           flashAdded();
-          // Briefly confirm the action inline on the button itself rather than opening the drawer.
+          if (state && state.added_product_name) {
+            showAddedToast(state.added_product_name);
+          }
           if (submit) {
             submit.innerHTML = I18N.added || originalLabel;
             submit._addedTimer = setTimeout(function () {
@@ -295,6 +345,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+      fetchState();
       var btn = document.querySelector('[data-luxe-mobile-nav-toggle]');
       var nav = document.querySelector('[data-luxe-mobile-nav]');
       if (btn && nav) {

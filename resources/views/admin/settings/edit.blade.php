@@ -205,6 +205,51 @@
         </div>
       </section>
 
+      <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+        <div class="border-b border-zinc-100 bg-zinc-50 px-6 py-4">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-700">{{ __('Payment methods') }}</h2>
+          <p class="mt-1 text-xs text-zinc-500">{{ __('Enable checkout options. Paystack uses PAYSTACK_SECRET_KEY from .env when enabled.') }}</p>
+        </div>
+        <div class="space-y-6 px-6 py-5">
+          <div class="flex items-start gap-3 rounded-lg border border-zinc-200 p-4">
+            <input type="hidden" name="payment_paystack_enabled" value="0" />
+            <input type="checkbox" name="payment_paystack_enabled" id="payment_paystack_enabled" value="1" class="mt-1 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" @checked(old('payment_paystack_enabled', $settings['payment_paystack_enabled'] ?? '1') === '1') />
+            <div class="min-w-0 flex-1">
+              <label for="payment_paystack_enabled" class="block text-sm font-semibold text-zinc-900">{{ __('Paystack (card, bank, USSD)') }}</label>
+              <p class="mt-1 text-xs text-zinc-500">{{ __('Redirects customers to Paystack checkout. Requires secret key in .env.') }}</p>
+            </div>
+          </div>
+          <div class="rounded-lg border border-zinc-200 p-4 space-y-4">
+            <div class="flex items-start gap-3">
+              <input type="hidden" name="payment_bank_transfer_enabled" value="0" />
+              <input type="checkbox" name="payment_bank_transfer_enabled" id="payment_bank_transfer_enabled" value="1" class="mt-1 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" @checked(old('payment_bank_transfer_enabled', $settings['payment_bank_transfer_enabled'] ?? '0') === '1') />
+              <div class="min-w-0 flex-1">
+                <label for="payment_bank_transfer_enabled" class="block text-sm font-semibold text-zinc-900">{{ __('Bank transfer') }}</label>
+                <p class="mt-1 text-xs text-zinc-500">{{ __('Customer places order and pays via your bank account.') }}</p>
+              </div>
+            </div>
+            <div>
+              <label for="payment_bank_transfer_details" class="block text-sm font-medium text-zinc-700">{{ __('Bank account details') }}</label>
+              <textarea name="payment_bank_transfer_details" id="payment_bank_transfer_details" rows="5" class="mt-1 block w-full rounded-md border-zinc-300 font-mono text-sm shadow-sm" placeholder="Bank name&#10;Account name&#10;Account number">{{ old('payment_bank_transfer_details', $settings['payment_bank_transfer_details'] ?? '') }}</textarea>
+            </div>
+          </div>
+          <div class="rounded-lg border border-zinc-200 p-4 space-y-4">
+            <div class="flex items-start gap-3">
+              <input type="hidden" name="payment_pay_on_delivery_enabled" value="0" />
+              <input type="checkbox" name="payment_pay_on_delivery_enabled" id="payment_pay_on_delivery_enabled" value="1" class="mt-1 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" @checked(old('payment_pay_on_delivery_enabled', $settings['payment_pay_on_delivery_enabled'] ?? '0') === '1') />
+              <div class="min-w-0 flex-1">
+                <label for="payment_pay_on_delivery_enabled" class="block text-sm font-semibold text-zinc-900">{{ __('Pay on delivery') }}</label>
+                <p class="mt-1 text-xs text-zinc-500">{{ __('Customer pays when the order is delivered.') }}</p>
+              </div>
+            </div>
+            <div>
+              <label for="payment_pay_on_delivery_note" class="block text-sm font-medium text-zinc-700">{{ __('Instructions (optional)') }}</label>
+              <textarea name="payment_pay_on_delivery_note" id="payment_pay_on_delivery_note" rows="3" class="mt-1 block w-full rounded-md border-zinc-300 text-sm shadow-sm">{{ old('payment_pay_on_delivery_note', $settings['payment_pay_on_delivery_note'] ?? '') }}</textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div class="flex justify-end gap-3">
         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50">{{ __('Cancel') }}</a>
         <button type="submit" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">{{ __('Save settings') }}</button>
