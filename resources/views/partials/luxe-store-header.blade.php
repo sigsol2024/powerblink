@@ -1,6 +1,13 @@
 @php
   $site = $site ?? [];
-  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : 'VOGUE DRESS';
+  $brandName = \App\Support\SiteBrand::displayName($site);
+  $logoPath = trim((string) ($site['logo_path'] ?? ''));
+  if ($logoPath === '') {
+    $logoPath = trim((string) ($site['logo_light_path'] ?? ''));
+  }
+  if ($logoPath === '') {
+    $logoPath = trim((string) ($site['logo_url'] ?? ''));
+  }
   $cartCount = \App\Support\Cart::count();
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
@@ -17,8 +24,14 @@
 @endpush
 <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter py-4 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store">
   <div class="flex items-center gap-4 md:gap-8 min-w-0">
-    <a href="{{ route('home') }}" class="font-display-lg text-[22px] sm:text-display-lg-mobile md:text-display-lg text-primary uppercase tracking-tighter truncate">
-      {{ strtoupper($brandName) }}
+    <a href="{{ route('home') }}" class="flex min-w-0 shrink items-center">
+      @if ($logoPath !== '')
+        <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[180px] object-contain sm:h-10" />
+      @else
+        <span class="font-display-lg text-[22px] sm:text-display-lg-mobile md:text-display-lg text-primary uppercase tracking-tighter truncate">
+          {{ strtoupper($brandName) }}
+        </span>
+      @endif
     </a>
     <nav class="hidden md:flex gap-6 lg:gap-8">
       <a href="{{ route('shop.index') }}" class="font-body-md text-body-md tracking-widest py-1 {{ $shopActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('COLLECTIONS') }}</a>

@@ -46,11 +46,8 @@
   $heroSlides = ($recentVehicles ?? collect())->take(5);
     @endphp
     <section class="relative w-full overflow-hidden luxe-geometric-bg bg-background">
-      {{-- Match shop page “plus” pattern background (luxe-geometric-bg) --}}
-      <div class="absolute inset-0 pointer-events-none">
-        {{-- Keep pattern visible with a translucent wash for readability --}}
-        <div class="absolute inset-0 bg-gradient-to-b from-background/85 via-background/60 to-background/90"></div>
-      </div>
+      {{-- Light wash only — heavy overlays hide the plus pattern (see shop page) --}}
+      <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-background/25 via-transparent to-background/30" aria-hidden="true"></div>
       <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-5 md:py-7">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           <div class="min-w-0 order-2 lg:order-1">

@@ -64,7 +64,7 @@
   $categoryCrumb = $vehicle->categoryOption?->value ?: __('Collections');
 @endphp
 
-<main class="luxe-store pt-24 max-w-max-container mx-auto px-margin-mobile md:px-gutter pb-section-py-mobile md:pb-section-py-desktop">
+<main class="luxe-store luxe-geometric-bg bg-background pt-24 max-w-max-container mx-auto px-margin-mobile md:px-gutter pb-section-py-mobile md:pb-section-py-desktop min-h-screen">
   <nav class="py-6 md:py-8" aria-label="{{ __('Breadcrumb') }}">
     <ul class="flex flex-wrap items-center gap-2 font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">
       <li><a class="hover:text-primary transition-colors" href="{{ route('home') }}">{{ __('Home') }}</a></li>
