@@ -27,22 +27,13 @@
     </nav>
   </div>
   <div class="flex items-center gap-4 md:gap-6 shrink-0">
-    <a href="{{ route('shop.index') }}" class="text-primary hover:scale-110 transition-transform hidden sm:inline-flex items-center justify-center" aria-label="{{ __('Search') }}">
-      <x-icon name="search" class="w-5 h-5" />
+    <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center justify-center bg-black text-white px-5 py-2 font-button-text text-button-text uppercase tracking-[0.2em] hover:opacity-90 transition-opacity" aria-label="{{ __('Shop now') }}">
+      {{ __('Shop now') }}
     </a>
     <button type="button" class="text-primary hover:scale-110 transition-transform relative inline-flex items-center justify-center {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}" data-cart-toggle>
       <x-icon name="shopping-bag" class="w-6 h-6" />
       <span class="luxe-cart-badge absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}" data-cart-count-badge>{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
     </button>
-    @auth
-      <a href="{{ route('dashboard') }}" class="text-primary hover:scale-110 transition-transform hidden md:inline-flex items-center justify-center" aria-label="{{ __('Account') }}">
-        <x-icon name="user" class="w-5 h-5" />
-      </a>
-    @else
-      <a href="{{ route('login') }}" class="text-primary hover:scale-110 transition-transform hidden md:inline-flex items-center justify-center" aria-label="{{ __('Sign in') }}">
-        <x-icon name="user" class="w-5 h-5" />
-      </a>
-    @endauth
     <button type="button" class="text-primary md:hidden inline-flex items-center justify-center" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav" aria-label="{{ __('Menu') }}">
       <x-icon name="menu" class="w-6 h-6" />
     </button>

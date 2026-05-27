@@ -1,7 +1,11 @@
 @php
   $formId = $formId ?? 'inventory-filter-form';
   $categories = collect($filterOptions['categories'] ?? []);
+  $sizes = collect($filterOptions['sizes'] ?? []);
+  $colors = collect($filterOptions['colors'] ?? []);
   $activeCategory = (int) ($filters['product_category_listing_option_id'] ?? 0);
+  $activeSize = (int) ($filters['size_id'] ?? 0);
+  $activeColor = (int) ($filters['color_id'] ?? 0);
   $priceMinVal = (int) ($filters['price_min'] ?? 0);
   $priceMaxVal = (int) ($filters['price_max'] ?? 0);
   $sliderMax = max($priceMaxVal, 5000);
@@ -16,28 +20,47 @@
 
   <section>
     <h3 class="font-label-caps text-label-caps text-primary mb-6 border-b border-outline-variant pb-2">{{ __('CATEGORIES') }}</h3>
-    <ul class="space-y-4 font-body-md text-body-md">
-      <li>
-        <a
-          href="{{ route('shop.index', request()->except(['product_category_listing_option_id', 'page'])) }}"
-          class="{{ $activeCategory === 0 ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary transition-colors' }}"
-        >{{ __('ALL PRODUCTS') }}</a>
-      </li>
+    <select
+      name="product_category_listing_option_id"
+      class="w-full border-b border-outline-variant bg-transparent py-2 font-label-caps text-[11px] uppercase tracking-widest focus:border-primary focus:outline-none"
+      onchange="this.form.submit()"
+      aria-label="{{ __('Category') }}"
+    >
+      <option value="">{{ __('ALL PRODUCTS') }}</option>
       @foreach ($categories as $row)
-        @php
-          $isActive = $activeCategory === (int) $row->id;
-          $catUrl = route('shop.index', array_merge(
-            request()->except(['product_category_listing_option_id', 'page']),
-            ['product_category_listing_option_id' => $row->id]
-          ));
-        @endphp
-        <li>
-          <a href="{{ $catUrl }}" class="{{ $isActive ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary transition-colors' }}">
-            {{ strtoupper($row->value) }}
-          </a>
-        </li>
+        <option value="{{ $row->id }}" @selected($activeCategory === (int) $row->id)>{{ strtoupper($row->value) }}</option>
       @endforeach
-    </ul>
+    </select>
+  </section>
+
+  <section>
+    <h3 class="font-label-caps text-label-caps text-primary mb-6 border-b border-outline-variant pb-2">{{ __('SIZE') }}</h3>
+    <select
+      name="size_id"
+      class="w-full border-b border-outline-variant bg-transparent py-2 font-label-caps text-[11px] uppercase tracking-widest focus:border-primary focus:outline-none"
+      onchange="this.form.submit()"
+      aria-label="{{ __('Size') }}"
+    >
+      <option value="">{{ __('ALL SIZES') }}</option>
+      @foreach ($sizes as $row)
+        <option value="{{ $row->id }}" @selected($activeSize === (int) $row->id)>{{ strtoupper($row->value) }}</option>
+      @endforeach
+    </select>
+  </section>
+
+  <section>
+    <h3 class="font-label-caps text-label-caps text-primary mb-6 border-b border-outline-variant pb-2">{{ __('COLOR') }}</h3>
+    <select
+      name="color_id"
+      class="w-full border-b border-outline-variant bg-transparent py-2 font-label-caps text-[11px] uppercase tracking-widest focus:border-primary focus:outline-none"
+      onchange="this.form.submit()"
+      aria-label="{{ __('Color') }}"
+    >
+      <option value="">{{ __('ALL COLORS') }}</option>
+      @foreach ($colors as $row)
+        <option value="{{ $row->id }}" @selected($activeColor === (int) $row->id)>{{ strtoupper($row->value) }}</option>
+      @endforeach
+    </select>
   </section>
 
   <section>

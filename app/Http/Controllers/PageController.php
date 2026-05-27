@@ -6,6 +6,7 @@ use App\Models\CmsPage;
 use App\Models\PageSection;
 use App\Models\SiteSetting;
 use App\Models\Vehicle;
+use App\Models\VehicleVariant;
 use App\Support\Compare;
 use App\Support\SiteBrand;
 use App\Support\SiteSettingDefaults;
@@ -320,6 +321,8 @@ class PageController extends Controller
             $filters = $request->validate([
                 'q' => ['nullable', 'string', 'max:255'],
                 'product_category_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['categories'] ?? []))),
+                'size_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['sizes'] ?? []))),
+                'color_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['colors'] ?? []))),
                 'price_min' => ['nullable', 'integer', 'min:0', 'max:999999999'],
                 'price_max' => ['nullable', 'integer', 'min:0', 'max:999999999'],
                 'sort' => ['nullable', 'string', Rule::in(['newest', 'price_low', 'price_high'])],
@@ -364,6 +367,24 @@ class PageController extends Controller
             $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
             if ($hasCategoryCol && $categoryId > 0) {
                 $query->where('product_category_listing_option_id', $categoryId);
+            }
+
+            $sizeId = (int) ($filters['size_id'] ?? 0);
+            if ($sizeId > 0) {
+                $query->whereIn('id', VehicleVariant::query()
+                    ->where('is_active', true)
+                    ->where('size_listing_option_id', $sizeId)
+                    ->select('vehicle_id')
+                );
+            }
+
+            $colorId = (int) ($filters['color_id'] ?? 0);
+            if ($colorId > 0) {
+                $query->whereIn('id', VehicleVariant::query()
+                    ->where('is_active', true)
+                    ->where('color_listing_option_id', $colorId)
+                    ->select('vehicle_id')
+                );
             }
 
             $priceMin = (int) ($filters['price_min'] ?? 0);
@@ -421,6 +442,8 @@ class PageController extends Controller
         return [
             'q' => '',
             'product_category_listing_option_id' => '',
+            'size_id' => '',
+            'color_id' => '',
             'price_min' => '',
             'price_max' => '',
             'sort' => 'newest',

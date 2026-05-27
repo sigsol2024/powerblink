@@ -73,9 +73,13 @@ final class VehicleListingCatalog
     public static function filterOptions(): array
     {
         $categories = collect();
+        $sizes = collect();
+        $colors = collect();
         try {
             if (Schema::hasTable('listing_options') && Schema::hasTable('listing_option_categories')) {
                 $categories = self::activeRootOptionRows('product_category');
+                $sizes = self::activeRootOptionRows('size');
+                $colors = self::activeRootOptionRows('color');
             }
         } catch (\Throwable) {
             // Fall through with empty collection.
@@ -83,6 +87,8 @@ final class VehicleListingCatalog
 
         return [
             'categories' => $categories,
+            'sizes' => $sizes,
+            'colors' => $colors,
         ];
     }
 
