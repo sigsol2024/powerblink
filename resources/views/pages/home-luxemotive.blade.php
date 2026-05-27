@@ -50,7 +50,7 @@
         <div class="absolute inset-0 luxe-african-pattern opacity-40"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-low/60 to-surface-container-lowest"></div>
       </div>
-      <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-10 md:py-14">
+      <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-7 md:py-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           <div class="min-w-0">
             <p class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase mb-3">{{ __('New season') }}</p>
@@ -118,7 +118,7 @@
             @touchend.passive="onTouchEnd($event)"
           >
             <div class="rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-sm overflow-hidden">
-              <div class="relative aspect-[4/5] bg-surface-container-low">
+              <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden">
                 @if ($heroSlides->isNotEmpty())
                   <div
                     class="absolute inset-0 flex transition-transform duration-500 ease-in-out"
@@ -131,16 +131,41 @@
                       @endphp
                       <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="w-full shrink-0 relative block">
                         <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute inset-0 bg-black/10"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/60 via-black/15 to-transparent">
                           <p class="font-label-caps text-label-caps text-white/90 tracking-widest">{{ $vehicle->categoryOption?->value ?: __('Collection') }}</p>
                           <h3 class="mt-2 font-headline-md text-headline-md text-white">{{ $vehicle->title }}</h3>
+                          <div class="mt-4">
+                            <span class="inline-flex items-center gap-2 border border-white/70 bg-white/10 px-4 py-2 font-label-caps text-[11px] text-white hover:bg-white/15">
+                              {{ __('View product') }}
+                              <x-icon name="arrow-right" class="w-4 h-4" />
+                            </span>
+                          </div>
                         </div>
                       </a>
                     @endforeach
                   </div>
                 @else
                   <img src="{{ $heroBg }}" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                @endif
+
+                @if ($heroSlides->count() > 1)
+                  <button
+                    type="button"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/40 bg-black/15 p-2 text-white backdrop-blur hover:bg-black/25"
+                    aria-label="{{ __('Previous') }}"
+                    @click="goTo(index - 1); stop(); start();"
+                  >
+                    <x-icon name="chevron-left" class="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/40 bg-black/15 p-2 text-white backdrop-blur hover:bg-black/25"
+                    aria-label="{{ __('Next') }}"
+                    @click="goTo(index + 1); stop(); start();"
+                  >
+                    <x-icon name="chevron-right" class="w-5 h-5" />
+                  </button>
                 @endif
               </div>
             </div>
@@ -180,47 +205,7 @@
       </div>
     </section>
 
-    {{-- New arrivals scroll --}}
-    @if ($arrivals->isNotEmpty())
-      <section class="bg-surface-container-low py-section-py-mobile md:py-section-py-desktop overflow-hidden">
-        <div class="max-w-max-container mx-auto px-margin-mobile md:px-gutter mb-8 md:mb-12 flex justify-between items-end">
-          <div>
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ __('SEASONAL DROP') }}</p>
-            <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg">{{ $recentTitle }}</h2>
-          </div>
-          <a href="{{ route('shop.index') }}" class="font-button-text text-button-text border-b border-primary pb-1 hidden md:block">{{ __('VIEW ALL') }}</a>
-        </div>
-        <div class="flex gap-6 overflow-x-auto luxe-hide-scrollbar px-margin-mobile md:px-[calc((100vw-1200px)/2+1.5rem)]">
-          @foreach ($arrivals as $vehicle)
-            @php
-              $cover = $vehicle->images->first();
-              $img = $cover ? \App\Support\VehicleImageUrl::url($cover->path) : \App\Support\PlaceholderMedia::url('asset/images/media/home-recent-fallback.jpg');
-              $subtitle = $vehicle->categoryOption?->value ?: __('Collection');
-            @endphp
-            <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="min-w-[280px] md:min-w-[400px] flex-shrink-0 group cursor-pointer block">
-              <div class="aspect-[4/5] overflow-hidden bg-surface-container-lowest mb-4 md:mb-6 relative">
-                <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
-                @if ($vehicle->is_special)
-                  <span class="absolute top-4 left-4 bg-surface-container-lowest px-3 py-1 font-label-caps text-[10px] tracking-tighter">{{ __('LIMITED') }}</span>
-                @endif
-              </div>
-              <div class="flex justify-between items-start gap-4">
-                <div class="min-w-0">
-                  <h4 class="font-body-lg text-body-lg text-primary uppercase truncate">{{ $vehicle->title }}</h4>
-                  <p class="font-body-md text-body-md text-on-surface-variant">{{ $subtitle }}</p>
-                </div>
-                <p class="font-body-lg text-body-lg font-bold text-secondary-fixed-dim shrink-0">
-                  @if (! is_null($vehicle->price)){{ format_currency($vehicle->price) }}@else {{ __('Ask') }}@endif
-                </p>
-              </div>
-            </a>
-          @endforeach
-        </div>
-        <div class="mt-8 text-center md:hidden px-margin-mobile">
-          <a href="{{ route('shop.index') }}" class="font-button-text text-button-text border-b border-primary pb-1">{{ __('VIEW ALL') }}</a>
-        </div>
-      </section>
-    @endif
+    {{-- New arrivals scroll removed (per request) --}}
 
     {{-- Bestsellers grid --}}
     @if ($bestsellers->isNotEmpty())

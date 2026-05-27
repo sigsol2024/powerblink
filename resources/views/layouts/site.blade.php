@@ -67,6 +67,8 @@
       <link rel="icon" href="{{ \App\Support\VehicleImageUrl::url($site['favicon_path']) }}" />
     @endif
     @stack('head')
+    {{-- Homepage hero slider + other luxe interactions use Alpine. --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
   </head>
 
   @php
