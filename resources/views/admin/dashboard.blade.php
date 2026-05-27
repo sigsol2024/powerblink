@@ -50,8 +50,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <x-admin.card variant="table" class="lg:col-span-2">
         <div class="p-4 border-b border-wp-border flex justify-between items-center">
-          <h4 class="text-sm font-semibold text-wp-text">{{ __('Recent Admin Activity') }}</h4>
-          <a href="{{ route('admin.audit.index') }}" class="text-xs text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1">
+          <h4 class="text-sm font-semibold text-wp-text">{{ __('Recent orders') }}</h4>
+          <a href="{{ route('admin.orders.index') }}" class="text-xs text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1">
             {{ __('View all') }}
             <x-icon name="arrow-right" class="w-3.5 h-3.5" />
           </a>
@@ -60,27 +60,35 @@
           <table class="w-full text-left border-collapse text-sm admin-luxe-table">
             <thead>
               <tr class="bg-wp-bg">
-                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('When') }}</th>
-                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Admin') }}</th>
-                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Method') }}</th>
-                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Path') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Date') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Order') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Product') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Qty') }}</th>
                 <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Status') }}</th>
               </tr>
             </thead>
             <tbody>
-              @forelse (($audit['recent'] ?? []) as $entry)
+              @forelse (($recentOrders ?? []) as $order)
+                @php
+                  $items = $order->items ?? collect();
+                  $firstItem = $items->first();
+                  $primaryName = (string) ($firstItem->name ?? $firstItem?->vehicle?->title ?? __('—'));
+                  $qtyTotal = (int) ($items->sum('qty') ?? 0);
+                @endphp
                 <tr class="hover:bg-wp-bg transition-colors">
-                  <td class="px-4 py-3 border-b border-wp-border text-wp-text-muted whitespace-nowrap">{{ optional($entry->created_at)->format('M j, Y') }}</td>
-                  <td class="px-4 py-3 border-b border-wp-border">{{ $entry->user?->name ?? __('Unknown') }}</td>
-                  <td class="px-4 py-3 border-b border-wp-border">
-                    <x-admin.status-pill variant="neutral">{{ $entry->method }}</x-admin.status-pill>
+                  <td class="px-4 py-3 border-b border-wp-border text-wp-text-muted whitespace-nowrap">{{ optional($order->created_at)->format('M j, Y') }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border font-medium">
+                    <a href="{{ route('admin.orders.show', $order) }}" class="hover:underline">{{ $order->order_number ?? ('#'.$order->id) }}</a>
                   </td>
-                  <td class="px-4 py-3 border-b border-wp-border max-w-xs truncate" title="{{ $entry->path }}">{{ $entry->path }}</td>
-                  <td class="px-4 py-3 border-b border-wp-border text-right font-medium">{{ $entry->status_code ?? '—' }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border max-w-xs truncate" title="{{ $primaryName }}">{{ $primaryName }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border text-right tabular-nums">{{ number_format($qtyTotal) }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border text-right">
+                    <x-admin.status-pill :variant="(string) ($order->status ?? 'neutral')">{{ $order->status ?? '—' }}</x-admin.status-pill>
+                  </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5"><x-admin.empty-state :title="__('No audit actions yet.')" /></td>
+                  <td colspan="5"><x-admin.empty-state :title="__('No orders yet.')" /></td>
                 </tr>
               @endforelse
             </tbody>

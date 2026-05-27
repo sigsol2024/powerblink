@@ -431,7 +431,7 @@
         if (statusEl) {
           statusEl.classList.remove('hidden');
           const t = statusEl.querySelector('.media-upload-status-text');
-          if (t) t.textContent = '{{ __('Uploading…') }}';
+          if (t) t.textContent = "{{ addslashes(__('Uploading…')) }}";
         }
         try {
           const res = await fetch(mediaUploadForm.action, {
@@ -443,9 +443,9 @@
           if (statusEl) {
             const t = statusEl.querySelector('.media-upload-status-text');
             if (t) {
-              t.textContent = res.ok
-                ? '{{ __('Upload complete') }}'
-                : '{{ __('Upload failed') }} (HTTP ' + res.status + ')';
+              const okLabel = "{{ addslashes(__('Upload complete')) }}";
+              const failLabel = "{{ addslashes(__('Upload failed')) }}";
+              t.textContent = res.ok ? okLabel : `${failLabel} (HTTP ${res.status})`;
             }
           }
           if (res.ok) {
@@ -456,7 +456,7 @@
         } catch (err) {
           if (statusEl) {
             const t = statusEl.querySelector('.media-upload-status-text');
-            if (t) t.textContent = '{{ __('Upload failed. Check your connection.') }}';
+            if (t) t.textContent = "{{ addslashes(__('Upload failed. Check your connection.')) }}";
           }
         } finally {
           if (submitBtn) submitBtn.disabled = false;
@@ -482,17 +482,13 @@
 @endphp
 
 <x-app-layout>
-    <x-slot name="header">
-    <h2 class="admin-page-title truncate">{{ __('Edit Page') }}: {{ $pageInfo['label'] }}</h2>
-  </x-slot>
+  <div class="flex flex-col">
+    <x-admin.page-header :title="__('Edit page')" :subtitle="$pageInfo['label'] ?? null" />
 
-
-  <div class="admin-content-toolbar">
-    <div class="admin-content-toolbar__actions">
-      <a href="{{ route('admin.pages.index') }}" class="admin-btn">{{ __('All pages') }}</a>
-    </div>
-  </div>
-  <div class="w-full px-4 md:px-6 pb-6 md:pb-8">
+    <x-admin.page-content>
+      <div class="mb-4 flex justify-end">
+        <a href="{{ route('admin.pages.index') }}" class="admin-luxe-btn-secondary">{{ __('All pages') }}</a>
+      </div>
     @if (session('status'))
       <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm">
         {{ session('status') }}
@@ -782,5 +778,6 @@
         </div>
       </div>
     </form>
+    </x-admin.page-content>
   </div>
 </x-app-layout>

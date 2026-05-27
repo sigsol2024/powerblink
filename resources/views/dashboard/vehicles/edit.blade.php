@@ -7,15 +7,15 @@
   @endpush
 
   <div class="min-h-full flex flex-col">
-    <header class="sticky top-0 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 md:px-6 py-4 md:py-6 border-b border-outline-variant bg-background/95 backdrop-blur-md shrink-0">
-      <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ $isAdminEdit ? __('Edit Product') : __('Edit listing') }}</h2>
-      <div class="flex items-center gap-3">
-        <a href="{{ route('dashboard.vehicles.index') }}" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">{{ __('Cancel') }}</a>
-        <button type="submit" form="luxe-product-edit-form" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 bg-primary text-on-primary hover:scale-105 transition-transform">{{ __('Save Product') }}</button>
+    <header class="sticky top-0 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white shrink-0">
+      <h2 class="text-lg font-semibold text-wp-text">{{ $isAdminEdit ? __('Edit Product') : __('Edit listing') }}</h2>
+      <div class="flex items-center gap-2">
+        <a href="{{ route('dashboard.vehicles.index') }}" class="text-sm px-3 py-1.5 border border-wp-border text-wp-text bg-white rounded hover:bg-wp-bg transition-colors">{{ __('Cancel') }}</a>
+        <button type="submit" form="luxe-product-form" class="admin-luxe-btn-primary">{{ __('Save Product') }}</button>
       </div>
     </header>
 
-    <div class="max-w-[1000px] mx-auto py-6 md:py-10 px-4 md:px-6 w-full flex-1 space-y-6">
+    <div class="max-w-[1100px] mx-auto py-6 md:py-8 px-4 md:px-6 w-full flex-1 space-y-6">
 
   @if($vehicle->status === 'approved')
   <div class="admin-content-toolbar">
@@ -47,7 +47,7 @@
       @endif
       <div class="border border-outline-variant bg-surface-container-lowest">
         <div class="p-6 text-on-background luxe-product-form">
-          <form id="luxe-product-edit-form" method="post" action="{{ route('dashboard.vehicles.update', $vehicle) }}" class="space-y-4" enctype="multipart/form-data">
+          <form id="luxe-product-form" method="post" action="{{ route('dashboard.vehicles.update', $vehicle) }}" class="space-y-4" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 

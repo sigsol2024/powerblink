@@ -3,12 +3,8 @@
 @endphp
 
 <x-app-layout>
-  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Media Library') }}</h2>
-  </header>
-
   <div
-    class="w-full space-y-6 px-4 md:px-6 py-6 md:py-8"
+    class="flex flex-col"
     x-data="{
       selected: [],
       allIds: @js($allItemIds),
@@ -27,6 +23,9 @@
       }
     }"
   >
+    <x-admin.page-header :title="__('Media library')" :subtitle="__('Upload and reuse images across pages and product editors.')" />
+
+    <x-admin.page-content class="space-y-6">
     @if (session('status'))
       <div class="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
         {{ session('status') }}
@@ -178,6 +177,7 @@
         </table>
       </div>
     </div>
+    </x-admin.page-content>
   </div>
   @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

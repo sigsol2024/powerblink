@@ -180,6 +180,11 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
 
         $totalViews = (int) (clone $analyticsBase)->count();
         $revenuePaidTotal = (int) (Order::query()->where('status', 'paid')->sum('total') ?? 0);
+        $recentOrders = Order::query()
+            ->with(['items'])
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('admin.dashboard', [
             'stats' => [
@@ -192,6 +197,7 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
                 'revenue_paid_total' => $revenuePaidTotal,
                 'visitors_total' => $totalViews,
             ],
+            'recentOrders' => $recentOrders,
             'analyticsSummary' => [
                 'range_days' => 90,
                 'total_views' => $totalViews,

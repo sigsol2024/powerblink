@@ -73,22 +73,52 @@
 
   <div x-show="hasDim('size')" x-cloak class="space-y-2">
     <label class="block text-sm font-medium text-wp-text">{{ __('Sizes') }}</label>
-    <select name="dimension_options[size][]" multiple class="mt-1 block w-full rounded-md border-wp-border text-sm min-h-[8rem]" x-model="sizeIds" @change="pruneMatrix()">
-      @foreach ($sizeOptions as $opt)
-        <option value="{{ $opt->id }}" @selected(in_array((int) $opt->id, $selectedSizeIds, true))>{{ $opt->value }}</option>
-      @endforeach
-    </select>
-    <p class="text-xs text-wp-text-muted">{{ __('Hold Ctrl/Cmd to select multiple sizes.') }}</p>
+    <div class="mt-1 max-h-56 overflow-auto rounded-md border border-wp-border bg-white p-3">
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        @foreach ($sizeOptions as $opt)
+          <label class="flex items-center gap-2 text-sm text-wp-text">
+            <input
+              type="checkbox"
+              name="dimension_options[size][]"
+              value="{{ $opt->id }}"
+              class="rounded border-wp-border"
+              x-model.number="sizeIds"
+              @change="pruneMatrix()"
+              @checked(in_array((int) $opt->id, $selectedSizeIds, true))
+            />
+            <span>{{ $opt->value }}</span>
+          </label>
+        @endforeach
+      </div>
+      @if($sizeOptions->isEmpty())
+        <p class="text-xs text-wp-text-muted">{{ __('No size options yet. Add them under Admin → Variants.') }}</p>
+      @endif
+    </div>
   </div>
 
   <div x-show="hasDim('color')" x-cloak class="space-y-2">
     <label class="block text-sm font-medium text-wp-text">{{ __('Colors') }}</label>
-    <select name="dimension_options[color][]" multiple class="mt-1 block w-full rounded-md border-wp-border text-sm min-h-[8rem]" x-model="colorIds" @change="pruneMatrix()">
-      @foreach ($colorOptions as $opt)
-        <option value="{{ $opt->id }}" @selected(in_array((int) $opt->id, $selectedColorIds, true))>{{ $opt->value }}</option>
-      @endforeach
-    </select>
-    <p class="text-xs text-wp-text-muted">{{ __('Hold Ctrl/Cmd to select multiple colors.') }}</p>
+    <div class="mt-1 max-h-56 overflow-auto rounded-md border border-wp-border bg-white p-3">
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        @foreach ($colorOptions as $opt)
+          <label class="flex items-center gap-2 text-sm text-wp-text">
+            <input
+              type="checkbox"
+              name="dimension_options[color][]"
+              value="{{ $opt->id }}"
+              class="rounded border-wp-border"
+              x-model.number="colorIds"
+              @change="pruneMatrix()"
+              @checked(in_array((int) $opt->id, $selectedColorIds, true))
+            />
+            <span>{{ $opt->value }}</span>
+          </label>
+        @endforeach
+      </div>
+      @if($colorOptions->isEmpty())
+        <p class="text-xs text-wp-text-muted">{{ __('No color options yet. Add them under Admin → Variants.') }}</p>
+      @endif
+    </div>
   </div>
 
   <div x-show="rows().length > 0" x-cloak>

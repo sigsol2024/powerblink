@@ -1,10 +1,8 @@
 <x-app-layout>
-  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <p class="text-xs uppercase tracking-wide text-wp-text-muted mb-1">{{ __('Admin') }}</p>
-    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Site settings') }}</h2>
-  </header>
+  <div class="flex flex-col">
+    <x-admin.page-header :title="__('Site settings')" :subtitle="__('Branding, login background, footer, top bar, and contact/newsletter routing.')" />
 
-  <div class="space-y-8 px-4 md:px-6 py-6 md:py-8">
+    <x-admin.page-content class="space-y-8">
     <p class="text-sm text-zinc-600">{{ __('Branding, login page background, footer, top bar, and contact/newsletter routing. Upload logos/favicons directly here, or paste media library paths if needed.') }}</p>
 
     @if (session('status'))
@@ -232,6 +230,7 @@
         </form>
       </div>
     </section>
+    </x-admin.page-content>
   </div>
   <script>
     (() => {

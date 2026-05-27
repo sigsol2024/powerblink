@@ -182,6 +182,10 @@ class AdminAnalyticsController extends Controller
         if ($normalized === '' || $normalized === '/') {
             return 'Home';
         }
+
+        // Stored paths may be saved with or without a leading slash.
+        $normalized = ltrim($normalized, '/');
+
         if (str_starts_with($normalized, 'inventory/')) {
             return 'Listing: '.str_replace('-', ' ', substr($normalized, 10));
         }

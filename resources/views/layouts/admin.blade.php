@@ -53,6 +53,8 @@
   @include('admin.partials.luxe-head')
   @stack('head')
   <style>[x-cloak]{display:none!important}</style>
+  {{-- Page-specific Vite entries must load before Alpine boots (app.js calls Alpine.start()) --}}
+  @stack('scripts')
   @if ($viteReady)
     @vite(['resources/js/app.js'])
   @else
@@ -215,7 +217,6 @@
   @unless (request()->routeIs('admin.pages.edit'))
     @include('partials.media-modal-pickers')
   @endunless
-  @stack('scripts')
   @stack('body-end')
 </body>
 </html>

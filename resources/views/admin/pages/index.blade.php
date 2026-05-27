@@ -1,10 +1,9 @@
 <x-app-layout>
-  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Page editors') }}</h2>
-  </header>
+  <div class="flex flex-col">
+    <x-admin.page-header :title="__('Page editors')" :subtitle="__('Edit public pages one by one.')" />
 
-  <div class="w-full px-4 md:px-6 py-6 md:py-8">
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <x-admin.page-content>
+      <x-admin.card variant="default">
         <p class="text-sm text-gray-600 mb-6">
           Edit the public pages one by one. This mirrors the page-editor pattern from your reference platform.
         </p>
@@ -33,7 +32,8 @@
             </a>
           @endforeach
         </div>
-      </div>
+      </x-admin.card>
+    </x-admin.page-content>
   </div>
   @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>
