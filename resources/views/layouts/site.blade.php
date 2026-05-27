@@ -85,11 +85,14 @@
       'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
       'cart.*', 'checkout.*', 'order.confirmed', 'order.placed', 'order.show', 'orders.lookup.index', 'orders.lookup'
     );
+    $luxeShowCartWidget = $luxeStorefront && ! request()->routeIs('cart.*', 'checkout.*', 'order.placed', 'order.confirmed');
   @endphp
   <body class="{{ $luxeStorefront ? 'bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store' : 'bg-page_bg font-body text-on_surface selection:bg-brand_blue/20' }} {{ $bodyClass ?? '' }}">
     @if ($luxeStorefront)
       @include('partials.luxe-store-header')
-      @include('partials.luxe-cart-widget')
+      @if ($luxeShowCartWidget)
+        @include('partials.luxe-cart-widget')
+      @endif
     @else
       @include('partials.header')
     @endif

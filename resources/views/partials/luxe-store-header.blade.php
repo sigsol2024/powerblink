@@ -22,13 +22,27 @@
     35%  { transform: scale(1.18); }
     100% { transform: scale(1); }
   }
+  .luxe-mobile-nav-panel {
+    transform: translateX(-100%);
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .luxe-mobile-nav-panel.is-open {
+    transform: translateX(0);
+  }
+  .luxe-mobile-nav-backdrop {
+    opacity: 0;
+    transition: opacity 280ms ease;
+  }
+  .luxe-mobile-nav-backdrop.is-open {
+    opacity: 1;
+  }
 </style>
 @endpush
 <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter py-4 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store">
   <div class="flex items-center gap-4 md:gap-8 min-w-0">
     <a href="{{ route('home') }}" class="flex min-w-0 shrink items-center">
       @if ($logoPath !== '')
-        <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[180px] object-contain sm:h-10" />
+        <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-11 w-auto max-w-[220px] object-contain sm:h-12 md:max-w-[260px]" />
       @else
         <span class="font-display-lg text-[22px] sm:text-display-lg-mobile md:text-display-lg text-primary uppercase tracking-tighter truncate">
           {{ strtoupper($brandName) }}
@@ -55,24 +69,109 @@
       <x-icon name="shopping-bag" class="w-6 h-6" />
       <span class="luxe-cart-badge absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}" data-cart-count-badge>{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
     </button>
-    <button type="button" class="text-primary md:hidden inline-flex items-center justify-center" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav" aria-label="{{ __('Menu') }}">
-      <x-icon name="menu" class="w-6 h-6" />
+    <button type="button" class="text-primary md:hidden inline-flex items-center justify-center w-10 h-10 -mr-1" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav-drawer" aria-label="{{ __('Menu') }}">
+      <span class="inline-flex" data-luxe-mobile-nav-icon-menu><x-icon name="menu" class="w-7 h-7" /></span>
+      <span class="hidden inline-flex" data-luxe-mobile-nav-icon-close><x-icon name="close" class="w-7 h-7" /></span>
     </button>
   </div>
 </header>
-<nav id="luxe-mobile-nav" class="luxe-store fixed top-[65px] inset-x-0 z-40 bg-background border-b border-outline-variant px-margin-mobile py-4 flex flex-col gap-3 md:hidden hidden" data-luxe-mobile-nav>
-  @foreach ($navCategories as $cat)
-    <a href="{{ route('shop.index', ['product_category_listing_option_id' => $cat->id]) }}" class="font-label-caps text-label-caps tracking-widest {{ $shopActive && $activeCategoryId === (int) $cat->id ? 'text-primary' : 'text-on-surface-variant' }}">{{ strtoupper($cat->value) }}</a>
-  @endforeach
-  @if ($navCategories->isEmpty())
-    <a href="{{ route('shop.index') }}" class="font-label-caps text-label-caps tracking-widest {{ $shopActive ? 'text-primary' : 'text-on-surface-variant' }}">{{ __('SHOP') }}</a>
-  @endif
-  @auth
-    <a href="{{ route('dashboard') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('ACCOUNT') }}</a>
-  @else
-    <a href="{{ route('login') }}" class="font-label-caps text-label-caps tracking-widest text-on-surface-variant">{{ __('SIGN IN') }}</a>
-  @endauth
-</nav>
+
+{{-- Mobile navigation sidebar (left) --}}
+<div
+  id="luxe-mobile-nav-drawer"
+  class="luxe-store fixed inset-0 z-[55] md:hidden hidden"
+  data-luxe-mobile-nav-drawer
+  aria-hidden="true"
+>
+  <div class="absolute inset-0 bg-black/50 luxe-mobile-nav-backdrop" data-luxe-mobile-nav-overlay></div>
+  <aside
+    class="luxe-mobile-nav-panel absolute top-0 left-0 h-full w-[min(100%,20rem)] sm:w-80 max-w-[85vw] bg-background shadow-2xl flex flex-col border-r border-outline-variant"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ __('Menu') }}"
+    data-luxe-mobile-nav-panel
+  >
+    <header class="flex items-center justify-between gap-4 px-5 py-5 border-b border-outline-variant shrink-0">
+      <a href="{{ route('home') }}" class="min-w-0 flex items-center" data-luxe-mobile-nav-close-link>
+        @if ($logoPath !== '')
+          <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-10 w-auto max-w-[160px] object-contain" />
+        @else
+          <span class="font-display-lg text-lg text-primary uppercase tracking-tighter truncate">{{ strtoupper($brandName) }}</span>
+        @endif
+      </a>
+      <button type="button" class="inline-flex items-center justify-center w-10 h-10 text-on-surface-variant hover:text-primary transition-colors shrink-0" aria-label="{{ __('Close menu') }}" data-luxe-mobile-nav-close>
+        <x-icon name="close" class="w-7 h-7" />
+      </button>
+    </header>
+
+    <nav class="flex-1 overflow-y-auto px-5 py-2" data-luxe-mobile-nav>
+      <p class="pt-4 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Shop') }}</p>
+      <ul class="divide-y divide-outline-variant">
+        @forelse ($navCategories as $cat)
+          @php $catActive = $shopActive && $activeCategoryId === (int) $cat->id; @endphp
+          <li>
+            <a
+              href="{{ route('shop.index', ['product_category_listing_option_id' => $cat->id]) }}"
+              class="flex items-center justify-between py-4 text-base font-semibold uppercase tracking-[0.12em] transition-colors {{ $catActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
+              data-luxe-mobile-nav-close-link
+            >
+              {{ strtoupper($cat->value) }}
+              <x-icon name="chevron-right" class="w-5 h-5 opacity-40 shrink-0" />
+            </a>
+          </li>
+        @empty
+          <li>
+            <a
+              href="{{ route('shop.index') }}"
+              class="flex items-center justify-between py-4 text-base font-semibold uppercase tracking-[0.12em] transition-colors {{ $shopActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
+              data-luxe-mobile-nav-close-link
+            >
+              {{ __('Shop all') }}
+              <x-icon name="chevron-right" class="w-5 h-5 opacity-40 shrink-0" />
+            </a>
+          </li>
+        @endforelse
+      </ul>
+
+      <p class="pt-8 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('More') }}</p>
+      <ul class="divide-y divide-outline-variant">
+        <li>
+          <a href="{{ route('about') }}" class="block py-4 text-sm font-medium uppercase tracking-[0.15em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('About us') }}</a>
+        </li>
+        <li>
+          <a href="{{ route('contact') }}" class="block py-4 text-sm font-medium uppercase tracking-[0.15em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('Contact') }}</a>
+        </li>
+      </ul>
+    </nav>
+
+    <footer class="shrink-0 border-t border-outline-variant px-5 py-5 space-y-3 bg-surface-container-low">
+      @auth
+        <a
+          href="{{ route('dashboard') }}"
+          class="flex w-full items-center justify-center border-2 border-[#3A3C94] text-[#3A3C94] px-5 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-[#3A3C94] hover:text-white transition-colors"
+          data-luxe-mobile-nav-close-link
+        >
+          {{ __('My account') }}
+        </a>
+      @else
+        <a
+          href="{{ route('login') }}"
+          class="flex w-full items-center justify-center border-2 border-[#3A3C94] text-[#3A3C94] px-5 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-[#3A3C94] hover:text-white transition-colors"
+          data-luxe-mobile-nav-close-link
+        >
+          {{ __('Sign in') }}
+        </a>
+      @endauth
+      <a
+        href="{{ route('shop.index') }}"
+        class="flex w-full items-center justify-center bg-black text-white px-5 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:opacity-90 transition-opacity"
+        data-luxe-mobile-nav-close-link
+      >
+        {{ __('Shop now') }}
+      </a>
+    </footer>
+  </aside>
+</div>
 
 {{-- Cart slide-over drawer (right side, mobile-first) --}}
 <div class="luxe-store fixed inset-0 z-[60] hidden" data-cart-drawer aria-hidden="true">
@@ -151,6 +250,7 @@
     }
 
     function openDrawer() {
+      closeMobileNav();
       var d = qs('[data-cart-drawer]');
       if (!d) return;
       d.classList.remove('hidden');
@@ -163,7 +263,8 @@
       if (!d) return;
       d.classList.add('hidden');
       d.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      var mobileOpen = qs('[data-luxe-mobile-nav-panel]') && qs('[data-luxe-mobile-nav-panel]').classList.contains('is-open');
+      if (!mobileOpen) document.body.style.overflow = '';
     }
 
     function renderLines(state) {
@@ -292,8 +393,55 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeDrawer();
+      if (e.key === 'Escape') {
+        closeDrawer();
+        closeMobileNav();
+      }
     });
+
+    function openMobileNav() {
+      closeDrawer();
+      var drawer = qs('[data-luxe-mobile-nav-drawer]');
+      var panel = qs('[data-luxe-mobile-nav-panel]');
+      var backdrop = qs('[data-luxe-mobile-nav-overlay]');
+      var btn = qs('[data-luxe-mobile-nav-toggle]');
+      var iconMenu = qs('[data-luxe-mobile-nav-icon-menu]');
+      var iconClose = qs('[data-luxe-mobile-nav-icon-close]');
+      if (!drawer || !panel) return;
+      drawer.classList.remove('hidden');
+      drawer.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(function () {
+        panel.classList.add('is-open');
+        if (backdrop) backdrop.classList.add('is-open');
+      });
+      document.body.style.overflow = 'hidden';
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+      if (iconMenu) iconMenu.classList.add('hidden');
+      if (iconClose) iconClose.classList.remove('hidden');
+    }
+
+    function closeMobileNav() {
+      var drawer = qs('[data-luxe-mobile-nav-drawer]');
+      var panel = qs('[data-luxe-mobile-nav-panel]');
+      var backdrop = qs('[data-luxe-mobile-nav-overlay]');
+      var btn = qs('[data-luxe-mobile-nav-toggle]');
+      var iconMenu = qs('[data-luxe-mobile-nav-icon-menu]');
+      var iconClose = qs('[data-luxe-mobile-nav-icon-close]');
+      if (!drawer || !panel) return;
+      panel.classList.remove('is-open');
+      if (backdrop) backdrop.classList.remove('is-open');
+      var cartOpen = qs('[data-cart-drawer]') && !qs('[data-cart-drawer]').classList.contains('hidden');
+      if (!cartOpen) document.body.style.overflow = '';
+      setTimeout(function () {
+        if (!panel.classList.contains('is-open')) {
+          drawer.classList.add('hidden');
+          drawer.setAttribute('aria-hidden', 'true');
+        }
+      }, 300);
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (iconMenu) iconMenu.classList.remove('hidden');
+      if (iconClose) iconClose.classList.add('hidden');
+    }
 
     function flashAdded() {
       // Quick pulse on the bag icon so the user sees something happened without taking over the page.
@@ -344,16 +492,29 @@
         });
     });
 
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-luxe-mobile-nav-toggle]')) {
+        e.preventDefault();
+        var drawer = qs('[data-luxe-mobile-nav-drawer]');
+        var panel = qs('[data-luxe-mobile-nav-panel]');
+        if (drawer && panel && panel.classList.contains('is-open')) {
+          closeMobileNav();
+        } else {
+          openMobileNav();
+        }
+        return;
+      }
+      if (e.target.closest('[data-luxe-mobile-nav-close]') || e.target.matches('[data-luxe-mobile-nav-overlay]')) {
+        closeMobileNav();
+        return;
+      }
+      if (e.target.closest('[data-luxe-mobile-nav-close-link]')) {
+        closeMobileNav();
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
       fetchState();
-      var btn = document.querySelector('[data-luxe-mobile-nav-toggle]');
-      var nav = document.querySelector('[data-luxe-mobile-nav]');
-      if (btn && nav) {
-        btn.addEventListener('click', function () {
-          nav.classList.toggle('hidden');
-          btn.setAttribute('aria-expanded', nav.classList.contains('hidden') ? 'false' : 'true');
-        });
-      }
     });
   })();
 </script>

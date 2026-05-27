@@ -30,7 +30,6 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('status', __('Your bag is empty.'));
         }
 
-        $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
         $paymentMethods = CheckoutPaymentMethods::enabledForCheckout();
 
         return view('pages.checkout.index', [
@@ -40,8 +39,6 @@ class CheckoutController extends Controller
             'subtotal' => Cart::subtotal(),
             'subtotalKobo' => Money::nairaToKobo(Cart::subtotal()),
             'paymentMethods' => $paymentMethods,
-            'bankTransferDetails' => CheckoutPaymentMethods::bankTransferDetails($site),
-            'payOnDeliveryNote' => CheckoutPaymentMethods::payOnDeliveryNote($site),
             'defaultPaymentMethod' => old('payment_method', $paymentMethods[0]['id'] ?? 'paystack'),
         ]);
     }
@@ -115,8 +112,9 @@ class CheckoutController extends Controller
 
         Cart::clear();
         session()->forget('checkout.pending_order_id');
+        session(['order.awaiting_ack' => $order->id]);
 
-        return redirect()->to($this->signedPlacedUrl($order));
+        return redirect()->to($this->signedShowUrl($order));
     }
 
     public function paystackCallback(
@@ -183,19 +181,12 @@ class CheckoutController extends Controller
         abort_unless($order->status === 'pending_payment', 404);
 
         $order->load(['items', 'payment']);
-        $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
-        $provider = (string) ($order->payment?->provider ?? '');
+        session()->forget('order.awaiting_ack');
 
         return view('pages.orders.placed', [
             'title' => __('Order received'),
             'order' => $order,
             'signedShowUrl' => $this->signedShowUrl($order),
-            'bankTransferDetails' => $provider === 'bank_transfer'
-                ? CheckoutPaymentMethods::bankTransferDetails($site)
-                : '',
-            'payOnDeliveryNote' => $provider === 'pay_on_delivery'
-                ? CheckoutPaymentMethods::payOnDeliveryNote($site)
-                : '',
         ]);
     }
 
@@ -205,10 +196,24 @@ class CheckoutController extends Controller
         abort_unless($order->isPaid() || $order->status === 'pending_payment', 404);
 
         $order->load(['items', 'payment']);
+        $site = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
+        $provider = (string) ($order->payment?->provider ?? '');
+        $showPaymentInstructions = $order->status === 'pending_payment'
+            && in_array($provider, ['bank_transfer', 'pay_on_delivery'], true);
 
         return view('pages.orders.show', [
             'title' => __('Order :number', ['number' => $order->order_number]),
             'order' => $order,
+            'showPaymentInstructions' => $showPaymentInstructions,
+            'paymentProvider' => $provider,
+            'bankTransferDetails' => $provider === 'bank_transfer'
+                ? CheckoutPaymentMethods::bankTransferDetails($site)
+                : '',
+            'payOnDeliveryNote' => $provider === 'pay_on_delivery'
+                ? CheckoutPaymentMethods::payOnDeliveryNote($site)
+                : '',
+            'signedPlacedUrl' => $this->signedPlacedUrl($order),
+            'awaitingAck' => (int) session('order.awaiting_ack') === $order->id,
         ]);
     }
 

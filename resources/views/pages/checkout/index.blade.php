@@ -82,40 +82,34 @@
           </section>
 
           <section>
-            <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4c4546] mb-6">{{ __('Payment method') }}</h2>
-            <div class="flex flex-col md:flex-row md:flex-wrap gap-3" role="radiogroup" aria-label="{{ __('Payment method') }}" data-payment-method-group>
+            <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4c4546] mb-4">{{ __('Payment method') }}</h2>
+            <div class="flex flex-col sm:flex-row flex-wrap gap-2" role="radiogroup" aria-label="{{ __('Payment method') }}" data-payment-method-group>
               @if ($hasPaystack)
-                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
+                <label class="payment-method-card inline-flex flex-row items-center gap-2 px-3 py-2 border rounded-sm cursor-pointer transition-all bg-white/90 w-full sm:w-auto sm:max-w-[11.5rem]" data-payment-method-card>
                   <input type="radio" name="payment_method" value="paystack" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'paystack') required />
-                  <img src="{{ asset('asset/images/brands/paystack-logo.png') }}" alt="Paystack" class="h-7 w-auto max-w-[140px] object-contain object-left" width="140" height="25" />
-                  <span class="text-[10px] uppercase tracking-widest text-center text-on-surface-variant leading-snug">{{ __('Card & online') }}</span>
+                  <img src="{{ asset('asset/images/brands/paystack-logo.png') }}" alt="Paystack" class="h-5 w-auto max-w-[96px] object-contain shrink-0" width="96" height="18" />
+                  <span class="text-[9px] uppercase tracking-wide text-on-surface-variant leading-tight">{{ __('Card & online') }}</span>
                 </label>
               @endif
               @if ($hasBank)
-                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
+                <label class="payment-method-card inline-flex flex-row items-center gap-2 px-3 py-2 border rounded-sm cursor-pointer transition-all bg-white/90 w-full sm:w-auto sm:max-w-[11.5rem]" data-payment-method-card>
                   <input type="radio" name="payment_method" value="bank_transfer" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'bank_transfer') @if(! $hasPaystack) required @endif />
-                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
-                    <x-icon name="building-library" class="w-6 h-6" />
+                  <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
+                    <x-icon name="building-library" class="w-4 h-4" />
                   </span>
-                  <span class="text-[10px] font-semibold uppercase tracking-widest text-center text-primary">{{ __('Bank transfer') }}</span>
+                  <span class="text-[10px] font-semibold uppercase tracking-wide text-primary leading-tight">{{ __('Bank transfer') }}</span>
                 </label>
               @endif
               @if ($hasCod)
-                <label class="payment-method-card flex flex-col items-center justify-center gap-3 p-4 md:p-5 border-2 rounded-sm cursor-pointer transition-all bg-white/90 flex-1 min-w-0 md:min-w-[10rem] md:max-w-[14rem]" data-payment-method-card>
+                <label class="payment-method-card inline-flex flex-row items-center gap-2 px-3 py-2 border rounded-sm cursor-pointer transition-all bg-white/90 w-full sm:w-auto sm:max-w-[11.5rem]" data-payment-method-card>
                   <input type="radio" name="payment_method" value="pay_on_delivery" class="sr-only" @checked(old('payment_method', $defaultPaymentMethod) === 'pay_on_delivery') @if(! $hasPaystack && ! $hasBank) required @endif />
-                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
-                    <x-icon name="truck" class="w-6 h-6" />
+                  <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container text-[#3A3C94]">
+                    <x-icon name="truck" class="w-4 h-4" />
                   </span>
-                  <span class="text-[10px] font-semibold uppercase tracking-widest text-center text-primary">{{ __('Pay on delivery') }}</span>
+                  <span class="text-[10px] font-semibold uppercase tracking-wide text-primary leading-tight">{{ __('Pay on delivery') }}</span>
                 </label>
               @endif
             </div>
-            @if ($bankTransferDetails !== '')
-              <div class="mt-4 text-sm text-on-surface-variant whitespace-pre-line border-l-2 border-[#3A3C94] pl-4 payment-hint hidden" data-payment-hint="bank_transfer">{{ $bankTransferDetails }}</div>
-            @endif
-            @if ($payOnDeliveryNote !== '')
-              <div class="mt-4 text-sm text-on-surface-variant border-l-2 border-[#3A3C94] pl-4 payment-hint hidden" data-payment-hint="pay_on_delivery">{{ $payOnDeliveryNote }}</div>
-            @endif
           </section>
         </div>
 
@@ -170,9 +164,6 @@
           card.style.borderColor = on ? selectedColor : '#cfc4c5';
           card.style.backgroundColor = on ? selectedBg : 'rgba(255, 255, 255, 0.9)';
           card.style.boxShadow = on ? '0 0 0 1px ' + selectedColor : 'none';
-        });
-        form.querySelectorAll('.payment-hint').forEach(function (el) {
-          el.classList.toggle('hidden', el.getAttribute('data-payment-hint') !== val);
         });
         if (val === 'paystack') {
           btn.textContent = @json(__('Pay with Paystack'));
