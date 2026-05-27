@@ -93,10 +93,10 @@
               <td class="px-4 py-3 text-wp-text-muted">{{ number_format((int) ($usage[$row->id] ?? 0)) }}</td>
               <td class="px-4 py-3 text-right">
                 <button type="button" class="text-wp-link hover:text-wp-link-hover text-sm" @click="editingId = {{ $row->id }}">{{ __('Edit') }}</button>
-                <form method="post" action="{{ route('admin.categories.destroy', $row->id) }}" class="inline-block ml-3" onsubmit="return confirm('{{ __('Delete this category?') }}')">
+                <form method="post" action="{{ route('admin.categories.destroy', $row->id) }}" class="inline-block ml-3">
                   @csrf
                   @method('DELETE')
-                  <button type="submit" class="text-rose-600 hover:text-rose-700 text-sm">{{ __('Delete') }}</button>
+                  <button type="button" class="text-rose-600 hover:text-rose-700 text-sm" @click="if (confirm('{{ addslashes(__('Delete this category?')) }}')) $el.closest('form').submit()">{{ __('Delete') }}</button>
                 </form>
               </td>
             </tr>
@@ -123,10 +123,10 @@
           </div>
           <div class="border-t border-wp-border bg-slate-50 px-4 py-2 flex items-center justify-end gap-3 text-sm">
             <button type="button" class="text-wp-link hover:text-wp-link-hover" @click="editingId = {{ $row->id }}">{{ __('Edit') }}</button>
-            <form method="post" action="{{ route('admin.categories.destroy', $row->id) }}" onsubmit="return confirm('{{ __('Delete this category?') }}')">
+            <form method="post" action="{{ route('admin.categories.destroy', $row->id) }}">
               @csrf
               @method('DELETE')
-              <button type="submit" class="text-rose-600 hover:text-rose-700">{{ __('Delete') }}</button>
+              <button type="button" class="text-rose-600 hover:text-rose-700" @click="if (confirm('{{ addslashes(__('Delete this category?')) }}')) $el.closest('form').submit()">{{ __('Delete') }}</button>
             </form>
           </div>
         </article>
@@ -149,6 +149,12 @@
             <x-input-label for="value" :value="__('Category name')" />
             <x-text-input id="value" name="value" type="text" class="mt-1 block w-full" value="{{ old('value') }}" required />
             <x-input-error :messages="$errors->get('value')" class="mt-2" />
+          </div>
+          <div>
+            <x-input-label for="logo_path" :value="__('Category image (optional)')" />
+            <x-text-input id="logo_path" name="logo_path" type="text" class="mt-1 block w-full font-mono text-xs" value="{{ old('logo_path') }}" placeholder="storage/site-settings/your-image.jpg" />
+            <p class="mt-1 text-xs text-wp-text-muted">{{ __('Paste a Media Library path (e.g. storage/...) or full URL. Used for homepage category cards.') }}</p>
+            <x-input-error :messages="$errors->get('logo_path')" class="mt-2" />
           </div>
           <label class="flex items-center gap-2 text-sm">
             <input type="checkbox" name="is_active" value="1" @checked(old('is_active', true)) class="rounded border-slate-300" />
@@ -179,6 +185,12 @@
               <x-input-label for="value-{{ $row->id }}" :value="__('Category name')" />
               <x-text-input id="value-{{ $row->id }}" name="value" type="text" class="mt-1 block w-full" value="{{ old('value', $row->value) }}" required />
               <x-input-error :messages="$errors->get('value')" class="mt-2" />
+            </div>
+            <div>
+              <x-input-label for="logo-{{ $row->id }}" :value="__('Category image (optional)')" />
+              <x-text-input id="logo-{{ $row->id }}" name="logo_path" type="text" class="mt-1 block w-full font-mono text-xs" value="{{ old('logo_path', $row->logo_path) }}" placeholder="storage/site-settings/your-image.jpg" />
+              <p class="mt-1 text-xs text-wp-text-muted">{{ __('Used for homepage category cards.') }}</p>
+              <x-input-error :messages="$errors->get('logo_path')" class="mt-2" />
             </div>
             <div>
               <x-input-label for="sort-{{ $row->id }}" :value="__('Sort order')" />

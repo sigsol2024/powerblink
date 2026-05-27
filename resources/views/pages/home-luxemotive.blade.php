@@ -43,14 +43,14 @@
   <main class="luxe-store mt-[80px]">
     {{-- Hero --}}
     @php
-      $heroSlides = ($recentVehicles ?? collect())->take(5);
+  $heroSlides = ($recentVehicles ?? collect())->take(5);
     @endphp
     <section class="relative w-full overflow-hidden">
       <div class="absolute inset-0">
         <div class="absolute inset-0 luxe-african-pattern opacity-40"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-low/60 to-surface-container-lowest"></div>
       </div>
-      <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-7 md:py-10">
+      <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-5 md:py-7">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           <div class="min-w-0">
             <p class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase mb-3">{{ __('New season') }}</p>
@@ -118,7 +118,7 @@
             @touchend.passive="onTouchEnd($event)"
           >
             <div class="rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-sm overflow-hidden">
-              <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden">
+              <div class="relative aspect-[4/5] sm:aspect-square bg-surface-container-low overflow-hidden max-h-[460px] sm:max-h-[520px] mx-auto">
                 @if ($heroSlides->isNotEmpty())
                   <div
                     class="absolute inset-0 flex transition-transform duration-500 ease-in-out"
@@ -189,19 +189,34 @@
     </section>
 
     {{-- Categories --}}
+    @php
+      $categoryRows = collect($filterOptions['categories'] ?? []);
+      $categoryCards = $categoryRows
+        ->filter(fn ($r) => (bool) ($r->is_active ?? true))
+        ->values()
+        ->take(8);
+    @endphp
     <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
       <h2 class="font-headline-md text-headline-md text-center mb-8 md:mb-10 uppercase">{{ __('Shop Categories') }}</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        @foreach ($categories as $cat)
-          <a href="{{ $cat['url'] }}" class="group relative aspect-[4/5] overflow-hidden cursor-pointer block">
-            <img src="{{ $cat['image'] }}" alt="" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
-            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 luxe-transition-standard"></div>
+        @forelse ($categoryCards as $cat)
+          @php
+            $img = \App\Support\VehicleImageUrl::url($cat->logo_path ?? null);
+          @endphp
+          <a
+            href="{{ route('shop.index', ['product_category_listing_option_id' => $cat->id]) }}"
+            class="group relative aspect-[4/5] overflow-hidden cursor-pointer block border border-outline-variant bg-surface-container-lowest"
+          >
+            <img src="{{ $img }}" alt="" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
+            <div class="absolute inset-0 bg-black/15 group-hover:bg-black/25 luxe-transition-standard"></div>
             <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-              <p class="font-label-caps text-label-caps tracking-widest mb-1">{{ $cat['label'] }}</p>
-              <h3 class="font-headline-sm text-headline-sm">{{ $cat['title'] }}</h3>
+              <p class="font-label-caps text-label-caps tracking-widest mb-1">{{ __('CATEGORY') }}</p>
+              <h3 class="font-headline-sm text-headline-sm">{{ $cat->value }}</h3>
             </div>
           </a>
-        @endforeach
+        @empty
+          <p class="col-span-full text-center text-sm text-on-surface-variant">{{ __('No categories yet. Add them in Admin → Categories.') }}</p>
+        @endforelse
       </div>
     </section>
 

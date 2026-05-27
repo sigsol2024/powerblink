@@ -56,6 +56,7 @@ class AdminCategoryController extends Controller
         try {
             $data = $request->validate([
                 'value' => ['required', 'string', 'max:191'],
+                'logo_path' => ['nullable', 'string', 'max:512'],
                 'is_active' => ['sometimes', 'boolean'],
             ]);
 
@@ -83,6 +84,7 @@ class AdminCategoryController extends Controller
                 'category_id' => $categoryId,
                 'parent_id' => null,
                 'value' => $value,
+                'logo_path' => trim((string) ($data['logo_path'] ?? '')) ?: null,
                 'sort_order' => $nextSort + 10,
                 'is_active' => (bool) ($data['is_active'] ?? true),
             ]);
@@ -103,6 +105,7 @@ class AdminCategoryController extends Controller
 
         $data = $request->validate([
             'value' => ['required', 'string', 'max:191'],
+            'logo_path' => ['nullable', 'string', 'max:512'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'is_active' => ['sometimes', 'boolean'],
         ]);
@@ -116,6 +119,7 @@ class AdminCategoryController extends Controller
 
         $category->update([
             'value' => $value,
+            'logo_path' => trim((string) ($data['logo_path'] ?? '')) ?: null,
             'sort_order' => $data['sort_order'] ?? $category->sort_order,
             'is_active' => $request->boolean('is_active'),
         ]);

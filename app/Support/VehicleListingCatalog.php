@@ -39,7 +39,7 @@ final class VehicleListingCatalog
     /**
      * Active root options for a category slug: id + value for selects.
      *
-     * @return Collection<int, object{id:int, value:string}>
+     * @return Collection<int, object{id:int, value:string, logo_path: string|null}>
      */
     public static function activeRootOptionRows(string $slug): Collection
     {
@@ -62,7 +62,7 @@ final class VehicleListingCatalog
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('value')
-            ->get(['id', 'value']);
+            ->get(['id', 'value', 'logo_path', 'is_active']);
     }
 
     /**
