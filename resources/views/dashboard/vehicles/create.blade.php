@@ -69,8 +69,8 @@
             <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Visibility') }}</h3>
             <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">
               <div>
-                <p class="font-body-md font-medium text-primary">{{ __('Special listing') }}</p>
-                <p class="text-xs text-on-surface-variant">{{ __('Shows “Special” ribbon on homepage cards.') }}</p>
+                <p class="font-body-md font-medium text-primary">{{ __('Featured product') }}</p>
+                <p class="text-xs text-on-surface-variant">{{ __('Featured products appear in the homepage “The Bestsellers” section.') }}</p>
               </div>
               <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded-none border-outline-variant text-primary focus:ring-primary" @checked(old('is_special')) />
             </div>

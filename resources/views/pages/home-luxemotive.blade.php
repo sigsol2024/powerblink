@@ -12,7 +12,10 @@
   $heroCtaUrl = \Illuminate\Support\Str::startsWith($heroCtaHref, ['http://', 'https://']) ? $heroCtaHref : url($heroCtaHref);
   $promoBg = \App\Support\PlaceholderMedia::url($s['dealer_cta_bg'] ?? 'asset/images/media/home-cta-left.jpg');
   $recentTitle = trim((string) ($s['recent_title'] ?? __('New Arrivals')));
-  $bestsellers = ($recentVehicles ?? collect())->take(4);
+  $bestsellers = ($recentVehicles ?? collect())->where('is_special', true)->take(4);
+  if ($bestsellers->isEmpty()) {
+    $bestsellers = ($recentVehicles ?? collect())->take(4);
+  }
   $arrivals = ($recentVehicles ?? collect())->take(6);
   $categories = [
     [

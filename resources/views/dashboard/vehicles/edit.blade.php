@@ -108,17 +108,25 @@
             </section>
 
             @if($isAdminEdit)
-              <div class="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50/80 px-3 py-2">
-                <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('is_special', $vehicle->is_special)) />
-                <x-input-label for="is_special" value="{{ __('Special listing (shows “Special” ribbon on homepage cards)') }}" class="!mb-0" />
-              </div>
-            @endif
-
-            @if($isAdminEdit && in_array($vehicle->status, ['pending', 'draft', 'rejected'], true))
-              <div class="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-2">
-                <input id="approve_listing" name="approve_listing" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" @checked(old('approve_listing')) />
-                <x-input-label for="approve_listing" value="{{ __('Approve and publish on save (live on public inventory)') }}" class="!mb-0" />
-              </div>
+              <section class="space-y-4">
+                <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Visibility') }}</h3>
+                <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">
+                  <div>
+                    <p class="font-body-md font-medium text-primary">{{ __('Featured product') }}</p>
+                    <p class="text-xs text-on-surface-variant">{{ __('Featured products appear in the homepage “The Bestsellers” section.') }}</p>
+                  </div>
+                  <input id="is_special" name="is_special" type="checkbox" value="1" class="rounded-none border-outline-variant text-primary focus:ring-primary" @checked(old('is_special', $vehicle->is_special)) />
+                </div>
+                @if(in_array($vehicle->status, ['pending', 'draft', 'rejected'], true))
+                  <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">
+                    <div>
+                      <p class="font-body-md font-medium text-primary">{{ __('Approve immediately') }}</p>
+                      <p class="text-xs text-on-surface-variant">{{ __('Live on public shop when saved.') }}</p>
+                    </div>
+                    <input id="approve_listing" name="approve_listing" type="checkbox" value="1" class="rounded-none border-outline-variant text-primary focus:ring-primary" @checked(old('approve_listing')) />
+                  </div>
+                @endif
+              </section>
             @endif
 
             <section class="rounded-lg border border-gray-200 p-4">
