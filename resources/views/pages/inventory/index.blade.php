@@ -34,8 +34,7 @@
             <option value="newest" @selected(($filters['sort'] ?? 'newest') === 'newest')>{{ __('NEWEST ARRIVALS') }}</option>
             <option value="price_low" @selected(($filters['sort'] ?? '') === 'price_low')>{{ __('PRICE: LOW TO HIGH') }}</option>
             <option value="price_high" @selected(($filters['sort'] ?? '') === 'price_high')>{{ __('PRICE: HIGH TO LOW') }}</option>
-            <option value="year_new" @selected(($filters['sort'] ?? '') === 'year_new')>{{ __('YEAR: NEWEST') }}</option>
-            <option value="year_old" @selected(($filters['sort'] ?? '') === 'year_old')>{{ __('YEAR: OLDEST') }}</option>
+            {{-- Legacy car sort options removed for dress store --}}
           </select>
           <span class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"><x-icon name="chevron-down" class="w-3.5 h-3.5" /></span>
         </div>
@@ -54,11 +53,6 @@
           'formId' => 'inventory-filter-form',
           'filters' => $filters,
           'filterOptions' => $filterOptions,
-          'conditions' => $conditions,
-          'countries' => $countries,
-          'originTypes' => $originTypes,
-          'extColors' => $extColors,
-          'nigerianTypeId' => $nigerianTypeId,
         ])
       </aside>
 

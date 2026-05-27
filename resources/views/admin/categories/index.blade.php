@@ -71,7 +71,7 @@
       <table class="w-full text-left border-collapse text-sm">
         <thead class="bg-wp-bg border-b border-wp-border">
           <tr>
-            <th class="px-4 py-3 font-semibold text-wp-text-muted text-xs uppercase tracking-wide">{{ __('Name') }}</th>
+            <th class="px-4 py-3 font-semibold text-wp-text-muted text-xs uppercase tracking-wide">{{ __('Category') }}</th>
             <th class="px-4 py-3 font-semibold text-wp-text-muted text-xs uppercase tracking-wide w-32">{{ __('Sort') }}</th>
             <th class="px-4 py-3 font-semibold text-wp-text-muted text-xs uppercase tracking-wide w-28">{{ __('Status') }}</th>
             <th class="px-4 py-3 font-semibold text-wp-text-muted text-xs uppercase tracking-wide w-28">{{ __('Products') }}</th>
@@ -81,7 +81,16 @@
         <tbody>
           @forelse ($rows as $row)
             <tr class="border-b border-wp-border last:border-0" x-show="visible('{{ addslashes($row->value) }}')">
-              <td class="px-4 py-3 font-medium text-wp-text">{{ $row->value }}</td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  @php $thumb = \App\Support\VehicleImageUrl::url($row->logo_path ?? null); @endphp
+                  <img src="{{ $thumb }}" alt="" class="h-9 w-9 rounded object-cover border border-wp-border bg-white shrink-0" loading="lazy" />
+                  <div class="min-w-0">
+                    <p class="font-medium text-wp-text truncate">{{ $row->value }}</p>
+                    <p class="text-[11px] text-wp-text-muted truncate">{{ $row->logo_path ? $row->logo_path : __('No image') }}</p>
+                  </div>
+                </div>
+              </td>
               <td class="px-4 py-3 text-wp-text-muted">{{ $row->sort_order }}</td>
               <td class="px-4 py-3">
                 @if ($row->is_active)
@@ -111,9 +120,13 @@
       @forelse ($rows as $row)
         <article class="bg-white border border-wp-border rounded overflow-hidden" x-show="visible('{{ addslashes($row->value) }}')">
           <div class="px-4 py-3 flex items-center justify-between gap-3">
-            <div class="min-w-0">
+            <div class="min-w-0 flex items-center gap-3">
+              @php $thumb = \App\Support\VehicleImageUrl::url($row->logo_path ?? null); @endphp
+              <img src="{{ $thumb }}" alt="" class="h-10 w-10 rounded object-cover border border-wp-border bg-white shrink-0" loading="lazy" />
+              <div class="min-w-0">
               <p class="font-semibold text-wp-text truncate">{{ $row->value }}</p>
               <p class="text-xs text-wp-text-muted">{{ number_format((int) ($usage[$row->id] ?? 0)) }} {{ __('products') }} · {{ __('Sort') }} {{ $row->sort_order }}</p>
+              </div>
             </div>
             @if ($row->is_active)
               <span class="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 shrink-0">{{ __('Active') }}</span>
@@ -277,10 +290,24 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
-        wire('logo_path');
-        document.querySelectorAll('input[id^="logo-"]').forEach(function (el) {
-          wire(el.id);
+        // Event delegation ensures previews update even when modal DOM is toggled by Alpine.
+        document.addEventListener('change', function (e) {
+          const t = e.target;
+          if (!t || !t.id) return;
+          if (t.id === 'logo_path' || t.id.indexOf('logo-') === 0) {
+            syncLogoPreview(t.id);
+          }
         });
+        document.addEventListener('input', function (e) {
+          const t = e.target;
+          if (!t || !t.id) return;
+          if (t.id === 'logo_path' || t.id.indexOf('logo-') === 0) {
+            syncLogoPreview(t.id);
+          }
+        });
+
+        wire('logo_path');
+        document.querySelectorAll('input[id^="logo-"]').forEach(function (el) { wire(el.id); });
       });
     })();
   </script>
