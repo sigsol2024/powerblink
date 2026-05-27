@@ -13,6 +13,7 @@ use App\Support\VehicleImageUrl;
 use App\Support\VehicleListingCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -327,6 +328,19 @@ class PageController extends Controller
             throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
         }
 
+        // Some installs may be mid-migration; avoid hard 500s when optional product columns
+        // have not been applied yet.
+        $hasCategoryCol = false;
+        $hasOverviewCol = false;
+        $hasDescriptionCol = false;
+        try {
+            $hasCategoryCol = Schema::hasColumn('vehicles', 'product_category_listing_option_id');
+            $hasOverviewCol = Schema::hasColumn('vehicles', 'overview');
+            $hasDescriptionCol = Schema::hasColumn('vehicles', 'description');
+        } catch (\Throwable) {
+            // Fail-open: treat as absent and fall back to basic fields.
+        }
+
         $query = Vehicle::query()
             ->with(['images', 'categoryOption'])
             ->where('status', 'approved')
@@ -335,16 +349,19 @@ class PageController extends Controller
         $search = isset($filters['q']) ? trim((string) $filters['q']) : '';
         if ($search !== '') {
             $like = '%'.$search.'%';
-            $query->where(function ($builder) use ($like) {
-                $builder
-                    ->where('title', 'like', $like)
-                    ->orWhere('description', 'like', $like)
-                    ->orWhere('overview', 'like', $like);
+            $query->where(function ($builder) use ($like, $hasDescriptionCol, $hasOverviewCol) {
+                $builder->where('title', 'like', $like);
+                if ($hasDescriptionCol) {
+                    $builder->orWhere('description', 'like', $like);
+                }
+                if ($hasOverviewCol) {
+                    $builder->orWhere('overview', 'like', $like);
+                }
             });
         }
 
         $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
-        if ($categoryId > 0) {
+        if ($hasCategoryCol && $categoryId > 0) {
             $query->where('product_category_listing_option_id', $categoryId);
         }
 

@@ -42,33 +42,138 @@
 @section('content')
   <main class="luxe-store mt-[80px]">
     {{-- Hero --}}
-    <section class="relative min-h-[70vh] md:min-h-[85vh] lg:h-[921px] w-full flex items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 z-0">
-        <img src="{{ $heroBg }}" alt="" class="w-full h-full object-cover grayscale-[20%]" />
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="absolute inset-0 luxe-african-pattern"></div>
+    @php
+      $heroSlides = ($recentVehicles ?? collect())->take(5);
+    @endphp
+    <section class="relative w-full overflow-hidden">
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 luxe-african-pattern opacity-40"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-low/60 to-surface-container-lowest"></div>
       </div>
-      <div class="relative z-10 text-center max-w-max-container px-margin-mobile md:px-gutter">
-        <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white uppercase mb-6 md:mb-8 tracking-tighter">{{ $heroTitle }}</h2>
-        @if (! empty($s['hero_subtitle']))
-          <p class="font-body-lg text-white/90 mb-8 max-w-xl mx-auto">{{ $s['hero_subtitle'] }}</p>
-        @endif
-        <a href="{{ $heroCtaUrl }}" class="inline-block bg-primary text-on-primary font-button-text px-8 md:px-12 py-4 md:py-5 uppercase tracking-widest luxe-scale-hover luxe-transition-standard">
-          {{ $s['hero_cta_text'] ?? __('Explore Collection') }}
-        </a>
+      <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-10 md:py-14">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+          <div class="min-w-0">
+            <p class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase mb-3">{{ __('New season') }}</p>
+            <h2 class="font-display-md md:font-display-lg text-primary uppercase mb-5 tracking-tighter">{{ $heroTitle }}</h2>
+            @if (! empty($s['hero_subtitle']))
+              <p class="font-body-lg text-on-surface-variant mb-7 max-w-xl">{{ $s['hero_subtitle'] }}</p>
+            @endif
+            <div class="flex flex-wrap gap-3">
+              <a href="{{ $heroCtaUrl }}" class="inline-block bg-primary text-on-primary font-button-text px-8 md:px-10 py-4 uppercase tracking-widest luxe-scale-hover luxe-transition-standard">
+                {{ $s['hero_cta_text'] ?? __('Explore Collection') }}
+              </a>
+              <a href="{{ route('shop.index') }}" class="inline-block border border-outline-variant text-primary font-button-text px-8 md:px-10 py-4 uppercase tracking-widest hover:bg-surface-container-high luxe-transition-standard">
+                {{ __('Shop now') }}
+              </a>
+            </div>
+          </div>
+
+          <div
+            class="min-w-0"
+            x-data="{
+              index: 0,
+              timer: null,
+              slideCount: {{ (int) $heroSlides->count() }},
+              prefersReduced: (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+              goTo(i) {
+                if (!this.slideCount) return;
+                this.index = ((i % this.slideCount) + this.slideCount) % this.slideCount;
+              },
+              start() {
+                if (this.prefersReduced || this.slideCount <= 1) return;
+                this.stop();
+                this.timer = window.setInterval(() => this.goTo(this.index + 1), 4500);
+              },
+              stop() {
+                if (this.timer) { window.clearInterval(this.timer); this.timer = null; }
+              },
+              init() { this.start(); },
+              touchStartX: 0,
+              touchStartY: 0,
+              touching: false,
+              onTouchStart(e) {
+                if (!e.touches || e.touches.length !== 1) return;
+                this.touching = true;
+                this.touchStartX = e.touches[0].clientX;
+                this.touchStartY = e.touches[0].clientY;
+                this.stop();
+              },
+              onTouchEnd(e) {
+                if (!this.touching) return;
+                this.touching = false;
+                const t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
+                if (!t) { this.start(); return; }
+                const dx = t.clientX - this.touchStartX;
+                const dy = t.clientY - this.touchStartY;
+                if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+                  this.goTo(this.index + (dx < 0 ? 1 : -1));
+                }
+                this.start();
+              },
+            }"
+            x-init="init()"
+            @mouseenter="stop()"
+            @mouseleave="start()"
+            @touchstart.passive="onTouchStart($event)"
+            @touchend.passive="onTouchEnd($event)"
+          >
+            <div class="rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-sm overflow-hidden">
+              <div class="relative aspect-[4/5] bg-surface-container-low">
+                @if ($heroSlides->isNotEmpty())
+                  <div
+                    class="absolute inset-0 flex transition-transform duration-500 ease-in-out"
+                    :style="`transform: translateX(-${index * 100}%);`"
+                  >
+                    @foreach ($heroSlides as $vehicle)
+                      @php
+                        $cover = $vehicle->images->first();
+                        $img = $cover ? \App\Support\VehicleImageUrl::url($cover->path) : $heroBg;
+                      @endphp
+                      <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="w-full shrink-0 relative block">
+                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/60 via-black/15 to-transparent">
+                          <p class="font-label-caps text-label-caps text-white/90 tracking-widest">{{ $vehicle->categoryOption?->value ?: __('Collection') }}</p>
+                          <h3 class="mt-2 font-headline-md text-headline-md text-white">{{ $vehicle->title }}</h3>
+                        </div>
+                      </a>
+                    @endforeach
+                  </div>
+                @else
+                  <img src="{{ $heroBg }}" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                @endif
+              </div>
+            </div>
+
+            @if ($heroSlides->count() > 1)
+              <div class="mt-4 flex justify-center gap-2">
+                @foreach ($heroSlides as $vehicle)
+                  <button
+                    type="button"
+                    class="h-1.5 w-7 rounded-full transition"
+                    :class="index === {{ $loop->index }} ? 'bg-primary' : 'bg-outline-variant hover:bg-primary/40'"
+                    @click="goTo({{ $loop->index }}); stop(); start();"
+                    aria-label="{{ __('Go to slide :n', ['n' => $loop->iteration]) }}"
+                  ></button>
+                @endforeach
+              </div>
+            @endif
+          </div>
+        </div>
       </div>
     </section>
 
     {{-- Categories --}}
     <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <h2 class="font-headline-md text-headline-md text-center mb-8 md:mb-10 uppercase">{{ __('Shop Categories') }}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         @foreach ($categories as $cat)
-          <a href="{{ $cat['url'] }}" class="group relative aspect-[3/4] overflow-hidden cursor-pointer block">
+          <a href="{{ $cat['url'] }}" class="group relative aspect-[4/5] overflow-hidden cursor-pointer block">
             <img src="{{ $cat['image'] }}" alt="" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
             <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 luxe-transition-standard"></div>
-            <div class="absolute bottom-6 md:bottom-10 left-6 md:left-10 text-white">
-              <p class="font-label-caps text-label-caps tracking-widest mb-2">{{ $cat['label'] }}</p>
-              <h3 class="font-headline-md text-headline-md">{{ $cat['title'] }}</h3>
+            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
+              <p class="font-label-caps text-label-caps tracking-widest mb-1">{{ $cat['label'] }}</p>
+              <h3 class="font-headline-sm text-headline-sm">{{ $cat['title'] }}</h3>
             </div>
           </a>
         @endforeach
