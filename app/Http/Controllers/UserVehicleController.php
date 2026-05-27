@@ -55,6 +55,7 @@ class UserVehicleController extends Controller
     {
         return view('dashboard.vehicles.create', [
             'productCategories' => $this->productCategoryOptions(),
+            ...$this->variantFormContext(),
         ]);
     }
 
@@ -72,6 +73,8 @@ class UserVehicleController extends Controller
                 ]);
 
                 $this->storeUploadedImages($request, $vehicle);
+                $this->syncProductVariants($request, $vehicle);
+
                 return $vehicle;
             });
 
@@ -106,6 +109,7 @@ class UserVehicleController extends Controller
             'vehicle' => $vehicle,
             'isAdminEdit' => $request->user()->hasRole('admin'),
             'productCategories' => $this->productCategoryOptions(),
+            ...$this->variantFormContext($vehicle),
         ]);
     }
 
@@ -146,6 +150,7 @@ class UserVehicleController extends Controller
                     $this->resequenceImages($vehicle);
                 }
                 $this->storeUploadedImages($request, $vehicle);
+                $this->syncProductVariants($request, $vehicle);
             });
 
             if (

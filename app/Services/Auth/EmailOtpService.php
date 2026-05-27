@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Services\Mail\OutboundMailService;
+use App\Support\SiteBrand;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
@@ -127,7 +128,7 @@ class EmailOtpService
 
     public function issueForLogin(User $user): bool
     {
-        $subject = __('Your :app sign-in code', ['app' => config('app.name')]);
+        $subject = __('Your :app sign-in code', ['app' => SiteBrand::displayName()]);
 
         return $this->issue(self::PURPOSE_LOGIN, (string) $user->id, (string) $user->email, (string) $user->name, $subject);
     }
@@ -139,7 +140,7 @@ class EmailOtpService
 
     public function issueForRegistration(string $token, string $email, string $name): bool
     {
-        $subject = __('Verify your :app account', ['app' => config('app.name')]);
+        $subject = __('Verify your :app account', ['app' => SiteBrand::displayName()]);
 
         return $this->issue(self::PURPOSE_REGISTRATION, $token, $email, $name, $subject);
     }
@@ -151,7 +152,7 @@ class EmailOtpService
 
     public function issueForOtpSettingsEnable(User $user): bool
     {
-        $subject = __('Confirm login OTP on :app', ['app' => config('app.name')]);
+        $subject = __('Confirm login OTP on :app', ['app' => SiteBrand::displayName()]);
 
         return $this->issue(self::PURPOSE_OTP_SETTINGS_ENABLE, (string) $user->id, (string) $user->email, (string) $user->name, $subject);
     }

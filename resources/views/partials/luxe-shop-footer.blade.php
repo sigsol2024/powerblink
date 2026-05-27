@@ -1,6 +1,6 @@
 @php
   $site = $site ?? [];
-  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : config('app.name');
+  $brandName = \App\Support\SiteBrand::displayName($site);
 @endphp
 <footer class="luxe-store w-full py-section-py-mobile md:py-section-py-desktop px-margin-mobile md:px-gutter flex flex-col md:flex-row justify-between items-start max-w-max-container mx-auto border-t border-outline-variant mt-8">
   <div class="mb-12 md:mb-0">

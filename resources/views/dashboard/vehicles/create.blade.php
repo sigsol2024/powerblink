@@ -45,6 +45,7 @@
             <p class="mt-1 text-xs text-on-surface-variant">{{ __('Stock-keeping unit. Optional but recommended for inventory tracking.') }}</p>
             <x-input-error :messages="$errors->get('vin')" class="mt-2" />
           </div>
+          @include('dashboard.vehicles.partials.variant-dimensions')
         </section>
 
         <section class="space-y-6">

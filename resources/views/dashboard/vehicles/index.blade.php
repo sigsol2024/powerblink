@@ -54,19 +54,15 @@
     @scroll.window="openMenuId != null && closeMenus()"
   >
     @if ($isAdminList)
-      <div class="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-6 pt-4 md:pt-5 pb-3 gap-3 shrink-0">
-        <div>
-          <h2 class="text-lg font-semibold text-wp-text">{{ __('Products') }}</h2>
-          <p class="text-wp-text-muted text-xs mt-0.5">{{ __('Manage your catalog.') }}</p>
-        </div>
-        <div>
-          <a href="{{ route('dashboard.vehicles.create') }}" class="admin-luxe-btn-primary">
+      <x-admin.page-header :title="__('Products')" :subtitle="__('Manage your catalog.')">
+        <x-slot name="actions">
+          <x-admin.button variant="primary" :href="route('dashboard.vehicles.create')">
             <x-icon name="plus" class="w-4 h-4" /> {{ __('Add product') }}
-          </a>
-        </div>
-      </div>
+          </x-admin.button>
+        </x-slot>
+      </x-admin.page-header>
 
-      <div class="px-4 md:px-6 pb-8 space-y-4">
+      <x-admin.page-content class="pb-8">
         @if (session('status'))
           <div class="border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-900 rounded">{{ session('status') }}</div>
         @endif
@@ -74,22 +70,21 @@
         @if ($stats)
           {{-- Stats: 3 separate boxes matching dashboard style --}}
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+            <x-admin.card variant="stats">
               <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total') }}</span>
               <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format((int) $stats['total']) }}</span>
-            </div>
-            <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+            </x-admin.card>
+            <x-admin.card variant="stats">
               <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Pending') }}</span>
               <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format((int) $stats['pending']) }}</span>
-            </div>
-            <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+            </x-admin.card>
+            <x-admin.card variant="stats">
               <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Approved') }}</span>
               <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format((int) $stats['approved']) }}</span>
-            </div>
+            </x-admin.card>
           </div>
 
-          {{-- Toolbar: search + filter chips --}}
-          <div class="bg-white border border-wp-border rounded p-3 md:p-4 flex flex-col gap-3">
+          <x-admin.card variant="toolbar">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <div class="relative flex-1 sm:flex-initial">
                 <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none">
@@ -126,14 +121,14 @@
                 <button type="button" @click="selectedStatus = '{{ $st }}'" :class="selectedStatus === '{{ $st }}' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'" class="border px-2.5 py-1 text-xs rounded">{{ $label }} (<span x-text="countFor('{{ $st }}')"></span>)</button>
               @endforeach
             </div>
-          </div>
+          </x-admin.card>
         @endif
 
         @if ($vehicles->total() === 0)
-          <p class="text-wp-text-muted py-12 text-center text-sm">{{ __('No products match this filter.') }}</p>
+          <x-admin.empty-state :title="__('No products match this filter.')" />
         @else
           {{-- Desktop table (lg+) --}}
-          <div class="hidden lg:block bg-white border border-wp-border rounded overflow-hidden">
+          <x-admin.card variant="table" class="hidden lg:block">
             <div class="overflow-x-auto">
               <table class="w-full border-collapse text-left admin-luxe-table">
                 <thead>
@@ -153,7 +148,7 @@
                 </tbody>
               </table>
             </div>
-          </div>
+          </x-admin.card>
 
           {{-- Mobile accordion (<lg) --}}
           <div class="lg:hidden space-y-2">
@@ -173,7 +168,7 @@
             {{ $vehicles->links() }}
           </div>
         @endif
-      </div>
+      </x-admin.page-content>
 
       @include('admin.partials.luxe-footer')
     @else

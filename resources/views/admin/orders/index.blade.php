@@ -13,13 +13,24 @@
     ];
   @endphp
 
+  @php
+    $statusCounts = $statusCounts ?? ['all' => 0];
+    $paidCount = (int) ($statusCounts['paid'] ?? 0);
+    $pendingCount = (int) ($statusCounts['pending_payment'] ?? 0);
+  @endphp
+
   <div
     class="flex flex-col"
     x-data="{
       currentStatus: @js((string) ($status ?? '')),
       q: '',
       expandedMobileId: null,
+      statusCounts: @js($statusCounts),
       toggleMobile(id) { this.expandedMobileId = this.expandedMobileId === id ? null : id; },
+      countFor(st) {
+        if (st === '') return this.statusCounts.all ?? 0;
+        return this.statusCounts[st] ?? 0;
+      },
       visible(rowStatus, haystack) {
         const statusOk = (!this.currentStatus || this.currentStatus === rowStatus);
         const query = this.q.trim().toLowerCase();
@@ -28,51 +39,45 @@
       },
     }"
   >
-    <header class="flex flex-col sm:flex-row sm:items-center justify-between px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0 gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <h2 class="text-lg font-semibold text-wp-text">{{ __('Orders') }}</h2>
-        <span class="text-xs text-wp-text-muted">{{ trans_choice(':count order|:count orders', $totalShown, ['count' => number_format($totalShown)]) }}</span>
+    <x-admin.page-header :title="__('Orders')" :count="trans_choice(':count order|:count orders', $totalShown, ['count' => number_format($totalShown)])" />
+
+    <x-admin.page-content>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <x-admin.card variant="stats">
+          <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total orders') }}</span>
+          <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format((int) ($statusCounts['all'] ?? 0)) }}</span>
+        </x-admin.card>
+        <x-admin.card variant="stats">
+          <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Paid') }}</span>
+          <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($paidCount) }}</span>
+        </x-admin.card>
+        <x-admin.card variant="stats">
+          <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Pending payment') }}</span>
+          <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($pendingCount) }}</span>
+        </x-admin.card>
       </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <div class="relative hidden sm:block">
-          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none"><x-icon name="search" class="w-4 h-4" /></span>
-          <input
-            type="search"
-            x-model.debounce.250ms="q"
-            class="pl-9 pr-3 py-1.5 text-sm w-48 lg:w-64"
-            placeholder="{{ __('Search orders…') }}"
-            aria-label="{{ __('Search orders') }}"
-          />
+
+      <x-admin.card variant="toolbar">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <div class="relative flex-1 sm:flex-initial">
+            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none"><x-icon name="search" class="w-4 h-4" /></span>
+            <input type="search" x-model.debounce.250ms="q" class="w-full sm:w-72 pl-9 pr-3 py-2 text-sm border border-wp-border rounded" placeholder="{{ __('Search orders…') }}" aria-label="{{ __('Search orders') }}" />
+          </div>
         </div>
-      </div>
-    </header>
-
-    <section class="flex-1 px-4 md:px-6 py-4 md:py-5 space-y-4">
-      {{-- Mobile search --}}
-      <div class="relative sm:hidden">
-        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none"><x-icon name="search" class="w-4 h-4" /></span>
-        <input
-          type="search"
-          x-model.debounce.250ms="q"
-          class="w-full pl-9 pr-3 py-2 text-sm"
-          placeholder="{{ __('Search orders…') }}"
-          aria-label="{{ __('Search orders') }}"
-        />
-      </div>
-
-      {{-- Status tabs (real-time Alpine filter, no page reload) --}}
-      <div class="flex flex-wrap items-center gap-1 border-b border-wp-border overflow-x-auto -mx-1 px-1">
-        @foreach ($statusTabs as $st)
-          <button
-            type="button"
-            @click="currentStatus = '{{ $st }}'; history.replaceState(null, '', currentStatus ? '?status=' + currentStatus : location.pathname);"
-            :class="currentStatus === '{{ $st }}' ? 'border-wp-link text-wp-link font-medium' : 'border-transparent text-wp-text-muted hover:text-wp-text'"
-            class="px-3 py-2 text-sm border-b-2 transition-colors whitespace-nowrap"
-          >
-            {{ $statusLabels[$st] ?? ucfirst(str_replace('_', ' ', $st)) }}
-          </button>
-        @endforeach
-      </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] text-wp-text-muted mr-1">{{ __('Filter') }}:</span>
+          @foreach ($statusTabs as $st)
+            <button
+              type="button"
+              @click="currentStatus = '{{ $st }}'; history.replaceState(null, '', currentStatus ? '?status=' + currentStatus : location.pathname);"
+              :class="currentStatus === '{{ $st }}' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'"
+              class="border px-2.5 py-1 text-xs rounded transition-colors whitespace-nowrap"
+            >
+              {{ $statusLabels[$st] ?? ucfirst(str_replace('_', ' ', $st)) }} (<span x-text="countFor('{{ $st }}')"></span>)
+            </button>
+          @endforeach
+        </div>
+      </x-admin.card>
 
       {{-- Desktop table --}}
       <div class="hidden lg:block bg-white border border-wp-border overflow-hidden rounded">
@@ -206,25 +211,7 @@
         @endif
       </div>
 
-      {{-- Summary cards --}}
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
-        <div class="p-4 bg-white border border-wp-border rounded flex flex-col justify-between min-h-[5.5rem]">
-          <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total orders') }}</p>
-          <h4 class="text-2xl font-semibold leading-none text-wp-text">{{ number_format($totalShown) }}</h4>
-        </div>
-        <div class="p-4 bg-white border border-wp-border rounded flex flex-col justify-between min-h-[5.5rem]">
-          <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Current filter') }}</p>
-          <h4 class="text-sm font-semibold text-wp-text" x-text="currentStatus === '' ? '{{ __('All statuses') }}' : currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1).replace('_', ' ')"></h4>
-        </div>
-        <div class="p-4 bg-white border border-wp-border rounded flex items-start gap-3">
-          <span class="text-wp-link"><x-icon name="shopping-bag" class="w-5 h-5" /></span>
-          <div>
-            <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Quick link') }}</p>
-            <a href="{{ route('dashboard.vehicles.index') }}" class="text-sm font-medium text-wp-link hover:text-wp-link-hover">{{ __('Manage products') }}</a>
-          </div>
-        </div>
-      </div>
-    </section>
+    </x-admin.page-content>
 
     @include('admin.partials.luxe-footer')
   </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
 use App\Services\Mail\OutboundMailService;
+use App\Support\SiteBrand;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -118,7 +119,7 @@ class AdminSiteSettingsController extends Controller
 
         $to = $validated['test_email'];
         $user = $request->user();
-        $subject = '[' . config('app.name') . '] ' . __('Test email');
+        $subject = '[' . SiteBrand::displayName() . '] ' . __('Test email');
         $html = '<p>' . e(__('This is a test message from the site admin. If you received it, PHPMailer SMTP is working.')) . '</p>';
 
         try {

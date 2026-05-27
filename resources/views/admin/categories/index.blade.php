@@ -6,17 +6,16 @@
     $totalUsage = (int) $usage->sum();
   @endphp
 
-  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0">
-    <div class="flex items-center gap-3 min-w-0">
-      <h2 class="text-lg font-semibold text-wp-text">{{ __('Product categories') }}</h2>
-      <span class="text-xs text-wp-text-muted">{{ trans_choice(':count category|:count categories', $rows->count(), ['count' => number_format($rows->count())]) }}</span>
-    </div>
-    <div class="shrink-0">
-      <button type="button" class="admin-luxe-btn-primary" @click="$dispatch('open-create-category')">
+  <x-admin.page-header
+    :title="__('Product categories')"
+    :count="trans_choice(':count category|:count categories', $rows->count(), ['count' => number_format($rows->count())])"
+  >
+    <x-slot name="actions">
+      <x-admin.button variant="primary" type="button" @click="$dispatch('open-create-category')">
         <x-icon name="plus" class="w-4 h-4" /> {{ __('Add category') }}
-      </button>
-    </div>
-  </header>
+      </x-admin.button>
+    </x-slot>
+  </x-admin.page-header>
 
   <div
     class="px-4 md:px-6 py-4 md:py-5 space-y-4"

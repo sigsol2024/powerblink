@@ -1,7 +1,5 @@
 @push('head')
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .anx-canvas {
       --anx-navy-deep: #040d18;
       --anx-shadow-elevated: 0 1px 0 rgba(255, 255, 255, 0.72) inset, 0 1px 2px rgba(11, 31, 58, 0.05), 0 16px 48px -16px rgba(11, 31, 58, 0.18);
@@ -49,13 +47,10 @@
 @endpush
 
 <x-app-layout>
-  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Analytics') }}</h2>
-  </header>
+  <x-admin.page-header :title="__('Analytics')" :subtitle="__('Store traffic and engagement')" />
 
-  <div
-    class="anx-canvas text-on-surface relative w-full min-h-0 antialiased px-4 md:px-6 py-6 md:py-8"
-    style="font-family: Inter, system-ui, sans-serif"
+  <x-admin.page-content
+    class="anx-canvas text-wp-text relative w-full min-h-0 antialiased"
     x-data="analyticsPage({
       trafficSubTemplate: @js(__('User engagement and volume over the last :count days', ['count' => '__N__'])),
       endpoint: '{{ route('admin.analytics.data') }}',
@@ -78,22 +73,28 @@
     })"
     x-init="initCharts()"
   >
-    <header class="mb-10 space-y-6">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div class="min-w-0 max-w-2xl flex-1">
-          <h2 class="text-3xl font-black tracking-tight text-[#061018] drop-shadow-[0_1px_0_rgba(255,255,255,0.5)]">{{ __('Analytics Overview') }}</h2>
-          <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">{{ __('Global luxury automotive market performance') }}</p>
-        </div>
-        <a
-          :href="`{{ route('admin.analytics.index') }}?range=${range}&export=csv&start_date=${startDate}&end_date=${endDate}`"
-          class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-primary-container px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#0b1f3a]/25 transition hover:brightness-110 sm:mt-0.5"
-        >
-          <x-icon name="download" class="w-4 h-4" />
-          <span>{{ __('Export Data') }}</span>
-        </a>
-      </div>
+    @php $diag = $trackingDiagnostic ?? []; @endphp
+    <p class="text-xs text-wp-text-muted">
+      {{ __('Tracking') }}:
+      @if (! empty($diag['last_event_at']))
+        {{ __('Last event :time (:count total)', ['time' => $diag['last_event_at'], 'count' => number_format((int) ($diag['total_events'] ?? 0))]) }}
+      @else
+        {{ __('No events recorded yet. Visit the public shop while logged out, then click Apply.') }}
+      @endif
+    </p>
 
-      <div class="anx-glass-toolbar w-full min-w-0 rounded-2xl border border-[#0a1628]/10 p-4">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div></div>
+      <a
+        :href="`{{ route('admin.analytics.index') }}?range=${range}&export=csv&start_date=${startDate}&end_date=${endDate}`"
+        class="admin-luxe-btn-primary inline-flex shrink-0 items-center gap-2"
+      >
+        <x-icon name="download" class="w-4 h-4" />
+        <span>{{ __('Export CSV') }}</span>
+      </a>
+    </div>
+
+      <x-admin.card variant="toolbar" class="anx-glass-toolbar w-full min-w-0">
         <div class="mb-3 flex items-center gap-2">
           <x-icon name="filter" class="w-4 h-4 text-primary-container" />
           <span class="text-xs font-semibold uppercase tracking-wider text-[#0b1f3a]">{{ __('Date Range') }}</span>
@@ -123,10 +124,9 @@
             <button type="button" @click="load()" class="w-full rounded-lg bg-primary-container px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#0b1f3a]/30 transition hover:brightness-110 sm:w-auto">{{ __('Apply') }}</button>
           </div>
         </div>
-      </div>
-    </header>
+      </x-admin.card>
 
-    <section class="mb-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <section class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <div class="anx-kpi-card flex flex-col rounded-2xl p-6 md:p-7">
         <div class="mb-5 flex items-start justify-between gap-2">
           <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Total Page Views') }}</span>
@@ -306,7 +306,7 @@
       </div>
       <div x-ref="dailyChart" class="min-h-[280px] w-full px-1 sm:px-3"></div>
     </section>
-  </div>
+  </x-admin.page-content>
 
-  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
+  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-4'])
 </x-app-layout>

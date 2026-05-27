@@ -24,7 +24,14 @@ class AdminAnalyticsController extends Controller
             return $this->csvExport($data['dailyTrend'], $days);
         }
 
-        return view('admin.analytics.index', $data);
+        $lastEvent = SiteTrafficEvent::query()->latest('viewed_at')->first();
+
+        return view('admin.analytics.index', array_merge($data, [
+            'trackingDiagnostic' => [
+                'last_event_at' => $lastEvent?->viewed_at?->toDateTimeString(),
+                'total_events' => SiteTrafficEvent::query()->count(),
+            ],
+        ]));
     }
 
     public function data(Request $request): JsonResponse

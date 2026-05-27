@@ -18,7 +18,7 @@ final class SiteSettingDefaults
         $hours = "Monday - Friday: 09:00AM - 09:00PM\nSaturday: 09:00AM - 07:00PM\nSunday: Closed";
 
         return [
-            'site_display_name' => '',
+            'site_display_name' => 'Vogue Dress 4Less',
             'logo_path' => '',
             'logo_light_path' => '',
             'favicon_path' => '',

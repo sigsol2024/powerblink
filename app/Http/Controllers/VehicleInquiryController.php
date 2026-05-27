@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Models\VehicleInquiry;
 use App\Services\Mail\OutboundMailService;
+use App\Support\SiteBrand;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,7 +66,7 @@ class VehicleInquiryController extends Controller
             'listingUrl' => route('inventory.show', ['slug' => $vehicle->slug]),
         ])->render();
 
-        $toName = (string) config('mail.from.name', config('app.name'));
+        $toName = (string) config('mail.from.name', SiteBrand::displayName());
         foreach ($adminEmails as $adminEmail) {
             try {
                 app(OutboundMailService::class)->send(

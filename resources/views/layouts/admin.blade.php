@@ -1,6 +1,6 @@
 @php
   $site = $site ?? [];
-  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : config('app.name', 'Console');
+  $brandName = \App\Support\SiteBrand::displayName($site);
   $logoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
   $user = Auth::user();
   $n = trim((string) ($user->name ?? 'User'));
@@ -17,6 +17,7 @@
           ['route' => 'admin.dashboard',          'match' => 'admin.dashboard',          'label' => __('Dashboard'),  'icon' => 'grid'],
           ['route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*',     'label' => __('Products'),   'icon' => 'box'],
           ['route' => 'admin.categories.index',   'match' => 'admin.categories.*',       'label' => __('Categories'), 'icon' => 'folder'],
+          ['route' => 'admin.variants.index',     'match' => 'admin.variants.*',         'label' => __('Variants'),   'icon' => 'tag'],
           ['route' => 'admin.orders.index',       'match' => 'admin.orders.*',           'label' => __('Orders'),     'icon' => 'shopping-cart'],
           ['route' => 'admin.users.index',        'match' => 'admin.users.*',            'label' => __('Customers'),  'icon' => 'users'],
           ['route' => 'admin.analytics.index',    'match' => 'admin.analytics.*',        'label' => __('Analytics'),  'icon' => 'chart'],
@@ -57,7 +58,6 @@
   @else
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
   @endif
-  @stack('scripts')
 </head>
 <body
   class="admin-luxe-root font-body-md text-on-background antialiased h-full overflow-hidden"
@@ -136,7 +136,8 @@
 
     {{-- Mobile drawer --}}
     <aside
-      class="admin-sidebar fixed inset-y-0 left-0 z-50 flex h-full w-[min(16rem,calc(100vw-2rem))] flex-col lg:hidden transition-transform duration-200 text-[13px]"
+      class="admin-sidebar fixed inset-y-0 left-0 z-50 flex h-full w-[min(16rem,calc(100vw-2rem))] flex-col lg:hidden transition-transform duration-200 text-[13px] -translate-x-full"
+      x-cloak
       :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="px-5 py-5 flex items-center justify-between shrink-0 border-b border-black/30">
@@ -167,6 +168,9 @@
         @endforeach
       </nav>
       <div class="border-t border-black/30 p-2 shrink-0">
+        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
+          <x-icon name="cog" class="w-4 h-4" /> {{ __('Settings') }}
+        </a>
         <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
           <x-icon name="storefront" class="w-4 h-4" /> {{ __('View site') }}
         </a>
@@ -211,6 +215,7 @@
   @unless (request()->routeIs('admin.pages.edit'))
     @include('partials.media-modal-pickers')
   @endunless
+  @stack('scripts')
   @stack('body-end')
 </body>
 </html>

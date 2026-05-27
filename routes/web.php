@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminAnalyticsController;
 use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\AdminVariantController;
 use App\Http\Controllers\AdminListingOptionController;
 use App\Http\Controllers\AdminMediaController;
 use App\Http\Controllers\AdminOrderController;
@@ -297,6 +298,11 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
     Route::post('/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
     Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+    Route::get('/variants', [AdminVariantController::class, 'index'])->name('admin.variants.index');
+    Route::post('/variants', [AdminVariantController::class, 'store'])->name('admin.variants.store');
+    Route::put('/variants/{variant}', [AdminVariantController::class, 'update'])->name('admin.variants.update');
+    Route::delete('/variants/{variant}', [AdminVariantController::class, 'destroy'])->name('admin.variants.destroy');
 
     Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->name('admin.listing-options.index');
     Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->name('admin.listing-options.show');

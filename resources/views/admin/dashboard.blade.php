@@ -9,53 +9,46 @@
     $visitors = (int) ($stats['visitors_total'] ?? ($traffic['total_views'] ?? 0));
   @endphp
 
-  <header class="flex justify-between items-center px-4 md:px-6 py-3 border-b border-wp-border sticky top-0 bg-white z-40 shrink-0">
-    <h2 class="text-lg font-semibold text-wp-text">{{ __('Dashboard') }}</h2>
-    <div class="flex items-center gap-4">
-      <button type="button" class="text-wp-text-muted hover:text-wp-link transition-colors inline-flex items-center" aria-label="{{ __('Notifications') }}">
-        <x-icon name="bell" class="w-5 h-5" />
-      </button>
+  <x-admin.page-header :title="__('Dashboard')">
+    <x-slot name="actions">
       <span class="text-xs text-wp-text-muted hidden sm:inline">{{ now()->format('M j, Y') }}</span>
-    </div>
-  </header>
+    </x-slot>
+  </x-admin.page-header>
 
-  <div class="py-5 md:py-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
-      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+  <x-admin.page-content>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <x-admin.card variant="stats">
         <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total Orders') }}</span>
         <div class="flex items-baseline gap-2">
           <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($totalOrders) }}</h3>
           <span class="text-xs text-wp-text-muted">{{ number_format($paidOrders) }} {{ __('paid') }}</span>
         </div>
-      </div>
-
-      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+      </x-admin.card>
+      <x-admin.card variant="stats">
         <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Active Products') }}</span>
         <div class="flex items-baseline gap-2">
           <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($activeProducts) }}</h3>
           <span class="text-xs text-wp-text-muted">{{ __('live') }}</span>
         </div>
-      </div>
-
-      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+      </x-admin.card>
+      <x-admin.card variant="stats">
         <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total Revenue') }}</span>
         <div class="flex items-baseline gap-2">
           <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ format_currency($revenue) }}</h3>
           <span class="text-xs text-wp-text-muted">{{ __('paid') }}</span>
         </div>
-      </div>
-
-      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+      </x-admin.card>
+      <x-admin.card variant="stats">
         <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Page Visitors') }}</span>
         <div class="flex items-baseline gap-2">
           <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($visitors) }}</h3>
           <span class="text-xs text-wp-text-muted">{{ __('last :days days', ['days' => (int) ($traffic['range_days'] ?? 90)]) }}</span>
         </div>
-      </div>
+      </x-admin.card>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div class="lg:col-span-2 bg-white border border-wp-border rounded">
+      <x-admin.card variant="table" class="lg:col-span-2">
         <div class="p-4 border-b border-wp-border flex justify-between items-center">
           <h4 class="text-sm font-semibold text-wp-text">{{ __('Recent Admin Activity') }}</h4>
           <a href="{{ route('admin.audit.index') }}" class="text-xs text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1">
@@ -64,14 +57,14 @@
           </a>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-sm">
+          <table class="w-full text-left border-collapse text-sm admin-luxe-table">
             <thead>
               <tr class="bg-wp-bg">
-                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('When') }}</th>
-                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Admin') }}</th>
-                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Method') }}</th>
-                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Path') }}</th>
-                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Status') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('When') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Admin') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Method') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Path') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Status') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -80,22 +73,22 @@
                   <td class="px-4 py-3 border-b border-wp-border text-wp-text-muted whitespace-nowrap">{{ optional($entry->created_at)->format('M j, Y') }}</td>
                   <td class="px-4 py-3 border-b border-wp-border">{{ $entry->user?->name ?? __('Unknown') }}</td>
                   <td class="px-4 py-3 border-b border-wp-border">
-                    <span class="inline-block px-2 py-0.5 bg-wp-bg text-[10px] font-semibold tracking-wide uppercase rounded">{{ $entry->method }}</span>
+                    <x-admin.status-pill variant="neutral">{{ $entry->method }}</x-admin.status-pill>
                   </td>
                   <td class="px-4 py-3 border-b border-wp-border max-w-xs truncate" title="{{ $entry->path }}">{{ $entry->path }}</td>
                   <td class="px-4 py-3 border-b border-wp-border text-right font-medium">{{ $entry->status_code ?? '—' }}</td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5" class="px-4 py-8 text-center text-wp-text-muted">{{ __('No audit actions yet.') }}</td>
+                  <td colspan="5"><x-admin.empty-state :title="__('No audit actions yet.')" /></td>
                 </tr>
               @endforelse
             </tbody>
           </table>
         </div>
-      </div>
+      </x-admin.card>
 
-      <div class="bg-white border border-wp-border rounded p-4">
+      <x-admin.card class="p-4">
         <div class="flex justify-between items-start mb-4">
           <div>
             <h4 class="text-sm font-semibold text-wp-text leading-tight">{{ __('Site Traffic') }}</h4>
@@ -120,13 +113,13 @@
           </div>
         </div>
         <div class="mt-5 grid grid-cols-1 gap-2">
-          <a href="{{ route('admin.orders.index') }}" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('Manage orders') }}</a>
-          <a href="{{ route('dashboard.vehicles.index') }}" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('Product management') }}</a>
-          <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('View shop') }}</a>
+          <x-admin.button variant="primary" :href="route('admin.orders.index')" class="w-full">{{ __('Manage orders') }}</x-admin.button>
+          <x-admin.button variant="primary" :href="route('dashboard.vehicles.index')" class="w-full">{{ __('Product management') }}</x-admin.button>
+          <x-admin.button variant="primary" :href="route('shop.index')" target="_blank" rel="noopener" class="w-full">{{ __('View shop') }}</x-admin.button>
         </div>
-      </div>
+      </x-admin.card>
     </div>
 
-    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8 border-t-0 opacity-60'])
-  </div>
+    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-4 border-t-0 opacity-60'])
+  </x-admin.page-content>
 </x-app-layout>

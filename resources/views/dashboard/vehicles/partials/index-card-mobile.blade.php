@@ -42,7 +42,7 @@
       </span>
     </button>
 
-    <div class="relative shrink-0">
+    <div class="relative shrink-0 hidden lg:block">
       <button
         type="button"
         class="text-wp-text-muted hover:text-wp-text transition-colors inline-flex items-center p-1"
@@ -94,8 +94,23 @@
       <span class="text-xs text-wp-text-muted">{{ __('SKU') }}</span>
       <span class="text-wp-text text-right">{{ $sku }}</span>
     </div>
-    <div class="pt-2">
-      <a href="{{ route('dashboard.vehicles.edit', $vehicle) }}" class="block w-full text-center bg-black text-white border border-black hover:opacity-90 px-3 py-2 text-xs font-medium rounded transition-opacity">{{ __('Edit product') }}</a>
+    <div class="pt-2 flex flex-wrap gap-2">
+      @if ($viewUrl)
+        <a href="{{ $viewUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium border border-wp-border rounded bg-white text-wp-text hover:bg-wp-bg flex-1 min-w-[5rem]">
+          <x-icon name="eye" class="w-4 h-4" /> {{ __('View') }}
+        </a>
+      @endif
+      <a href="{{ route('dashboard.vehicles.edit', $vehicle) }}" class="inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded bg-wp-link text-white hover:opacity-90 flex-1 min-w-[5rem]">
+        <x-icon name="pencil" class="w-4 h-4" /> {{ __('Edit') }}
+      </a>
+      @if ($isAdminList && $canApprove)
+        <form method="post" action="{{ route('admin.vehicles.approve', $vehicle) }}" class="flex-1 min-w-[5rem]">
+          @csrf
+          <button type="submit" class="w-full inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium border border-emerald-300 rounded bg-emerald-50 text-emerald-800">
+            <x-icon name="check" class="w-4 h-4" /> {{ __('Approve') }}
+          </button>
+        </form>
+      @endif
     </div>
   </div>
 </div>

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @php
       $site = $site ?? [];
-      $siteDisplayName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : config('app.name');
+      $siteDisplayName = \App\Support\SiteBrand::displayName($site);
       $loaderLogoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
     @endphp
     <title>@if(!empty($title ?? null)){{ $title }} | @endif{{ $siteDisplayName }}</title>
@@ -99,7 +99,7 @@
       @include('partials.luxe-shop-footer', ['site' => $site ?? []])
     @elseif ($luxeStorefront)
       <footer class="luxe-store border-t border-outline-variant py-8 px-margin-mobile md:px-gutter text-center font-label-caps text-label-caps text-on-surface-variant">
-        <p>© {{ date('Y') }} {{ config('app.name') }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
+        <p>© {{ date('Y') }} {{ \App\Support\SiteBrand::displayName($site ?? []) }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
       </footer>
     @else
       @include('partials.footer')

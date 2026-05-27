@@ -8,7 +8,9 @@ use App\Models\Vehicle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Throwable;
 
 /**
  * Product category management. Categories are stored as listing_options rows under the
@@ -30,13 +32,18 @@ class AdminCategoryController extends Controller
                 ->get(['id', 'value', 'sort_order', 'is_active'])
             : collect();
 
-        $usage = $rows->isNotEmpty()
-            ? Vehicle::query()
-                ->whereIn('product_category_listing_option_id', $rows->pluck('id')->all())
-                ->select('product_category_listing_option_id', DB::raw('count(*) as total'))
-                ->groupBy('product_category_listing_option_id')
-                ->pluck('total', 'product_category_listing_option_id')
-            : collect();
+        $usage = collect();
+        if ($rows->isNotEmpty()) {
+            try {
+                $usage = Vehicle::query()
+                    ->whereIn('product_category_listing_option_id', $rows->pluck('id')->all())
+                    ->select('product_category_listing_option_id', DB::raw('count(*) as total'))
+                    ->groupBy('product_category_listing_option_id')
+                    ->pluck('total', 'product_category_listing_option_id');
+            } catch (Throwable $e) {
+                Log::error('admin.categories.index usage query failed', ['error' => $e->getMessage()]);
+            }
+        }
 
         return view('admin.categories.index', [
             'rows' => $rows,
@@ -46,34 +53,48 @@ class AdminCategoryController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'value' => ['required', 'string', 'max:191'],
-            'is_active' => ['sometimes', 'boolean'],
-        ]);
+        try {
+            $data = $request->validate([
+                'value' => ['required', 'string', 'max:191'],
+                'is_active' => ['sometimes', 'boolean'],
+            ]);
 
-        $categoryId = $this->productCategoryId(create: true);
-        $value = trim((string) $data['value']);
+            $categoryId = $this->productCategoryId(create: true);
+            if ($categoryId === 0) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['value' => __('Product category is not configured. Run migrations (php artisan migrate) and try again.')]);
+            }
 
-        if ($this->valueExists($categoryId, $value)) {
+            $value = trim((string) $data['value']);
+
+            if ($this->valueExists($categoryId, $value)) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['value' => __('A category with this name already exists.')]);
+            }
+
+            $nextSort = (int) ListingOption::query()
+                ->where('category_id', $categoryId)
+                ->whereNull('parent_id')
+                ->max('sort_order');
+
+            ListingOption::query()->create([
+                'category_id' => $categoryId,
+                'parent_id' => null,
+                'value' => $value,
+                'sort_order' => $nextSort + 10,
+                'is_active' => (bool) ($data['is_active'] ?? true),
+            ]);
+
+            return back()->with('status', __('Category added.'));
+        } catch (Throwable $e) {
+            Log::error('admin.categories.store failed', ['error' => $e->getMessage()]);
+
             return back()
                 ->withInput()
-                ->withErrors(['value' => __('A category with this name already exists.')]);
+                ->withErrors(['value' => __('Could not save category. Check database migrations and try again.')]);
         }
-
-        $nextSort = (int) ListingOption::query()
-            ->where('category_id', $categoryId)
-            ->whereNull('parent_id')
-            ->max('sort_order');
-
-        ListingOption::query()->create([
-            'category_id' => $categoryId,
-            'parent_id' => null,
-            'value' => $value,
-            'sort_order' => $nextSort + 10,
-            'is_active' => (bool) ($data['is_active'] ?? true),
-        ]);
-
-        return back()->with('status', __('Category added.'));
     }
 
     public function update(Request $request, ListingOption $category): RedirectResponse
@@ -106,9 +127,17 @@ class AdminCategoryController extends Controller
     {
         $this->authorizeProductCategory($category);
 
-        $usage = Vehicle::query()
-            ->where('product_category_listing_option_id', $category->id)
-            ->count();
+        try {
+            $usage = Vehicle::query()
+                ->where('product_category_listing_option_id', $category->id)
+                ->count();
+        } catch (Throwable $e) {
+            Log::error('admin.categories.destroy usage query failed', ['error' => $e->getMessage()]);
+
+            return back()->withErrors([
+                'category' => __('Could not verify category usage. Check database migrations and try again.'),
+            ]);
+        }
 
         if ($usage > 0) {
             return back()->withErrors([

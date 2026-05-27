@@ -20,9 +20,17 @@ class AdminOrderController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        $statusKeys = ['pending_payment', 'paid', 'fulfilled', 'failed', 'cancelled', 'refunded'];
+        $statusCounts = ['all' => Order::query()->count()];
+        foreach ($statusKeys as $key) {
+            $statusCounts[$key] = Order::query()->where('status', $key)->count();
+        }
+
         return view('admin.orders.index', [
             'orders' => $orders,
             'status' => $status,
+            'statusCounts' => $statusCounts,
+            'pageStatuses' => $orders->pluck('status')->values()->all(),
         ]);
     }
 

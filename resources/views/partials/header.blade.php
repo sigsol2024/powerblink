@@ -1,6 +1,6 @@
 @php
   $site = $site ?? [];
-  $brandName = ! empty(trim((string) ($site['site_display_name'] ?? ''))) ? trim((string) $site['site_display_name']) : config('app.name', 'Site');
+  $brandName = \App\Support\SiteBrand::displayName($site);
   $logoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
   $hoursLabel = trim((string) ($site['dealer_hours_label'] ?? '')) ?: __('Work Hours');
   $hoursLines = preg_split('/\r\n|\r|\n/', (string) ($site['dealer_sales_hours'] ?? '')) ?: [];

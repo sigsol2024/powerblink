@@ -7,6 +7,7 @@ use App\Models\PageSection;
 use App\Models\SiteSetting;
 use App\Models\Vehicle;
 use App\Support\Compare;
+use App\Support\SiteBrand;
 use App\Support\SiteSettingDefaults;
 use App\Support\VehicleImageUrl;
 use App\Support\VehicleListingCatalog;
@@ -38,7 +39,7 @@ class PageController extends Controller
     public function home()
     {
         $page = CmsPage::query()->where('slug', 'home')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $recentVehicles = Vehicle::query()
             ->with(['images', 'categoryOption'])
             ->where('status', 'approved')
@@ -112,7 +113,7 @@ class PageController extends Controller
     public function about()
     {
         $page = CmsPage::query()->where('slug', 'about')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('about', [
             'hero_image' => 'asset/images/media/about-hero-bg.jpg',
             'established_year' => '2020',
@@ -173,7 +174,7 @@ class PageController extends Controller
     public function contact()
     {
         $page = CmsPage::query()->where('slug', 'contact')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
 
         return view('pages.contact', [
             'title' => $page->title.' | '.$siteName,
@@ -206,7 +207,7 @@ class PageController extends Controller
     public function faq()
     {
         $page = CmsPage::query()->where('slug', 'faq')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('faq', [
             'kicker' => 'Need Help?',
             'heading' => 'HELP CENTER',
@@ -255,7 +256,7 @@ class PageController extends Controller
     public function privacyPolicy()
     {
         $page = CmsPage::query()->where('slug', 'privacy-policy')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('privacy-policy', [
             'heading' => 'Privacy Policy',
             'body' => "This Privacy Policy explains how we collect, use, and protect information when you use our online store.\n\nIf you create an account, sign in (including via Google), save items, submit inquiries, or contact us, we may process the information you provide to deliver these features.\n\nWe do not sell your personal information. We use your information to operate the site, communicate with you, prevent fraud, and comply with legal obligations.\n\nFor questions about this policy or to request access, correction, or deletion of your data, please use the Contact page.",
@@ -276,7 +277,7 @@ class PageController extends Controller
     public function terms()
     {
         $page = CmsPage::query()->where('slug', 'terms')->where('is_active', true)->firstOrFail();
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('terms', [
             'heading' => 'Terms & Conditions',
             'body' => "These Terms & Conditions govern your use of our online store.\n\nBy using the site, you agree not to misuse the platform, attempt unauthorized access, or submit false or misleading information.\n\nProducts may be added by staff accounts. Product details, pricing, and availability can change and are provided for informational purposes.\n\nIf you submit an inquiry, you agree that we may contact you using the information you provide.\n\nWe may suspend or terminate accounts that violate these terms. These terms may be updated from time to time; continued use indicates acceptance of updates.",
@@ -480,7 +481,7 @@ class PageController extends Controller
             $similarVehicles = $similarVehicles->concat($fallback)->values();
         }
 
-        $siteName = config('app.name');
+        $siteName = SiteBrand::displayName();
         $plainDesc = $vehicle->description
             ? Str::limit(strip_tags($vehicle->description), 160)
             : Str::limit(trim((string) ($vehicle->title ?? '')), 160);

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Models\ListingOption;
 use App\Models\ListingOptionCategory;
 use App\Models\Vehicle;
+use App\Services\ProductVariantSyncService;
 use App\Support\VehicleImageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -207,5 +209,77 @@ trait InteractsWithVehicleForms
                 Storage::disk('public')->delete($rel);
             }
         }
+    }
+
+    protected function syncProductVariants(Request $request, Vehicle $vehicle): void
+    {
+        $dimensions = array_values(array_intersect(
+            ['size', 'color'],
+            array_map('strval', (array) $request->input('variant_dimensions', []))
+        ));
+
+        $options = [
+            'size' => array_map('intval', (array) $request->input('dimension_options.size', [])),
+            'color' => array_map('intval', (array) $request->input('dimension_options.color', [])),
+        ];
+
+        $matrix = (array) $request->input('variant_matrix', []);
+
+        app(ProductVariantSyncService::class)->sync($vehicle, $dimensions, $options, $matrix);
+    }
+
+    /**
+     * @return array{
+     *   sizeOptions: \Illuminate\Support\Collection,
+     *   colorOptions: \Illuminate\Support\Collection,
+     *   selectedDimensions: array<int, string>,
+     *   selectedSizeIds: array<int, int>,
+     *   selectedColorIds: array<int, int>,
+     *   variantMatrix: array<string, array<string, mixed>>
+     * }
+     */
+    protected function variantFormContext(?Vehicle $vehicle = null): array
+    {
+        $service = app(ProductVariantSyncService::class);
+        $sizeOptions = $this->listingOptionsForSlug('size');
+        $colorOptions = $this->listingOptionsForSlug('color');
+        $selectedDimensions = [];
+        $selectedSizeIds = [];
+        $selectedColorIds = [];
+        $variantMatrix = [];
+
+        if ($vehicle !== null) {
+            $variants = $vehicle->allVariants()->get();
+            if ($variants->isNotEmpty()) {
+                if ($variants->contains(fn ($v) => $v->size_listing_option_id)) {
+                    $selectedDimensions[] = 'size';
+                }
+                if ($variants->contains(fn ($v) => $v->color_listing_option_id)) {
+                    $selectedDimensions[] = 'color';
+                }
+                $selectedSizeIds = $variants->pluck('size_listing_option_id')->filter()->unique()->values()->all();
+                $selectedColorIds = $variants->pluck('color_listing_option_id')->filter()->unique()->values()->all();
+                foreach ($variants as $variant) {
+                    $key = $service->matrixKey($variant->size_listing_option_id, $variant->color_listing_option_id);
+                    $variantMatrix[$key] = [
+                        'stock' => $variant->stock,
+                        'sku' => $variant->sku,
+                        'price' => $variant->price,
+                    ];
+                }
+            }
+        }
+
+        return compact('sizeOptions', 'colorOptions', 'selectedDimensions', 'selectedSizeIds', 'selectedColorIds', 'variantMatrix');
+    }
+
+    protected function listingOptionsForSlug(string $slug): \Illuminate\Support\Collection
+    {
+        return ListingOption::query()
+            ->whereHas('category', fn ($q) => $q->where('slug', $slug))
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('value')
+            ->get(['id', 'value']);
     }
 }
