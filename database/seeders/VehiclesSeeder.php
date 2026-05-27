@@ -2,19 +2,23 @@
 
 namespace Database\Seeders;
 
+use App\Models\ListingOption;
+use App\Models\ListingOptionCategory;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\VehicleImage;
-use App\Support\ListingOptionCatalogSync;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
+/**
+ * Seeds the apparel product catalog (table is still named `vehicles` for historical reasons).
+ * Only writes the lean post-overhaul columns — no car-shaped legacy fields, no listing-option
+ * sync. Phase 7 will wire category mapping after the additive migration ships.
+ */
 class VehiclesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $demoUsers = DemoData::users();
@@ -42,48 +46,39 @@ class VehiclesSeeder extends Seeder
             $approver->assignRole('admin');
         }
 
-        $seedVehicles = DemoData::vehicles();
+        $hasStockColumn = Schema::hasColumn('vehicles', 'stock');
+        $hasCategoryColumn = Schema::hasColumn('vehicles', 'product_category_listing_option_id');
+        $categoryLookup = $this->productCategoryLookup();
 
-        foreach ($seedVehicles as $v) {
-            ListingOptionCatalogSync::ensureOptionValuesFromArray($v);
-        }
+        foreach (DemoData::vehicles() as $product) {
+            $slug = Str::slug($product['title']);
 
-        foreach ($seedVehicles as $v) {
-            $slug = Str::slug($v['title']);
-            $fk = ListingOptionCatalogSync::resolveLegacyRowToForeignKeys((object) $v);
+            $payload = [
+                'user_id' => $owner->id,
+                'title' => $product['title'],
+                'slug' => $slug,
+                'status' => 'approved',
+                'price' => $product['price'],
+                'features' => $product['features'] ?? null,
+                'description' => $product['description'] ?? 'Placeholder product description.',
+                'submitted_at' => now(),
+                'approved_at' => now(),
+                'approved_by' => $approver->id,
+            ];
 
-            $vehicle = Vehicle::query()->updateOrCreate(
-                ['slug' => $slug],
-                [
-                    'user_id' => $owner->id,
-                    'title' => $v['title'],
-                    'slug' => $slug,
-                    'status' => 'approved',
-                    'year' => $v['year'],
-                    'make_listing_option_id' => $fk['make_listing_option_id'],
-                    'model_listing_option_id' => $fk['model_listing_option_id'],
-                    'condition_listing_option_id' => $fk['condition_listing_option_id'],
-                    'body_type_listing_option_id' => $fk['body_type_listing_option_id'],
-                    'transmission_listing_option_id' => $fk['transmission_listing_option_id'],
-                    'fuel_type_listing_option_id' => $fk['fuel_type_listing_option_id'],
-                    'drive_listing_option_id' => $fk['drive_listing_option_id'],
-                    'country_listing_option_id' => $fk['country_listing_option_id'],
-                    'price' => $v['price'],
-                    'mileage' => $v['mileage'],
-                    'engine_size' => $v['engine_size'] ?? null,
-                    'street_address' => $v['street_address'] ?? null,
-                    'features' => $v['features'] ?? null,
-                    'exterior_color' => $v['exterior_color'],
-                    'interior_color' => $v['interior_color'],
-                    'description' => $v['description'] ?? 'Seed vehicle for UI placeholder. Replace with real content later.',
-                    'submitted_at' => now(),
-                    'approved_at' => now(),
-                    'approved_by' => $approver->id,
-                ]
-            );
+            if ($hasStockColumn) {
+                $payload['stock'] = $product['stock'] ?? 0;
+            }
+
+            if ($hasCategoryColumn) {
+                $categoryName = (string) ($product['category'] ?? '');
+                $payload['product_category_listing_option_id'] = $categoryLookup[strtolower($categoryName)] ?? null;
+            }
+
+            $vehicle = Vehicle::query()->updateOrCreate(['slug' => $slug], $payload);
 
             VehicleImage::query()->where('vehicle_id', $vehicle->id)->delete();
-            foreach ($v['images'] as $idx => $path) {
+            foreach ($product['images'] as $idx => $path) {
                 VehicleImage::query()->create([
                     'vehicle_id' => $vehicle->id,
                     'path' => $path,
@@ -91,5 +86,30 @@ class VehiclesSeeder extends Seeder
                 ]);
             }
         }
+    }
+
+    /**
+     * lowercased category-name -> listing_options.id (active rows under the
+     * 'product_category' slug). Empty array when the catalogue hasn't been seeded.
+     *
+     * @return array<string, int>
+     */
+    private function productCategoryLookup(): array
+    {
+        if (! Schema::hasTable('listing_options') || ! Schema::hasTable('listing_option_categories')) {
+            return [];
+        }
+
+        $categoryId = (int) ListingOptionCategory::query()->where('slug', 'product_category')->value('id');
+        if ($categoryId === 0) {
+            return [];
+        }
+
+        return ListingOption::query()
+            ->where('category_id', $categoryId)
+            ->whereNull('parent_id')
+            ->pluck('id', 'value')
+            ->mapWithKeys(fn ($id, $value) => [strtolower((string) $value) => (int) $id])
+            ->all();
     }
 }

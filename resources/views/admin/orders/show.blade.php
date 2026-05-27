@@ -10,7 +10,7 @@
     </a>
   </header>
 
-  <div class="px-margin-mobile md:px-gutter max-w-max-container mx-auto w-full pb-section-py-mobile md:pb-section-py-desktop">
+  <div class="px-4 md:px-6 py-4 md:py-5">
     @if (session('status'))
       <div class="mb-8 border border-secondary/40 bg-secondary-fixed/30 px-4 py-3 text-sm text-on-surface">{{ session('status') }}</div>
     @endif

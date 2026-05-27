@@ -33,14 +33,8 @@
               <p class="text-primary font-bold text-2xl">@if(!is_null($vehicle->price)){{ format_currency($vehicle->price) }}@else Ask @endif</p>
               {{-- Fixed key-fields schema: always render same rows in same order --}}
               <div class="text-xs text-slate-300 space-y-1 uppercase tracking-wide">
-                <p><span class="text-slate-400">Year:</span> {{ $vehicle->year ?: 'N/A' }}</p>
-                <p><span class="text-slate-400">Body:</span> {{ $vehicle->bodyTypeOption?->value ?? 'N/A' }}</p>
-                <p><span class="text-slate-400">Mileage:</span> {{ $vehicle->mileage ? number_format((int) $vehicle->mileage) . ' mi' : 'N/A' }}</p>
-                <p><span class="text-slate-400">Fuel:</span> {{ $vehicle->fuelTypeOption?->value ?? 'N/A' }}</p>
-                <p><span class="text-slate-400">Transmission:</span> {{ $vehicle->transmissionOption?->value ?? 'N/A' }}</p>
-                <p><span class="text-slate-400">Drive:</span> {{ $vehicle->driveOption?->value ?? 'N/A' }}</p>
-                <p><span class="text-slate-400">Engine:</span> {{ $vehicle->engine_size ?: 'N/A' }}</p>
-                <p><span class="text-slate-400">Country:</span> {{ $vehicle->countryOption?->value ?? 'N/A' }}</p>
+                <p><span class="text-slate-400">Category:</span> {{ $vehicle->categoryOption?->value ?? 'N/A' }}</p>
+                <p><span class="text-slate-400">Stock:</span> {{ ($vehicle->stock ?? 0) > 0 ? $vehicle->stock : 'Out of stock' }}</p>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}" class="text-center py-2 border border-white/30 rounded text-xs font-bold uppercase tracking-wider hover:bg-white/10">Details</a>

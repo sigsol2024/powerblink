@@ -69,23 +69,14 @@
             </div>
             <h2 class="inv-card__title">
               <a href="{{ route('inventory.show', ['slug' => $vehicle->slug]) }}">
-                <span class="text-muted" style="font-size: 14px; font-weight: 600;">{{ $vehicle->modelOption?->value ?? '' }}</span>
-                {{ $vehicle->year ?? '' }}
+                {{ $vehicle->title }}
               </a>
             </h2>
 
             <div class="inv-card__meta">
               <div class="inv-card__meta-item">
-                <span class="label">Mileage</span>
-                <span class="value">{{ $vehicle->mileage ?? '' }} mi</span>
-              </div>
-              <div class="inv-card__meta-item">
-                <span class="label">Fuel</span>
-                <span class="value">{{ $vehicle->fuelTypeOption?->value ?? '' }}</span>
-              </div>
-              <div class="inv-card__meta-item">
-                <span class="label">Transmission</span>
-                <span class="value">{{ $vehicle->transmissionOption?->value ?? '' }}</span>
+                <span class="label">Category</span>
+                <span class="value">{{ $vehicle->categoryOption?->value ?? '—' }}</span>
               </div>
             </div>
 

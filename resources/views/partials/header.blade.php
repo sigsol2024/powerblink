@@ -18,15 +18,7 @@
   $isHome = request()->routeIs('home') || request()->routeIs('faq') || request()->routeIs('about');
   $shopUrl = route('shop.index');
   $inventoryUrl = $shopUrl;
-  $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
-  $foreignTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Foreign');
-  $inventoryNigeriaUrl = $nigerianTypeId ? route('shop.index', ['type_listing_option_id' => $nigerianTypeId]) : $shopUrl;
-  $inventoryForeignUrl = $foreignTypeId ? route('shop.index', ['type_listing_option_id' => $foreignTypeId]) : $shopUrl;
-  $inventoryActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show') || request()->routeIs('makes.index');
-  $currentTypeId = (int) request('type_listing_option_id', 0);
-  $nigeriaActive = $inventoryActive && $nigerianTypeId && $currentTypeId === $nigerianTypeId;
-  $foreignActive = $inventoryActive && $foreignTypeId && $currentTypeId === $foreignTypeId;
-  $navMakesTop = \App\Support\VehicleListingCatalog::activeMakeNavTopTiles(6);
+  $inventoryActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $faqNavItems = $faqNavItems ?? [];
   $faqUrl = route('faq');
   $cmsNavActive = $cmsNavActive ?? [];
@@ -129,65 +121,7 @@
         @endif
 
         @if ($navOn('inventory'))
-        {{-- Inventory mega dropdown (Nigerian / Foreign live under here) --}}
-        <div class="pointer-events-auto relative flex items-end" data-header-inventory-dropdown>
-          <a href="{{ $inventoryUrl }}" data-header-inventory-trigger data-header-nav-link class="inline-flex items-center gap-0.5 border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ $inventoryActive ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}" aria-expanded="false" aria-haspopup="true">
-            <span>{{ __('Shop') }}</span>
-            <span class="material-symbols-outlined text-[18px] leading-none text-inherit" aria-hidden="true">expand_more</span>
-          </a>
-          <div class="absolute left-1/2 top-full z-[60] hidden w-max -translate-x-1/2 pt-2" data-header-inventory-panel role="region" aria-label="{{ __('Inventory categories') }}">
-            <div class="flex w-[min(56rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ring-1 ring-black/5">
-              <div class="flex min-w-0 w-1/2 flex-col border-r border-slate-200">
-                <div class="grid flex-1 gap-px bg-slate-200 p-px">
-                  <a href="{{ $inventoryNigeriaUrl }}" class="group flex items-start justify-between gap-3 bg-slate-50 px-4 py-3 transition hover:bg-slate-100 {{ $nigeriaActive ? 'ring-1 ring-inset ring-[#1280DF]/40' : '' }}">
-                    <div>
-                      <span class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.06em] text-zinc-900 transition-colors group-hover:text-[#1280DF]">
-                        <img src="https://flagcdn.com/w40/ng.png" srcset="https://flagcdn.com/w80/ng.png 2x" width="28" height="19" alt="" class="h-6 w-auto shrink-0 rounded-sm object-cover shadow-sm ring-1 ring-slate-200" decoding="async" loading="lazy" />
-                        {{ __('Nigerian Used') }}
-                      </span>
-                      <p class="mt-1 text-xs font-medium text-zinc-600">{{ __('Locally sourced Nigerian-used listings.') }}</p>
-                    </div>
-                    <span class="material-symbols-outlined shrink-0 text-lg text-[#1280DF] transition group-hover:translate-x-0.5 group-hover:text-[#0a5cb3]">chevron_right</span>
-                  </a>
-                  <a href="{{ $inventoryForeignUrl }}" class="group flex items-start justify-between gap-3 bg-slate-50 px-4 py-3 transition hover:bg-slate-100 {{ $foreignActive ? 'ring-1 ring-inset ring-[#1280DF]/40' : '' }}">
-                    <div>
-                      <span class="block text-[13px] font-bold uppercase tracking-[0.06em] text-zinc-900 transition-colors group-hover:text-[#1280DF]">
-                        {{ __('Foreign Used') }}
-                      </span>
-                      <p class="mt-1 text-xs font-medium text-zinc-600">{{ __('Foreign-used imports and international stock.') }}</p>
-                    </div>
-                    <span class="material-symbols-outlined shrink-0 text-lg text-[#1280DF] transition group-hover:translate-x-0.5 group-hover:text-[#0a5cb3]">chevron_right</span>
-                  </a>
-                </div>
-                <div class="border-t border-slate-200 bg-slate-50/90 px-4 py-3">
-                  <a href="{{ $inventoryUrl }}" class="inline-flex items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition-colors hover:text-[#0a5cb3]">{{ __('View full inventory') }}<span class="material-symbols-outlined text-base">arrow_forward</span></a>
-                </div>
-              </div>
-              @if ($navMakesTop->isNotEmpty())
-                <div class="flex min-w-0 w-1/2 flex-col bg-slate-50 p-3 sm:p-4" aria-label="{{ __('Shop by make') }}">
-                  <p class="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-zinc-500">{{ __('Shop by make') }}</p>
-                  <div class="grid max-h-[min(22rem,55vh)] grid-cols-3 gap-x-2.5 gap-y-3.5 overflow-y-auto overscroll-contain pr-0.5">
-                    @foreach ($navMakesTop as $makeOpt)
-                      <a href="{{ route('inventory.index', ['make_listing_option_id' => $makeOpt->id]) }}" class="group flex flex-col items-center gap-1.5 rounded-lg p-2 text-center transition hover:bg-white hover:shadow-sm">
-                        @if (! empty($makeOpt->logo_path))
-                          <span class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-white ring-1 ring-slate-200"><img src="{{ \App\Support\VehicleImageUrl::url($makeOpt->logo_path) }}" alt="" class="h-full w-full object-contain p-0.5" /></span>
-                        @elseif (! empty(trim((string) ($makeOpt->flag_emoji ?? ''))))
-                          <span class="flex h-12 w-12 items-center justify-center text-2xl leading-none" style="font-family: 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif" aria-hidden="true">{{ trim((string) $makeOpt->flag_emoji) }}</span>
-                        @else
-                          <span class="flex h-12 w-12 items-center justify-center rounded-md bg-slate-200 text-[12px] font-black text-zinc-700">{{ strtoupper(\Illuminate\Support\Str::substr($makeOpt->value, 0, 2)) }}</span>
-                        @endif
-                        <span class="line-clamp-2 w-full text-[10px] font-bold uppercase leading-snug text-zinc-800 transition group-hover:text-[#1280DF] sm:text-[11px]">{{ $makeOpt->value }}</span>
-                      </a>
-                    @endforeach
-                  </div>
-                  <div class="mt-3 border-t border-slate-200 pt-3">
-                    <a href="{{ route('makes.index') }}" class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition-colors hover:text-[#0a5cb3]">{{ __('All makes') }}<span class="material-symbols-outlined text-base">arrow_forward</span></a>
-                  </div>
-                </div>
-              @endif
-            </div>
-          </div>
-        </div>
+          <a href="{{ $inventoryUrl }}" data-header-nav-link class="pointer-events-auto inline-flex items-center border-b-2 pb-1.5 text-[13px] font-extrabold uppercase leading-none tracking-[0.07em] transition-colors whitespace-nowrap {{ $inventoryActive ? 'border-[#1280DF] text-white' : 'border-transparent text-white/85 hover:text-[#1280DF]' }}">{{ __('Shop') }}</a>
         @endif
 
         @if ($navOn('about'))
@@ -285,41 +219,7 @@
     <a href="{{ route('home') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('Home') }}</a>
     @endif
     @if ($navOn('inventory'))
-    <div class="shrink-0 rounded-sm border border-slate-200 bg-slate-50/80">
-      <button type="button" class="flex w-full items-center justify-between px-3 py-3.5 text-left text-sm font-bold uppercase tracking-[0.06em] text-zinc-900 transition hover:bg-slate-100" data-mobile-inventory-toggle aria-expanded="false" aria-controls="mobile-inventory-subnav">
-        <span>{{ __('Shop') }}</span>
-        <span class="material-symbols-outlined text-[22px] text-zinc-500 transition-transform duration-200" data-mobile-inventory-chevron aria-hidden="true">expand_more</span>
-      </button>
-      <div id="mobile-inventory-subnav" class="hidden max-h-[min(78dvh,36rem)] overflow-y-auto overscroll-y-contain border-t border-slate-200 bg-white" data-mobile-inventory-panel>
-        <a href="{{ $inventoryNigeriaUrl }}" class="block border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
-          {{ __('Nigerian Used') }}
-        </a>
-        <a href="{{ $inventoryForeignUrl }}" class="block border-b border-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-50 hover:text-[#1280DF]">
-          {{ __('Foreign Used') }}
-        </a>
-        <a href="{{ $inventoryUrl }}" class="block border-b border-slate-100 bg-slate-50/80 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition hover:bg-slate-100 hover:text-[#0a5cb3]">{{ __('View full inventory') }}</a>
-        @if ($navMakesTop->isNotEmpty())
-          <div class="border-t border-slate-200 bg-slate-50">
-            <p class="bg-slate-50 px-4 pb-1 pt-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-zinc-500">{{ __('Shop by make') }}</p>
-            <div class="flex flex-col pb-2">
-              @foreach ($navMakesTop as $makeOpt)
-                <a href="{{ route('inventory.index', ['make_listing_option_id' => $makeOpt->id]) }}" class="group flex items-center gap-3 border-t border-slate-100 px-4 py-2.5 transition hover:bg-white">
-                  @if (! empty($makeOpt->logo_path))
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white ring-1 ring-slate-200"><img src="{{ \App\Support\VehicleImageUrl::url($makeOpt->logo_path) }}" alt="" class="h-full w-full object-contain p-0.5" /></span>
-                  @elseif (! empty(trim((string) ($makeOpt->flag_emoji ?? ''))))
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center text-lg leading-none" style="font-family: 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif" aria-hidden="true">{{ trim((string) $makeOpt->flag_emoji) }}</span>
-                  @else
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[10px] font-black text-zinc-700">{{ strtoupper(\Illuminate\Support\Str::substr($makeOpt->value, 0, 2)) }}</span>
-                  @endif
-                  <span class="text-left text-[11px] font-bold uppercase tracking-[0.05em] text-zinc-800 transition group-hover:text-[#1280DF]">{{ $makeOpt->value }}</span>
-                </a>
-              @endforeach
-              <a href="{{ route('makes.index') }}" class="border-t border-slate-200 bg-white px-4 py-3 text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#1280DF] transition hover:bg-slate-50">{{ __('All makes') }}</a>
-            </div>
-          </div>
-        @endif
-      </div>
-    </div>
+    <a href="{{ $inventoryUrl }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('Shop') }}</a>
     @endif
     @if ($navOn('about'))
     <a href="{{ route('about') }}" class="shrink-0 rounded-sm px-3 py-3.5 text-sm font-bold uppercase tracking-[0.06em] text-zinc-800 transition hover:bg-slate-100 hover:text-[#1280DF]">{{ __('About') }}</a>

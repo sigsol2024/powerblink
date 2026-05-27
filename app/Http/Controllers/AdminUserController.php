@@ -20,8 +20,15 @@ class AdminUserController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        $stats = [
+            'total' => User::query()->count(),
+            'admins' => User::query()->role('admin')->count(),
+            'customers' => User::query()->whereDoesntHave('roles', fn ($q) => $q->where('name', 'admin'))->count(),
+        ];
+
         return view('admin.users.index', [
             'users' => $users,
+            'userStats' => $stats,
         ]);
     }
 

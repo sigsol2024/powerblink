@@ -381,26 +381,19 @@ class AdminListingOptionController extends Controller
         return $errors;
     }
 
+    /**
+     * Count of products that still reference this listing option. After the car
+     * column drop only product_category, size, and color remain as live mappings;
+     * legacy slugs return 0 so they can be deleted without crashing.
+     */
     protected function usageCount(string $categorySlug, ListingOption $option): int
     {
         $column = match ($categorySlug) {
-            'make' => 'make_listing_option_id',
-            'model' => 'model_listing_option_id',
-            'condition' => 'condition_listing_option_id',
-            'body_type' => 'body_type_listing_option_id',
-            'transmission' => 'transmission_listing_option_id',
-            'fuel_type' => 'fuel_type_listing_option_id',
-            'drive' => 'drive_listing_option_id',
-            'country' => 'country_listing_option_id',
-            'vehicle_origin_type' => 'type_listing_option_id',
+            'product_category' => 'product_category_listing_option_id',
             default => null,
         };
         if ($column === null) {
             return 0;
-        }
-
-        if ($categorySlug === 'model') {
-            return Vehicle::query()->where('model_listing_option_id', $option->id)->count();
         }
 
         return Vehicle::query()->where($column, $option->id)->count();

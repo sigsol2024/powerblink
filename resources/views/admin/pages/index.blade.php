@@ -1,9 +1,9 @@
 <x-app-layout>
-  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Page editors') }}</h2>
+  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Page editors') }}</h2>
   </header>
 
-  <div class="w-full px-margin-mobile md:px-gutter py-8 max-w-max-container mx-auto">
+  <div class="w-full px-4 md:px-6 py-6 md:py-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
         <p class="text-sm text-gray-600 mb-6">
           Edit the public pages one by one. This mirrors the page-editor pattern from your reference platform.

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\InteractsWithVehicleForms;
+use App\Models\ListingOption;
 use App\Models\Vehicle;
-use App\Support\VehicleListingCatalog;
 use App\Models\VehicleImage;
 use App\Services\Mail\OutboundMailService;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +25,7 @@ class UserVehicleController extends Controller
         $isAdmin = $request->user()->hasRole('admin');
 
         $query = Vehicle::query()
-            ->with(['user.roles', 'makeOption', 'modelOption'])
+            ->with(['user.roles', 'categoryOption'])
             ->latest();
 
         if (! $isAdmin) {
@@ -54,8 +54,7 @@ class UserVehicleController extends Controller
     public function create(): View
     {
         return view('dashboard.vehicles.create', [
-            'listingOptions' => VehicleListingCatalog::filterOptions(),
-            'makeRows' => VehicleListingCatalog::activeMakeSelectRows(),
+            'productCategories' => $this->productCategoryOptions(),
         ]);
     }
 
@@ -106,9 +105,22 @@ class UserVehicleController extends Controller
         return view('dashboard.vehicles.edit', [
             'vehicle' => $vehicle,
             'isAdminEdit' => $request->user()->hasRole('admin'),
-            'listingOptions' => VehicleListingCatalog::filterOptions(),
-            'makeRows' => VehicleListingCatalog::activeMakeSelectRows(),
+            'productCategories' => $this->productCategoryOptions(),
         ]);
+    }
+
+    /**
+     * Active product-category options for the create/edit form dropdown. Returns an
+     * empty collection while the listing_options.product_category category is unseeded.
+     */
+    private function productCategoryOptions(): \Illuminate\Support\Collection
+    {
+        return ListingOption::query()
+            ->whereHas('category', fn ($q) => $q->where('slug', 'product_category'))
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('value')
+            ->get(['id', 'value']);
     }
 
     public function update(Request $request, Vehicle $vehicle): RedirectResponse

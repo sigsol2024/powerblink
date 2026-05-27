@@ -7,7 +7,7 @@
   $rejectReasonDefault = old('rejection_reason', $vehicle->rejection_reason ?? '');
   $coverImage = $vehicle->images->first();
   $thumbUrl = $coverImage ? \App\Support\VehicleImageUrl::url($coverImage->path) : \App\Support\PlaceholderMedia::url('asset/images/media/inventory-listing-fallback.jpg');
-  $categoryLabel = $vehicle->makeOption?->value ?? $vehicle->bodyTypeOption?->value ?? '—';
+  $categoryLabel = $vehicle->categoryOption?->value ?? '—';
   $priceLabel = ! is_null($vehicle->price) ? format_currency($vehicle->price) : __('Ask');
   $statusBadge = match ($vehicle->status) {
       'approved' => ['label' => __('Published'), 'class' => 'bg-green-100 text-green-800 border-green-200'],
@@ -41,9 +41,6 @@
   </td>
   <td class="text-right relative">
     <div class="flex justify-end gap-2 items-center">
-      <a href="{{ route('dashboard.vehicles.edit', $vehicle) }}" class="text-wp-link hover:text-wp-link-hover inline-flex items-center gap-1 text-sm" title="{{ __('Edit') }}">
-        <x-icon name="pencil" class="w-4 h-4" />
-      </a>
       <button
         type="button"
         class="text-wp-text-muted hover:text-wp-text transition-colors inline-flex items-center"

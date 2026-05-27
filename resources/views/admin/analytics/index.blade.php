@@ -49,12 +49,12 @@
 @endpush
 
 <x-app-layout>
-  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Analytics') }}</h2>
+  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Analytics') }}</h2>
   </header>
 
   <div
-    class="anx-canvas text-on-surface relative w-full min-h-0 antialiased"
+    class="anx-canvas text-on-surface relative w-full min-h-0 antialiased px-4 md:px-6 py-6 md:py-8"
     style="font-family: Inter, system-ui, sans-serif"
     x-data="analyticsPage({
       trafficSubTemplate: @js(__('User engagement and volume over the last :count days', ['count' => '__N__'])),

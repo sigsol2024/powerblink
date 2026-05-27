@@ -11,8 +11,6 @@
   $serviceHoursLines = $splitHours((string) ($site['dealer_service_hours'] ?? ''));
   $partsHoursLines = $splitHours((string) ($site['dealer_parts_hours'] ?? ''));
 
-  $footerTopMakeLabels = ['Toyota', 'Lexus', 'Mercedes Benz', 'Honda', 'BMW'];
-
   $aboutGalleryStr = \App\Models\PageSection::query()->where('page', 'about')->where('section_key', 'gallery')->value('content') ?? '[]';
   $aboutGallery = json_decode($aboutGalleryStr, true) ?? [];
   $footerGallery = array_slice($aboutGallery, 0, 4);
@@ -59,17 +57,11 @@
     </div>
     @if ($navOn('inventory'))
     <div class="space-y-6">
-      <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Top 5 car makes') }}</h4>
+      <h4 class="text-white font-bold text-xs uppercase tracking-widest">{{ __('Shop') }}</h4>
       <div class="space-y-3">
-        @foreach ($footerTopMakeLabels as $mkLabel)
-          @php
-            $mkId = \App\Support\VehicleListingCatalog::makeListingOptionIdByValueCi($mkLabel);
-            $mkHref = $mkId ? route('inventory.index', ['make_listing_option_id' => $mkId]) : route('inventory.index', ['q' => $mkLabel]);
-          @endphp
-          <a href="{{ $mkHref }}" class="block truncate text-slate-300 text-[13px] font-medium hover:text-white">
-            {{ $mkLabel }}
-          </a>
-        @endforeach
+        <a href="{{ route('shop.index') }}" class="block truncate text-slate-300 text-[13px] font-medium hover:text-white">
+          {{ __('All products') }}
+        </a>
       </div>
     </div>
     @endif

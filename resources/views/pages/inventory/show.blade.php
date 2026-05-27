@@ -57,11 +57,11 @@
   $productVariants = $productVariants ?? collect();
   $displayColors = $productVariants->isNotEmpty()
     ? $productVariants->map(fn ($v) => $v->colorOption?->value)->filter()->unique()->values()
-    : collect(array_filter([$vehicle->exterior_color]));
+    : collect();
   if ($displayColors->isEmpty()) {
     $displayColors = collect([__('Onyx'), __('Ivory')]);
   }
-  $categoryCrumb = $vehicle->makeOption?->value ?: __('Collections');
+  $categoryCrumb = $vehicle->categoryOption?->value ?: __('Collections');
 @endphp
 
 <main class="luxe-store pt-24 max-w-max-container mx-auto px-margin-mobile md:px-gutter pb-section-py-mobile md:pb-section-py-desktop">

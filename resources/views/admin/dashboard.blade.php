@@ -5,8 +5,8 @@
     $totalOrders = (int) ($stats['orders_count'] ?? 0);
     $paidOrders = (int) ($stats['paid_orders_count'] ?? 0);
     $activeProducts = (int) ($stats['approved_listings'] ?? 0);
-    $ordersPct = $totalOrders > 0 ? min(100, (int) round(($paidOrders / $totalOrders) * 100)) : 0;
-    $productsPct = ($stats['total_listings'] ?? 0) > 0 ? min(100, (int) round(($activeProducts / max(1, $stats['total_listings'])) * 100)) : 0;
+    $revenue = (int) ($stats['revenue_paid_total'] ?? 0);
+    $visitors = (int) ($stats['visitors_total'] ?? ($traffic['total_views'] ?? 0));
   @endphp
 
   <header class="flex justify-between items-center px-4 md:px-6 py-3 border-b border-wp-border sticky top-0 bg-white z-40 shrink-0">
@@ -19,82 +19,75 @@
     </div>
   </header>
 
-  <div class="px-margin-mobile md:px-gutter py-8 md:py-0 md:pb-gutter max-w-max-container mx-auto w-full">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
-        <div>
-          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Total Orders') }}</span>
-          <div class="flex items-baseline gap-3 mt-4">
-            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format($totalOrders) }}</h3>
-            <span class="text-secondary font-body-md text-sm font-medium">{{ number_format($paidOrders) }} {{ __('paid') }}</span>
-          </div>
-        </div>
-        <div class="mt-8 h-1 bg-surface-container">
-          <div class="h-full bg-primary" style="width: {{ $ordersPct }}%"></div>
+  <div class="py-5 md:py-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total Orders') }}</span>
+        <div class="flex items-baseline gap-2">
+          <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($totalOrders) }}</h3>
+          <span class="text-xs text-wp-text-muted">{{ number_format($paidOrders) }} {{ __('paid') }}</span>
         </div>
       </div>
 
-      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
-        <div>
-          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Active Products') }}</span>
-          <div class="flex items-baseline gap-3 mt-4">
-            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format($activeProducts) }}</h3>
-            <span class="text-on-surface-variant font-body-md text-sm">{{ __('live') }}</span>
-          </div>
-        </div>
-        <div class="mt-8 h-1 bg-surface-container">
-          <div class="h-full bg-primary" style="width: {{ $productsPct }}%"></div>
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Active Products') }}</span>
+        <div class="flex items-baseline gap-2">
+          <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($activeProducts) }}</h3>
+          <span class="text-xs text-wp-text-muted">{{ __('live') }}</span>
         </div>
       </div>
 
-      <div class="bg-surface-container-lowest p-8 border border-outline-variant flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
-        <div>
-          <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{{ __('Pending Review') }}</span>
-          <div class="flex items-baseline gap-3 mt-4">
-            <h3 class="font-display-lg text-[40px] leading-tight text-primary">{{ number_format((int) ($stats['pending_listings'] ?? 0)) }}</h3>
-            <span class="text-on-surface-variant font-body-md text-sm">{{ __('products') }}</span>
-          </div>
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total Revenue') }}</span>
+        <div class="flex items-baseline gap-2">
+          <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ format_currency($revenue) }}</h3>
+          <span class="text-xs text-wp-text-muted">{{ __('paid') }}</span>
         </div>
-        <div class="mt-8 h-1 bg-surface-container">
-          <div class="h-full" style="width: {{ ($stats['total_listings'] ?? 0) > 0 ? min(100, (int) round((($stats['pending_listings'] ?? 0) / max(1, $stats['total_listings'])) * 100)) : 0 }}%; background-color: #C19A6B;"></div>
+      </div>
+
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[7rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Page Visitors') }}</span>
+        <div class="flex items-baseline gap-2">
+          <h3 class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($visitors) }}</h3>
+          <span class="text-xs text-wp-text-muted">{{ __('last :days days', ['days' => (int) ($traffic['range_days'] ?? 90)]) }}</span>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant">
-        <div class="p-8 border-b border-outline-variant flex justify-between items-center">
-          <h4 class="font-headline-md text-headline-md">{{ __('Recent Admin Activity') }}</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white border border-wp-border rounded">
+        <div class="p-4 border-b border-wp-border flex justify-between items-center">
+          <h4 class="text-sm font-semibold text-wp-text">{{ __('Recent Admin Activity') }}</h4>
           <a href="{{ route('admin.audit.index') }}" class="text-xs text-wp-link hover:text-wp-link-hover transition-colors inline-flex items-center gap-1">
             {{ __('View all') }}
             <x-icon name="arrow-right" class="w-3.5 h-3.5" />
           </a>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-left border-collapse text-sm">
             <thead>
-              <tr class="bg-surface-container-low">
-                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('WHEN') }}</th>
-                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('ADMIN') }}</th>
-                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('METHOD') }}</th>
-                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">{{ __('PATH') }}</th>
-                <th class="px-8 py-4 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant text-right">{{ __('STATUS') }}</th>
+              <tr class="bg-wp-bg">
+                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('When') }}</th>
+                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Admin') }}</th>
+                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Method') }}</th>
+                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Path') }}</th>
+                <th class="px-4 py-2 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Status') }}</th>
               </tr>
             </thead>
-            <tbody class="font-body-md text-body-md">
+            <tbody>
               @forelse (($audit['recent'] ?? []) as $entry)
-                <tr class="hover:bg-surface-container transition-colors">
-                  <td class="px-8 py-6 border-b border-outline-variant text-on-surface-variant">{{ optional($entry->created_at)->format('M j, Y') }}</td>
-                  <td class="px-8 py-6 border-b border-outline-variant">{{ $entry->user?->name ?? __('Unknown') }}</td>
-                  <td class="px-8 py-6 border-b border-outline-variant">
-                    <span class="inline-block px-2 py-1 bg-surface-container text-[10px] font-bold tracking-widest uppercase">{{ $entry->method }}</span>
+                <tr class="hover:bg-wp-bg transition-colors">
+                  <td class="px-4 py-3 border-b border-wp-border text-wp-text-muted whitespace-nowrap">{{ optional($entry->created_at)->format('M j, Y') }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border">{{ $entry->user?->name ?? __('Unknown') }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border">
+                    <span class="inline-block px-2 py-0.5 bg-wp-bg text-[10px] font-semibold tracking-wide uppercase rounded">{{ $entry->method }}</span>
                   </td>
-                  <td class="px-8 py-6 border-b border-outline-variant max-w-xs truncate" title="{{ $entry->path }}">{{ $entry->path }}</td>
-                  <td class="px-8 py-6 border-b border-outline-variant text-right font-medium">{{ $entry->status_code ?? '—' }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border max-w-xs truncate" title="{{ $entry->path }}">{{ $entry->path }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border text-right font-medium">{{ $entry->status_code ?? '—' }}</td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5" class="px-8 py-12 text-center text-on-surface-variant">{{ __('No audit actions yet.') }}</td>
+                  <td colspan="5" class="px-4 py-8 text-center text-wp-text-muted">{{ __('No audit actions yet.') }}</td>
                 </tr>
               @endforelse
             </tbody>
@@ -102,38 +95,38 @@
         </div>
       </div>
 
-      <div class="bg-surface-container-lowest border border-outline-variant p-8">
-        <div class="flex justify-between items-start mb-10">
+      <div class="bg-white border border-wp-border rounded p-4">
+        <div class="flex justify-between items-start mb-4">
           <div>
-            <h4 class="font-headline-md text-headline-md leading-tight">{{ __('Site Traffic') }}</h4>
-            <p class="font-label-caps text-[10px] text-on-surface-variant mt-1">{{ __('LAST :days DAYS', ['days' => $traffic['range_days'] ?? 90]) }}</p>
+            <h4 class="text-sm font-semibold text-wp-text leading-tight">{{ __('Site Traffic') }}</h4>
+            <p class="text-[10px] uppercase tracking-wide text-wp-text-muted mt-0.5">{{ __('Last :days days', ['days' => (int) ($traffic['range_days'] ?? 90)]) }}</p>
           </div>
           <a href="{{ route('admin.analytics.index') }}" class="text-wp-text-muted hover:text-wp-link inline-flex items-center" aria-label="{{ __('Open analytics') }}">
             <x-icon name="arrow-right" class="w-4 h-4" />
           </a>
         </div>
-        <div class="space-y-6">
+        <div class="space-y-3 text-sm">
           <div>
-            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Total views') }}</p>
-            <p class="font-headline-md text-primary mt-1">{{ number_format((int) ($traffic['total_views'] ?? 0)) }}</p>
+            <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total views') }}</p>
+            <p class="text-lg font-semibold text-wp-text mt-0.5">{{ number_format((int) ($traffic['total_views'] ?? 0)) }}</p>
           </div>
           <div>
-            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Unique sessions') }}</p>
-            <p class="font-headline-md text-primary mt-1">{{ number_format((int) ($traffic['unique_sessions'] ?? 0)) }}</p>
+            <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Unique sessions') }}</p>
+            <p class="text-lg font-semibold text-wp-text mt-0.5">{{ number_format((int) ($traffic['unique_sessions'] ?? 0)) }}</p>
           </div>
-          <div class="pt-8 border-t border-outline-variant">
-            <p class="font-label-caps text-label-caps text-on-surface-variant">{{ __('Top page') }}</p>
-            <p class="font-body-md text-sm mt-1">{{ $traffic['top_page_label'] ?? __('No data yet') }}</p>
+          <div class="pt-3 border-t border-wp-border">
+            <p class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Top page') }}</p>
+            <p class="text-sm mt-0.5">{{ $traffic['top_page_label'] ?? __('No data yet') }}</p>
           </div>
         </div>
-        <div class="mt-10 grid grid-cols-1 gap-3">
-          <a href="{{ route('admin.orders.index') }}" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('Manage orders') }}</a>
-          <a href="{{ route('dashboard.vehicles.index') }}" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('Product management') }}</a>
-          <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="border border-outline-variant px-4 py-3 font-label-caps text-[10px] tracking-widest uppercase hover:border-primary transition-colors">{{ __('View shop') }}</a>
+        <div class="mt-5 grid grid-cols-1 gap-2">
+          <a href="{{ route('admin.orders.index') }}" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('Manage orders') }}</a>
+          <a href="{{ route('dashboard.vehicles.index') }}" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('Product management') }}</a>
+          <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="bg-black text-white border border-black hover:opacity-90 px-4 py-3 text-xs font-medium rounded text-center transition-opacity">{{ __('View shop') }}</a>
         </div>
       </div>
     </div>
 
-    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-16 border-t-0 opacity-60'])
+    @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8 border-t-0 opacity-60'])
   </div>
 </x-app-layout>

@@ -14,7 +14,7 @@ class FavoriteController extends Controller
         $vehicles = $request->user()
             ->favoriteVehicles()
             ->where('vehicles.status', 'approved')
-            ->with(['images', 'fuelTypeOption', 'transmissionOption', 'modelOption'])
+            ->with(['images', 'categoryOption'])
             ->orderByDesc('vehicle_favorites.created_at')
             ->paginate(12);
 

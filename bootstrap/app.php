@@ -38,7 +38,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('listing-options:sync-vpic --makes-only')->weekly();
-        $schedule->command('listing-options:sync-vpic --models-only')->monthly();
+        //
     })
     ->create();

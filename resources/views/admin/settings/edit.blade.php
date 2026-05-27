@@ -1,10 +1,10 @@
 <x-app-layout>
-  <header class="px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">{{ __('Admin') }}</p>
-    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Site settings') }}</h2>
+  <header class="px-4 md:px-6 py-6 md:py-8 border-b border-outline-variant shrink-0">
+    <p class="text-xs uppercase tracking-wide text-wp-text-muted mb-1">{{ __('Admin') }}</p>
+    <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ __('Site settings') }}</h2>
   </header>
 
-  <div class="mx-auto max-w-5xl space-y-8 px-margin-mobile md:px-gutter py-8 md:py-10">
+  <div class="space-y-8 px-4 md:px-6 py-6 md:py-8">
     <p class="text-sm text-zinc-600">{{ __('Branding, login page background, footer, top bar, and contact/newsletter routing. Upload logos/favicons directly here, or paste media library paths if needed.') }}</p>
 
     @if (session('status'))

@@ -19,23 +19,33 @@
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div>
-              <x-input-label for="year" :value="__('Year')" />
-              <x-text-input id="year" name="year" type="number" class="mt-1 block w-full" />
-              <x-input-error :messages="$errors->get('year')" class="mt-2" />
-            </div>
-            <div>
               <x-input-label for="price" :value="__('Price')" />
-              <x-text-input id="price" name="price" type="number" class="mt-1 block w-full" />
+              <x-text-input id="price" name="price" type="number" class="mt-1 block w-full" value="{{ old('price') }}" />
               <x-input-error :messages="$errors->get('price')" class="mt-2" />
             </div>
+            <div>
+              <x-input-label for="stock" :value="__('Stock')" />
+              <x-text-input id="stock" name="stock" type="number" class="mt-1 block w-full" value="{{ old('stock', 0) }}" min="0" />
+              <x-input-error :messages="$errors->get('stock')" class="mt-2" />
+            </div>
+          </div>
+          <div>
+            <x-input-label for="product_category_listing_option_id" :value="__('Category')" />
+            <select id="product_category_listing_option_id" name="product_category_listing_option_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="">{{ __('— Select a category —') }}</option>
+              @foreach (($productCategories ?? collect()) as $row)
+                <option value="{{ $row->id }}" @selected((int) old('product_category_listing_option_id') === (int) $row->id)>{{ $row->value }}</option>
+              @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('product_category_listing_option_id')" class="mt-2" />
+          </div>
+          <div>
+            <x-input-label for="vin" :value="__('SKU')" />
+            <x-text-input id="vin" name="vin" type="text" class="mt-1 block w-full" value="{{ old('vin') }}" placeholder="VD-DEMO-001" />
+            <p class="mt-1 text-xs text-on-surface-variant">{{ __('Stock-keeping unit. Optional but recommended for inventory tracking.') }}</p>
+            <x-input-error :messages="$errors->get('vin')" class="mt-2" />
           </div>
         </section>
-
-        @include('dashboard.vehicles.partials.listing-catalog-fields', [
-          'listingOptions' => $listingOptions ?? [],
-          'makeRows' => $makeRows ?? collect(),
-          'vehicle' => null,
-        ])
 
         <section class="space-y-6">
           <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('The Story') }}</h3>

@@ -1,110 +1,223 @@
 <x-app-layout>
-  <header class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 px-margin-mobile md:px-gutter py-6 md:py-8 border-b border-outline-variant shrink-0">
-    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ __('Customers') }}</h2>
-  </header>
+  @php
+    $userStats = $userStats ?? ['total' => $users->total(), 'admins' => 0, 'customers' => 0];
+  @endphp
 
-  <div class="admin-content-toolbar px-margin-mobile md:px-gutter max-w-max-container mx-auto w-full">
-    <div class="admin-content-toolbar__actions">
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+      <h2 class="text-lg font-semibold text-wp-text">{{ __('Customers') }}</h2>
+      <span class="text-xs text-wp-text-muted">{{ trans_choice(':count account|:count accounts', $userStats['total'], ['count' => number_format($userStats['total'])]) }}</span>
+    </div>
+    <div class="shrink-0">
       <button type="button" class="admin-luxe-btn-primary" @click="$dispatch('open-invite-modal')">
-        {{ __('Invite or create account') }}
+        <x-icon name="plus" class="w-4 h-4" /> {{ __('Invite or create account') }}
       </button>
     </div>
-  </div>
+  </header>
+
   <div
-    class="w-full space-y-8"
-    x-data="{ inviteOpen: {{ $errors->any() ? 'true' : 'false' }}, openId: null, toggleOpen(id) { this.openId = this.openId === id ? null : id; } }"
+    class="px-4 md:px-6 py-4 md:py-5 space-y-4"
+    x-data="{
+      inviteOpen: {{ $errors->any() ? 'true' : 'false' }},
+      openId: null,
+      expandedMobileId: null,
+      q: '',
+      roleFilter: 'all',
+      toggleOpen(id) { this.openId = this.openId === id ? null : id; },
+      toggleMobile(id) { this.expandedMobileId = this.expandedMobileId === id ? null : id; },
+      visible(roleNames, haystack) {
+        const query = this.q.trim().toLowerCase();
+        const searchOk = !query || haystack.toLowerCase().includes(query);
+        let roleOk = true;
+        if (this.roleFilter === 'admin') roleOk = roleNames.includes('admin');
+        else if (this.roleFilter === 'customer') roleOk = !roleNames.includes('admin');
+        return searchOk && roleOk;
+      },
+    }"
     @open-invite-modal.window="inviteOpen = true"
     @keydown.escape.window="inviteOpen = false"
   >
-    <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-      <div class="border-b border-zinc-100 px-6 py-4">
-        <h3 class="text-base font-bold text-zinc-900">{{ __('All accounts') }}</h3>
-        <p class="mt-1 text-sm text-zinc-600">{{ __('Admins manage the site; dealers own their listings.') }}</p>
+    {{-- Stats strip --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total accounts') }}</span>
+        <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($userStats['total']) }}</span>
       </div>
-      <div class="hidden lg:block overflow-x-auto p-4 sm:p-6">
-        <table class="min-w-full divide-y divide-zinc-200 text-sm">
-          <thead>
-            <tr class="text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              <th class="px-3 py-2">{{ __('Name') }}</th>
-              <th class="px-3 py-2">{{ __('Email') }}</th>
-              <th class="px-3 py-2">{{ __('Roles') }}</th>
-              <th class="px-3 py-2 text-right">{{ __('Actions') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-100">
-            @foreach($users as $user)
-              <tr>
-                <td class="px-3 py-3 font-medium text-zinc-900">{{ $user->name }}</td>
-                <td class="px-3 py-3 text-zinc-600">{{ $user->email }}</td>
-                <td class="px-3 py-3">
-                  <div class="flex flex-wrap gap-1">
-                    @foreach($user->roles as $role)
-                      @if($role->name === 'admin')
-                        <span class="inline-flex rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-semibold text-violet-800">{{ __('Admin') }}</span>
-                      @elseif($role->name === 'user')
-                        <span class="inline-flex rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">{{ __('Dealer') }}</span>
-                      @else
-                        <span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-700">{{ $role->name }}</span>
-                      @endif
-                    @endforeach
-                  </div>
-                </td>
-                <td class="px-3 py-3 text-right">
-                  @if($user->id === auth()->id())
-                    <span class="text-xs text-zinc-400">{{ __('You') }}</span>
-                  @else
-                    <form method="post" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm(@json(__('Delete this user?')));">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="text-sm font-medium text-rose-700 hover:underline">{{ __('Delete') }}</button>
-                    </form>
-                  @endif
-                </td>
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Admins') }}</span>
+        <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($userStats['admins']) }}</span>
+      </div>
+      <div class="bg-white border border-wp-border rounded p-4 flex flex-col justify-between min-h-[5.5rem]">
+        <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Customers') }}</span>
+        <span class="text-2xl font-semibold text-wp-text leading-none">{{ number_format($userStats['customers']) }}</span>
+      </div>
+    </div>
+
+    {{-- Toolbar: search + role filter --}}
+    <div class="bg-white border border-wp-border rounded p-3 md:p-4 flex flex-col gap-3">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <div class="relative flex-1 sm:flex-initial">
+          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none">
+            <x-icon name="search" class="w-4 h-4" />
+          </span>
+          <input
+            type="search"
+            x-model.debounce.250ms="q"
+            class="w-full sm:w-72 pl-9 pr-3 text-sm"
+            placeholder="{{ __('Search by name or email…') }}"
+            aria-label="{{ __('Search customers') }}"
+          />
+        </div>
+        <button
+          type="button"
+          x-show="q.length > 0"
+          x-cloak
+          @click="q = ''"
+          class="text-xs text-wp-text-muted hover:text-wp-text underline"
+        >{{ __('Clear') }}</button>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="text-[11px] text-wp-text-muted mr-1">{{ __('Filter') }}:</span>
+        @foreach (['all' => __('All'), 'customer' => __('Customer'), 'admin' => __('Admin')] as $key => $label)
+          <button
+            type="button"
+            @click="roleFilter = '{{ $key }}'"
+            :class="roleFilter === '{{ $key }}' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'"
+            class="border px-2.5 py-1 text-xs rounded"
+          >{{ $label }}</button>
+        @endforeach
+      </div>
+    </div>
+
+    @if ($users->total() === 0)
+      <p class="text-wp-text-muted py-12 text-center text-sm">{{ __('No customers yet.') }}</p>
+    @else
+      {{-- Desktop table --}}
+      <div class="hidden lg:block bg-white border border-wp-border rounded overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-wp-bg">
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Name') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Email') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border">{{ __('Roles') }}</th>
+                <th class="px-4 py-2.5 text-xs uppercase tracking-wide text-wp-text-muted border-b border-wp-border text-right">{{ __('Actions') }}</th>
               </tr>
-            @endforeach
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @foreach($users as $user)
+                @php
+                  $roleNames = $user->roles->pluck('name')->all();
+                  $haystack = strtolower(trim($user->name.' '.$user->email));
+                @endphp
+                <tr class="hover:bg-wp-bg/40 transition-colors" x-show="visible(@js($roleNames), @js($haystack))">
+                  <td class="px-4 py-3 border-b border-wp-border font-medium text-wp-text">{{ $user->name }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border text-wp-text-muted">{{ $user->email }}</td>
+                  <td class="px-4 py-3 border-b border-wp-border">
+                    <div class="flex flex-wrap gap-1">
+                      @foreach($user->roles as $role)
+                        @if($role->name === 'admin')
+                          <span class="inline-flex rounded bg-violet-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800 border border-violet-200">{{ __('Admin') }}</span>
+                        @elseif($role->name === 'user')
+                          <span class="inline-flex rounded bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-800 border border-sky-200">{{ __('Customer') }}</span>
+                        @else
+                          <span class="inline-flex rounded bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-700 border border-zinc-200">{{ $role->name }}</span>
+                        @endif
+                      @endforeach
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 border-b border-wp-border text-right">
+                    @if($user->id === auth()->id())
+                      <span class="text-xs text-wp-text-muted">{{ __('You') }}</span>
+                    @else
+                      <form method="post" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm(@json(__('Delete this user?')));">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-xs font-medium text-rose-700 hover:underline inline-flex items-center gap-1">
+                          <x-icon name="trash" class="w-3.5 h-3.5" /> {{ __('Delete') }}
+                        </button>
+                      </form>
+                    @endif
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+        @if ($users->hasPages())
+          <div class="px-4 py-3 border-t border-wp-border admin-luxe-pagination">{{ $users->links() }}</div>
+        @endif
       </div>
 
-      <div class="lg:hidden space-y-3 p-4 sm:p-6">
-        @foreach($users as $user)
-          <article class="overflow-hidden rounded-lg border border-zinc-200 bg-white">
-            <button type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" @click="toggleOpen({{ $user->id }})" :aria-expanded="openId === {{ $user->id }} ? 'true' : 'false'">
-              <span class="min-w-0 flex-1 truncate font-semibold text-zinc-900">{{ $user->name }}</span>
-              <svg class="h-5 w-5 shrink-0 text-zinc-400 transition-transform" :class="openId === {{ $user->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div x-show="openId === {{ $user->id }}" x-cloak class="border-t border-zinc-100 bg-zinc-50 px-4 py-4 text-sm">
-              <p class="text-zinc-600">{{ $user->email }}</p>
-              <div class="mt-2 flex flex-wrap gap-1">
-                @foreach($user->roles as $role)
-                  @if($role->name === 'admin')
-                    <span class="inline-flex rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-semibold text-violet-800">{{ __('Admin') }}</span>
-                  @elseif($role->name === 'user')
-                    <span class="inline-flex rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">{{ __('Dealer') }}</span>
-                  @else
-                    <span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-700">{{ $role->name }}</span>
-                  @endif
-                @endforeach
+      {{-- Mobile accordion --}}
+      <div class="lg:hidden space-y-2">
+        @foreach ($users as $user)
+          @php
+            $roleNames = $user->roles->pluck('name')->all();
+            $haystack = strtolower(trim($user->name.' '.$user->email));
+            $isAdmin = in_array('admin', $roleNames, true);
+          @endphp
+          <div class="bg-white border border-wp-border rounded overflow-hidden" x-show="visible(@js($roleNames), @js($haystack))">
+            <button
+              type="button"
+              class="w-full flex items-center gap-3 p-3 text-left"
+              @click="toggleMobile({{ $user->id }})"
+              :aria-expanded="expandedMobileId === {{ $user->id }} ? 'true' : 'false'"
+            >
+              <div class="w-10 h-10 bg-wp-bg rounded-full flex items-center justify-center font-bold text-xs shrink-0">
+                {{ strtoupper(substr($user->name, 0, 1)) }}
               </div>
-              <div class="mt-4 flex flex-col gap-2">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-medium text-wp-text text-sm truncate">{{ $user->name }}</span>
+                  @if($isAdmin)
+                    <span class="inline-flex rounded bg-violet-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800 border border-violet-200 shrink-0">{{ __('Admin') }}</span>
+                  @else
+                    <span class="inline-flex rounded bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-800 border border-sky-200 shrink-0">{{ __('Customer') }}</span>
+                  @endif
+                </div>
+                <p class="text-xs text-wp-text-muted truncate mt-0.5">{{ $user->email }}</p>
+              </div>
+              <svg :class="expandedMobileId === {{ $user->id }} ? 'rotate-180' : ''" class="w-4 h-4 transition-transform text-wp-text-muted shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              x-show="expandedMobileId === {{ $user->id }}"
+              x-cloak
+              x-transition.duration.150ms
+              class="border-t border-wp-border bg-wp-bg/40 p-3 space-y-2 text-sm"
+            >
+              <div class="flex justify-between gap-3">
+                <span class="text-xs text-wp-text-muted">{{ __('Email') }}</span>
+                <span class="text-wp-text text-right truncate">{{ $user->email }}</span>
+              </div>
+              <div class="flex justify-between gap-3">
+                <span class="text-xs text-wp-text-muted">{{ __('Joined') }}</span>
+                <span class="text-wp-text text-right">{{ $user->created_at?->format('M j, Y') ?? '—' }}</span>
+              </div>
+              <div class="pt-2">
                 @if($user->id === auth()->id())
-                  <span class="text-xs text-zinc-400">{{ __('You') }}</span>
+                  <p class="text-center text-xs text-wp-text-muted">{{ __('This is your account.') }}</p>
                 @else
                   <form method="post" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm(@json(__('Delete this user?')));">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="admin-btn w-full justify-start text-rose-700">{{ __('Delete') }}</button>
+                    <button type="submit" class="block w-full text-center bg-rose-600 text-white hover:bg-rose-500 px-3 py-2 text-xs font-medium rounded transition-colors">
+                      {{ __('Delete account') }}
+                    </button>
                   </form>
                 @endif
               </div>
             </div>
-          </article>
+          </div>
         @endforeach
+
+        @if ($users->hasPages())
+          <div class="py-2 admin-luxe-pagination">{{ $users->links() }}</div>
+        @endif
       </div>
-      <div class="border-t border-zinc-100 px-6 py-4">
-        {{ $users->links() }}
-      </div>
-    </div>
+    @endif
 
     {{-- Modal: create / invite user --}}
     <div
@@ -126,7 +239,7 @@
         <div class="sticky top-0 flex items-start justify-between gap-4 border-b border-zinc-100 bg-white px-6 py-4">
           <div>
             <h3 class="text-base font-bold text-zinc-900">{{ __('Invite or create an account') }}</h3>
-            <p class="mt-1 text-sm text-zinc-600">{{ __('Choose Admin for full console access, or Dealer for users who only list vehicles.') }}</p>
+            <p class="mt-1 text-sm text-zinc-600">{{ __('Choose Admin for full console access, or Customer for shoppers.') }}</p>
           </div>
           <button type="button" class="rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800" @click="inviteOpen = false" aria-label="{{ __('Close') }}">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -157,7 +270,7 @@
             <div class="sm:col-span-2">
               <x-input-label for="role" value="{{ __('Role') }}" />
               <select id="role" name="role" class="mt-1 block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-amber-500 focus:ring-amber-500">
-                <option value="user" @selected(old('role') === 'user')>{{ __('Dealer (list vehicles)') }}</option>
+                <option value="user" @selected(old('role') === 'user')>{{ __('Customer (shopper)') }}</option>
                 <option value="admin" @selected(old('role') === 'admin')>{{ __('Admin (full access)') }}</option>
               </select>
               <x-input-error :messages="$errors->get('role')" class="mt-2" />
@@ -165,7 +278,7 @@
           </div>
           <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
             <button type="button" class="admin-btn" @click="inviteOpen = false">{{ __('Cancel') }}</button>
-            <x-primary-button class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800">{{ __('Create user') }}</x-primary-button>
+            <x-primary-button class="admin-btn-primary !border-zinc-900 !bg-zinc-900 !text-white hover:!bg-zinc-800">{{ __('Create account') }}</x-primary-button>
           </div>
         </form>
       </div>

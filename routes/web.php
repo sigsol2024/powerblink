@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAnalyticsController;
+use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminListingOptionController;
 use App\Http\Controllers\AdminMediaController;
 use App\Http\Controllers\AdminOrderController;
@@ -165,8 +166,8 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
         if ($topPagePath !== '') {
             if ($topPagePath === '/') {
                 $topPageLabel = 'Homepage';
-            } elseif (str_starts_with($topPagePath, '/inventory/')) {
-                $topPageLabel = 'Listing detail';
+            } elseif (str_starts_with($topPagePath, '/product/') || str_starts_with($topPagePath, '/inventory/')) {
+                $topPageLabel = 'Product detail';
             } else {
                 $clean = trim(str_replace(['-', '_', '/'], ' ', $topPagePath));
                 $topPageLabel = ucwords($clean !== '' ? $clean : $topPagePath);
@@ -176,6 +177,9 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
         $auditStart = now()->subDays(30)->startOfDay();
         $auditBase = AdminAuditTrail::query()->where('created_at', '>=', $auditStart);
 
+        $totalViews = (int) (clone $analyticsBase)->count();
+        $revenuePaidTotal = (int) (Order::query()->where('status', 'paid')->sum('total') ?? 0);
+
         return view('admin.dashboard', [
             'stats' => [
                 'total_listings' => Vehicle::query()->count(),
@@ -184,10 +188,12 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
                 'users_count' => User::query()->count(),
                 'orders_count' => Order::query()->count(),
                 'paid_orders_count' => Order::query()->where('status', 'paid')->count(),
+                'revenue_paid_total' => $revenuePaidTotal,
+                'visitors_total' => $totalViews,
             ],
             'analyticsSummary' => [
                 'range_days' => 90,
-                'total_views' => (clone $analyticsBase)->count(),
+                'total_views' => $totalViews,
                 'unique_sessions' => (clone $analyticsBase)->whereNotNull('session_id')->distinct('session_id')->count('session_id'),
                 'top_page' => $topPage,
                 'top_page_label' => $topPageLabel,
@@ -286,6 +292,11 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
     Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.status');
+
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
     Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->name('admin.listing-options.index');
     Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->name('admin.listing-options.show');

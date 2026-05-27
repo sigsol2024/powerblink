@@ -7,15 +7,15 @@
   @endpush
 
   <div class="min-h-full flex flex-col">
-    <header class="sticky top-0 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-margin-mobile md:px-gutter py-6 border-b border-outline-variant bg-background/95 backdrop-blur-md shrink-0">
-      <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">{{ $isAdminEdit ? __('Edit Product') : __('Edit listing') }}</h2>
+    <header class="sticky top-0 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 md:px-6 py-4 md:py-6 border-b border-outline-variant bg-background/95 backdrop-blur-md shrink-0">
+      <h2 class="text-lg font-semibold text-wp-text tracking-tight">{{ $isAdminEdit ? __('Edit Product') : __('Edit listing') }}</h2>
       <div class="flex items-center gap-3">
         <a href="{{ route('dashboard.vehicles.index') }}" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">{{ __('Cancel') }}</a>
         <button type="submit" form="luxe-product-edit-form" class="font-button-text text-button-text uppercase px-6 md:px-8 py-3 bg-primary text-on-primary hover:scale-105 transition-transform">{{ __('Save Product') }}</button>
       </div>
     </header>
 
-    <div class="max-w-[1000px] mx-auto py-10 md:py-16 px-margin-mobile md:px-gutter w-full flex-1 space-y-6">
+    <div class="max-w-[1000px] mx-auto py-6 md:py-10 px-4 md:px-6 w-full flex-1 space-y-6">
 
   @if($vehicle->status === 'approved')
   <div class="admin-content-toolbar">
@@ -59,22 +59,34 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <x-input-label for="year" value="Year" />
-                <x-text-input id="year" name="year" type="number" class="mt-1 block w-full" value="{{ old('year', $vehicle->year) }}" />
-                <x-input-error :messages="$errors->get('year')" class="mt-2" />
-              </div>
-              <div>
                 <x-input-label for="price" value="Price" />
                 <x-text-input id="price" name="price" type="number" class="mt-1 block w-full" value="{{ old('price', $vehicle->price) }}" />
                 <x-input-error :messages="$errors->get('price')" class="mt-2" />
               </div>
+              <div>
+                <x-input-label for="stock" value="Stock" />
+                <x-text-input id="stock" name="stock" type="number" class="mt-1 block w-full" value="{{ old('stock', $vehicle->stock ?? 0) }}" min="0" />
+                <x-input-error :messages="$errors->get('stock')" class="mt-2" />
+              </div>
             </div>
 
-            @include('dashboard.vehicles.partials.listing-catalog-fields', [
-              'listingOptions' => $listingOptions ?? [],
-              'makeRows' => $makeRows ?? collect(),
-              'vehicle' => $vehicle,
-            ])
+            <div>
+              <x-input-label for="product_category_listing_option_id" value="Category" />
+              <select id="product_category_listing_option_id" name="product_category_listing_option_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="">{{ __('— Select a category —') }}</option>
+                @foreach (($productCategories ?? collect()) as $row)
+                  <option value="{{ $row->id }}" @selected((int) old('product_category_listing_option_id', $vehicle->product_category_listing_option_id ?? 0) === (int) $row->id)>{{ $row->value }}</option>
+                @endforeach
+              </select>
+              <x-input-error :messages="$errors->get('product_category_listing_option_id')" class="mt-2" />
+            </div>
+
+            <div>
+              <x-input-label for="vin" value="SKU" />
+              <x-text-input id="vin" name="vin" type="text" class="mt-1 block w-full" value="{{ old('vin', $vehicle->vin) }}" placeholder="VD-DEMO-001" />
+              <p class="mt-1 text-xs text-gray-500">{{ __('Stock-keeping unit. Optional but recommended for inventory tracking.') }}</p>
+              <x-input-error :messages="$errors->get('vin')" class="mt-2" />
+            </div>
 
             <div>
               <x-input-label for="features_text" value="Features (one per line)" />

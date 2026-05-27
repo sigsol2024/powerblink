@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * The "Vehicle" model is the storefront's Product. Table is still named `vehicles`
+ * for backwards-compat (renames + FK rewrites are a separate phase) but the lean
+ * column set is: title, slug, price, stock, vin (SKU), features, description, overview,
+ * is_special, status + workflow timestamps + product_category_listing_option_id (Phase 7).
+ */
 class Vehicle extends Model
 {
     use HasFactory;
@@ -17,51 +23,18 @@ class Vehicle extends Model
         'title',
         'slug',
         'status',
-        'year',
-        'make_listing_option_id',
-        'model_listing_option_id',
-        'condition_listing_option_id',
-        'body_type_listing_option_id',
-        'transmission_listing_option_id',
-        'fuel_type_listing_option_id',
-        'drive_listing_option_id',
-        'country_listing_option_id',
-        'type_listing_option_id',
         'price',
-        'msrp',
-        'finance_price',
-        'finance_interest_rate',
-        'finance_term_months',
-        'finance_down_payment',
-        'finance_min_down_payment',
-        'finance_term_min_months',
-        'finance_term_max_months',
-        'show_financing_calculator',
-        'mileage',
-        'city_mpg',
-        'hwy_mpg',
-        'engine_size',
-        'engine_layout',
-        'top_track_speed',
-        'zero_to_sixty',
-        'number_of_gears',
-        'street_address',
-        'contact_phone',
-        'contact_email',
-        'map_location',
+        'stock',
         'features',
-        'exterior_color',
-        'interior_color',
         'vin',
-        'video_url',
         'description',
         'overview',
-        'tech_specs',
         'is_special',
         'submitted_at',
         'approved_at',
         'approved_by',
         'rejection_reason',
+        'product_category_listing_option_id',
     ];
 
     protected function casts(): array
@@ -70,9 +43,7 @@ class Vehicle extends Model
             'submitted_at' => 'datetime',
             'approved_at' => 'datetime',
             'features' => 'array',
-            'tech_specs' => 'array',
             'is_special' => 'boolean',
-            'show_financing_calculator' => 'boolean',
         ];
     }
 
@@ -117,48 +88,12 @@ class Vehicle extends Model
         return $this->belongsToMany(User::class, 'vehicle_favorites')->withTimestamps();
     }
 
-    public function makeOption(): BelongsTo
+    /**
+     * Product category (added in Phase 7). Backed by listing_options under the
+     * 'product_category' slug; nullable until categories are configured + assigned.
+     */
+    public function categoryOption(): BelongsTo
     {
-        return $this->belongsTo(ListingOption::class, 'make_listing_option_id');
-    }
-
-    public function modelOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'model_listing_option_id');
-    }
-
-    public function conditionOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'condition_listing_option_id');
-    }
-
-    public function bodyTypeOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'body_type_listing_option_id');
-    }
-
-    public function transmissionOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'transmission_listing_option_id');
-    }
-
-    public function fuelTypeOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'fuel_type_listing_option_id');
-    }
-
-    public function driveOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'drive_listing_option_id');
-    }
-
-    public function countryOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'country_listing_option_id');
-    }
-
-    public function typeOption(): BelongsTo
-    {
-        return $this->belongsTo(ListingOption::class, 'type_listing_option_id');
+        return $this->belongsTo(ListingOption::class, 'product_category_listing_option_id');
     }
 }

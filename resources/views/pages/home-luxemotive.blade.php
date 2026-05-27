@@ -87,7 +87,7 @@
             @php
               $cover = $vehicle->images->first();
               $img = $cover ? \App\Support\VehicleImageUrl::url($cover->path) : \App\Support\PlaceholderMedia::url('asset/images/media/home-recent-fallback.jpg');
-              $subtitle = collect([$vehicle->exterior_color, $vehicle->makeOption?->value])->filter()->first() ?: __('Collection');
+              $subtitle = $vehicle->categoryOption?->value ?: __('Collection');
             @endphp
             <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="min-w-[280px] md:min-w-[400px] flex-shrink-0 group cursor-pointer block">
               <div class="aspect-[4/5] overflow-hidden bg-surface-container-lowest mb-4 md:mb-6 relative">

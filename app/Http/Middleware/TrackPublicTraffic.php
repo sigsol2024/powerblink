@@ -101,7 +101,7 @@ class TrackPublicTraffic
      */
     protected function resolveVehicleMetadata(Request $request, ?string $routeName): array
     {
-        if ($routeName !== 'inventory.show') {
+        if ($routeName !== 'inventory.show' && $routeName !== 'product.show') {
             return ['vehicle_id' => null, 'vehicle_slug' => null];
         }
 

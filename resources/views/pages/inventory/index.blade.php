@@ -7,11 +7,7 @@
 @section('content')
   @php
     $activeFilterCount = collect([
-      'q', 'street_q', 'condition_listing_option_id', 'body_type_listing_option_id',
-      'make_listing_option_id', 'model_listing_option_id', 'transmission_listing_option_id',
-      'fuel_type_listing_option_id', 'drive_listing_option_id', 'country_listing_option_id',
-      'type_listing_option_id', 'exterior_color', 'year_min', 'year_max', 'mileage_min',
-      'mileage_max', 'price_min', 'price_max',
+      'q', 'product_category_listing_option_id', 'price_min', 'price_max',
     ])->filter(function ($k) use ($filters) {
         $v = $filters[$k] ?? '';
         if ($v === null || $v === '') {
@@ -23,19 +19,6 @@
 
         return trim((string) $v) !== '';
     })->count();
-    $conditionChoices = $filterOptions['conditions'] ?? collect();
-    if (! $conditionChoices instanceof \Illuminate\Support\Collection) {
-      $conditionChoices = collect();
-    }
-    $modelMatrix = $filterOptions['model_matrix'] ?? collect();
-    if (! $modelMatrix instanceof \Illuminate\Support\Collection) {
-      $modelMatrix = collect();
-    }
-    $conditions = $conditionChoices;
-    $countries = collect($filterOptions['countries'] ?? []);
-    $originTypes = collect($filterOptions['vehicle_origin_types'] ?? []);
-    $extColors = collect($filterOptions['exterior_colors'] ?? []);
-    $nigerianTypeId = \App\Support\VehicleListingCatalog::vehicleOriginTypeIdByLabel('Nigerian');
   @endphp
 
   <main class="luxe-store pt-28 md:pt-32 pb-24 md:pb-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter luxe-geometric-bg bg-background text-on-background min-h-screen font-body-md">
@@ -98,7 +81,7 @@
                 @endif
               </a>
               <a href="{{ $vehicleUrl }}" class="block">
-                <h2 class="font-body-md text-body-md uppercase tracking-wider text-primary mb-1 line-clamp-2">{{ $vehicle->title ?? ($vehicle->modelOption?->value ?? __('Product')) }}</h2>
+                <h2 class="font-body-md text-body-md uppercase tracking-wider text-primary mb-1 line-clamp-2">{{ $vehicle->title ?? __('Product') }}</h2>
                 <p class="font-body-md text-on-surface-variant">
                   @if (! is_null($vehicle->price))
                     {{ format_currency($vehicle->price) }}
@@ -142,17 +125,11 @@
           'formId' => 'inventory-filter-form-mobile',
           'filters' => $filters,
           'filterOptions' => $filterOptions,
-          'conditions' => $conditions,
-          'countries' => $countries,
-          'originTypes' => $originTypes,
-          'extColors' => $extColors,
-          'nigerianTypeId' => $nigerianTypeId,
         ])
       </div>
     </div>
   </div>
 
-  <script type="application/json" id="inventoryModelMatrixJson">@json($modelMatrix->values()->all())</script>
   <script>
     (() => {
       const sort = document.getElementById('inventory-sort');
@@ -212,53 +189,6 @@
           });
         });
       });
-
-      const matrixEl = document.getElementById('inventoryModelMatrixJson');
-      const matrix = matrixEl ? JSON.parse(matrixEl.textContent || '[]') : [];
-      function bindInventoryMakeModel(formEl) {
-        if (!matrix.length || !formEl) return;
-        const makeEl = formEl.querySelector('select[name="make_listing_option_id"]');
-        const modelEl = formEl.querySelector('select[name="model_listing_option_id"]');
-        if (!makeEl || !modelEl) return;
-        const initialMake = makeEl.value || '';
-        const initialModel = String(modelEl.dataset.initialModel || '');
-        function rebuild() {
-          const mk = makeEl.value || '';
-          modelEl.innerHTML = '<option value="">{{ __('Any') }}</option>';
-          if (!mk) return;
-          matrix.forEach((r) => {
-            if (!r || !r.model_id) return;
-            if (String(r.make_id) !== mk) return;
-            const o = document.createElement('option');
-            o.value = String(r.model_id);
-            o.textContent = r.model || '';
-            if (String(r.model_id) === String(initialModel) && String(r.make_id) === String(initialMake)) o.selected = true;
-            modelEl.appendChild(o);
-          });
-        }
-        makeEl.addEventListener('change', rebuild);
-        rebuild();
-      }
-      bindInventoryMakeModel(form);
-      bindInventoryMakeModel(mobileForm);
-
-      function bindInventoryTypeCountry(formEl) {
-        if (!formEl) return;
-        const typeEl = formEl.querySelector('select[name="type_listing_option_id"]');
-        const countryWrap = formEl.querySelector('[data-country-wrap]');
-        const countryEl = formEl.querySelector('select[name="country_listing_option_id"]');
-        if (!typeEl || !countryWrap || !countryEl) return;
-        const nigerianId = String(typeEl.getAttribute('data-nigerian-id') || '');
-        function sync() {
-          const isNigerian = nigerianId && String(typeEl.value || '') === nigerianId;
-          countryWrap.classList.toggle('hidden', !!isNigerian);
-          if (isNigerian) countryEl.value = '';
-        }
-        typeEl.addEventListener('change', sync);
-        sync();
-      }
-      bindInventoryTypeCountry(form);
-      bindInventoryTypeCountry(mobileForm);
     })();
   </script>
 @endsection

@@ -492,7 +492,7 @@
       <a href="{{ route('admin.pages.index') }}" class="admin-btn">{{ __('All pages') }}</a>
     </div>
   </div>
-  <div class="w-full px-4 pb-10 sm:px-0">
+  <div class="w-full px-4 md:px-6 pb-6 md:pb-8">
     @if (session('status'))
       <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm">
         {{ session('status') }}

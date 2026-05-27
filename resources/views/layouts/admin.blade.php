@@ -16,6 +16,7 @@
       ? [
           ['route' => 'admin.dashboard',          'match' => 'admin.dashboard',          'label' => __('Dashboard'),  'icon' => 'grid'],
           ['route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*',     'label' => __('Products'),   'icon' => 'box'],
+          ['route' => 'admin.categories.index',   'match' => 'admin.categories.*',       'label' => __('Categories'), 'icon' => 'folder'],
           ['route' => 'admin.orders.index',       'match' => 'admin.orders.*',           'label' => __('Orders'),     'icon' => 'shopping-cart'],
           ['route' => 'admin.users.index',        'match' => 'admin.users.*',            'label' => __('Customers'),  'icon' => 'users'],
           ['route' => 'admin.analytics.index',    'match' => 'admin.analytics.*',        'label' => __('Analytics'),  'icon' => 'chart'],
@@ -33,11 +34,11 @@
   $mediaUploadUrl = $isAdminRole ? route('admin.media.upload') : route('dashboard.api.media.upload');
   $mediaListUrl = $isAdminRole ? route('admin.media.list') : route('dashboard.api.media');
   $viteReady = file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'));
-  $fullBleedRoutes = request()->routeIs([
-    'admin.dashboard', 'dashboard.vehicles.index', 'admin.orders.index', 'admin.orders.show',
+
+  // Pages with sticky save bars or canvas elements opt out of the standard wrapper
+  // by passing :fullBleed="true" on the <x-app-layout> tag, or by living on these routes.
+  $isFullBleed = ($fullBleed ?? false) || request()->routeIs([
     'dashboard.vehicles.create', 'dashboard.vehicles.edit',
-    'admin.users.*', 'admin.settings.*', 'admin.media.*', 'admin.analytics.*', 'admin.audit.*',
-    'admin.pages.*', 'admin.listing-options.*',
   ]);
 @endphp
 <!DOCTYPE html>
@@ -187,13 +188,19 @@
       </header>
 
       <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
-        @if (isset($header) && ! $fullBleedRoutes)
+        @if (isset($header) && ! $isFullBleed)
           <div class="shrink-0 border-b border-wp-border bg-white px-4 md:px-6 py-3">
             <div class="max-w-max-container mx-auto w-full">{{ $header }}</div>
           </div>
         @endif
         <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-          {{ $slot }}
+          @if ($isFullBleed)
+            {{ $slot }}
+          @else
+            <div class="max-w-max-container mx-auto w-full">
+              {{ $slot }}
+            </div>
+          @endif
         </div>
       </div>
     </main>

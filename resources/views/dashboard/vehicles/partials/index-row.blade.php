@@ -24,7 +24,7 @@
         <img src="{{ $thumbUrl }}" alt="" class="h-12 w-16 shrink-0 rounded-md border border-slate-200 object-cover" loading="lazy" />
         <div class="min-w-0">
           <div class="truncate font-semibold text-slate-900" title="{{ $vehicle->title }}">{{ $vehicle->title }}</div>
-          <div class="text-xs text-slate-500">{{ $vehicle->year }} {{ $vehicle->makeOption?->value }} {{ $vehicle->modelOption?->value }}</div>
+          <div class="text-xs text-slate-500">{{ $vehicle->categoryOption?->value ?? '—' }}</div>
           <div class="mt-0.5 text-[11px] leading-snug text-slate-500">
             @if($listingWhen)
               {{ __('Submitted') }} {{ $listingWhen->format('M j, Y') }} · {{ $listingWhen->format('g:i a') }}
@@ -95,7 +95,7 @@
       <svg class="h-5 w-5 shrink-0 text-slate-400 transition-transform" :class="openId === {{ $vehicle->id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
     </button>
     <div x-show="openId === {{ $vehicle->id }}" x-cloak class="border-t border-slate-100 bg-slate-50/80 px-4 py-4 text-sm text-slate-700">
-      <p class="text-xs text-slate-500">{{ $vehicle->year }} {{ $vehicle->makeOption?->value }} {{ $vehicle->modelOption?->value }}</p>
+      <p class="text-xs text-slate-500">{{ $vehicle->categoryOption?->value ?? '—' }}</p>
       @if($listingWhen)
         <p class="mt-1 text-xs text-slate-500">{{ __('Submitted') }} {{ $listingWhen->format('M j, Y') }} · {{ $listingWhen->format('g:i a') }}</p>
       @endif
