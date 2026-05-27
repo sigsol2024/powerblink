@@ -307,94 +307,110 @@ class PageController extends Controller
 
     public function inventory(Request $request)
     {
-        $page = CmsPage::query()->where('slug', 'inventory')->where('is_active', true)->first();
-        $filterOpts = $this->approvedVehicleFilterOptions();
-
-        $idIn = function (Collection $rows): array {
-            $ids = $rows->pluck('id')->filter()->values()->all();
-
-            return $ids === [] ? [] : [Rule::in($ids)];
-        };
-
-        $filters = $request->validate([
-            'q' => ['nullable', 'string', 'max:255'],
-            'product_category_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['categories'] ?? []))),
-            'price_min' => ['nullable', 'integer', 'min:0', 'max:999999999'],
-            'price_max' => ['nullable', 'integer', 'min:0', 'max:999999999'],
-            'sort' => ['nullable', 'string', Rule::in(['newest', 'price_low', 'price_high'])],
-        ]);
-
-        if (! empty($filters['price_min']) && ! empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
-            throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
-        }
-
-        // Some installs may be mid-migration; avoid hard 500s when optional product columns
-        // have not been applied yet.
-        $hasCategoryCol = false;
-        $hasOverviewCol = false;
-        $hasDescriptionCol = false;
         try {
-            $hasCategoryCol = Schema::hasColumn('vehicles', 'product_category_listing_option_id');
-            $hasOverviewCol = Schema::hasColumn('vehicles', 'overview');
-            $hasDescriptionCol = Schema::hasColumn('vehicles', 'description');
-        } catch (\Throwable) {
-            // Fail-open: treat as absent and fall back to basic fields.
+            $page = CmsPage::query()->where('slug', 'inventory')->where('is_active', true)->first();
+            $filterOpts = $this->approvedVehicleFilterOptions();
+
+            $idIn = function (Collection $rows): array {
+                $ids = $rows->pluck('id')->filter()->values()->all();
+
+                return $ids === [] ? [] : [Rule::in($ids)];
+            };
+
+            $filters = $request->validate([
+                'q' => ['nullable', 'string', 'max:255'],
+                'product_category_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['categories'] ?? []))),
+                'price_min' => ['nullable', 'integer', 'min:0', 'max:999999999'],
+                'price_max' => ['nullable', 'integer', 'min:0', 'max:999999999'],
+                'sort' => ['nullable', 'string', Rule::in(['newest', 'price_low', 'price_high'])],
+            ]);
+
+            if (! empty($filters['price_min']) && ! empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
+                throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
+            }
+
+            // Some installs may be mid-migration; avoid hard 500s when optional product columns
+            // have not been applied yet.
+            $hasCategoryCol = false;
+            $hasOverviewCol = false;
+            $hasDescriptionCol = false;
+            try {
+                $hasCategoryCol = Schema::hasColumn('vehicles', 'product_category_listing_option_id');
+                $hasOverviewCol = Schema::hasColumn('vehicles', 'overview');
+                $hasDescriptionCol = Schema::hasColumn('vehicles', 'description');
+            } catch (\Throwable) {
+                // Fail-open: treat as absent and fall back to basic fields.
+            }
+
+            $query = Vehicle::query()
+                ->with(['images', 'categoryOption'])
+                ->where('status', 'approved')
+                ->latest();
+
+            $search = isset($filters['q']) ? trim((string) $filters['q']) : '';
+            if ($search !== '') {
+                $like = '%'.$search.'%';
+                $query->where(function ($builder) use ($like, $hasDescriptionCol, $hasOverviewCol) {
+                    $builder->where('title', 'like', $like);
+                    if ($hasDescriptionCol) {
+                        $builder->orWhere('description', 'like', $like);
+                    }
+                    if ($hasOverviewCol) {
+                        $builder->orWhere('overview', 'like', $like);
+                    }
+                });
+            }
+
+            $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
+            if ($hasCategoryCol && $categoryId > 0) {
+                $query->where('product_category_listing_option_id', $categoryId);
+            }
+
+            $priceMin = (int) ($filters['price_min'] ?? 0);
+            if ($priceMin > 0) {
+                $query->where('price', '>=', $priceMin);
+            }
+
+            $priceMax = (int) ($filters['price_max'] ?? 0);
+            if ($priceMax > 0) {
+                $query->where('price', '<=', $priceMax);
+            }
+
+            $sort = (string) ($filters['sort'] ?? 'newest');
+            match ($sort) {
+                'price_low' => $query->orderBy('price'),
+                'price_high' => $query->orderByDesc('price'),
+                default => $query->latest(),
+            };
+
+            $vehicles = $query->paginate(9)->withQueryString();
+
+            return view('pages.inventory.index', [
+                'title' => ($page?->title ?: 'Shop'),
+                'vehicles' => $vehicles,
+                'filters' => array_merge($this->defaultInventoryFilters(), $filters),
+                'filterOptions' => $filterOpts,
+                'page' => $page,
+                'sections' => $this->pageSections('inventory', [
+                    'heading' => 'Shop the Collection',
+                    'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
+                ]),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('storefront.inventory failed', ['error' => $e->getMessage()]);
+
+            return view('pages.inventory.index', [
+                'title' => 'Shop',
+                'vehicles' => Vehicle::query()->whereRaw('1=0')->paginate(9),
+                'filters' => $this->defaultInventoryFilters(),
+                'filterOptions' => ['categories' => collect()],
+                'page' => null,
+                'sections' => $this->pageSections('inventory', [
+                    'heading' => 'Shop the Collection',
+                    'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
+                ]),
+            ]);
         }
-
-        $query = Vehicle::query()
-            ->with(['images', 'categoryOption'])
-            ->where('status', 'approved')
-            ->latest();
-
-        $search = isset($filters['q']) ? trim((string) $filters['q']) : '';
-        if ($search !== '') {
-            $like = '%'.$search.'%';
-            $query->where(function ($builder) use ($like, $hasDescriptionCol, $hasOverviewCol) {
-                $builder->where('title', 'like', $like);
-                if ($hasDescriptionCol) {
-                    $builder->orWhere('description', 'like', $like);
-                }
-                if ($hasOverviewCol) {
-                    $builder->orWhere('overview', 'like', $like);
-                }
-            });
-        }
-
-        $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
-        if ($hasCategoryCol && $categoryId > 0) {
-            $query->where('product_category_listing_option_id', $categoryId);
-        }
-
-        $priceMin = (int) ($filters['price_min'] ?? 0);
-        if ($priceMin > 0) {
-            $query->where('price', '>=', $priceMin);
-        }
-
-        $priceMax = (int) ($filters['price_max'] ?? 0);
-        if ($priceMax > 0) {
-            $query->where('price', '<=', $priceMax);
-        }
-
-        $sort = (string) ($filters['sort'] ?? 'newest');
-        match ($sort) {
-            'price_low' => $query->orderBy('price'),
-            'price_high' => $query->orderByDesc('price'),
-            default => $query->latest(),
-        };
-
-        $vehicles = $query->paginate(9)->withQueryString();
-
-        return view('pages.inventory.index', [
-            'title' => ($page?->title ?: 'Shop'),
-            'vehicles' => $vehicles,
-            'filters' => array_merge($this->defaultInventoryFilters(), $filters),
-            'filterOptions' => $filterOpts,
-            'page' => $page,
-            'sections' => $this->pageSections('inventory', [
-                'heading' => 'Shop the Collection',
-                'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
-            ]),
-        ]);
     }
 
     /**

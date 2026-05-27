@@ -152,8 +152,21 @@
           </div>
           <div>
             <x-input-label for="logo_path" :value="__('Category image (optional)')" />
-            <x-text-input id="logo_path" name="logo_path" type="text" class="mt-1 block w-full font-mono text-xs" value="{{ old('logo_path') }}" placeholder="storage/site-settings/your-image.jpg" />
+            <div class="mt-1 flex gap-2">
+              <x-text-input id="logo_path" name="logo_path" type="text" readonly class="block w-full font-mono text-xs bg-slate-50" value="{{ old('logo_path') }}" placeholder="{{ __('Pick an image…') }}" />
+              <button type="button" class="admin-luxe-btn-secondary js-mt-media-pick whitespace-nowrap" data-mt-media-target="logo_path">{{ __('Media library') }}</button>
+              <button type="button" class="admin-luxe-btn-secondary whitespace-nowrap" @click="document.getElementById('logo_path').value=''; document.getElementById('logo_path').dispatchEvent(new Event('change', { bubbles: true }));">{{ __('Clear') }}</button>
+            </div>
             <p class="mt-1 text-xs text-wp-text-muted">{{ __('Paste a Media Library path (e.g. storage/...) or full URL. Used for homepage category cards.') }}</p>
+            <div class="mt-3 hidden" data-category-logo-preview-wrap="logo_path">
+              <div class="flex items-center gap-3 rounded border border-wp-border bg-wp-bg px-3 py-2">
+                <img alt="" class="h-10 w-10 rounded object-cover bg-white border border-wp-border" data-category-logo-preview="logo_path" />
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-wp-text">{{ __('Preview') }}</p>
+                  <p class="text-[11px] text-wp-text-muted truncate" data-category-logo-preview-text="logo_path">—</p>
+                </div>
+              </div>
+            </div>
             <x-input-error :messages="$errors->get('logo_path')" class="mt-2" />
           </div>
           <label class="flex items-center gap-2 text-sm">
@@ -188,8 +201,21 @@
             </div>
             <div>
               <x-input-label for="logo-{{ $row->id }}" :value="__('Category image (optional)')" />
-              <x-text-input id="logo-{{ $row->id }}" name="logo_path" type="text" class="mt-1 block w-full font-mono text-xs" value="{{ old('logo_path', $row->logo_path) }}" placeholder="storage/site-settings/your-image.jpg" />
+              <div class="mt-1 flex gap-2">
+                <x-text-input id="logo-{{ $row->id }}" name="logo_path" type="text" readonly class="block w-full font-mono text-xs bg-slate-50" value="{{ old('logo_path', $row->logo_path) }}" placeholder="{{ __('Pick an image…') }}" />
+                <button type="button" class="admin-luxe-btn-secondary js-mt-media-pick whitespace-nowrap" data-mt-media-target="logo-{{ $row->id }}">{{ __('Media library') }}</button>
+                <button type="button" class="admin-luxe-btn-secondary whitespace-nowrap" @click="document.getElementById('logo-{{ $row->id }}').value=''; document.getElementById('logo-{{ $row->id }}').dispatchEvent(new Event('change', { bubbles: true }));">{{ __('Clear') }}</button>
+              </div>
               <p class="mt-1 text-xs text-wp-text-muted">{{ __('Used for homepage category cards.') }}</p>
+              <div class="mt-3 hidden" data-category-logo-preview-wrap="logo-{{ $row->id }}">
+                <div class="flex items-center gap-3 rounded border border-wp-border bg-wp-bg px-3 py-2">
+                  <img alt="" class="h-10 w-10 rounded object-cover bg-white border border-wp-border" data-category-logo-preview="logo-{{ $row->id }}" />
+                  <div class="min-w-0">
+                    <p class="text-xs font-semibold text-wp-text">{{ __('Preview') }}</p>
+                    <p class="text-[11px] text-wp-text-muted truncate" data-category-logo-preview-text="logo-{{ $row->id }}">—</p>
+                  </div>
+                </div>
+              </div>
               <x-input-error :messages="$errors->get('logo_path')" class="mt-2" />
             </div>
             <div>
@@ -211,3 +237,51 @@
     @endforeach
   </div>
 </x-app-layout>
+
+@push('body-end')
+  <script>
+    (function () {
+      function previewUrlFromPath(path) {
+        const p = String(path || '').trim();
+        if (!p) return '';
+        if (/^https?:\/\//i.test(p)) return p;
+        return '/' + p.replace(/^\/+/, '');
+      }
+
+      function syncLogoPreview(inputId) {
+        const input = document.getElementById(inputId);
+        const wrap = document.querySelector('[data-category-logo-preview-wrap="' + inputId + '"]');
+        const img = document.querySelector('[data-category-logo-preview="' + inputId + '"]');
+        const txt = document.querySelector('[data-category-logo-preview-text="' + inputId + '"]');
+        if (!input || !wrap || !img) return;
+        const raw = String(input.value || '').trim();
+        const has = raw !== '';
+        wrap.classList.toggle('hidden', !has);
+        if (txt) txt.textContent = has ? raw : '—';
+        if (has) {
+          img.src = previewUrlFromPath(raw);
+        } else {
+          img.removeAttribute('src');
+        }
+      }
+
+      function wire(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (!input.dataset.categoryLogoPreviewBound) {
+          input.dataset.categoryLogoPreviewBound = '1';
+          input.addEventListener('change', function () { syncLogoPreview(inputId); });
+          input.addEventListener('input', function () { syncLogoPreview(inputId); });
+        }
+        syncLogoPreview(inputId);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        wire('logo_path');
+        document.querySelectorAll('input[id^="logo-"]').forEach(function (el) {
+          wire(el.id);
+        });
+      });
+    })();
+  </script>
+@endpush

@@ -118,7 +118,7 @@
             @touchend.passive="onTouchEnd($event)"
           >
             <div class="rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-sm overflow-hidden">
-              <div class="relative aspect-[4/5] sm:aspect-square bg-surface-container-low overflow-hidden max-h-[460px] sm:max-h-[520px] mx-auto">
+              <div class="relative w-full h-[360px] sm:h-[420px] md:h-[480px] bg-surface-container-low overflow-hidden">
                 @if ($heroSlides->isNotEmpty())
                   <div
                     class="absolute inset-0 flex transition-transform duration-500 ease-in-out"
@@ -130,7 +130,7 @@
                         $img = $cover ? \App\Support\VehicleImageUrl::url($cover->path) : $heroBg;
                       @endphp
                       <a href="{{ route('product.show', ['slug' => $vehicle->slug]) }}" class="w-full shrink-0 relative block">
-                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy" />
                         <div class="absolute inset-0 bg-black/10"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/60 via-black/15 to-transparent">
                           <p class="font-label-caps text-label-caps text-white/90 tracking-widest">{{ $vehicle->categoryOption?->value ?: __('Collection') }}</p>
