@@ -29,7 +29,7 @@ class AdminCategoryController extends Controller
                 ->whereNull('parent_id')
                 ->orderBy('sort_order')
                 ->orderBy('value')
-                ->get(['id', 'value', 'sort_order', 'is_active'])
+                ->get(['id', 'value', 'logo_path', 'sort_order', 'is_active'])
             : collect();
 
         $usage = collect();

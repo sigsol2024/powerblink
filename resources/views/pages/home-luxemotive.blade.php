@@ -45,14 +45,14 @@
     @php
   $heroSlides = ($recentVehicles ?? collect())->take(5);
     @endphp
-    <section class="relative w-full overflow-hidden">
+    <section class="relative w-full overflow-hidden luxe-geometric-bg">
       <div class="absolute inset-0">
         <div class="absolute inset-0 luxe-african-pattern opacity-40"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-low/60 to-surface-container-lowest"></div>
       </div>
       <div class="relative max-w-max-container mx-auto px-margin-mobile md:px-gutter py-5 md:py-7">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-          <div class="min-w-0">
+          <div class="min-w-0 order-2 lg:order-1">
             <p class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase mb-3">{{ __('New season') }}</p>
             <h2 class="font-display-md md:font-display-lg text-primary uppercase mb-5 tracking-tighter">{{ $heroTitle }}</h2>
             @if (! empty($s['hero_subtitle']))
@@ -69,7 +69,7 @@
           </div>
 
           <div
-            class="min-w-0"
+            class="min-w-0 order-1 lg:order-2"
             x-data="{
               index: 0,
               timer: null,
@@ -275,9 +275,7 @@
             <p>{{ $s['welcome_body_2'] }}</p>
           @endif
         </div>
-        <div class="mt-12">
-          <span class="text-primary inline-flex"><x-icon name="sparkles" class="w-10 h-10" /></span>
-        </div>
+        {{-- Removed sparkles icon --}}
       </div>
     </section>
 

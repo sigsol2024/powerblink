@@ -92,7 +92,7 @@
 
         @if ($vehicles->hasPages())
           <div class="mt-16 md:mt-20 luxe-pagination flex justify-center">
-            {{ $vehicles->links() }}
+            {{ $vehicles->links('vendor.pagination.luxe') }}
           </div>
         @endif
       </div>
