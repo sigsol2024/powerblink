@@ -245,14 +245,6 @@ body {
   .motors-carousel-next { right: -14px; }
 }
 
-body.mobile-menu-open {
-  overflow: hidden;
-}
-
-[data-mobile-menu-panel].is-open {
-  transform: translateX(0);
-}
-
 .vehicle-detail-page [data-vehicle-detail-thumb].is-active {
   border-color: #ffb129;
   box-shadow: inset 0 0 0 1px #ffb129;

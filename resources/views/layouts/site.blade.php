@@ -71,39 +71,31 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
   </head>
 
+  {{-- Public storefront chrome: luxe header and luxe footers only. --}}
   @php
-    $luxeStorefront = request()->routeIs([
-      'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
-      'cart.*', 'checkout.*', 'order.confirmed', 'order.show', 'orders.lookup.index', 'orders.lookup',
-      'about', 'contact', 'faq', 'privacy-policy', 'terms', 'makes.index',
-    ]);
     $luxeHome = request()->routeIs('home');
     $luxeShopPage = request()->routeIs('shop.index', 'inventory.index');
-    // Pages that already handle their own top padding (or full-bleed hero). Everything else under
-    // the luxe header needs a default offset so content isn't hidden behind the fixed bar.
+    // Pages that already handle their own top padding (or full-bleed hero).
     $luxeSelfPadded = request()->routeIs(
       'home', 'shop.index', 'inventory.index', 'product.show', 'inventory.show',
-      'cart.*', 'checkout.*', 'order.confirmed', 'order.placed', 'order.show', 'orders.lookup.index', 'orders.lookup'
+      'cart.*', 'checkout.*', 'order.*', 'orders.*',
+      'about', 'contact', 'faq', 'privacy-policy', 'terms', 'makes.index', 'compare',
     );
-    $luxeShowCartWidget = $luxeStorefront && ! request()->routeIs('cart.*', 'checkout.*', 'order.placed', 'order.confirmed');
+    $luxeShowCartWidget = ! request()->routeIs('cart.*', 'checkout.*', 'order.placed', 'order.confirmed');
   @endphp
-  <body class="{{ $luxeStorefront ? 'bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store' : 'bg-page_bg font-body text-on_surface selection:bg-brand_blue/20' }} {{ $bodyClass ?? '' }}">
-    @if ($luxeStorefront)
-      @include('partials.luxe-store-header')
-      @if ($luxeShowCartWidget)
-        @include('partials.luxe-cart-widget')
-      @endif
-    @else
-      @include('partials.header')
+  <body class="bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store {{ $bodyClass ?? '' }}">
+    @include('partials.luxe-store-header')
+    @if ($luxeShowCartWidget)
+      @include('partials.luxe-cart-widget')
     @endif
-    <main id="main" class="{{ $luxeStorefront && ! $luxeSelfPadded ? 'pt-20 md:pt-24' : '' }}">
+    <main id="main" class="{{ $luxeSelfPadded ? '' : 'pt-20 md:pt-24' }}">
       @yield('content')
     </main>
     @if ($luxeHome)
       @include('partials.luxe-home-footer', ['site' => $site ?? []])
     @elseif ($luxeShopPage)
       @include('partials.luxe-shop-footer', ['site' => $site ?? []])
-    @elseif ($luxeStorefront)
+    @else
       <footer class="luxe-store border-t border-outline-variant py-10 px-margin-mobile md:px-gutter font-label-caps text-label-caps text-on-surface-variant">
         <div class="max-w-max-container mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-6">
           <a href="{{ route('about') }}" class="hover:text-primary transition-colors">{{ __('ABOUT US') }}</a>
@@ -111,8 +103,6 @@
         </div>
         <p class="text-center">© {{ date('Y') }} {{ \App\Support\SiteBrand::displayName($site ?? []) }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
       </footer>
-    @else
-      @include('partials.footer')
     @endif
     @include('partials.whatsapp-widget')
     <script src="{{ asset('asset/js/main.js') }}" defer></script>

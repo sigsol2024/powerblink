@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Models\SiteSetting;
 use App\Support\SiteSettingDefaults;
-use App\View\Composers\CmsNavComposer;
-use App\View\Composers\FaqNavComposer;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -59,8 +57,5 @@ class AppServiceProvider extends ServiceProvider
 
         $site = SiteSettingDefaults::mergeWithDatabase($fromDb);
         View::share('site', $site);
-
-        View::composer('layouts.site', CmsNavComposer::class);
-        View::composer('layouts.site', FaqNavComposer::class);
     }
 }
