@@ -41,9 +41,9 @@
 </style>
 @endpush
 <header class="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store px-margin-mobile md:px-gutter py-4">
-  <div class="max-w-max-container mx-auto w-full grid grid-cols-2 md:grid-cols-3 items-center gap-4">
-    <div class="min-w-0 flex items-center">
-      <a href="{{ route('home') }}" class="flex min-w-0 shrink items-center">
+  <div class="max-w-max-container mx-auto w-full flex items-center gap-4">
+    <div class="min-w-0 shrink-0 flex items-center">
+      <a href="{{ route('home') }}" class="flex min-w-0 items-center">
       @if ($logoPath !== '')
         <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-12 w-auto max-w-[240px] object-contain sm:h-14 md:max-w-[300px]" />
       @else
@@ -54,7 +54,7 @@
       </a>
     </div>
 
-    <nav class="hidden md:flex items-center justify-center gap-2 lg:gap-4 flex-wrap min-w-0">
+    <nav class="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8 min-w-0">
       <a
         href="{{ $featuredShopUrl }}"
         class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
