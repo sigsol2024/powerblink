@@ -91,18 +91,10 @@
     <main id="main" class="{{ $luxeSelfPadded ? '' : 'pt-20 md:pt-24' }}">
       @yield('content')
     </main>
-    @if ($luxeHome)
-      @include('partials.luxe-home-footer', ['site' => $site ?? []])
-    @elseif ($luxeShopPage)
+    @if ($luxeShopPage)
       @include('partials.luxe-shop-footer', ['site' => $site ?? []])
     @else
-      <footer class="luxe-store border-t border-outline-variant py-10 px-margin-mobile md:px-gutter font-label-caps text-label-caps text-on-surface-variant">
-        <div class="max-w-max-container mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-6">
-          <a href="{{ route('about') }}" class="hover:text-primary transition-colors">{{ __('ABOUT US') }}</a>
-          <a href="{{ route('contact') }}" class="hover:text-primary transition-colors">{{ __('CONTACT US') }}</a>
-        </div>
-        <p class="text-center">© {{ date('Y') }} {{ \App\Support\SiteBrand::displayName($site ?? []) }}. {{ __('ALL RIGHTS RESERVED.') }}</p>
-      </footer>
+      @include('partials.luxe-home-footer', ['site' => $site ?? []])
     @endif
     @include('partials.whatsapp-widget')
     <script src="{{ asset('asset/js/main.js') }}" defer></script>

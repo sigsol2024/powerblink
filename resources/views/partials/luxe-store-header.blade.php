@@ -55,7 +55,7 @@
       <a
         href="{{ $featuredShopUrl }}"
         class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
-      >{{ __('Featured items') }}</a>
+      >{{ __('FEATURED ITEMS') }}</a>
       @forelse ($navCategories as $cat)
         @php
           $catActive = $shopActive && ! $featuredActive && $activeCategoryId === (int) $cat->id;
