@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\SiteSetting;
 use App\Support\SiteSettingDefaults;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -56,6 +57,15 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $site = SiteSettingDefaults::mergeWithDatabase($fromDb);
+
+        try {
+            if (config('cache.default') !== 'database') {
+                $site = Cache::remember('site_settings_merged_v1', 300, fn () => $site);
+            }
+        } catch (\Throwable) {
+            // If cache store is unavailable (e.g. local DB down), use defaults above.
+        }
+
         View::share('site', $site);
     }
 }

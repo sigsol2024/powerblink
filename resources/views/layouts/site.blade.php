@@ -27,48 +27,18 @@
       <meta name="twitter:card" content="summary_large_image" />
     @endif
 
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Work+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    {{-- High-visibility icons have been migrated to inline SVGs (<x-icon>). Anything that still
-         uses the legacy icon-font class loads the webfont with `block` so the glyph either
-         renders or stays invisible — never as raw words during the font load. --}}
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet" />
-    <style>
-      /* Hide the icon-font slot until the font has rendered glyphs (extra belt-and-braces). */
-      .material-symbols-outlined { font-feature-settings: 'liga'; line-height: 1; }
-    </style>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: '#ffb129',
-              brand_blue: '#4e77ed',
-              brand_orange: '#f9a825',
-              card_bg: 'rgba(34,39,45,0.95)',
-              sold_red: '#e94343',
-              on_surface: '#191c1e',
-              page_bg: '#f8f9fc',
-            },
-            fontFamily: {
-              headline: ['Epilogue', 'sans-serif'],
-              body: ['Work Sans', 'sans-serif'],
-              label: ['Inter', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
+    {{-- Faster first paint on slow networks: preconnect + avoid blocking Tailwind in <head>. --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     @include('partials.luxe-public-theme')
     <link rel="stylesheet" href="{{ asset('asset/css/site.css') }}" />
     @if (!empty($site['favicon_path'] ?? ''))
       <link rel="icon" href="{{ \App\Support\VehicleImageUrl::url($site['favicon_path']) }}" />
     @endif
     @stack('head')
-    {{-- Homepage hero slider + other luxe interactions use Alpine. --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
   </head>
 
   {{-- Public storefront chrome: luxe header and luxe footers only. --}}
@@ -97,6 +67,27 @@
       @include('partials.luxe-home-footer', ['site' => $site ?? []])
     @endif
     @include('partials.whatsapp-widget')
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#ffb129',
+              brand_blue: '#4e77ed',
+              brand_orange: '#f9a825',
+              card_bg: 'rgba(34,39,45,0.95)',
+              sold_red: '#e94343',
+              on_surface: '#191c1e',
+              page_bg: '#f8f9fc',
+            },
+          },
+        },
+      };
+    </script>
+    @include('partials.luxe-public-theme-tailwind')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
     <script src="{{ asset('asset/js/main.js') }}" defer></script>
     @stack('scripts')
   </body>

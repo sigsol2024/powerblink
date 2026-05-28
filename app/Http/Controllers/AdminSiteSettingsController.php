@@ -7,6 +7,7 @@ use App\Services\Mail\OutboundMailService;
 use App\Support\SiteBrand;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -160,9 +161,10 @@ class AdminSiteSettingsController extends Controller
     {
         if ($value === '') {
             SiteSetting::query()->where('key', $key)->delete();
-
-            return;
+        } else {
+            SiteSetting::setValue($key, $value);
         }
-        SiteSetting::setValue($key, $value);
+
+        Cache::forget('site_settings_merged_v1');
     }
 }
