@@ -47,23 +47,23 @@ class AppServiceProvider extends ServiceProvider
                 ->symbols();
         });
 
-        $fromDb = [];
-        try {
-            if (Schema::hasTable('site_settings')) {
-                $fromDb = SiteSetting::allKeyed();
-            }
-        } catch (\Throwable) {
+        $loadSite = static function (): array {
             $fromDb = [];
-        }
+            try {
+                if (Schema::hasTable('site_settings')) {
+                    $fromDb = SiteSetting::allKeyed();
+                }
+            } catch (\Throwable) {
+                $fromDb = [];
+            }
 
-        $site = SiteSettingDefaults::mergeWithDatabase($fromDb);
+            return SiteSettingDefaults::mergeWithDatabase($fromDb);
+        };
 
         try {
-            if (config('cache.default') !== 'database') {
-                $site = Cache::remember('site_settings_merged_v1', 300, fn () => $site);
-            }
+            $site = Cache::store('file')->remember('site_settings_merged_v1', 300, $loadSite);
         } catch (\Throwable) {
-            // If cache store is unavailable (e.g. local DB down), use defaults above.
+            $site = $loadSite();
         }
 
         View::share('site', $site);

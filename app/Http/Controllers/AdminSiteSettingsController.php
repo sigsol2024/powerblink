@@ -165,6 +165,6 @@ class AdminSiteSettingsController extends Controller
             SiteSetting::setValue($key, $value);
         }
 
-        Cache::forget('site_settings_merged_v1');
+        Cache::store('file')->forget('site_settings_merged_v1');
     }
 }
