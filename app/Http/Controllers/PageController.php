@@ -39,6 +39,68 @@ class PageController extends Controller
         return $out;
     }
 
+    protected function sanitizeShopHeading(string $heading): string
+    {
+        $trimmed = trim($heading);
+        if ($trimmed === '') {
+            return (string) __('Shop the Collection');
+        }
+
+        if (preg_match('/\b(vehicle|automotive|car\s+for\s+sale)\b/i', $trimmed)) {
+            return (string) __('Shop the Collection');
+        }
+
+        return $trimmed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @param  array<string, mixed>  $filterOptions
+     */
+    protected function resolveShopHeading(string $storedHeading, array $filters, array $filterOptions): string
+    {
+        if (! empty($filters['featured'])) {
+            return (string) __('Featured products');
+        }
+
+        $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
+        if ($categoryId > 0) {
+            $category = collect($filterOptions['categories'] ?? [])->firstWhere('id', $categoryId);
+            if ($category && trim((string) ($category->value ?? '')) !== '') {
+                return trim((string) $category->value);
+            }
+        }
+
+        $search = trim((string) ($filters['q'] ?? ''));
+        if ($search !== '') {
+            return (string) __('Search results');
+        }
+
+        return $this->sanitizeShopHeading($storedHeading);
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @param  array<string, mixed>  $filterOptions
+     */
+    protected function resolveShopKicker(array $filters, array $filterOptions): string
+    {
+        if (! empty($filters['featured'])) {
+            return (string) __('FEATURED');
+        }
+
+        $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
+        if ($categoryId > 0) {
+            return (string) __('SHOP');
+        }
+
+        if (trim((string) ($filters['q'] ?? '')) !== '') {
+            return (string) __('SEARCH');
+        }
+
+        return (string) __('CURATED SERIES');
+    }
+
     protected function resolvePublicPage(string $slug, string $defaultTitle, string $defaultDescription = ''): CmsPage
     {
         return CmsPage::query()->firstOrCreate(
@@ -400,31 +462,41 @@ class PageController extends Controller
             };
 
             $vehicles = $query->paginate(30)->withQueryString();
+            $mergedFilters = array_merge($this->defaultInventoryFilters(), $filters);
+            $sections = $this->pageSections('inventory', [
+                'heading' => 'Shop the Collection',
+                'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
+            ]);
 
             return view('pages.inventory.index', [
                 'title' => ($page?->title ?: 'Shop'),
                 'vehicles' => $vehicles,
-                'filters' => array_merge($this->defaultInventoryFilters(), $filters),
+                'filters' => $mergedFilters,
                 'filterOptions' => $filterOpts,
                 'page' => $page,
-                'sections' => $this->pageSections('inventory', [
-                    'heading' => 'Shop the Collection',
-                    'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
-                ]),
+                'sections' => $sections,
+                'shopHeading' => $this->resolveShopHeading($sections['heading'] ?? '', $mergedFilters, $filterOpts),
+                'shopKicker' => $this->resolveShopKicker($mergedFilters, $filterOpts),
             ]);
         } catch (\Throwable $e) {
             Log::error('storefront.inventory failed', ['error' => $e->getMessage()]);
 
+            $fallbackFilters = $this->defaultInventoryFilters();
+            $fallbackSections = $this->pageSections('inventory', [
+                'heading' => 'Shop the Collection',
+                'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
+            ]);
+            $emptyFilterOpts = ['categories' => collect()];
+
             return view('pages.inventory.index', [
                 'title' => 'Shop',
                 'vehicles' => Vehicle::query()->whereRaw('1=0')->paginate(30),
-                'filters' => $this->defaultInventoryFilters(),
-                'filterOptions' => ['categories' => collect()],
+                'filters' => $fallbackFilters,
+                'filterOptions' => $emptyFilterOpts,
                 'page' => null,
-                'sections' => $this->pageSections('inventory', [
-                    'heading' => 'Shop the Collection',
-                    'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
-                ]),
+                'sections' => $fallbackSections,
+                'shopHeading' => $this->resolveShopHeading($fallbackSections['heading'] ?? '', $fallbackFilters, $emptyFilterOpts),
+                'shopKicker' => $this->resolveShopKicker($fallbackFilters, $emptyFilterOpts),
             ]);
         }
     }

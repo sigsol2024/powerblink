@@ -32,13 +32,13 @@
   <div class="relative overflow-x-hidden">
     <div class="absolute inset-0 luxe-natural-pattern"></div>
 
-    <section class="relative w-full h-52 sm:h-64 md:h-[75vh] lg:h-[80vh] overflow-hidden">
+    <section class="relative w-full h-[55vh] min-h-[18rem] max-h-[26rem] sm:max-h-[28rem] md:h-[75vh] md:min-h-0 md:max-h-none lg:h-[80vh] overflow-hidden">
       <img
         alt=""
         class="about-page-hero__image absolute inset-0 w-full h-full"
         src="{{ $heroImg }}"
       />
-      <div class="absolute inset-0 z-[1] bg-black/20 flex flex-col justify-end pb-8 sm:pb-10 md:pb-24">
+      <div class="absolute inset-0 z-[1] bg-black/20 flex flex-col justify-end pb-10 sm:pb-12 md:pb-24">
         <div class="max-w-max-container mx-auto px-gutter w-full relative z-10">
           <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface max-w-3xl leading-none">
             {{ $s['hero_title'] ?? __('The Hands Behind the Heritage') }}
@@ -77,7 +77,7 @@
     <section class="bg-surface-container py-section-py-mobile md:py-section-py-desktop relative z-10">
       <div class="max-w-max-container mx-auto px-gutter">
         <div class="flex flex-col md:flex-row gap-12 items-center">
-          <div class="w-full md:w-1/2 aspect-[4/5] overflow-hidden grayscale contrast-125">
+          <div class="w-full md:w-1/2 aspect-[4/5] overflow-hidden">
             <img alt="" class="about-page-media__image w-full h-full" src="{{ $artisanImg }}" />
           </div>
           <div class="w-full md:w-1/2 md:pl-8 lg:pl-16">

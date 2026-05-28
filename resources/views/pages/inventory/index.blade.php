@@ -27,8 +27,8 @@
   <main class="luxe-store pt-28 md:pt-32 pb-24 md:pb-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter luxe-geometric-bg bg-background text-on-background min-h-screen font-body-md">
     <div class="mb-10 md:mb-16 border-b border-outline-variant pb-6 md:pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
       <div>
-        <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ ! empty($filters['featured']) ? __('FEATURED') : __('CURATED SERIES') }}</p>
-        <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase">{{ ! empty($filters['featured']) ? __('Featured products') : ($sections['heading'] ?? ($page?->title ?? __('Collections'))) }}</h1>
+        <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ $shopKicker ?? __('CURATED SERIES') }}</p>
+        <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase">{{ $shopHeading ?? __('Shop the Collection') }}</h1>
       </div>
       <div class="flex items-center gap-4 w-full md:w-auto">
         <span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">{{ __('SORT BY') }}</span>
