@@ -187,8 +187,11 @@
           >
             <img src="{{ $img }}" alt="" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
             <div class="absolute inset-0 bg-black/15 group-hover:bg-black/25 luxe-transition-standard"></div>
-            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-              <h3 class="font-headline-sm text-headline-sm">{{ $cat->value }}</h3>
+            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6">
+              <span class="inline-flex items-center gap-2 border border-white/70 bg-white/10 backdrop-blur-sm px-4 py-2 font-label-caps text-[11px] uppercase tracking-widest text-white shadow-sm group-hover:bg-white/15 luxe-transition-standard">
+                {{ $cat->value }}
+                <x-icon name="arrow-right" class="w-4 h-4 shrink-0 opacity-90" />
+              </span>
             </div>
           </a>
         @empty

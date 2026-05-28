@@ -14,6 +14,7 @@ use App\Support\VehicleImageUrl;
 use App\Support\VehicleListingCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -36,6 +37,19 @@ class PageController extends Controller
         }
 
         return $out;
+    }
+
+    protected function resolvePublicPage(string $slug, string $defaultTitle, string $defaultDescription = ''): CmsPage
+    {
+        return CmsPage::query()->firstOrCreate(
+            ['slug' => $slug],
+            [
+                'title' => $defaultTitle,
+                'meta_description' => $defaultDescription,
+                'content_html' => '',
+                'is_active' => true,
+            ]
+        );
     }
 
     public function home()
@@ -106,51 +120,33 @@ class PageController extends Controller
 
     public function about()
     {
-        $page = CmsPage::query()->where('slug', 'about')->where('is_active', true)->firstOrFail();
+        $page = $this->resolvePublicPage('about', 'About Us', 'Our story, values, and the artisans behind every piece.');
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('about', [
             'hero_image' => 'asset/images/media/about-hero-bg.jpg',
-            'established_year' => '2020',
-            'hero_stat_value' => '5+',
-            'hero_stat_label' => 'Years of Craft',
-            'heading' => 'WELCOME TO THE ATELIER',
-            'intro' => 'A small studio creating considered apparel for the modern wardrobe. Every piece is designed to last and made in small batches.',
-            'hero_primary_cta_text' => 'Our Story',
-            'hero_primary_cta_href' => '/about',
-
-            'values_title' => 'CORE VALUES',
-            'val_1_title' => 'Considered design',
-            'val_1_body' => 'Every silhouette is drafted, sampled, and refined before it ships.',
-            'val_2_title' => 'Quality fabric',
-            'val_2_body' => 'Sourced from mills with traceable supply chains and high finishing standards.',
-            'val_3_title' => 'Customer care',
-            'val_3_body' => 'Real humans answer questions, manage returns, and remember repeat customers.',
-            'values_grid_1' => 'asset/images/media/about-values-1.jpg',
-            'values_grid_2' => 'asset/images/media/about-values-2.jpg',
-            'values_grid_3' => 'asset/images/media/about-values-3.jpg',
-            'values_grid_4' => 'asset/images/media/about-values-4.jpg',
-
-            'gallery_title' => 'Media Gallery',
-            'gallery' => '[]',
-
-            'advantages_title' => 'Quick Links',
-            'adv_1_icon' => 'shopping_bag',
-            'adv_1_title' => 'Shop the collection',
-            'adv_1_body' => 'Browse the latest drops in our online store.',
-            'adv_1_href' => '/shop',
-            'adv_2_icon' => 'storefront',
-            'adv_2_title' => 'Visit the atelier',
-            'adv_2_body' => 'Book a styling session for personal advice and fittings.',
-            'adv_2_href' => '/contact',
-            'adv_3_icon' => 'mail',
-            'adv_3_title' => 'Stay in the loop',
-            'adv_3_body' => 'Subscribe for new arrivals and behind-the-scenes notes.',
-            'adv_3_href' => '/contact',
-
-            'testimonials_title' => 'Customer Notes',
-            'testimonial_1_body' => 'The fit was spot on and the fabric feels remarkable. My new go-to.',
-            'testimonial_1_author' => 'Jane Doe',
-            'testimonial_1_brand' => 'Repeat Customer',
+            'hero_title' => 'The Hands Behind the Heritage',
+            'philosophy_kicker' => 'Our Philosophy',
+            'philosophy_title' => 'Modern Heritage',
+            'philosophy_quote' => '"Luxury is not found in excess, but in the silence of perfect craftsmanship and the weight of history held in a single thread."',
+            'story_paragraph_1' => 'Born in the vibrant heart of Lagos and refined through a global lens, our atelier represents the convergence of ancient West African textile traditions and contemporary minimalist design. We believe that true luxury is a dialogue between the past and the present.',
+            'story_paragraph_2' => 'Each collection is a curated exploration of form, texture, and cultural narrative. By stripping away the superfluous, we allow the intrinsic beauty of hand-finished fabrics to speak. Our silhouette is modern, but its soul is ancestral.',
+            'story_cta_text' => 'View the Collection',
+            'story_cta_href' => '/shop',
+            'artisan_kicker' => 'The Master Weaver',
+            'artisan_title' => 'Meticulous Craft',
+            'artisan_body' => 'Meet the artisans who shape every piece in our studio. With decades of experience, their hands navigate each stitch with an intuitive grace that machines can never replicate. Every garment carries the rhythm of their work — a tangible connection to heritage artistry.',
+            'artisan_image' => 'asset/images/media/about-values-1.jpg',
+            'artisan_location_label' => 'Location: Lagos Studio',
+            'artisan_location_detail' => 'Lagos, Nigeria',
+            'values_title' => 'Core Values',
+            'val_1_title' => 'Craftsmanship',
+            'val_1_body' => 'Slow fashion at its pinnacle. We prioritize quality over speed, ensuring every seam is a testament to artisanal skill.',
+            'val_2_title' => 'Sustainability',
+            'val_2_body' => 'Ethical sourcing of materials and fair-wage partnerships that empower local communities and protect the earth.',
+            'val_3_title' => 'Heritage',
+            'val_3_body' => 'A commitment to preserving and evolving cultural narratives through modern design and visual storytelling.',
+            'newsletter_title' => 'Join the Circle',
+            'newsletter_body' => 'Receive early access to limited drops and stories from the studio.',
         ]);
 
         return view('pages.about', [
@@ -167,8 +163,9 @@ class PageController extends Controller
 
     public function contact()
     {
-        $page = CmsPage::query()->where('slug', 'contact')->where('is_active', true)->firstOrFail();
+        $page = $this->resolvePublicPage('contact', 'Contact Us', 'Reach our concierge team for styling consultations and order inquiries.');
         $siteName = SiteBrand::displayName();
+        $dealerEmail = SiteSetting::getValue('dealer_public_email', '') ?: SiteSettingDefaults::resolvedNotifyEmail();
 
         return view('pages.contact', [
             'title' => $page->title.' | '.$siteName,
@@ -179,21 +176,21 @@ class PageController extends Controller
             'ogUrl' => route('contact', [], true),
             'page' => $page,
             'sections' => $this->pageSections('contact', [
-                'heading' => 'Contact Us',
-                'intro' => 'Reach our team using the form below.',
-                'hero_image' => 'asset/images/media/contact-hero-bg.jpg',
-                'map_address' => '',
-                'map_embed_url' => '',
-                'map_fallback_image' => 'asset/images/media/contact-map.jpg',
-                'sales_address' => SiteSetting::getValue('dealer_address', ''),
-                'sales_phone' => SiteSetting::getValue('dealer_sales_phone', ''),
-                'sales_hours' => SiteSetting::getValue('dealer_sales_hours', "Mon - Fri: 09:00AM - 06:00PM\nSaturday: 10:00AM - 04:00PM\nSunday: Closed"),
-                'parts_address' => SiteSetting::getValue('dealer_address', ''),
-                'parts_phone' => '',
-                'parts_hours' => "Mon - Fri: 09:00AM - 06:00PM\nSaturday: 10:00AM - 04:00PM\nSunday: Closed",
-                'renting_address' => SiteSetting::getValue('dealer_address', ''),
-                'renting_phone' => '',
-                'renting_hours' => "Mon - Fri: 09:00AM - 06:00PM\nSaturday: 10:00AM - 04:00PM\nSunday: Closed",
+                'hero_kicker' => 'Concierge',
+                'hero_title' => 'Get in Touch',
+                'hero_intro' => 'Experience bespoke service tailored to your style. Our specialists are available for styling consultations and inquiries about our collections.',
+                'services_email' => $dealerEmail,
+                'services_phone' => SiteSetting::getValue('dealer_sales_phone', '') ?: SiteSetting::getValue('dealer_phone', ''),
+                'services_hours' => SiteSetting::getValue('dealer_sales_hours', "Mon — Fri: 09:00 - 18:00\nSat: 10:00 - 16:00\nSun: Closed"),
+                'studio_title' => 'Flagship Studio',
+                'studio_address' => SiteSetting::getValue('dealer_address', ''),
+                'map_link_url' => '',
+                'social_instagram_label' => 'Instagram',
+                'social_instagram_url' => '',
+                'social_twitter_label' => 'Twitter',
+                'social_twitter_url' => '',
+                'atmospheric_image' => 'asset/images/media/contact-map.jpg',
+                'atmospheric_quote' => '"Crafted with care, for the world."',
             ]),
         ]);
     }
@@ -249,7 +246,7 @@ class PageController extends Controller
 
     public function privacyPolicy()
     {
-        $page = CmsPage::query()->where('slug', 'privacy-policy')->where('is_active', true)->firstOrFail();
+        $page = $this->resolvePublicPage('privacy-policy', 'Privacy Policy', 'How we collect, use, and protect your information.');
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('privacy-policy', [
             'heading' => 'Privacy Policy',
@@ -270,7 +267,7 @@ class PageController extends Controller
 
     public function terms()
     {
-        $page = CmsPage::query()->where('slug', 'terms')->where('is_active', true)->firstOrFail();
+        $page = $this->resolvePublicPage('terms', 'Terms & Conditions', 'Terms governing use of our online store.');
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('terms', [
             'heading' => 'Terms & Conditions',
@@ -416,7 +413,7 @@ class PageController extends Controller
                 ]),
             ]);
         } catch (\Throwable $e) {
-            \Log::error('storefront.inventory failed', ['error' => $e->getMessage()]);
+            Log::error('storefront.inventory failed', ['error' => $e->getMessage()]);
 
             return view('pages.inventory.index', [
                 'title' => 'Shop',

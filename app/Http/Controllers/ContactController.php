@@ -15,19 +15,35 @@ class ContactController extends Controller
     public function submit(Request $request, OutboundMailService $mailer): RedirectResponse
     {
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'name' => ['required_without_all:first_name,last_name', 'nullable', 'string', 'max:255'],
+            'first_name' => ['required_without:name', 'nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'subject' => ['nullable', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:5000'],
             'newsletter_subscribe' => ['nullable', 'boolean'],
         ]);
 
+        if (! empty($validated['name'])) {
+            $parts = preg_split('/\s+/', trim($validated['name']), 2);
+            $firstName = $parts[0] ?? '';
+            $lastName = $parts[1] ?? '';
+        } else {
+            $firstName = $validated['first_name'];
+            $lastName = $validated['last_name'] ?? '';
+        }
+
+        $message = $validated['message'];
+        if (! empty($validated['subject'])) {
+            $message = 'Subject: '.$validated['subject']."\n\n".$message;
+        }
+
         $data = [
-            'name' => trim($validated['first_name'] . ' ' . $validated['last_name']),
+            'name' => trim($firstName.' '.$lastName),
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
-            'message' => $validated['message'],
+            'message' => $message,
         ];
 
         $to = SiteSettingDefaults::resolvedNotifyEmail();

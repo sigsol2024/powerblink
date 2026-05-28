@@ -1,201 +1,121 @@
 @extends('layouts.site')
 
-@section('content')
 @php
-    $heroImg = \App\Support\VehicleImageUrl::url($sections['hero_image'] ?? 'asset/images/media/about-hero-bg.jpg');
-    $valGrid1 = \App\Support\VehicleImageUrl::url($sections['values_grid_1'] ?? 'asset/images/media/about-values-1.jpg');
-    $valGrid2 = \App\Support\VehicleImageUrl::url($sections['values_grid_2'] ?? 'asset/images/media/about-values-2.jpg');
-    $valGrid3 = \App\Support\VehicleImageUrl::url($sections['values_grid_3'] ?? 'asset/images/media/about-values-3.jpg');
-    $valGrid4 = \App\Support\VehicleImageUrl::url($sections['values_grid_4'] ?? 'asset/images/media/about-values-4.jpg');
-
-    $rawGallery = trim((string) ($sections['gallery'] ?? '[]'));
-    $galleryPaths = [];
-    try {
-        $galleryPaths = json_decode($rawGallery, true);
-        if (!is_array($galleryPaths)) {
-            $galleryPaths = [];
-        }
-    } catch (\Exception $e) {
-        $galleryPaths = [];
-    }
-
-    // Fallback to defaults if empty
-    if (empty($galleryPaths)) {
-        $galleryPaths = [
-            'asset/images/media/about-gallery-1.jpg',
-            'asset/images/media/about-gallery-2.jpg',
-            'asset/images/media/about-gallery-3.jpg',
-            'asset/images/media/about-gallery-4.jpg',
-        ];
-    }
-
-    $gallery = collect($galleryPaths)
-      ->filter(fn ($p) => !empty(trim((string) $p)))
-      ->map(fn ($p) => \App\Support\VehicleImageUrl::url($p))
-      ->values();
-
-    // Hero intro: plain text from the editor has no HTML tags — browsers collapse newlines, so we
-    // render it as GitHub-flavored Markdown (paragraphs, * / - lists). If it already contains real
-    // markup from a rich editor, output that HTML unchanged.
-    $aboutIntroRaw = trim((string) ($sections['intro'] ?? ''));
-    $heroWelcomeLine = '';
-    $heroBrandLine = '';
-    $headingRaw = trim((string) ($sections['heading'] ?? 'Welcome to Auto Torque Ltd'));
-    if (preg_match('/^(welcome\s+to)\s+(.+)$/iu', preg_replace('/\s+/', ' ', $headingRaw), $heroHeadingParts)) {
-        $heroWelcomeLine = mb_strtoupper(trim($heroHeadingParts[1]));
-        $heroBrandLine = mb_strtoupper(trim($heroHeadingParts[2]));
-    } else {
-        $heroBrandLine = mb_strtoupper($headingRaw);
-    }
-
-    $aboutIntroHtml = '';
-    if ($aboutIntroRaw !== '') {
-        $looksLikeHtml = (bool) preg_match(
-            '/<\s*(?:p|div|span|br|strong|em|b|i|u|ul|ol|li|h[1-6]|a|img|section|article|blockquote)\b/i',
-            $aboutIntroRaw
-        );
-        if ($looksLikeHtml) {
-            $aboutIntroHtml = $aboutIntroRaw;
-        } else {
-            $aboutIntroHtml = \Illuminate\Support\Str::markdown($aboutIntroRaw);
-        }
-    }
-
+  $s = $sections ?? [];
+  $heroImg = \App\Support\VehicleImageUrl::url($s['hero_image'] ?? 'asset/images/media/about-hero-bg.jpg');
+  $artisanImg = \App\Support\VehicleImageUrl::url($s['artisan_image'] ?? 'asset/images/media/about-values-1.jpg');
+  $storyCtaHref = trim($s['story_cta_href'] ?? '/shop');
+  if ($storyCtaHref !== '' && ! str_starts_with($storyCtaHref, 'http')) {
+      $storyCtaHref = url($storyCtaHref);
+  }
 @endphp
 
+@push('head')
 <style>
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
+  .luxe-natural-pattern {
+    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+    opacity: 0.03;
+    pointer-events: none;
+  }
 </style>
+@endpush
 
-<!-- Hero Section -->
-<section class="relative min-h-[80vh] flex items-start overflow-hidden pt-24 md:pt-32">
-    <div class="flex flex-col md:flex-row w-full h-full">
-        <div class="w-full md:w-1/2 relative h-[500px] md:h-screen">
-            <img alt="Hero Image" class="w-full h-full object-cover" src="{{ $heroImg }}"/>
-            <div class="absolute bottom-12 right-0 bg-primary text-slate-900 px-8 py-6 flex flex-col items-center justify-center transform translate-x-1/4 shadow-2xl">
-                <span class="text-4xl font-black font-headline">{{ $sections['hero_stat_value'] ?? '25+' }}</span>
-                <span class="text-xs font-bold font-label tracking-tighter uppercase">{{ $sections['hero_stat_label'] ?? 'Years of Excellence' }}</span>
-            </div>
-        </div>
-        <div class="w-full md:w-1/2 flex items-center px-12 md:px-24 py-20 bg-white">
-            <div class="max-w-xl">
-                <h2 class="text-sm font-label font-bold text-primary tracking-[0.3em] uppercase mb-4">Established {{ $sections['established_year'] ?? '1999' }}</h2>
-                <h1 class="text-3xl md:text-4xl font-black font-headline text-on_surface leading-[1.05] mb-8 uppercase">
-                    @if ($heroWelcomeLine !== '')
-                        <span class="block text-primary">{{ $heroWelcomeLine }}</span>
-                        <span class="block text-on_surface">{{ $heroBrandLine }}</span>
-                    @else
-                        <span class="block text-on_surface">{{ $heroBrandLine }}</span>
-                    @endif
-                </h1>
-                <div class="about-intro text-base font-body text-slate-600 leading-relaxed mb-10 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_li:last-child]:mb-0 [&_a]:text-primary [&_a]:underline">
-                    @if ($aboutIntroHtml !== '')
-                        {!! $aboutIntroHtml !!}
-                    @else
-                        <p>{{ __('Experience the pinnacle of automotive engineering and white-glove service.') }}</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+@section('content')
+  <div class="relative overflow-x-hidden">
+    <div class="absolute inset-0 luxe-natural-pattern"></div>
 
-<!-- Core Values -->
-<section class="py-32 bg-page_bg overflow-hidden">
-    <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-        <div>
-            <h2 class="text-5xl font-black font-headline text-on_surface mb-12 tracking-tight uppercase">
-                @php
-                    $vTitle = $sections['values_title'] ?? 'CORE VALUES';
-                    $vWords = explode(' ', $vTitle);
-                    $vLast = array_pop($vWords);
-                    $vFirst = implode(' ', $vWords);
-                @endphp
-                {{ $vFirst }} <span class="text-primary">{{ $vLast }}</span>
-            </h2>
-            <div class="space-y-10">
-                @foreach([1, 2, 3] as $i)
-                    @php
-                        $vT = $sections['val_'.$i.'_title'] ?? '';
-                        $vB = $sections['val_'.$i.'_body'] ?? '';
-                    @endphp
-                    @if($vT)
-                    <div class="flex items-start gap-6 group">
-                        <div class="mt-1 flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-slate-900">
-                            <x-icon name="check" class="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold font-headline mb-2 uppercase tracking-wide">{{ $vT }}</h3>
-                            <p class="text-slate-600 font-body">{{ $vB }}</p>
-                        </div>
-                    </div>
-                    @endif
-                @endforeach
-            </div>
+    <section class="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
+      <img alt="" class="w-full h-full object-cover" src="{{ $heroImg }}" />
+      <div class="absolute inset-0 bg-black/20 flex flex-col justify-end pb-16 md:pb-24">
+        <div class="max-w-max-container mx-auto px-gutter w-full relative z-10">
+          <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface max-w-3xl leading-none">
+            {{ $s['hero_title'] ?? __('The Hands Behind the Heritage') }}
+          </h1>
         </div>
-        <div class="grid grid-cols-2 gap-4 h-[600px]">
-            <div class="space-y-4 pt-12">
-                <div class="h-1/2 overflow-hidden bg-slate-200">
-                    <img alt="Value 1" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" src="{{ $valGrid1 }}"/>
-                </div>
-                <div class="h-1/2 overflow-hidden bg-slate-200">
-                    <img alt="Value 2" class="w-full h-full object-cover" src="{{ $valGrid2 }}"/>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="h-1/2 overflow-hidden bg-slate-200">
-                    <img alt="Value 3" class="w-full h-full object-cover" src="{{ $valGrid3 }}"/>
-                </div>
-                <div class="h-1/2 overflow-hidden bg-slate-200 relative">
-                    <div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
-                    <img alt="Value 4" class="w-full h-full object-cover" src="{{ $valGrid4 }}"/>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Media Gallery (Motors reference palette) -->
-@if($gallery->isNotEmpty())
-<section class="bg-[#232628] py-24 px-6 md:px-12 lg:px-24">
-  <div class="max-w-7xl mx-auto w-full">
-    <div class="text-center mb-16">
-      <h2 class="text-white font-headline text-3xl md:text-4xl font-extrabold tracking-tight uppercase">
-        {{ strtoupper((string) ($sections['gallery_title'] ?? 'Media Gallery')) }}
-      </h2>
-      <div class="motors-colored-separator">
-        <div class="first-long"></div>
-        <div class="last-short"></div>
       </div>
-    </div>
+    </section>
 
-    <div class="motors-carousel motors-carousel--gallery" data-simple-carousel data-carousel-type="gallery" data-carousel-loop="1">
-      <div class="motors-carousel-viewport overflow-hidden" data-carousel-viewport>
-        <div class="motors-carousel-track flex gap-1" data-carousel-track>
-          @foreach ($gallery as $img)
-            <div class="w-full sm:w-1/3 lg:w-1/4 shrink-0 px-0.5" data-carousel-slide>
-              <a href="{{ $img }}" target="_blank" rel="noopener noreferrer" class="aspect-[4/3] overflow-hidden group cursor-pointer block bg-black/10">
-                <img src="{{ $img }}" alt="{{ __('Gallery image') }}" data-gallery-image class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async" />
+    <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-gutter relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24 items-start">
+        <div class="md:col-span-5">
+          <span class="font-label-caps text-label-caps text-secondary tracking-widest uppercase mb-4 block">{{ $s['philosophy_kicker'] ?? __('Our Philosophy') }}</span>
+          <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8">{{ $s['philosophy_title'] ?? __('Modern Heritage') }}</h2>
+          @if(trim($s['philosophy_quote'] ?? '') !== '')
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed italic">{{ $s['philosophy_quote'] }}</p>
+          @endif
+        </div>
+        <div class="md:col-span-7 space-y-6">
+          @if(trim($s['story_paragraph_1'] ?? '') !== '')
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{{ $s['story_paragraph_1'] }}</p>
+          @endif
+          @if(trim($s['story_paragraph_2'] ?? '') !== '')
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{{ $s['story_paragraph_2'] }}</p>
+          @endif
+          @if(trim($s['story_cta_text'] ?? '') !== '')
+            <div class="pt-8">
+              <a href="{{ $storyCtaHref }}" class="inline-block bg-primary text-on-primary font-button-text text-button-text px-10 py-4 uppercase tracking-widest transition-transform duration-300 hover:scale-[1.02]">
+                {{ $s['story_cta_text'] }}
               </a>
             </div>
-          @endforeach
+          @endif
         </div>
       </div>
+    </section>
 
-      <div class="flex items-center justify-center mt-12 gap-8">
-        <button type="button" class="motors-gallery-chevron" data-carousel-prev aria-label="{{ __('Previous') }}">
-          <x-icon name="chevron-left" class="w-7 h-7" />
-        </button>
-        <div class="motors-gallery-dots flex items-center gap-3" data-carousel-dots></div>
-        <button type="button" class="motors-gallery-chevron" data-carousel-next aria-label="{{ __('Next') }}">
-          <x-icon name="chevron-right" class="w-7 h-7" />
-        </button>
+    <section class="bg-surface-container py-section-py-mobile md:py-section-py-desktop relative z-10">
+      <div class="max-w-max-container mx-auto px-gutter">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+          <div class="w-full md:w-1/2 aspect-[4/5] overflow-hidden grayscale contrast-125">
+            <img alt="" class="w-full h-full object-cover" src="{{ $artisanImg }}" />
+          </div>
+          <div class="w-full md:w-1/2 md:pl-8 lg:pl-16">
+            <span class="font-label-caps text-label-caps text-secondary tracking-widest uppercase mb-4 block">{{ $s['artisan_kicker'] ?? '' }}</span>
+            <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">{{ $s['artisan_title'] ?? '' }}</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-8 leading-relaxed">{{ $s['artisan_body'] ?? '' }}</p>
+            @if(trim($s['artisan_location_label'] ?? '') !== '' || trim($s['artisan_location_detail'] ?? '') !== '')
+              <div class="border-l-2 border-primary pl-6 py-2">
+                @if(trim($s['artisan_location_label'] ?? '') !== '')
+                  <p class="font-label-caps text-label-caps text-primary uppercase">{{ $s['artisan_location_label'] }}</p>
+                @endif
+                @if(trim($s['artisan_location_detail'] ?? '') !== '')
+                  <p class="font-body-md text-body-md text-on-surface-variant">{{ $s['artisan_location_detail'] }}</p>
+                @endif
+              </div>
+            @endif
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-@endif
+    </section>
 
+    <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-gutter relative z-10">
+      <div class="text-center mb-16">
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">{{ $s['values_title'] ?? __('Core Values') }}</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-outline-variant border border-outline-variant">
+        @foreach([
+          ['icon' => 'sparkles', 'title' => $s['val_1_title'] ?? '', 'body' => $s['val_1_body'] ?? ''],
+          ['icon' => 'heart', 'title' => $s['val_2_title'] ?? '', 'body' => $s['val_2_body'] ?? ''],
+          ['icon' => 'document', 'title' => $s['val_3_title'] ?? '', 'body' => $s['val_3_body'] ?? ''],
+        ] as $value)
+          <div class="bg-surface p-12 text-center group transition-colors duration-500 hover:bg-primary-container">
+            <x-icon :name="$value['icon']" class="w-10 h-10 text-secondary mb-6 mx-auto block group-hover:text-surface transition-colors" />
+            <h3 class="font-headline-md text-headline-md text-primary mb-4 group-hover:text-surface transition-colors">{{ $value['title'] }}</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant group-hover:text-inverse-on-surface transition-colors">{{ $value['body'] }}</p>
+          </div>
+        @endforeach
+      </div>
+    </section>
+
+    <section class="bg-surface-container-high py-24 relative z-10">
+      <div class="max-w-[600px] mx-auto px-gutter text-center">
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4 uppercase tracking-tighter">{{ $s['newsletter_title'] ?? __('Join the Circle') }}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-10">{{ $s['newsletter_body'] ?? '' }}</p>
+        <form class="flex flex-col md:flex-row gap-0" method="post" action="{{ route('newsletter.subscribe') }}">
+          @csrf
+          <input class="flex-grow bg-transparent border-b border-primary px-4 py-4 focus:ring-0 focus:outline-none placeholder:text-outline font-label-caps text-label-caps uppercase" name="email" type="email" placeholder="{{ __('Your email address') }}" required />
+          <button class="bg-primary text-on-primary px-8 py-4 uppercase font-button-text text-button-text tracking-widest hover:bg-on-surface hover:text-surface transition-colors" type="submit">{{ __('Subscribe') }}</button>
+        </form>
+      </div>
+    </section>
+  </div>
 @endsection

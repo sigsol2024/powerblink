@@ -11,7 +11,7 @@
   $cartCount = \App\Support\Cart::count();
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
-  $navCategories = collect(\App\Support\VehicleListingCatalog::filterOptions()['categories'] ?? [])->take(3);
+  $navCategories = collect(\App\Support\VehicleListingCatalog::filterOptions()['categories'] ?? [])->take(4);
   $activeCategoryId = (int) request('product_category_listing_option_id', 0);
   $featuredShopUrl = route('shop.index', ['featured' => 1]);
   $featuredActive = $shopActive && request()->boolean('featured');
@@ -51,11 +51,11 @@
         </span>
       @endif
     </a>
-    <nav class="hidden md:flex items-center gap-2.5 lg:gap-5 flex-wrap max-w-[min(52vw,28rem)] lg:max-w-none">
+    <nav class="hidden md:flex items-center gap-2 lg:gap-4 flex-wrap min-w-0">
       <a
         href="{{ $featuredShopUrl }}"
         class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
-      >{{ __('FEATURED') }}</a>
+      >{{ __('Featured items') }}</a>
       @forelse ($navCategories as $cat)
         @php
           $catActive = $shopActive && ! $featuredActive && $activeCategoryId === (int) $cat->id;
@@ -119,7 +119,7 @@
             class="flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.1em] transition-colors {{ $featuredActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
             data-luxe-mobile-nav-close-link
           >
-            {{ __('Featured') }}
+            {{ __('Featured items') }}
             <x-icon name="chevron-right" class="w-4 h-4 opacity-40 shrink-0" />
           </a>
         </li>
