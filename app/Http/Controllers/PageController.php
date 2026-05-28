@@ -42,55 +42,46 @@ class PageController extends Controller
     {
         $page = CmsPage::query()->where('slug', 'home')->where('is_active', true)->firstOrFail();
         $siteName = SiteBrand::displayName();
-        $recentVehicles = Vehicle::query()
+        $heroVehicles = Vehicle::query()
             ->with(['images', 'categoryOption'])
             ->where('status', 'approved')
-            // Homepage "recent products" should reflect newly approved/added inventory,
-            // not last edited listings.
             ->orderByDesc('approved_at')
             ->orderByDesc('id')
-            ->take(6)
+            ->take(5)
+            ->get();
+
+        $featuredVehicles = Vehicle::query()
+            ->with(['images', 'categoryOption'])
+            ->where('status', 'approved')
+            ->where('is_special', true)
+            ->orderByDesc('approved_at')
+            ->orderByDesc('id')
+            ->take(4)
             ->get();
 
         $filterOptions = $this->approvedVehicleFilterOptions();
         $filters = $this->defaultInventoryFilters();
 
-        $heroCover = $recentVehicles->first()?->images->first();
+        $heroCover = $heroVehicles->first()?->images->first();
         $ogImage = $heroCover ? url(VehicleImageUrl::url($heroCover->path)) : null;
 
         $homeSections = $this->pageSections('home', [
-            'hero_title' => 'Discover Your Signature Style',
-            'hero_subtitle' => 'Considered apparel for the modern wardrobe',
-            'hero_description' => '',
-            'hero_cta_text' => 'Explore the Collection',
+            'hero_title' => 'Artisanship Redefined',
+            'hero_subtitle' => 'Luxury apparel and accessories cut, sewn, and finished in our Lagos atelier.',
+            'hero_cta_text' => 'Explore Collection',
             'hero_cta_href' => '/shop',
-            'home_search_label' => 'Search the collection',
-            'recent_title' => 'New Arrivals',
-            'recent_subtitle' => 'Fresh styles, just dropped. Cards below are live listings.',
             'hero_image' => 'asset/images/media/home-hero-main.jpg',
+            'shop_categories_title' => 'Shop Categories',
+            'bestsellers_title' => 'The Bestsellers',
             'dealer_cta_bg' => 'asset/images/media/home-cta-left.jpg',
-            'dealer_cta_left_icon' => 'shopping_bag',
-            'dealer_cta_right_icon' => 'storefront',
-            'cta_left_title' => 'Shop the look',
-            'cta_left_body' => 'Curated pieces delivered to your door. Free returns within 30 days.',
-            'cta_left_button_text' => 'Shop now',
-            'cta_left_button_href' => '/shop',
-            'cta_right_title' => 'Visit the atelier',
-            'cta_right_body' => 'Book a private session with our stylists for fittings and personal styling.',
-            'cta_right_button_text' => 'Book a visit',
-            'cta_right_button_href' => '/contact',
-            'feat1_title' => 'Considered design',
-            'feat1_body' => 'Pieces designed in small batches with attention to fabric, fit, and finishing.',
-            'feat2_title' => 'Quality fabrics',
-            'feat2_body' => 'Sustainably sourced materials chosen for longevity, not seasons.',
-            'feat3_title' => 'Effortless returns',
-            'feat3_body' => 'Try on at home with free 30-day returns. No questions asked.',
-            'welcome_title' => 'A wardrobe worth keeping',
-            'welcome_body' => 'Considered apparel made to last. Built for the modern wardrobe.',
-            'welcome_video_url' => '',
-            'prefooter_title' => 'Have a question?',
-            'prefooter_button_text' => 'Contact',
-            'prefooter_button_href' => '/contact',
+            'promo_eyebrow' => 'LIMITED CAPSULE',
+            'promo_title' => 'The Diaspora Series',
+            'promo_cta' => 'Explore Series',
+            'promo_cta_href' => '/shop',
+            'welcome_eyebrow' => 'OUR HERITAGE',
+            'welcome_title' => 'Crafting a New Legacy',
+            'welcome_body' => 'We collaborate with master artisans to bring exceptional pieces to a global audience. Each product reflects quality, story, and craft.',
+            'welcome_body_2' => '',
         ]);
 
         return view('pages.home-luxemotive', [
@@ -102,8 +93,9 @@ class PageController extends Controller
             'ogUrl' => route('home', [], true),
             'ogImage' => $ogImage,
             'page' => $page,
-            'heroVehicle' => $recentVehicles->first(),
-            'recentVehicles' => $recentVehicles,
+            'heroVehicle' => $heroVehicles->first(),
+            'heroVehicles' => $heroVehicles,
+            'featuredVehicles' => $featuredVehicles,
             'filterOptions' => $filterOptions,
             'filters' => $filters,
             'dealerPhone' => SiteSetting::getValue('dealer_phone', '+1 878-9674-4455'),

@@ -28,23 +28,14 @@ class AdminPageController extends Controller
                     ['name' => 'hero_cta_href', 'label' => 'Hero CTA Link (path or URL)', 'type' => 'text', 'default' => '/shop', 'group' => 'Hero'],
                     ['name' => 'hero_image', 'label' => 'Hero Background Image', 'type' => 'image', 'default' => 'asset/images/media/home-hero-main.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
 
-                    ['name' => 'category_1_label', 'label' => 'Category 1 Eyebrow', 'type' => 'text', 'default' => 'LIMITED', 'group' => 'Category tiles'],
-                    ['name' => 'category_1_title', 'label' => 'Category 1 Title', 'type' => 'text', 'default' => 'Bridal', 'group' => 'Category tiles'],
-                    ['name' => 'category_1_image', 'label' => 'Category 1 Image', 'type' => 'image', 'default' => 'asset/images/media/home-cta-left.jpg', 'group' => 'Category tiles', 'preview' => 'thumbnail'],
-                    ['name' => 'category_2_label', 'label' => 'Category 2 Eyebrow', 'type' => 'text', 'default' => 'ESSENTIALS', 'group' => 'Category tiles'],
-                    ['name' => 'category_2_title', 'label' => 'Category 2 Title', 'type' => 'text', 'default' => 'Pret-a-Porter', 'group' => 'Category tiles'],
-                    ['name' => 'category_2_image', 'label' => 'Category 2 Image', 'type' => 'image', 'default' => 'asset/images/media/home-recent-fallback.jpg', 'group' => 'Category tiles', 'preview' => 'thumbnail'],
-                    ['name' => 'category_3_label', 'label' => 'Category 3 Eyebrow', 'type' => 'text', 'default' => 'HERITAGE', 'group' => 'Category tiles'],
-                    ['name' => 'category_3_title', 'label' => 'Category 3 Title', 'type' => 'text', 'default' => 'Textiles', 'group' => 'Category tiles'],
-                    ['name' => 'category_3_image', 'label' => 'Category 3 Image', 'type' => 'image', 'default' => 'asset/images/media/home-cta-left.jpg', 'group' => 'Category tiles', 'preview' => 'thumbnail'],
-
-                    ['name' => 'recent_title', 'label' => 'New Arrivals Title', 'type' => 'text', 'default' => 'New Arrivals', 'group' => 'New arrivals'],
-                    ['name' => 'recent_subtitle', 'label' => 'New Arrivals Intro', 'type' => 'textarea', 'default' => 'Curated luxury apparel and accessories, refreshed each season. The cards below are live products.', 'group' => 'New arrivals'],
+                    ['name' => 'shop_categories_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'Shop Categories', 'group' => 'Shop categories (tiles come from Admin → Categories)'],
+                    ['name' => 'bestsellers_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'The Bestsellers', 'group' => 'Bestsellers (up to 4 featured products)'],
 
                     ['name' => 'dealer_cta_bg', 'label' => 'Promo banner background', 'type' => 'image', 'default' => 'asset/images/media/home-cta-left.jpg', 'group' => 'Promo banner', 'preview' => 'thumbnail'],
                     ['name' => 'promo_eyebrow', 'label' => 'Promo eyebrow', 'type' => 'text', 'default' => 'LIMITED CAPSULE', 'group' => 'Promo banner'],
                     ['name' => 'promo_title', 'label' => 'Promo title', 'type' => 'text', 'default' => 'The Diaspora Series', 'group' => 'Promo banner'],
                     ['name' => 'promo_cta', 'label' => 'Promo button text', 'type' => 'text', 'default' => 'Explore Series', 'group' => 'Promo banner'],
+                    ['name' => 'promo_cta_href', 'label' => 'Promo button link (path or URL)', 'type' => 'text', 'default' => '/shop', 'group' => 'Promo banner'],
 
                     ['name' => 'welcome_eyebrow', 'label' => 'Heritage eyebrow', 'type' => 'text', 'default' => 'OUR HERITAGE', 'group' => 'Heritage block'],
                     ['name' => 'welcome_title', 'label' => 'Heritage block title', 'type' => 'text', 'default' => 'Crafting a New Legacy', 'group' => 'Heritage block'],

@@ -11,40 +11,17 @@
   $heroCtaHref = $s['hero_cta_href'] ?? '/shop';
   $heroCtaUrl = \Illuminate\Support\Str::startsWith($heroCtaHref, ['http://', 'https://']) ? $heroCtaHref : url($heroCtaHref);
   $promoBg = \App\Support\PlaceholderMedia::url($s['dealer_cta_bg'] ?? 'asset/images/media/home-cta-left.jpg');
-  $recentTitle = trim((string) ($s['recent_title'] ?? __('New Arrivals')));
-  $bestsellers = ($recentVehicles ?? collect())->where('is_special', true)->take(4);
-  if ($bestsellers->isEmpty()) {
-    $bestsellers = ($recentVehicles ?? collect())->take(4);
-  }
-  $arrivals = ($recentVehicles ?? collect())->take(6);
-  $categories = [
-    [
-      'label' => $s['category_1_label'] ?? __('LIMITED'),
-      'title' => $s['category_1_title'] ?? __('Bridal'),
-      'image' => \App\Support\PlaceholderMedia::url($s['category_1_image'] ?? 'asset/images/media/home-cta-left.jpg'),
-      'url' => route('shop.index'),
-    ],
-    [
-      'label' => $s['category_2_label'] ?? __('ESSENTIALS'),
-      'title' => $s['category_2_title'] ?? __('Pret-a-Porter'),
-      'image' => \App\Support\PlaceholderMedia::url($s['category_2_image'] ?? 'asset/images/media/home-recent-fallback.jpg'),
-      'url' => route('shop.index'),
-    ],
-    [
-      'label' => $s['category_3_label'] ?? __('HERITAGE'),
-      'title' => $s['category_3_title'] ?? __('Textiles'),
-      'image' => \App\Support\PlaceholderMedia::url($s['category_3_image'] ?? $promoBg),
-      'url' => route('shop.index'),
-    ],
-  ];
+  $promoCtaHref = $s['promo_cta_href'] ?? '/shop';
+  $promoCtaUrl = \Illuminate\Support\Str::startsWith($promoCtaHref, ['http://', 'https://']) ? $promoCtaHref : url($promoCtaHref);
+  $shopCategoriesTitle = trim((string) ($s['shop_categories_title'] ?? __('Shop Categories')));
+  $bestsellersTitle = trim((string) ($s['bestsellers_title'] ?? __('The Bestsellers')));
+  $bestsellers = $featuredVehicles ?? collect();
+  $heroSlides = $heroVehicles ?? collect();
 @endphp
 
 @section('content')
   <main class="luxe-store mt-[80px]">
     {{-- Hero --}}
-    @php
-  $heroSlides = ($recentVehicles ?? collect())->take(5);
-    @endphp
     <section class="relative w-full overflow-hidden luxe-geometric-bg bg-background">
       {{-- Light wash only — heavy overlays hide the plus pattern (see shop page) --}}
       <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-background/25 via-transparent to-background/30" aria-hidden="true"></div>
@@ -198,7 +175,7 @@
         ->take(8);
     @endphp
     <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
-      <h2 class="font-headline-md text-headline-md text-center mb-8 md:mb-10 uppercase">{{ __('Shop Categories') }}</h2>
+      <h2 class="font-headline-md text-headline-md text-center mb-8 md:mb-10 uppercase">{{ $shopCategoriesTitle }}</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         @forelse ($categoryCards as $cat)
           @php
@@ -221,12 +198,10 @@
       </div>
     </section>
 
-    {{-- New arrivals scroll removed (per request) --}}
-
-    {{-- Bestsellers grid --}}
-    @if ($bestsellers->isNotEmpty())
-      <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
-        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-center mb-10 md:mb-16 uppercase">{{ __('The Bestsellers') }}</h2>
+    {{-- Featured products (admin: Featured product checkbox) — max 4 --}}
+    <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
+      <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-center mb-10 md:mb-16 uppercase">{{ $bestsellersTitle }}</h2>
+      @if ($bestsellers->isNotEmpty())
         <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12">
           @foreach ($bestsellers as $vehicle)
             @php
@@ -247,8 +222,10 @@
             </a>
           @endforeach
         </div>
-      </section>
-    @endif
+      @else
+        <p class="text-center text-sm text-on-surface-variant max-w-lg mx-auto">{{ __('No featured products yet. Mark up to four products as “Featured product” in the admin product editor.') }}</p>
+      @endif
+    </section>
 
     {{-- Promo banner --}}
     <section class="max-w-max-container mx-auto px-margin-mobile md:px-gutter mb-section-py-mobile md:mb-section-py-desktop">
@@ -258,7 +235,7 @@
         <div class="relative z-10 px-margin-mobile md:px-gutter">
           <p class="font-label-caps text-label-caps text-white mb-4 tracking-[0.3em]">{{ $s['promo_eyebrow'] ?? __('LIMITED CAPSULE') }}</p>
           <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-6 md:mb-8">{{ $s['promo_title'] ?? __('The Diaspora Series') }}</h2>
-          <a href="{{ $heroCtaUrl }}" class="inline-block border border-white text-white font-button-text px-8 md:px-10 py-4 uppercase tracking-widest hover:bg-white hover:text-primary luxe-transition-standard luxe-scale-hover">
+          <a href="{{ $promoCtaUrl }}" class="inline-block border border-white text-white font-button-text px-8 md:px-10 py-4 uppercase tracking-widest hover:bg-white hover:text-primary luxe-transition-standard luxe-scale-hover">
             {{ $s['promo_cta'] ?? __('Explore Series') }}
           </a>
         </div>
