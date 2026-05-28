@@ -312,6 +312,7 @@ class PageController extends Controller
 
             $filters = $request->validate([
                 'q' => ['nullable', 'string', 'max:255'],
+                'featured' => ['nullable', 'boolean'],
                 'product_category_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['categories'] ?? []))),
                 'size_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['sizes'] ?? []))),
                 'color_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['colors'] ?? []))),
@@ -319,6 +320,7 @@ class PageController extends Controller
                 'price_max' => ['nullable', 'integer', 'min:0', 'max:999999999'],
                 'sort' => ['nullable', 'string', Rule::in(['newest', 'price_low', 'price_high'])],
             ]);
+            $filters['featured'] = $request->boolean('featured');
 
             if (! empty($filters['price_min']) && ! empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
                 throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
@@ -354,6 +356,10 @@ class PageController extends Controller
                         $builder->orWhere('overview', 'like', $like);
                     }
                 });
+            }
+
+            if (! empty($filters['featured'])) {
+                $query->where('is_special', true);
             }
 
             $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
@@ -433,6 +439,7 @@ class PageController extends Controller
     {
         return [
             'q' => '',
+            'featured' => false,
             'product_category_listing_option_id' => '',
             'size_id' => '',
             'color_id' => '',

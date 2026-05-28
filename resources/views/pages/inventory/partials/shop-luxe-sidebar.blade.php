@@ -14,9 +14,20 @@
 @endphp
 
 <form id="{{ $formId }}" method="get" action="{{ route('shop.index') }}" class="shop-luxe-filter-form space-y-12">
+  @if (! empty($filters['featured']))
+    <input type="hidden" name="featured" value="1" />
+  @endif
   @if ($formId === 'inventory-filter-form-mobile')
     <input type="hidden" name="sort" value="{{ $filters['sort'] ?? 'newest' }}" data-mobile-sort-field />
   @endif
+
+  <section>
+    <h3 class="font-label-caps text-label-caps text-primary mb-4 border-b border-outline-variant pb-2">{{ __('COLLECTION') }}</h3>
+    <a
+      href="{{ route('shop.index', ['featured' => 1]) }}"
+      class="mb-6 inline-block font-label-caps text-[11px] uppercase tracking-widest {{ ! empty($filters['featured']) ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary' }}"
+    >{{ __('Featured products') }}</a>
+  </section>
 
   <section>
     <h3 class="font-label-caps text-label-caps text-primary mb-6 border-b border-outline-variant pb-2">{{ __('CATEGORIES') }}</h3>

@@ -7,8 +7,11 @@
 @section('content')
   @php
     $activeFilterCount = collect([
-      'q', 'product_category_listing_option_id', 'price_min', 'price_max',
+      'q', 'featured', 'product_category_listing_option_id', 'price_min', 'price_max',
     ])->filter(function ($k) use ($filters) {
+        if ($k === 'featured') {
+            return ! empty($filters['featured']);
+        }
         $v = $filters[$k] ?? '';
         if ($v === null || $v === '') {
             return false;
@@ -24,8 +27,8 @@
   <main class="luxe-store pt-28 md:pt-32 pb-24 md:pb-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter luxe-geometric-bg bg-background text-on-background min-h-screen font-body-md">
     <div class="mb-10 md:mb-16 border-b border-outline-variant pb-6 md:pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
       <div>
-        <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ __('CURATED SERIES') }}</p>
-        <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase">{{ $sections['heading'] ?? ($page?->title ?? __('Collections')) }}</h1>
+        <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ ! empty($filters['featured']) ? __('FEATURED') : __('CURATED SERIES') }}</p>
+        <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase">{{ ! empty($filters['featured']) ? __('Featured products') : ($sections['heading'] ?? ($page?->title ?? __('Collections'))) }}</h1>
       </div>
       <div class="flex items-center gap-4 w-full md:w-auto">
         <span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">{{ __('SORT BY') }}</span>
@@ -76,13 +79,11 @@
               </a>
               <a href="{{ $vehicleUrl }}" class="block">
                 <h2 class="font-body-md text-body-md uppercase tracking-wider text-primary mb-1 line-clamp-2">{{ $vehicle->title ?? __('Product') }}</h2>
-                <p class="font-body-md text-on-surface-variant">
-                  @if (! is_null($vehicle->price))
-                    {{ format_currency($vehicle->price) }}
-                  @else
-                    {{ __('Price on request') }}
-                  @endif
-                </p>
+                @if (! is_null($vehicle->price))
+                  <span class="inline-block w-fit max-w-full bg-black text-secondary-fixed-dim font-body-md text-body-md px-2 py-1 leading-tight">{{ format_currency($vehicle->price) }}</span>
+                @else
+                  <span class="inline-block w-fit max-w-full bg-black text-secondary-fixed-dim font-body-md text-body-md px-2 py-1 leading-tight">{{ __('Price on request') }}</span>
+                @endif
               </a>
             </article>
           @empty

@@ -11,8 +11,10 @@
   $cartCount = \App\Support\Cart::count();
   $shopActive = request()->routeIs('shop.index', 'inventory.index', 'product.show', 'inventory.show');
   $cartActive = request()->routeIs('cart.*');
-  $navCategories = collect(\App\Support\VehicleListingCatalog::filterOptions()['categories'] ?? [])->take(4);
+  $navCategories = collect(\App\Support\VehicleListingCatalog::filterOptions()['categories'] ?? [])->take(3);
   $activeCategoryId = (int) request('product_category_listing_option_id', 0);
+  $featuredShopUrl = route('shop.index', ['featured' => 1]);
+  $featuredActive = $shopActive && request()->boolean('featured');
 @endphp
 @push('head')
 <style>
@@ -49,15 +51,19 @@
         </span>
       @endif
     </a>
-    <nav class="hidden md:flex gap-5 lg:gap-7 flex-wrap">
+    <nav class="hidden md:flex items-center gap-2.5 lg:gap-5 flex-wrap max-w-[min(52vw,28rem)] lg:max-w-none">
+      <a
+        href="{{ $featuredShopUrl }}"
+        class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
+      >{{ __('FEATURED') }}</a>
       @forelse ($navCategories as $cat)
         @php
-          $catActive = $shopActive && $activeCategoryId === (int) $cat->id;
+          $catActive = $shopActive && ! $featuredActive && $activeCategoryId === (int) $cat->id;
           $catUrl = route('shop.index', ['product_category_listing_option_id' => $cat->id]);
         @endphp
-        <a href="{{ $catUrl }}" class="font-body-md text-body-md tracking-widest py-1 whitespace-nowrap {{ $catActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ strtoupper($cat->value) }}</a>
+        <a href="{{ $catUrl }}" class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $catActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ strtoupper($cat->value) }}</a>
       @empty
-        <a href="{{ route('shop.index') }}" class="font-body-md text-body-md tracking-widest py-1 {{ $shopActive && $activeCategoryId === 0 ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('SHOP') }}</a>
+        <a href="{{ route('shop.index') }}" class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 {{ $shopActive && ! $featuredActive && $activeCategoryId === 0 ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('SHOP') }}</a>
       @endforelse
     </nav>
   </div>
@@ -105,41 +111,51 @@
     </header>
 
     <nav class="flex-1 overflow-y-auto px-5 py-2" data-luxe-mobile-nav>
-      <p class="pt-4 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Shop') }}</p>
+      <p class="pt-4 pb-1 text-[9px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Shop') }}</p>
       <ul class="divide-y divide-outline-variant">
+        <li>
+          <a
+            href="{{ $featuredShopUrl }}"
+            class="flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.1em] transition-colors {{ $featuredActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
+            data-luxe-mobile-nav-close-link
+          >
+            {{ __('Featured') }}
+            <x-icon name="chevron-right" class="w-4 h-4 opacity-40 shrink-0" />
+          </a>
+        </li>
         @forelse ($navCategories as $cat)
-          @php $catActive = $shopActive && $activeCategoryId === (int) $cat->id; @endphp
+          @php $catActive = $shopActive && ! $featuredActive && $activeCategoryId === (int) $cat->id; @endphp
           <li>
             <a
               href="{{ route('shop.index', ['product_category_listing_option_id' => $cat->id]) }}"
-              class="flex items-center justify-between py-4 text-base font-semibold uppercase tracking-[0.12em] transition-colors {{ $catActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
+              class="flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.1em] transition-colors {{ $catActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
               data-luxe-mobile-nav-close-link
             >
               {{ strtoupper($cat->value) }}
-              <x-icon name="chevron-right" class="w-5 h-5 opacity-40 shrink-0" />
+              <x-icon name="chevron-right" class="w-4 h-4 opacity-40 shrink-0" />
             </a>
           </li>
         @empty
           <li>
             <a
               href="{{ route('shop.index') }}"
-              class="flex items-center justify-between py-4 text-base font-semibold uppercase tracking-[0.12em] transition-colors {{ $shopActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
+              class="flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.1em] transition-colors {{ $shopActive && ! $featuredActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
               data-luxe-mobile-nav-close-link
             >
               {{ __('Shop all') }}
-              <x-icon name="chevron-right" class="w-5 h-5 opacity-40 shrink-0" />
+              <x-icon name="chevron-right" class="w-4 h-4 opacity-40 shrink-0" />
             </a>
           </li>
         @endforelse
       </ul>
 
-      <p class="pt-8 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('More') }}</p>
+      <p class="pt-6 pb-1 text-[9px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('More') }}</p>
       <ul class="divide-y divide-outline-variant">
         <li>
-          <a href="{{ route('about') }}" class="block py-4 text-sm font-medium uppercase tracking-[0.15em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('About us') }}</a>
+          <a href="{{ route('about') }}" class="block py-3 text-xs font-medium uppercase tracking-[0.12em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('About us') }}</a>
         </li>
         <li>
-          <a href="{{ route('contact') }}" class="block py-4 text-sm font-medium uppercase tracking-[0.15em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('Contact') }}</a>
+          <a href="{{ route('contact') }}" class="block py-3 text-xs font-medium uppercase tracking-[0.12em] text-on-surface-variant hover:text-[#3A3C94] transition-colors" data-luxe-mobile-nav-close-link>{{ __('Contact') }}</a>
         </li>
       </ul>
     </nav>

@@ -188,7 +188,6 @@
             <img src="{{ $img }}" alt="" class="w-full h-full object-cover luxe-transition-standard group-hover:scale-105" loading="lazy" />
             <div class="absolute inset-0 bg-black/15 group-hover:bg-black/25 luxe-transition-standard"></div>
             <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-              <p class="font-label-caps text-label-caps tracking-widest mb-1">{{ __('CATEGORY') }}</p>
               <h3 class="font-headline-sm text-headline-sm">{{ $cat->value }}</h3>
             </div>
           </a>
@@ -216,9 +215,11 @@
                 @endif
               </div>
               <h4 class="font-body-md text-body-md text-primary uppercase mb-1 line-clamp-2">{{ $vehicle->title }}</h4>
-              <p class="font-body-md text-body-md text-secondary-fixed-dim">
-                @if (! is_null($vehicle->price)){{ format_currency($vehicle->price) }}@else {{ __('Ask') }}@endif
-              </p>
+              @if (! is_null($vehicle->price))
+                <span class="inline-block w-fit max-w-full bg-black text-secondary-fixed-dim font-body-md text-body-md px-2 py-1 leading-tight">{{ format_currency($vehicle->price) }}</span>
+              @else
+                <span class="inline-block w-fit max-w-full bg-black text-secondary-fixed-dim font-body-md text-body-md px-2 py-1 leading-tight">{{ __('Ask') }}</span>
+              @endif
             </a>
           @endforeach
         </div>
