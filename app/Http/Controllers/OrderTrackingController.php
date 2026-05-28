@@ -39,6 +39,11 @@ class OrderTrackingController extends Controller
                 ->withErrors(['tracking_number' => __('Tracking number not found.')]);
         }
 
+        if (empty($order->tracking_number)) {
+            $order->tracking_number = Order::generateUniqueTrackingNumber();
+            $order->save();
+        }
+
         return view('pages.orders.track', [
             'title' => __('Track your order'),
             'order' => $order,

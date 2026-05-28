@@ -6,11 +6,7 @@
     $delivery = strtoupper(str_replace('_', ' ', (string) ($order?->delivery_status ?? 'processing')));
     $payment = strtoupper(str_replace('_', ' ', (string) ($order?->status ?? '')));
     $hasOrder = ! empty($order?->id);
-    $trackingNumber = trim((string) ($order?->tracking_number ?? ''));
-    if ($trackingNumber === '') {
-      $trackingNumber = trim((string) ($order?->order_number ?? ''));
-    }
-    $trackingUrl = trim((string) ($order?->tracking_url ?? ''));
+    $trackingNumber = trim((string) ($order?->tracking_number ?? '')) ?: trim((string) ($order?->order_number ?? ''));
   @endphp
 
   <div class="luxe-store bg-background text-on-background min-h-screen luxe-geometric-bg font-body-md">
@@ -55,12 +51,6 @@
             <div class="bg-surface-container-lowest border border-outline-variant p-6">
               <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ __('Tracking') }}</p>
               <p class="font-body-md text-body-md text-primary font-semibold">{{ $trackingNumber }}</p>
-              @if ($trackingUrl !== '')
-                <a href="{{ $trackingUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-label-caps text-label-caps uppercase border-b border-primary pb-1 mt-3 hover:text-secondary hover:border-secondary transition-all">
-                  {{ __('Open carrier tracking') }}
-                  <x-icon name="arrow-right" class="w-3.5 h-3.5" />
-                </a>
-              @endif
             </div>
 
             <div class="bg-surface-container-lowest border border-outline-variant p-6">

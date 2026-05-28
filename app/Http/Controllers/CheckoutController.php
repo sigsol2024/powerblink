@@ -225,6 +225,7 @@ class CheckoutController extends Controller
         return DB::transaction(function () use ($data, $subtotalKobo, $shippingKobo, $taxKobo, $totalKobo) {
             $order = Order::query()->create([
                 'order_number' => Order::generateOrderNumber(),
+                'tracking_number' => Order::generateUniqueTrackingNumber(),
                 'customer_name' => $data['customer_name'],
                 'customer_email' => $data['customer_email'],
                 'customer_phone' => $data['customer_phone'] ?? null,
