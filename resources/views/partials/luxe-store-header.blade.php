@@ -40,18 +40,21 @@
   }
 </style>
 @endpush
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter py-4 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store">
-  <div class="flex items-center gap-4 md:gap-8 min-w-0">
-    <a href="{{ route('home') }}" class="flex min-w-0 shrink items-center">
+<header class="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-outline-variant luxe-store px-margin-mobile md:px-gutter py-4">
+  <div class="max-w-max-container mx-auto w-full grid grid-cols-2 md:grid-cols-3 items-center gap-4">
+    <div class="min-w-0 flex items-center">
+      <a href="{{ route('home') }}" class="flex min-w-0 shrink items-center">
       @if ($logoPath !== '')
-        <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-11 w-auto max-w-[220px] object-contain sm:h-12 md:max-w-[260px]" />
+        <img src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}" alt="{{ $brandName }}" class="h-12 w-auto max-w-[240px] object-contain sm:h-14 md:max-w-[300px]" />
       @else
         <span class="font-display-lg text-[22px] sm:text-display-lg-mobile md:text-display-lg text-primary uppercase tracking-tighter truncate">
           {{ strtoupper($brandName) }}
         </span>
       @endif
-    </a>
-    <nav class="hidden md:flex items-center gap-2 lg:gap-4 flex-wrap min-w-0">
+      </a>
+    </div>
+
+    <nav class="hidden md:flex items-center justify-center gap-2 lg:gap-4 flex-wrap min-w-0">
       <a
         href="{{ $featuredShopUrl }}"
         class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
@@ -66,8 +69,8 @@
         <a href="{{ route('shop.index') }}" class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 {{ $shopActive && ! $featuredActive && $activeCategoryId === 0 ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}">{{ __('SHOP') }}</a>
       @endforelse
     </nav>
-  </div>
-  <div class="flex items-center gap-4 md:gap-6 shrink-0">
+
+    <div class="flex items-center justify-end gap-4 md:gap-6 shrink-0">
     <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center justify-center bg-black text-white px-5 py-2 font-button-text text-button-text uppercase tracking-[0.2em] hover:opacity-90 transition-opacity" aria-label="{{ __('Shop now') }}">
       {{ __('Shop now') }}
     </a>
@@ -79,6 +82,7 @@
       <span class="inline-flex" data-luxe-mobile-nav-icon-menu><x-icon name="menu" class="w-7 h-7" /></span>
       <span class="hidden inline-flex" data-luxe-mobile-nav-icon-close><x-icon name="close" class="w-7 h-7" /></span>
     </button>
+    </div>
   </div>
 </header>
 
