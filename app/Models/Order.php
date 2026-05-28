@@ -27,6 +27,9 @@ class Order extends Model
         'currency',
         'status',
         'delivery_status',
+        'tracking_number',
+        'tracking_url',
+        'delivered_at',
         'stock_deducted_at',
         'customer_notified_at',
         'admin_notified_at',
@@ -42,6 +45,7 @@ class Order extends Model
             'stock_deducted_at' => 'datetime',
             'customer_notified_at' => 'datetime',
             'admin_notified_at' => 'datetime',
+            'delivered_at' => 'datetime',
         ];
     }
 

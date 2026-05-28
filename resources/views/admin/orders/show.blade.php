@@ -89,6 +89,14 @@
                 <option value="{{ $dst }}" @selected(($order->delivery_status ?? 'processing') === $dst)>{{ ucfirst(str_replace('_', ' ', $dst)) }}</option>
               @endforeach
             </select>
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Tracking number (optional)') }}</label>
+              <input type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}" class="w-full bg-surface-container-low border-outline-variant border py-3 px-4 font-body-md text-sm focus:ring-0 focus:border-primary" placeholder="e.g. DHL-123456789" />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Tracking URL (optional)') }}</label>
+              <input type="text" name="tracking_url" value="{{ old('tracking_url', $order->tracking_url) }}" class="w-full bg-surface-container-low border-outline-variant border py-3 px-4 font-body-md text-sm focus:ring-0 focus:border-primary" placeholder="https://..." />
+            </div>
             <button type="submit" class="admin-luxe-btn-primary w-full">{{ __('Save status') }}</button>
           </form>
         </div>

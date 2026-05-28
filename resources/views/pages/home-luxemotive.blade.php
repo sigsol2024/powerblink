@@ -109,7 +109,14 @@
                       @endphp
                       @php $productUrl = route('product.show', ['slug' => $vehicle->slug]); @endphp
                       <div class="w-full shrink-0 relative block">
-                        <img src="{{ $img }}" alt="{{ $vehicle->title }}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none" loading="lazy" />
+                        <img
+                          src="{{ $img }}"
+                          alt="{{ $vehicle->title }}"
+                          class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+                          loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                          decoding="async"
+                          @if($loop->first) fetchpriority="high" @endif
+                        />
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/60 via-black/15 to-transparent">
                           <p class="font-label-caps text-label-caps text-white/90 tracking-widest">{{ $vehicle->categoryOption?->value ?: __('Collection') }}</p>

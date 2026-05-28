@@ -27,7 +27,10 @@ class OrderTrackingController extends Controller
 
         $order = Order::query()
             ->with(['items', 'payment'])
-            ->where('order_number', $trackingNumber)
+            ->where(function ($q) use ($trackingNumber) {
+                $q->where('order_number', $trackingNumber)
+                    ->orWhere('tracking_number', $trackingNumber);
+            })
             ->first();
 
         if (! $order) {

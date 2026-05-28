@@ -24,6 +24,8 @@
         class="w-full h-full object-cover transition-transform duration-700 ease-out"
         data-vehicle-detail-main
         data-vehicle-detail-main-img
+        decoding="async"
+        fetchpriority="high"
         draggable="false"
       />
       <div class="absolute inset-0 hidden" data-vehicle-detail-main-video>
@@ -50,7 +52,7 @@
           data-index="{{ $index }}"
           data-full="{{ $url }}"
         >
-          <img src="{{ $url }}" alt="" class="w-full h-full object-cover" draggable="false" />
+          <img src="{{ $url }}" alt="" class="w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
         </button>
       @endforeach
       @if ($videoUrl !== '')

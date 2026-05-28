@@ -6,6 +6,11 @@
     $delivery = strtoupper(str_replace('_', ' ', (string) ($order?->delivery_status ?? 'processing')));
     $payment = strtoupper(str_replace('_', ' ', (string) ($order?->status ?? '')));
     $hasOrder = ! empty($order?->id);
+    $trackingNumber = trim((string) ($order?->tracking_number ?? ''));
+    if ($trackingNumber === '') {
+      $trackingNumber = trim((string) ($order?->order_number ?? ''));
+    }
+    $trackingUrl = trim((string) ($order?->tracking_url ?? ''));
   @endphp
 
   <div class="luxe-store bg-background text-on-background min-h-screen luxe-geometric-bg font-body-md">
@@ -13,7 +18,7 @@
       <div class="text-center mb-10">
         <span class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase block mb-4">{{ __('Order Tracking') }}</span>
         <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">{{ $title ?? __('Track your order') }}</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">{{ __('Enter your tracking number (order number) to see payment and delivery status.') }}</p>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">{{ __('Enter your order number or shipping tracking number to see payment and delivery status.') }}</p>
       </div>
 
       <form method="post" action="{{ route('orders.track') }}" class="max-w-xl mx-auto bg-surface-container-low border border-outline-variant p-7 md:p-9 space-y-4">
@@ -45,6 +50,17 @@
               <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ __('Order') }}</p>
               <p class="font-headline-md text-headline-md text-primary">#{{ $order->order_number }}</p>
               <p class="mt-2 font-body-md text-body-md text-on-surface-variant">{{ __('Placed') }}: {{ $order->created_at?->format('M j, Y') }}</p>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant p-6">
+              <p class="font-label-caps text-label-caps text-on-surface-variant mb-2">{{ __('Tracking') }}</p>
+              <p class="font-body-md text-body-md text-primary font-semibold">{{ $trackingNumber }}</p>
+              @if ($trackingUrl !== '')
+                <a href="{{ $trackingUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-label-caps text-label-caps uppercase border-b border-primary pb-1 mt-3 hover:text-secondary hover:border-secondary transition-all">
+                  {{ __('Open carrier tracking') }}
+                  <x-icon name="arrow-right" class="w-3.5 h-3.5" />
+                </a>
+              @endif
             </div>
 
             <div class="bg-surface-container-lowest border border-outline-variant p-6">

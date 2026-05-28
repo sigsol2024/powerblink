@@ -48,11 +48,15 @@ class AdminOrderController extends Controller
         $data = $request->validate([
             'status' => ['required', 'in:pending_payment,paid,failed,cancelled,fulfilled,refunded'],
             'delivery_status' => ['nullable', 'in:processing,packed,dispatched,in_transit,delivered,failed,returned,cancelled'],
+            'tracking_number' => ['nullable', 'string', 'max:64'],
+            'tracking_url' => ['nullable', 'string', 'max:2048'],
         ]);
 
         $order->update([
             'status' => $data['status'],
             'delivery_status' => $data['delivery_status'] ?? $order->delivery_status ?? 'processing',
+            'tracking_number' => isset($data['tracking_number']) ? trim((string) $data['tracking_number']) : $order->tracking_number,
+            'tracking_url' => isset($data['tracking_url']) ? trim((string) $data['tracking_url']) : $order->tracking_url,
         ]);
 
         return back()->with('status', __('Order updated.'));
