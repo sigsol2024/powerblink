@@ -7,6 +7,17 @@
     $payment = strtoupper(str_replace('_', ' ', (string) ($order?->status ?? '')));
     $hasOrder = ! empty($order?->id);
     $trackingNumber = trim((string) ($order?->tracking_number ?? '')) ?: trim((string) ($order?->order_number ?? ''));
+
+    $paymentKey = (string) ($order?->status ?? '');
+    $deliveryKey = (string) ($order?->delivery_status ?? 'processing');
+    $tone = function (string $key): string {
+        return match ($key) {
+            'paid', 'fulfilled', 'delivered' => 'text-emerald-700',
+            'pending_payment', 'pending', 'processing', 'packed', 'dispatched', 'in_transit' => 'text-amber-700',
+            'failed', 'cancelled', 'refunded', 'returned' => 'text-red-700',
+            default => 'text-on-surface-variant',
+        };
+    };
   @endphp
 
   <div class="luxe-store bg-background text-on-background min-h-screen luxe-geometric-bg font-body-md">
@@ -17,27 +28,29 @@
         <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">{{ __('Enter your order number or shipping tracking number to see payment and delivery status.') }}</p>
       </div>
 
-      <form method="post" action="{{ route('orders.track') }}" class="max-w-xl mx-auto bg-surface-container-low border border-outline-variant p-7 md:p-9 space-y-4">
-        @csrf
-        <div>
-          <label for="tracking_number" class="block font-label-caps text-label-caps mb-2 text-on-surface-variant">{{ __('Tracking number') }}</label>
-          <input
-            type="text"
-            name="tracking_number"
-            id="tracking_number"
-            value="{{ old('tracking_number') }}"
-            required
-            placeholder="VD-XXXXXXXX"
-            class="w-full border-0 border-b border-outline-variant bg-transparent px-0 py-3 font-body-md text-body-md placeholder:text-outline-variant focus:ring-0"
-          />
-          @error('tracking_number')
-            <p class="text-error text-sm mt-2">{{ $message }}</p>
-          @enderror
-        </div>
-        <button type="submit" class="bg-primary text-on-primary px-10 py-4 font-button-text text-button-text uppercase tracking-widest hover:scale-[1.02] transition-transform w-full md:w-auto">
-          {{ __('Track order') }}
-        </button>
-      </form>
+      @if (! $hasOrder)
+        <form method="post" action="{{ route('orders.track') }}" class="max-w-xl mx-auto bg-surface-container-low border border-outline-variant p-7 md:p-9 space-y-4">
+          @csrf
+          <div>
+            <label for="tracking_number" class="block font-label-caps text-label-caps mb-2 text-on-surface-variant">{{ __('Tracking number') }}</label>
+            <input
+              type="text"
+              name="tracking_number"
+              id="tracking_number"
+              value="{{ old('tracking_number') }}"
+              required
+              placeholder="TRK-XXXXXXXXXX / VD-XXXXXXXX"
+              class="w-full border-0 border-b border-outline-variant bg-transparent px-0 py-3 font-body-md text-body-md placeholder:text-outline-variant focus:ring-0"
+            />
+            @error('tracking_number')
+              <p class="text-error text-sm mt-2">{{ $message }}</p>
+            @enderror
+          </div>
+          <button type="submit" class="bg-primary text-on-primary px-10 py-4 font-button-text text-button-text uppercase tracking-widest hover:scale-[1.02] transition-transform w-full md:w-auto">
+            {{ __('Track order') }}
+          </button>
+        </form>
+      @endif
 
       @if ($hasOrder)
         <div class="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
@@ -56,8 +69,14 @@
             <div class="bg-surface-container-lowest border border-outline-variant p-6">
               <p class="font-label-caps text-label-caps text-on-surface-variant mb-3">{{ __('Status') }}</p>
               <div class="space-y-2">
-                <p class="font-body-md text-body-md">{{ __('Payment') }}: <span class="font-semibold text-primary">{{ $payment }}</span></p>
-                <p class="font-body-md text-body-md">{{ __('Delivery') }}: <span class="font-semibold text-primary">{{ $delivery }}</span></p>
+                <p class="font-body-md text-body-md">
+                  {{ __('Payment') }}:
+                  <span class="font-semibold {{ $tone($paymentKey) }}">{{ $payment }}</span>
+                </p>
+                <p class="font-body-md text-body-md">
+                  {{ __('Delivery') }}:
+                  <span class="font-semibold {{ $tone($deliveryKey) }}">{{ $delivery }}</span>
+                </p>
               </div>
             </div>
 
@@ -94,6 +113,12 @@
               @endforeach
             </div>
           </div>
+        </div>
+
+        <div class="mt-14 text-center">
+          <a href="{{ route('orders.track.index') }}" class="inline-flex items-center justify-center bg-primary text-on-primary px-10 py-4 font-button-text text-button-text uppercase tracking-widest hover:scale-[1.02] transition-transform">
+            {{ __('Track another order') }}
+          </a>
         </div>
       @endif
     </div>
