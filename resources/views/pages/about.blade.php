@@ -18,6 +18,13 @@
     opacity: 0.03;
     pointer-events: none;
   }
+
+  /* Hero / editorial images: center crop on all viewports (not Tailwind-dependent). */
+  .about-page-hero__image,
+  .about-page-media__image {
+    object-fit: cover;
+    object-position: center center;
+  }
 </style>
 @endpush
 
@@ -25,9 +32,13 @@
   <div class="relative overflow-x-hidden">
     <div class="absolute inset-0 luxe-natural-pattern"></div>
 
-    <section class="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
-      <img alt="" class="w-full h-full object-cover" src="{{ $heroImg }}" />
-      <div class="absolute inset-0 bg-black/20 flex flex-col justify-end pb-16 md:pb-24">
+    <section class="relative w-full h-52 sm:h-64 md:h-[75vh] lg:h-[80vh] overflow-hidden">
+      <img
+        alt=""
+        class="about-page-hero__image absolute inset-0 w-full h-full"
+        src="{{ $heroImg }}"
+      />
+      <div class="absolute inset-0 z-[1] bg-black/20 flex flex-col justify-end pb-8 sm:pb-10 md:pb-24">
         <div class="max-w-max-container mx-auto px-gutter w-full relative z-10">
           <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface max-w-3xl leading-none">
             {{ $s['hero_title'] ?? __('The Hands Behind the Heritage') }}
@@ -67,7 +78,7 @@
       <div class="max-w-max-container mx-auto px-gutter">
         <div class="flex flex-col md:flex-row gap-12 items-center">
           <div class="w-full md:w-1/2 aspect-[4/5] overflow-hidden grayscale contrast-125">
-            <img alt="" class="w-full h-full object-cover" src="{{ $artisanImg }}" />
+            <img alt="" class="about-page-media__image w-full h-full" src="{{ $artisanImg }}" />
           </div>
           <div class="w-full md:w-1/2 md:pl-8 lg:pl-16">
             <span class="font-label-caps text-label-caps text-secondary tracking-widest uppercase mb-4 block">{{ $s['artisan_kicker'] ?? '' }}</span>
