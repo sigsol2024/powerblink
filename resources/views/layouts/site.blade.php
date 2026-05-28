@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth site-is-loading">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,8 +7,11 @@
     @php
       $site = $site ?? [];
       $siteDisplayName = \App\Support\SiteBrand::displayName($site);
-      $loaderLogoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
     @endphp
+    <style>
+      html.site-is-loading { background: #fff; }
+      #site-page-loader { position: fixed; inset: 0; z-index: 99999; background: #fff; }
+    </style>
     <title>@if(!empty($title ?? null)){{ $title }} | @endif{{ $siteDisplayName }}</title>
     @if (!empty($metaDescription))
       <meta name="description" content="{{ $metaDescription }}" />
@@ -54,6 +57,7 @@
     $luxeShowCartWidget = ! request()->routeIs('cart.*', 'checkout.*', 'order.placed', 'order.confirmed');
   @endphp
   <body class="bg-background text-on-background font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-fixed luxe-store {{ $bodyClass ?? '' }}">
+    @include('partials.site-page-loader')
     @include('partials.luxe-store-header')
     @if ($luxeShowCartWidget)
       @include('partials.luxe-cart-widget')
