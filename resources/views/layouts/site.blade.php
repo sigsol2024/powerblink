@@ -8,10 +8,7 @@
       $site = $site ?? [];
       $siteDisplayName = \App\Support\SiteBrand::displayName($site);
     @endphp
-    <style>
-      html.site-is-loading { background: #fff; }
-      #site-page-loader { position: fixed; inset: 0; z-index: 99999; background: #fff; }
-    </style>
+    @include('partials.site-page-loader-styles')
     <title>@if(!empty($title ?? null)){{ $title }} | @endif{{ $siteDisplayName }}</title>
     @if (!empty($metaDescription))
       <meta name="description" content="{{ $metaDescription }}" />

@@ -70,7 +70,7 @@
       @endforelse
     </nav>
 
-    <div class="flex items-center justify-end gap-4 md:gap-6 shrink-0">
+    <div class="ml-auto flex items-center justify-end gap-3 sm:gap-4 md:gap-6 shrink-0">
     <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center justify-center bg-black text-white px-5 py-2 font-button-text text-button-text uppercase tracking-[0.2em] hover:opacity-90 transition-opacity" aria-label="{{ __('Shop now') }}">
       {{ __('Shop now') }}
     </a>
