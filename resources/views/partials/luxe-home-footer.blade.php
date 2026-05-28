@@ -3,7 +3,7 @@
   $brandName = \App\Support\SiteBrand::displayName($site);
   $tagline = trim((string) ($site['footer_tagline'] ?? ''));
   if ($tagline === '') {
-    $tagline = __('THE PINNNACLE OF AFRICAN ARTISANSHIP AND GLOBAL LUXURY DESIGN.');
+    $tagline = __('THE PINNACLE OF AFRICAN ARTISANSHIP AND GLOBAL LUXURY DESIGN.');
   }
   $newsletterEnabled = (string) ($site['newsletter_enabled'] ?? '0') === '1';
   $newsletterNote = trim((string) ($site['newsletter_note'] ?? ''));

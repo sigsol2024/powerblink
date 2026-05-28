@@ -26,6 +26,7 @@ class Order extends Model
         'total',
         'currency',
         'status',
+        'delivery_status',
         'stock_deducted_at',
         'customer_notified_at',
         'admin_notified_at',

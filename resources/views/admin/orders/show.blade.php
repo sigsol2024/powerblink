@@ -84,6 +84,11 @@
                 <option value="{{ $st }}" @selected($order->status === $st)>{{ ucfirst(str_replace('_', ' ', $st)) }}</option>
               @endforeach
             </select>
+            <select name="delivery_status" class="w-full bg-surface-container-low border-outline-variant border py-3 px-4 font-body-md text-sm focus:ring-0 focus:border-primary">
+              @foreach (['processing', 'packed', 'dispatched', 'in_transit', 'delivered', 'failed', 'returned', 'cancelled'] as $dst)
+                <option value="{{ $dst }}" @selected(($order->delivery_status ?? 'processing') === $dst)>{{ ucfirst(str_replace('_', ' ', $dst)) }}</option>
+              @endforeach
+            </select>
             <button type="submit" class="admin-luxe-btn-primary w-full">{{ __('Save status') }}</button>
           </form>
         </div>

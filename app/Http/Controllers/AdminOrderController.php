@@ -47,10 +47,14 @@ class AdminOrderController extends Controller
     {
         $data = $request->validate([
             'status' => ['required', 'in:pending_payment,paid,failed,cancelled,fulfilled,refunded'],
+            'delivery_status' => ['nullable', 'in:processing,packed,dispatched,in_transit,delivered,failed,returned,cancelled'],
         ]);
 
-        $order->update(['status' => $data['status']]);
+        $order->update([
+            'status' => $data['status'],
+            'delivery_status' => $data['delivery_status'] ?? $order->delivery_status ?? 'processing',
+        ]);
 
-        return back()->with('status', __('Order status updated.'));
+        return back()->with('status', __('Order updated.'));
     }
 }

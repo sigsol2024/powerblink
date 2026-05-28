@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderLookupController;
+use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
@@ -90,6 +91,8 @@ Route::get('/payment/paystack/callback', [CheckoutController::class, 'paystackCa
 Route::post('/payment/paystack/webhook', PaystackWebhookController::class)->name('payment.paystack.webhook');
 Route::get('/orders/lookup', [OrderLookupController::class, 'index'])->name('orders.lookup.index');
 Route::post('/orders/lookup', [OrderLookupController::class, 'lookup'])->middleware('throttle:10,1')->name('orders.lookup');
+Route::get('/orders/track', [OrderTrackingController::class, 'index'])->name('orders.track.index');
+Route::post('/orders/track', [OrderTrackingController::class, 'track'])->middleware('throttle:10,1')->name('orders.track');
 Route::get('/order/confirmed/{order}', [CheckoutController::class, 'confirmed'])->name('order.confirmed');
 Route::get('/order/placed/{order}', [CheckoutController::class, 'placed'])->name('order.placed');
 Route::get('/order/{order}', [CheckoutController::class, 'show'])->name('order.show');

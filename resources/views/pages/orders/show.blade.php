@@ -65,6 +65,10 @@
           <p class="text-sm">{{ __('Status') }}: <span class="font-bold uppercase">{{ str_replace('_', ' ', $order->status) }}</span></p>
           <p class="text-sm mt-2">{{ __('Total') }}: <span class="font-bold">{{ \App\Support\Money::formatKobo($order->total) }}</span></p>
         </div>
+        <div class="bg-surface-container-lowest border border-outline-variant p-6">
+          <h2 class="font-label-caps text-label-caps text-on-surface-variant mb-4">{{ __('Delivery') }}</h2>
+          <p class="text-sm">{{ __('Status') }}: <span class="font-bold uppercase">{{ str_replace('_', ' ', (string) ($order->delivery_status ?? 'processing')) }}</span></p>
+        </div>
       </div>
 
       <div class="bg-white border border-[#cfc4c5] divide-y divide-[#cfc4c5]">

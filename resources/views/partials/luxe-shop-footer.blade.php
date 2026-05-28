@@ -17,7 +17,6 @@
       <p class="font-label-caps text-label-caps text-primary mb-2">{{ __('ASSISTANCE') }}</p>
       <a href="{{ route('about') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">{{ __('ABOUT US') }}</a>
       <a href="{{ route('contact') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">{{ __('CONTACT US') }}</a>
-      <a href="{{ route('faq') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">{{ __('FAQ') }}</a>
     </div>
   </div>
   <div class="mt-12 md:mt-0 md:text-right">

@@ -10,6 +10,9 @@
   $heroBg = \App\Support\PlaceholderMedia::url($s['hero_image'] ?? 'asset/images/media/home-hero-main.jpg');
   $heroCtaHref = $s['hero_cta_href'] ?? '/shop';
   $heroCtaUrl = \Illuminate\Support\Str::startsWith($heroCtaHref, ['http://', 'https://']) ? $heroCtaHref : url($heroCtaHref);
+  if (trim(strtoupper((string) ($s['hero_cta_text'] ?? ''))) === 'VIEW ORDER') {
+    $heroCtaUrl = route('orders.track.index');
+  }
   $promoBg = \App\Support\PlaceholderMedia::url($s['dealer_cta_bg'] ?? 'asset/images/media/home-cta-left.jpg');
   $promoCtaHref = $s['promo_cta_href'] ?? '/shop';
   $promoCtaUrl = \Illuminate\Support\Str::startsWith($promoCtaHref, ['http://', 'https://']) ? $promoCtaHref : url($promoCtaHref);

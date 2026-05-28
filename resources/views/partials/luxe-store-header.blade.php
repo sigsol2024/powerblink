@@ -119,7 +119,7 @@
             class="flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.1em] transition-colors {{ $featuredActive ? 'text-[#3A3C94]' : 'text-on-surface hover:text-[#3A3C94]' }}"
             data-luxe-mobile-nav-close-link
           >
-            {{ __('Featured items') }}
+            {{ __('FEATURED ITEMS') }}
             <x-icon name="chevron-right" class="w-4 h-4 opacity-40 shrink-0" />
           </a>
         </li>
