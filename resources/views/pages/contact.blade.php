@@ -16,7 +16,6 @@
 
   $instagramUrl = trim($s['social_instagram_url'] ?? '') ?: trim($site['social_instagram'] ?? '');
   $twitterUrl = trim($s['social_twitter_url'] ?? '');
-  $atmosphericImg = \App\Support\VehicleImageUrl::url($s['atmospheric_image'] ?? 'asset/images/media/contact-map.jpg');
 @endphp
 
 @push('head')
@@ -30,12 +29,6 @@
 @endpush
 
 @section('content')
-  @if(session('status'))
-    <div class="max-w-max-container mx-auto px-gutter pt-8">
-      <div class="p-4 bg-surface-container text-on-surface border border-outline-variant font-body-md text-body-md">{{ session('status') }}</div>
-    </div>
-  @endif
-
   @if($errors->any())
     <div class="max-w-max-container mx-auto px-gutter pt-8">
       <div class="p-4 bg-error-container text-on-error-container border border-error font-body-md text-body-md">
@@ -111,7 +104,28 @@
       @endif
     </div>
 
-    <div class="lg:col-span-8 bg-surface-container-low p-8 md:p-12">
+    <div class="lg:col-span-8 bg-surface-container-low p-8 md:p-12" id="contact-form-panel">
+      @if(session('status') && ! $errors->any())
+        <div id="contact-success" class="py-6 md:py-10 text-center" tabindex="-1">
+          <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-outline-variant bg-surface text-primary">
+            <x-icon name="check" class="h-8 w-8" />
+          </div>
+          <h2 class="font-headline-md text-headline-md text-primary mb-4">{{ __('Message sent') }}</h2>
+          <p class="mx-auto mb-3 max-w-lg font-body-md text-body-md leading-relaxed text-on-surface">
+            {{ session('status') }}
+          </p>
+          <p class="mx-auto mb-10 max-w-lg font-body-md text-body-md leading-relaxed text-on-surface-variant">
+            {{ __('We appreciate you taking the time to write to us. A member of our sales team will review your inquiry and respond as soon as possible.') }}
+          </p>
+          <a href="{{ route('contact') }}" class="inline-block border border-primary px-8 py-3 font-button-text text-button-text uppercase tracking-widest text-primary transition-colors duration-300 hover:bg-primary hover:text-on-primary">
+            {{ __('Send another message') }}
+          </a>
+        </div>
+      @else
+      <div id="contact-form-errors" class="hidden mb-6 p-4 border border-error bg-error-container text-on-error-container font-body-md text-body-md" role="alert" aria-live="polite">
+        <ul class="list-disc pl-5 space-y-1" data-contact-error-list></ul>
+      </div>
+      <div id="contact-form-wrap">
       <form class="space-y-8" method="post" action="{{ route('contact.submit') }}" id="contact-form">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -143,17 +157,7 @@
           </button>
         </div>
       </form>
-    </div>
-  </section>
-
-  <section class="max-w-max-container mx-auto px-gutter pb-section-py-mobile md:pb-section-py-desktop">
-    <div class="h-[400px] overflow-hidden relative group">
-      <img alt="" class="w-full h-full object-cover grayscale opacity-90 transition-transform duration-700 group-hover:scale-105" src="{{ $atmosphericImg }}" />
-      <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
-      @if(trim($s['atmospheric_quote'] ?? '') !== '')
-        <div class="absolute inset-0 flex items-center justify-center p-8">
-          <p class="text-center font-headline-md text-headline-md italic text-on-primary max-w-xl">{{ $s['atmospheric_quote'] }}</p>
-        </div>
+      </div>
       @endif
     </div>
   </section>
@@ -162,14 +166,135 @@
 @push('scripts')
 <script>
   (function () {
+    const success = document.getElementById('contact-success');
+    if (success) {
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      success.focus({ preventScroll: true });
+    }
+
     const form = document.getElementById('contact-form');
-    if (!form || form.dataset.bound === '1') return;
+    const panel = document.getElementById('contact-form-panel');
+    const formWrap = document.getElementById('contact-form-wrap');
+    const errorBox = document.getElementById('contact-form-errors');
+    const errorList = errorBox ? errorBox.querySelector('[data-contact-error-list]') : null;
+    const submitBtn = document.getElementById('contact-submit');
+    const submitLabel = @json(__('Send Inquiry'));
+    const csrf = document.querySelector('meta[name="csrf-token"]');
+
+    if (!form || !panel || form.dataset.bound === '1') return;
     form.dataset.bound = '1';
-    form.addEventListener('submit', function () {
-      const btn = document.getElementById('contact-submit');
-      if (!btn || btn.disabled) return;
-      btn.textContent = @json(__('Sending...'));
-      btn.disabled = true;
+
+    function showErrors(messages) {
+      if (!errorBox || !errorList) return;
+      errorList.innerHTML = '';
+      messages.forEach(function (msg) {
+        const li = document.createElement('li');
+        li.textContent = msg;
+        errorList.appendChild(li);
+      });
+      errorBox.classList.remove('hidden');
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearErrors() {
+      if (!errorBox || !errorList) return;
+      errorList.innerHTML = '';
+      errorBox.classList.add('hidden');
+    }
+
+    function showSuccess(data) {
+      const existing = document.getElementById('contact-success');
+      if (existing) existing.remove();
+
+      const wrap = document.createElement('div');
+      wrap.id = 'contact-success';
+      wrap.className = 'py-6 md:py-10 text-center';
+      wrap.tabIndex = -1;
+      wrap.innerHTML =
+        '<div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-outline-variant bg-surface text-primary">' +
+          '<svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />' +
+          '</svg>' +
+        '</div>' +
+        '<h2 class="font-headline-md text-headline-md text-primary mb-4"></h2>' +
+        '<p class="mx-auto mb-3 max-w-lg font-body-md text-body-md leading-relaxed text-on-surface contact-success-message"></p>' +
+        '<p class="mx-auto mb-10 max-w-lg font-body-md text-body-md leading-relaxed text-on-surface-variant contact-success-detail"></p>' +
+        '<button type="button" class="inline-block border border-primary px-8 py-3 font-button-text text-button-text uppercase tracking-widest text-primary transition-colors duration-300 hover:bg-primary hover:text-on-primary contact-success-reset"></button>';
+
+      wrap.querySelector('h2').textContent = data.title || @json(__('Message sent'));
+      wrap.querySelector('.contact-success-message').textContent = data.message || '';
+      wrap.querySelector('.contact-success-detail').textContent = data.detail || '';
+      wrap.querySelector('.contact-success-reset').textContent = data.sendAnother || @json(__('Send another message'));
+
+      if (formWrap) formWrap.classList.add('hidden');
+      if (errorBox) errorBox.classList.add('hidden');
+      panel.appendChild(wrap);
+
+      wrap.querySelector('.contact-success-reset').addEventListener('click', function () {
+        wrap.remove();
+        if (formWrap) {
+          formWrap.classList.remove('hidden');
+          form.reset();
+        }
+        clearErrors();
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitLabel;
+        }
+      });
+
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      wrap.focus({ preventScroll: true });
+    }
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      clearErrors();
+
+      if (!submitBtn || submitBtn.disabled) return;
+
+      submitBtn.textContent = @json(__('Sending...'));
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': csrf ? csrf.content : '',
+          },
+          body: new FormData(form),
+        });
+
+        const data = await response.json().catch(function () { return {}; });
+
+        if (response.ok) {
+          showSuccess(data);
+          return;
+        }
+
+        const messages = [];
+        if (data.errors) {
+          Object.keys(data.errors).forEach(function (key) {
+            (data.errors[key] || []).forEach(function (msg) { messages.push(msg); });
+          });
+        }
+        if (!messages.length && data.message) {
+          messages.push(data.message);
+        }
+        if (!messages.length) {
+          messages.push(@json(__('Could not send message. Please try again later.')));
+        }
+        showErrors(messages);
+      } catch (err) {
+        showErrors([@json(__('Could not send message. Please check your connection and try again.'))]);
+      } finally {
+        if (submitBtn && document.getElementById('contact-form-wrap') && !document.getElementById('contact-form-wrap').classList.contains('hidden')) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitLabel;
+        }
+      }
     });
   })();
 </script>

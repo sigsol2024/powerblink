@@ -54,7 +54,7 @@
       </a>
     </div>
 
-    <nav class="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8 min-w-0">
+    <nav class="hidden xl:flex flex-1 items-center justify-center gap-5 xl:gap-6 min-w-0">
       <a
         href="{{ $featuredShopUrl }}"
         class="text-[10px] lg:text-xs xl:text-sm tracking-wide lg:tracking-widest py-1 whitespace-nowrap {{ $featuredActive ? 'text-primary font-bold border-b border-primary' : 'text-on-surface-variant hover:text-primary transition-colors duration-300' }}"
@@ -71,14 +71,14 @@
     </nav>
 
     <div class="ml-auto flex items-center justify-end gap-3 sm:gap-4 md:gap-6 shrink-0">
-    <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center justify-center bg-black text-white px-5 py-2 font-button-text text-button-text uppercase tracking-[0.2em] hover:opacity-90 transition-opacity" aria-label="{{ __('Shop now') }}">
+    <a href="{{ route('shop.index') }}" class="hidden xl:inline-flex items-center justify-center bg-black text-white px-5 py-2 font-button-text text-button-text uppercase tracking-[0.2em] hover:opacity-90 transition-opacity" aria-label="{{ __('Shop now') }}">
       {{ __('Shop now') }}
     </a>
     <button type="button" class="text-primary hover:scale-110 transition-transform relative inline-flex items-center justify-center {{ $cartActive ? 'font-bold' : '' }}" aria-label="{{ __('Bag') }}" data-cart-toggle>
       <x-icon name="shopping-bag" class="w-6 h-6" />
       <span class="luxe-cart-badge absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}" data-cart-count-badge>{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
     </button>
-    <button type="button" class="text-primary md:hidden inline-flex items-center justify-center w-10 h-10 -mr-1" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav-drawer" aria-label="{{ __('Menu') }}">
+    <button type="button" class="text-primary xl:hidden inline-flex items-center justify-center w-10 h-10 -mr-1" data-luxe-mobile-nav-toggle aria-expanded="false" aria-controls="luxe-mobile-nav-drawer" aria-label="{{ __('Menu') }}">
       <span class="inline-flex" data-luxe-mobile-nav-icon-menu><x-icon name="menu" class="w-7 h-7" /></span>
       <span class="hidden inline-flex" data-luxe-mobile-nav-icon-close><x-icon name="close" class="w-7 h-7" /></span>
     </button>
@@ -89,7 +89,7 @@
 {{-- Mobile navigation sidebar (left) --}}
 <div
   id="luxe-mobile-nav-drawer"
-  class="luxe-store fixed inset-0 z-[55] md:hidden hidden"
+  class="luxe-store fixed inset-0 z-[55] xl:hidden hidden"
   data-luxe-mobile-nav-drawer
   aria-hidden="true"
 >

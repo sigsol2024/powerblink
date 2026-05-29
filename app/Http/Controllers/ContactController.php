@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\BrandedMailContext;
-use App\Support\SiteSettingDefaults;
 use App\Services\Mail\OutboundMailService;
+use App\Support\SiteSettingDefaults;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
@@ -12,7 +12,7 @@ use Throwable;
 
 class ContactController extends Controller
 {
-    public function submit(Request $request, OutboundMailService $mailer): RedirectResponse
+    public function submit(Request $request, OutboundMailService $mailer): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'name' => ['required_without_all:first_name,last_name', 'nullable', 'string', 'max:255'],
@@ -61,29 +61,49 @@ class ContactController extends Controller
                 $data['name']
             );
         } catch (RuntimeException) {
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'Mail is not configured or the request could not be sent. Please try again later.']);
+            return $this->submitFailed(
+                $request,
+                __('Mail is not configured or the request could not be sent. Please try again later.')
+            );
         } catch (Throwable $e) {
             report($e);
 
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'Could not send message. Please try again later.']);
+            return $this->submitFailed(
+                $request,
+                __('Could not send message. Please try again later.')
+            );
         }
 
         if ($request->boolean('newsletter_subscribe')) {
             NewsletterController::notifyIfEnabled($mailer, $validated['email']);
         }
 
-        $siteName = BrandedMailContext::forEmail()['siteName'];
+        $statusMessage = __('Thank you for contacting us. Our sales team will get back to you shortly.');
+        $detailMessage = __('We appreciate you taking the time to write to us. A member of our sales team will review your inquiry and respond as soon as possible.');
 
-        return back()->with(
-            'status',
-            __('Thank you for contacting :site. Our customer representative will contact you soon. Thank you.', [
-                'site' => $siteName,
-            ])
-        );
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $statusMessage,
+                'detail' => $detailMessage,
+                'title' => __('Message sent'),
+                'sendAnother' => __('Send another message'),
+            ]);
+        }
+
+        return back()->with('status', $statusMessage);
+    }
+
+    protected function submitFailed(Request $request, string $message): RedirectResponse|JsonResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'errors' => ['email' => [$message]],
+            ], 422);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['email' => $message]);
     }
 }
-
