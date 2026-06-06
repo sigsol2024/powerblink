@@ -129,10 +129,8 @@ class PageController extends Controller
         $featuredVehicles = Vehicle::query()
             ->with(['images', 'categoryOption'])
             ->where('status', 'approved')
-            ->where('is_special', true)
-            ->orderByDesc('approved_at')
-            ->orderByDesc('id')
-            ->take(4)
+            ->inRandomOrder()
+            ->take(8)
             ->get();
 
         $filterOptions = $this->approvedVehicleFilterOptions();

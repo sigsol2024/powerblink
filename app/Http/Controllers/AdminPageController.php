@@ -29,7 +29,7 @@ class AdminPageController extends Controller
                     ['name' => 'hero_image', 'label' => 'Hero Background Image', 'type' => 'image', 'default' => 'asset/images/media/home-hero-main.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
 
                     ['name' => 'shop_categories_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'Shop Categories', 'group' => 'Shop categories (tiles come from Admin → Categories)'],
-                    ['name' => 'bestsellers_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'The Bestsellers', 'group' => 'Bestsellers (up to 4 featured products)'],
+                    ['name' => 'bestsellers_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'The Bestsellers', 'group' => 'Bestsellers (8 random products per page load)'],
 
                     ['name' => 'dealer_cta_bg', 'label' => 'Promo banner background', 'type' => 'image', 'default' => 'asset/images/media/home-cta-left.jpg', 'group' => 'Promo banner', 'preview' => 'thumbnail'],
                     ['name' => 'promo_eyebrow', 'label' => 'Promo eyebrow', 'type' => 'text', 'default' => 'LIMITED CAPSULE', 'group' => 'Promo banner'],

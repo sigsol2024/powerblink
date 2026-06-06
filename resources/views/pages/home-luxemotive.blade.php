@@ -210,7 +210,7 @@
       </div>
     </section>
 
-    {{-- Featured products (admin: Featured product checkbox) — max 4 --}}
+    {{-- Bestsellers: 8 random approved products per page load --}}
     <section class="py-section-py-mobile md:py-section-py-desktop max-w-max-container mx-auto px-margin-mobile md:px-gutter">
       <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-center mb-10 md:mb-16 uppercase">{{ $bestsellersTitle }}</h2>
       @if ($bestsellers->isNotEmpty())
