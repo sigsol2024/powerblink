@@ -18,7 +18,9 @@ class PasswordUpdateTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->from('/profile')
-            ->put('/password', [
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => $user->email,
                 'current_password' => 'password',
                 'password' => 'NewStr0ng!Pass88',
                 'password_confirmation' => 'NewStr0ng!Pass88',
@@ -38,14 +40,16 @@ class PasswordUpdateTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->from('/profile')
-            ->put('/password', [
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => $user->email,
                 'current_password' => 'wrong-password',
                 'password' => 'NewStr0ng!Pass88',
                 'password_confirmation' => 'NewStr0ng!Pass88',
             ]);
 
         $response
-            ->assertSessionHasErrorsIn('updatePassword', 'current_password')
+            ->assertSessionHasErrors('current_password')
             ->assertRedirect('/profile');
     }
 }
