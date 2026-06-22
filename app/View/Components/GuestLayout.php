@@ -12,6 +12,6 @@ class GuestLayout extends Component
      */
     public function render(): View
     {
-        return view('layouts.auth-split');
+        return view('layouts.guest');
     }
 }

@@ -1,16 +1,12 @@
 <x-guest-layout>
   @php
-    $tab = old('_tab', request('tab', 'login'));
-    if (! in_array($tab, ['login', 'register'], true)) {
-        $tab = 'login';
-    }
     $googleAuthConfigured = is_string(config('services.google.client_id')) && trim((string) config('services.google.client_id')) !== ''
         && is_string(config('services.google.client_secret')) && trim((string) config('services.google.client_secret')) !== ''
         && is_string(config('services.google.redirect')) && trim((string) config('services.google.redirect')) !== '';
     $rememberedGoogleEmail = trim((string) request()->cookie('mt_google_email', ''));
   @endphp
 
-  <div x-data="{ tab: '{{ $tab }}' }" class="w-full">
+  <div class="w-full">
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     @if ($errors->any() && ! $errors->has('email') && ! $errors->has('password') && ! $errors->has('name'))
@@ -19,16 +15,12 @@
       </div>
     @endif
 
-    <div class="mb-6 flex border-b border-gray-200">
-      <button type="button" @click="tab = 'login'" :class="tab === 'login' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'" class="flex-1 border-b-2 py-3 text-sm font-semibold transition">
-        {{ __('Sign in') }}
-      </button>
-      <button type="button" @click="tab = 'register'" :class="tab === 'register' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'" class="flex-1 border-b-2 py-3 text-sm font-semibold transition">
-        {{ __('Create account') }}
-      </button>
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold tracking-tight text-zinc-900">{{ __('Sign in') }}</h1>
+      <p class="mt-1 text-sm text-zinc-600">{{ __('Use your account email and password to access the dashboard.') }}</p>
     </div>
 
-    <div x-show="tab === 'login'" x-cloak class="space-y-4">
+    <div class="space-y-4">
       <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
         <input type="hidden" name="_tab" value="login" />
@@ -76,7 +68,7 @@
       </form>
     </div>
 
-    <div x-show="tab === 'register'" x-cloak class="space-y-4">
+    <div hidden class="space-y-4" aria-hidden="true">
       <form method="POST" action="{{ route('register') }}" class="space-y-4">
         @csrf
         <input type="hidden" name="_tab" value="register" />
