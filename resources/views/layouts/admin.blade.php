@@ -107,7 +107,11 @@
       </nav>
 
       <div class="mt-auto py-3 border-t border-black/30 shrink-0 text-[13px]">
-        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors">
+        <a href="{{ route('profile.edit') }}" @if (request()->routeIs('profile.*')) aria-current="page" @endif class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs('profile.*') ? 'is-active' : '' }}">
+          <x-icon name="user" class="w-4 h-4" />
+          <span>{{ __('My account') }}</span>
+        </a>
+        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs($isAdminRole ? 'admin.settings.*' : 'dashboard.vendor-settings.*') ? 'is-active' : '' }}">
           <x-icon name="cog" class="w-4 h-4" />
           <span>{{ __('Settings') }}</span>
         </a>
@@ -130,7 +134,7 @@
           @endif
           <div class="min-w-0">
             <p class="text-[11px] sidebar-meta truncate">{{ __('Signed in') }}</p>
-            <p class="text-[12px] font-medium truncate text-white">{{ $user->name }}</p>
+            <a href="{{ route('profile.edit') }}" class="text-[12px] font-medium truncate text-white hover:underline block">{{ $user->name }}</a>
           </div>
         </div>
       </div>
@@ -170,6 +174,9 @@
         @endforeach
       </nav>
       <div class="border-t border-black/30 p-2 shrink-0">
+        <a href="{{ route('profile.edit') }}" @click="drawerOpen = false" @if (request()->routeIs('profile.*')) aria-current="page" @endif class="flex items-center gap-3 px-4 py-2.5 {{ request()->routeIs('profile.*') ? 'is-active' : '' }}">
+          <x-icon name="user" class="w-4 h-4" /> {{ __('My account') }}
+        </a>
         <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
           <x-icon name="cog" class="w-4 h-4" /> {{ __('Settings') }}
         </a>
