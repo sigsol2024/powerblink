@@ -56,9 +56,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $home = $user->staffHomeRoute();
-
-        return redirect()->intended($home);
+        return redirect()->to($user->loginRedirectPath());
     }
 
     /**
@@ -66,12 +64,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $wasStaff = $request->user()?->isStaff() ?? false;
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return $wasStaff
+            ? redirect()->route('login')
+            : redirect('/');
     }
 }

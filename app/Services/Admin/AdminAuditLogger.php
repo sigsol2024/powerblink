@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminAuditLogger
 {
+    public const STRUCTURED_LOGGED_ATTRIBUTE = 'audit.structured_logged';
+
     /**
      * @param  array<string, mixed>  $meta
      */
@@ -33,6 +35,8 @@ class AdminAuditLogger
                     'summary' => $summary,
                 ], $meta),
             ]);
+
+            $request->attributes->set(self::STRUCTURED_LOGGED_ATTRIBUTE, true);
         } catch (\Throwable) {
             // Fail open: audit logging should never block admin actions.
         }

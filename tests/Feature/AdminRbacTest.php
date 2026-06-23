@@ -88,6 +88,16 @@ class AdminRbacTest extends TestCase
 
         $this->assertSame(route('admin.dashboard', absolute: false), $admin->staffHomeRoute());
         $this->assertSame(route('dashboard.vehicles.index', absolute: false), $editor->staffHomeRoute());
+        $this->assertSame(route('dashboard.vehicles.index', absolute: false), $editor->loginRedirectPath());
+    }
+
+    public function test_editor_visiting_admin_root_redirects_to_products(): void
+    {
+        $editor = $this->makeEditor();
+
+        $this->actingAs($editor)
+            ->get('/admin')
+            ->assertRedirect(route('dashboard.vehicles.index'));
     }
 
     public function test_admin_can_set_staff_password_on_create_and_edit(): void
@@ -135,6 +145,13 @@ class AdminRbacTest extends TestCase
         $this->assertNotNull($entry);
         $this->assertSame('staff.created', $entry->meta['action'] ?? null);
         $this->assertArrayNotHasKey('password', $entry->meta ?? []);
+
+        $genericDuplicates = AdminAuditTrail::query()
+            ->where('path', '/admin/staff')
+            ->where('method', 'POST')
+            ->whereNull('meta->action')
+            ->count();
+        $this->assertSame(0, $genericDuplicates);
     }
 
     public function test_super_admin_can_be_updated_without_submitting_role_field(): void

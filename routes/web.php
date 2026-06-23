@@ -165,6 +165,11 @@ Route::middleware(['auth', 'vendor.idle'])->group(function () {
 
 Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(function () {
     Route::get('/', function () {
+        $user = request()->user();
+        if ($user && ! $user->can('dashboard.view')) {
+            return redirect()->route('dashboard.vehicles.index');
+        }
+
         $analyticsStart = now()->subDays(89)->startOfDay();
         $analyticsEnd = now();
         $analyticsBase = SiteTrafficEvent::query()->betweenDates($analyticsStart, $analyticsEnd);
@@ -222,7 +227,7 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
                 'recent' => (clone $auditBase)->with('user:id,name,email')->latest()->take(8)->get(),
             ],
         ]);
-    })->middleware('permission:dashboard.view')->name('admin.dashboard');
+    })->name('admin.dashboard');
 
     Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('admin.analytics.index');
     Route::get('/analytics/data', [AdminAnalyticsController::class, 'data'])->middleware('permission:analytics.view')->name('admin.analytics.data');

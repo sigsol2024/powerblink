@@ -98,6 +98,25 @@ class User extends Authenticatable
         return route('dashboard', absolute: false);
     }
 
+    /**
+     * Post-login redirect path. Staff always land on their role home — never a stale
+     * "intended" URL such as /admin that editors cannot access.
+     */
+    public function loginRedirectPath(): string
+    {
+        if ($this->isStaff()) {
+            session()->forget('url.intended');
+
+            return $this->staffHomeRoute();
+        }
+
+        $intended = session()->pull('url.intended');
+
+        return (is_string($intended) && $intended !== '')
+            ? $intended
+            : route('dashboard', absolute: false);
+    }
+
     public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class);

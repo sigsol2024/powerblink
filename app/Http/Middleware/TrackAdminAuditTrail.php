@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\AdminAuditTrail;
+use App\Services\Admin\AdminAuditLogger;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,11 @@ class TrackAdminAuditTrail
 
         $statusCode = (int) $response->getStatusCode();
         if ($statusCode < 200 || $statusCode >= 400) {
+            return $response;
+        }
+
+        // Controllers using AdminAuditLogger already wrote a structured row — skip generic HTTP duplicate.
+        if ($request->attributes->get(AdminAuditLogger::STRUCTURED_LOGGED_ATTRIBUTE)) {
             return $response;
         }
 

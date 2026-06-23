@@ -165,10 +165,8 @@ class GoogleAuthController extends Controller
                 ->cookie('mt_google_email', $user->email, 60 * 24 * 365, null, null, false, true, false, 'Lax');
         }
 
-        $home = $user->staffHomeRoute();
-
         return redirect()
-            ->intended($home)
+            ->to($user->loginRedirectPath())
             ->cookie('mt_google_email', $user->email, 60 * 24 * 365, null, null, false, true, false, 'Lax');
     }
 

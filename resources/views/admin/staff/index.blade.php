@@ -2,6 +2,21 @@
   @php
     $staffStats = $staffStats ?? ['total' => $staff->total(), 'admins' => 0, 'editors' => 0];
     $profileUrl = route('profile.edit');
+    $staffMenuActions = [];
+    foreach ($staff as $member) {
+        $roleName = $member->roles->first()?->name ?? 'editor';
+        $isSelf = $member->id === auth()->id();
+        $staffMenuActions[$member->id] = [
+            'id' => $member->id,
+            'name' => $member->name,
+            'email' => $member->email,
+            'role' => $roleName,
+            'is_super_admin' => $member->isSuperAdmin(),
+            'is_self' => $isSelf,
+            'can_delete' => ! $isSelf && ! $member->isSuperAdmin(),
+            'profile_url' => $profileUrl,
+        ];
+    }
   @endphp
 
   <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0">
@@ -23,12 +38,33 @@
       editOpen: {{ $errors->any() && old('_form') === 'edit' ? 'true' : 'false' }},
       deleteOpen: false,
       openMenuId: null,
+      menuTarget: null,
+      menuStyle: '',
+      staffById: @js($staffMenuActions),
       editUser: @js(old('_form') === 'edit' ? ['id' => old('user_id'), 'name' => old('name'), 'email' => old('email'), 'role' => old('role'), 'is_super_admin' => (bool) old('is_super_admin')] : null),
       deleteUser: null,
       openEdit(user) { this.closeMenus(); this.editUser = user; this.editOpen = true; },
       openDelete(user) { this.closeMenus(); this.deleteUser = user; this.deleteOpen = true; },
-      toggleMenu(id) { this.openMenuId = this.openMenuId === id ? null : id; },
-      closeMenus() { this.openMenuId = null; },
+      toggleMenu(id, event) {
+        if (this.openMenuId === id) {
+          this.closeMenus();
+          return;
+        }
+        const rect = event.currentTarget.getBoundingClientRect();
+        const menuWidth = 192;
+        const menuHeight = 96;
+        let left = rect.right - menuWidth;
+        let top = rect.bottom + 4;
+        if (top + menuHeight > window.innerHeight - 8) {
+          top = rect.top - menuHeight - 4;
+        }
+        left = Math.max(8, Math.min(left, window.innerWidth - menuWidth - 8));
+        top = Math.max(8, Math.min(top, window.innerHeight - menuHeight - 8));
+        this.menuStyle = 'top:' + top + 'px;left:' + left + 'px';
+        this.openMenuId = id;
+        this.menuTarget = this.staffById[id] ?? null;
+      },
+      closeMenus() { this.openMenuId = null; this.menuTarget = null; this.menuStyle = ''; },
     }"
     @open-staff-create.window="createOpen = true"
     @keydown.escape.window="createOpen = false; editOpen = false; deleteOpen = false; closeMenus()"
@@ -53,8 +89,8 @@
       </div>
     </div>
 
-    <div class="overflow-hidden rounded-lg border border-wp-border bg-white">
-      <div class="hidden lg:block overflow-x-auto overflow-y-visible">
+    <div class="rounded-lg border border-wp-border bg-white">
+      <div class="hidden lg:block">
         <table class="min-w-full divide-y divide-wp-border text-sm">
           <thead class="bg-wp-bg text-left text-[11px] font-bold uppercase tracking-wider text-wp-text-muted">
             <tr>
@@ -85,12 +121,12 @@
                     {{ $roleName === 'admin' ? __('Admin') : __('Editor') }}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-right relative">
+                <td class="px-4 py-3 text-right">
                   <button
                     type="button"
                     class="text-wp-text-muted hover:text-wp-text transition-colors inline-flex items-center p-1"
                     title="{{ __('More actions') }}"
-                    @click.stop="toggleMenu({{ $member->id }})"
+                    @click.stop="toggleMenu({{ $member->id }}, $event)"
                     :aria-expanded="openMenuId === {{ $member->id }} ? 'true' : 'false'"
                     aria-label="{{ __('More actions') }}"
                   >
@@ -98,23 +134,6 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                     </svg>
                   </button>
-                  <div
-                    x-show="openMenuId === {{ $member->id }}"
-                    x-cloak
-                    x-transition
-                    @click.outside="closeMenus()"
-                    class="absolute right-0 top-full z-[300] mt-1 w-48 bg-white border border-wp-border py-1 text-left shadow-lg rounded"
-                    role="menu"
-                  >
-                    @if ($isSelf)
-                      <a href="{{ $profileUrl }}" class="block w-full px-4 py-2 text-left text-sm text-wp-text hover:bg-wp-bg" role="menuitem" @click="closeMenus()">{{ __('Edit profile') }}</a>
-                    @else
-                      <button type="button" class="block w-full px-4 py-2 text-left text-sm text-wp-text hover:bg-wp-bg" role="menuitem" @click="openEdit(@js(['id' => $member->id, 'name' => $member->name, 'email' => $member->email, 'role' => $roleName, 'is_super_admin' => $member->isSuperAdmin()]))">{{ __('Edit') }}</button>
-                    @endif
-                    @if (! $isSelf && ! $member->isSuperAdmin())
-                      <button type="button" class="block w-full px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-50" role="menuitem" @click="openDelete(@js(['id' => $member->id, 'name' => $member->name, 'email' => $member->email, 'role' => $roleName]))">{{ __('Delete') }}</button>
-                    @endif
-                  </div>
                 </td>
               </tr>
             @endforeach
@@ -144,20 +163,10 @@
                 {{ $roleName === 'admin' ? __('Admin') : __('Editor') }}
               </span>
             </div>
-            <div class="relative shrink-0">
-              <button type="button" class="text-wp-text-muted hover:text-wp-text p-1" @click.stop="toggleMenu({{ $member->id }})" aria-label="{{ __('More actions') }}">
+            <div class="shrink-0">
+              <button type="button" class="text-wp-text-muted hover:text-wp-text p-1" @click.stop="toggleMenu({{ $member->id }}, $event)" aria-label="{{ __('More actions') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" /></svg>
               </button>
-              <div x-show="openMenuId === {{ $member->id }}" x-cloak @click.outside="closeMenus()" class="absolute right-0 top-full z-[300] mt-1 w-48 bg-white border border-wp-border py-1 shadow-lg rounded">
-                @if ($isSelf)
-                  <a href="{{ $profileUrl }}" class="block px-4 py-2 text-sm hover:bg-wp-bg" @click="closeMenus()">{{ __('Edit profile') }}</a>
-                @else
-                  <button type="button" class="block w-full px-4 py-2 text-left text-sm hover:bg-wp-bg" @click="openEdit(@js(['id' => $member->id, 'name' => $member->name, 'email' => $member->email, 'role' => $roleName, 'is_super_admin' => $member->isSuperAdmin()]))">{{ __('Edit') }}</button>
-                @endif
-                @if (! $isSelf && ! $member->isSuperAdmin())
-                  <button type="button" class="block w-full px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-50" @click="openDelete(@js(['id' => $member->id, 'name' => $member->name, 'email' => $member->email, 'role' => $roleName]))">{{ __('Delete') }}</button>
-                @endif
-              </div>
             </div>
           </div>
         @endforeach
@@ -166,6 +175,42 @@
       @if ($staff->hasPages())
         <div class="px-4 py-3 admin-luxe-pagination">{{ $staff->links() }}</div>
       @endif
+    </div>
+
+    {{-- Floating action menu (fixed to viewport — avoids table overflow clipping) --}}
+    <div
+      x-show="openMenuId !== null && menuTarget"
+      x-cloak
+      x-transition
+      @click.outside="closeMenus()"
+      :style="menuStyle"
+      class="fixed z-[500] w-48 bg-white border border-wp-border py-1 text-left shadow-lg rounded"
+      role="menu"
+    >
+      <a
+        x-show="menuTarget && menuTarget.is_self"
+        x-cloak
+        :href="menuTarget ? menuTarget.profile_url : '#'"
+        class="block w-full px-4 py-2 text-left text-sm text-wp-text hover:bg-wp-bg"
+        role="menuitem"
+        @click="closeMenus()"
+      >{{ __('Edit profile') }}</a>
+      <button
+        type="button"
+        x-show="menuTarget && !menuTarget.is_self"
+        x-cloak
+        class="block w-full px-4 py-2 text-left text-sm text-wp-text hover:bg-wp-bg"
+        role="menuitem"
+        @click="openEdit(menuTarget)"
+      >{{ __('Edit') }}</button>
+      <button
+        type="button"
+        x-show="menuTarget && menuTarget.can_delete"
+        x-cloak
+        class="block w-full px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-50"
+        role="menuitem"
+        @click="openDelete(menuTarget)"
+      >{{ __('Delete') }}</button>
     </div>
 
     {{-- Create modal --}}

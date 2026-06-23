@@ -42,9 +42,7 @@ class LoginOtpChallengeController extends Controller
         Auth::login($user, (bool) $request->session()->pull('login_otp_remember', false));
         $request->session()->regenerate();
 
-        $home = $user->staffHomeRoute();
-
-        return redirect()->intended($home);
+        return redirect()->to($user->loginRedirectPath());
     }
 
     public function resend(Request $request, EmailOtpService $otp): RedirectResponse
