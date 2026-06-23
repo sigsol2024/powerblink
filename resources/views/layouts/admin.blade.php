@@ -19,7 +19,6 @@
       ['permission' => 'variants.manage', 'route' => 'admin.variants.index', 'match' => 'admin.variants.*', 'label' => __('Variants'), 'icon' => 'tag'],
       ['permission' => 'orders.manage', 'route' => 'admin.orders.index', 'match' => 'admin.orders.*', 'label' => __('Orders'), 'icon' => 'shopping-cart'],
       ['permission' => 'customers.view', 'route' => 'admin.users.index', 'match' => 'admin.users.*', 'label' => __('Customers'), 'icon' => 'users'],
-      ['permission' => 'staff.manage', 'route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => __('Admin users'), 'icon' => 'user'],
       ['permission' => 'analytics.view', 'route' => 'admin.analytics.index', 'match' => 'admin.analytics.*', 'label' => __('Analytics'), 'icon' => 'chart'],
       ['permission' => 'pages.manage', 'route' => 'admin.pages.index', 'match' => 'admin.pages.*', 'label' => __('Pages'), 'icon' => 'document'],
       ['permission' => 'media.manage', 'route' => 'admin.media.index', 'match' => 'admin.media.*', 'label' => __('Media'), 'icon' => 'photo'],
@@ -118,6 +117,12 @@
           <x-icon name="user" class="w-4 h-4" />
           <span>{{ __('My account') }}</span>
         </a>
+        @if ($user?->can('staff.manage'))
+        <a href="{{ route('admin.staff.index') }}" @if (request()->routeIs('admin.staff.*')) aria-current="page" @endif class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs('admin.staff.*') ? 'is-active' : '' }}">
+          <x-icon name="users" class="w-4 h-4" />
+          <span>{{ __('Admin users') }}</span>
+        </a>
+        @endif
         @if ($user?->can('settings.manage'))
         <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs('admin.settings.*') ? 'is-active' : '' }}">
           <x-icon name="cog" class="w-4 h-4" />
@@ -191,6 +196,11 @@
         <a href="{{ route('profile.edit') }}" @click="drawerOpen = false" @if (request()->routeIs('profile.*')) aria-current="page" @endif class="flex items-center gap-3 px-4 py-2.5 {{ request()->routeIs('profile.*') ? 'is-active' : '' }}">
           <x-icon name="user" class="w-4 h-4" /> {{ __('My account') }}
         </a>
+        @if ($user?->can('staff.manage'))
+        <a href="{{ route('admin.staff.index') }}" @click="drawerOpen = false" @if (request()->routeIs('admin.staff.*')) aria-current="page" @endif class="flex items-center gap-3 px-4 py-2.5 {{ request()->routeIs('admin.staff.*') ? 'is-active' : '' }}">
+          <x-icon name="users" class="w-4 h-4" /> {{ __('Admin users') }}
+        </a>
+        @endif
         @if ($user?->can('settings.manage'))
         <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
           <x-icon name="cog" class="w-4 h-4" /> {{ __('Settings') }}
