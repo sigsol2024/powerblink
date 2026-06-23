@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
+use App\Services\Admin\AdminAuditLogger;
 use App\Services\Mail\OutboundMailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use Throwable;
 
 class AdminVehicleController extends Controller
 {
-    public function approve(Request $request, Vehicle $vehicle): RedirectResponse
+    public function approve(Request $request, Vehicle $vehicle, AdminAuditLogger $audit): RedirectResponse
     {
         $vehicle->status = 'approved';
         $vehicle->approved_at = now();
@@ -39,10 +40,12 @@ class AdminVehicleController extends Controller
             }
         }
 
+        $audit->logProductApproved($request, $vehicle);
+
         return back();
     }
 
-    public function reject(Request $request, Vehicle $vehicle): RedirectResponse
+    public function reject(Request $request, Vehicle $vehicle, AdminAuditLogger $audit): RedirectResponse
     {
         $data = $request->validate([
             'rejection_reason' => ['nullable', 'string', 'max:2000'],
@@ -74,6 +77,8 @@ class AdminVehicleController extends Controller
                 ]);
             }
         }
+
+        $audit->logProductRejected($request, $vehicle);
 
         return back();
     }

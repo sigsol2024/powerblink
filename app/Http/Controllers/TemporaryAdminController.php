@@ -60,6 +60,7 @@ class TemporaryAdminController extends Controller
         ]);
 
         $user->assignRole('admin');
+        $user->forceFill(['is_super_admin' => true])->save();
 
         Auth::login($user);
 

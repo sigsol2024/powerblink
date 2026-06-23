@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(RolesSeeder::class);
+        $this->call(PermissionsSeeder::class);
 
         foreach (DemoData::users() as $demoUser) {
             // User has `password` / `remember_token` hidden, so ->toArray() drops them.

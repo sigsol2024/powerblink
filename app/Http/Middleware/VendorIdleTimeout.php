@@ -17,7 +17,7 @@ class VendorIdleTimeout
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (! $user || $user->hasRole('admin')) {
+        if (! $user || $user->isStaff()) {
             return $next($request);
         }
 

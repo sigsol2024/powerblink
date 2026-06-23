@@ -53,11 +53,11 @@ final class MediaLibraryCatalog
             return $q->whereRaw('1 = 0');
         }
 
-        if ($user->hasRole('admin')) {
+        if ($user->can('media.manage') && $user->isStaff()) {
             return $q->where(function (Builder $w): void {
                 $w->whereNull('uploaded_by')
                     ->orWhereHas('uploader', function (Builder $sub): void {
-                        $sub->role('admin');
+                        $sub->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->whereIn('name', ['admin', 'editor']));
                     });
             });
         }

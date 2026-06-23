@@ -1,6 +1,6 @@
 @php
   $owner = $vehicle->user;
-  $isStaffListing = $owner && $owner->hasRole('admin');
+  $isStaffListing = $owner && $owner->isStaff();
   $viewUrl = $vehicle->status === 'approved' ? route('inventory.show', ['slug' => $vehicle->slug]) : null;
   $canApprove = $isAdminList && in_array($vehicle->status, ['pending', 'draft', 'rejected'], true);
   $canReject = $isAdminList && $vehicle->status !== 'rejected';

@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\InteractsWithVehicleForms;
 use App\Models\ListingOption;
 use App\Models\Vehicle;
 use App\Models\VehicleImage;
+use App\Services\Admin\AdminAuditLogger;
 use App\Services\Mail\OutboundMailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -22,13 +23,13 @@ class UserVehicleController extends Controller
 
     public function index(Request $request): View
     {
-        $isAdmin = $request->user()->hasRole('admin');
+        $isStaffList = $request->user()->can('products.manage') && $request->user()->isStaff();
 
         $query = Vehicle::query()
             ->with(['user.roles', 'categoryOption'])
             ->latest();
 
-        if (! $isAdmin) {
+        if (! $isStaffList) {
             $query->where('user_id', $request->user()->id);
         } else {
             $status = $request->query('status');
@@ -41,9 +42,9 @@ class UserVehicleController extends Controller
 
         return view('dashboard.vehicles.index', [
             'vehicles' => $vehicles,
-            'isAdminList' => $isAdmin,
-            'statusFilter' => $isAdmin ? (string) $request->query('status', '') : '',
-            'stats' => $isAdmin ? [
+            'isAdminList' => $isStaffList,
+            'statusFilter' => $isStaffList ? (string) $request->query('status', '') : '',
+            'stats' => $isStaffList ? [
                 'total' => Vehicle::query()->count(),
                 'pending' => Vehicle::query()->where('status', 'pending')->count(),
                 'approved' => Vehicle::query()->where('status', 'approved')->count(),
@@ -59,7 +60,7 @@ class UserVehicleController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AdminAuditLogger $audit): RedirectResponse
     {
         try {
             $data = $this->validateVehicleData($request);
@@ -78,7 +79,7 @@ class UserVehicleController extends Controller
                 return $vehicle;
             });
 
-            if ($request->user()->hasRole('admin') && $request->boolean('approve_listing')) {
+            if ($request->user()->isStaff() && $request->boolean('approve_listing')) {
                 $vehicle->refresh();
                 $vehicle->status = 'approved';
                 $vehicle->approved_at = now();
@@ -86,6 +87,10 @@ class UserVehicleController extends Controller
                 $vehicle->rejection_reason = null;
                 $vehicle->save();
                 $this->notifyOwnerListingApproved($vehicle);
+            }
+
+            if ($request->user()->isStaff()) {
+                $audit->logProductCreated($request, $vehicle->fresh());
             }
 
             return redirect()->route('dashboard.vehicles.edit', $vehicle);
@@ -107,7 +112,7 @@ class UserVehicleController extends Controller
 
         return view('dashboard.vehicles.edit', [
             'vehicle' => $vehicle,
-            'isAdminEdit' => $request->user()->hasRole('admin'),
+            'isAdminEdit' => $request->user()->isStaff(),
             'productCategories' => $this->productCategoryOptions(),
             ...$this->variantFormContext($vehicle),
         ]);
@@ -127,7 +132,7 @@ class UserVehicleController extends Controller
             ->get(['id', 'value']);
     }
 
-    public function update(Request $request, Vehicle $vehicle): RedirectResponse
+    public function update(Request $request, Vehicle $vehicle, AdminAuditLogger $audit): RedirectResponse
     {
         $this->authorizeVehicleAccess($request, $vehicle);
         try {
@@ -154,7 +159,7 @@ class UserVehicleController extends Controller
             });
 
             if (
-                $request->user()->hasRole('admin')
+                $request->user()->isStaff()
                 && $request->boolean('approve_listing')
                 && in_array($vehicle->status, ['pending', 'draft', 'rejected'], true)
             ) {
@@ -164,6 +169,10 @@ class UserVehicleController extends Controller
                 $vehicle->rejection_reason = null;
                 $vehicle->save();
                 $this->notifyOwnerListingApproved($vehicle);
+            }
+
+            if ($request->user()->isStaff()) {
+                $audit->logProductUpdated($request, $vehicle->fresh());
             }
 
             return back()->with('status', 'Listing updated.');
@@ -212,9 +221,13 @@ class UserVehicleController extends Controller
         return back();
     }
 
-    public function destroy(Request $request, Vehicle $vehicle): RedirectResponse
+    public function destroy(Request $request, Vehicle $vehicle, AdminAuditLogger $audit): RedirectResponse
     {
         $this->authorizeVehicleAccess($request, $vehicle);
+
+        if ($request->user()->isStaff()) {
+            $audit->logProductDeleted($request, $vehicle);
+        }
 
         $this->deleteLocalVehicleImageFiles($vehicle);
         $vehicle->delete();
@@ -246,7 +259,7 @@ class UserVehicleController extends Controller
 
     private function authorizeVehicleAccess(Request $request, Vehicle $vehicle): void
     {
-        if ($request->user()->hasRole('admin')) {
+        if ($request->user()->can('products.manage') && $request->user()->isStaff()) {
             return;
         }
 

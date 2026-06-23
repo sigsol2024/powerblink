@@ -56,9 +56,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $home = $user->hasRole('admin')
-            ? route('admin.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
+        $home = $user->staffHomeRoute();
 
         return redirect()->intended($home);
     }

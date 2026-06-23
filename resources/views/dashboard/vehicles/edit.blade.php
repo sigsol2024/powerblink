@@ -36,7 +36,7 @@
             <div><span class="text-indigo-700">{{ __('Submitted') }}:</span> {{ $vehicle->submitted_at?->format('M j, Y g:i a') ?? '—' }}</div>
             <div class="sm:col-span-2">
               <span class="text-indigo-700">{{ __('Account type') }}:</span>
-              @if($u?->hasRole('admin'))
+              @if($u?->isStaff())
                 {{ __('Staff (admin role)') }}
               @else
                 {{ __('Dealer') }}

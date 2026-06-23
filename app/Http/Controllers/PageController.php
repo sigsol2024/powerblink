@@ -541,7 +541,7 @@ class PageController extends Controller
                 'variants.colorOption',
             ])
             ->where('slug', $slug)
-            ->when(! ($user && $user->hasRole('admin')), function ($query) use ($user) {
+            ->when(! ($user && $user->isStaff()), function ($query) use ($user) {
                 $query->where(function ($visibility) use ($user) {
                     $visibility->where('status', 'approved');
 

@@ -7,33 +7,40 @@
   $initials = strtoupper(substr($n, 0, 1).(str_contains($n, ' ') ? substr($n, (int) strrpos($n, ' ') + 1, 1) : ''));
   $initials = strlen($initials) > 2 ? substr($initials, 0, 2) : $initials;
 
-  $isAdminRole = $user && $user->hasRole('admin');
-  $dashboardHomeRoute = $isAdminRole ? 'admin.dashboard' : 'dashboard';
+  $isStaff = $user && $user->isStaff();
+  $dashboardHomeRoute = $user?->isAdmin()
+      ? 'admin.dashboard'
+      : ($user?->isEditor() ? 'dashboard.vehicles.index' : 'dashboard');
 
-  // WooCommerce-style sidebar. Listing Options is removed (catalog options are managed alongside
-  // each product, not as a separate top-level menu).
-  $navItems = $isAdminRole
-      ? [
-          ['route' => 'admin.dashboard',          'match' => 'admin.dashboard',          'label' => __('Dashboard'),  'icon' => 'grid'],
-          ['route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*',     'label' => __('Products'),   'icon' => 'box'],
-          ['route' => 'admin.categories.index',   'match' => 'admin.categories.*',       'label' => __('Categories'), 'icon' => 'folder'],
-          ['route' => 'admin.variants.index',     'match' => 'admin.variants.*',         'label' => __('Variants'),   'icon' => 'tag'],
-          ['route' => 'admin.orders.index',       'match' => 'admin.orders.*',           'label' => __('Orders'),     'icon' => 'shopping-cart'],
-          ['route' => 'admin.users.index',        'match' => 'admin.users.*',            'label' => __('Customers'),  'icon' => 'users'],
-          ['route' => 'admin.analytics.index',    'match' => 'admin.analytics.*',        'label' => __('Analytics'),  'icon' => 'chart'],
-          ['route' => 'admin.pages.index',        'match' => 'admin.pages.*',            'label' => __('Pages'),      'icon' => 'document'],
-          ['route' => 'admin.media.index',        'match' => 'admin.media.*',            'label' => __('Media'),      'icon' => 'photo'],
-          ['route' => 'admin.audit.index',        'match' => 'admin.audit.*',            'label' => __('Audit log'),  'icon' => 'clock'],
-      ]
+  $allNavItems = [
+      ['permission' => 'dashboard.view', 'route' => 'admin.dashboard', 'match' => 'admin.dashboard', 'label' => __('Dashboard'), 'icon' => 'grid'],
+      ['permission' => 'products.manage', 'route' => 'dashboard.vehicles.index', 'match' => 'dashboard.vehicles.*', 'label' => __('Products'), 'icon' => 'box'],
+      ['permission' => 'categories.manage', 'route' => 'admin.categories.index', 'match' => 'admin.categories.*', 'label' => __('Categories'), 'icon' => 'folder'],
+      ['permission' => 'variants.manage', 'route' => 'admin.variants.index', 'match' => 'admin.variants.*', 'label' => __('Variants'), 'icon' => 'tag'],
+      ['permission' => 'orders.manage', 'route' => 'admin.orders.index', 'match' => 'admin.orders.*', 'label' => __('Orders'), 'icon' => 'shopping-cart'],
+      ['permission' => 'customers.view', 'route' => 'admin.users.index', 'match' => 'admin.users.*', 'label' => __('Customers'), 'icon' => 'users'],
+      ['permission' => 'staff.manage', 'route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => __('Admin users'), 'icon' => 'user'],
+      ['permission' => 'analytics.view', 'route' => 'admin.analytics.index', 'match' => 'admin.analytics.*', 'label' => __('Analytics'), 'icon' => 'chart'],
+      ['permission' => 'pages.manage', 'route' => 'admin.pages.index', 'match' => 'admin.pages.*', 'label' => __('Pages'), 'icon' => 'document'],
+      ['permission' => 'media.manage', 'route' => 'admin.media.index', 'match' => 'admin.media.*', 'label' => __('Media'), 'icon' => 'photo'],
+      ['permission' => 'audit.view', 'route' => 'admin.audit.index', 'match' => 'admin.audit.*', 'label' => __('Audit log'), 'icon' => 'clock'],
+  ];
+
+  $navItems = $isStaff
+      ? collect($allNavItems)->filter(fn ($item) => $user->can($item['permission']))->values()->all()
       : [
-          ['route' => 'dashboard',                        'match' => 'dashboard',                       'label' => __('Overview'),       'icon' => 'grid'],
-          ['route' => 'dashboard.vehicles.index',         'match' => 'dealer.vehicles.list',            'label' => __('My products'),    'icon' => 'box'],
-          ['route' => 'dashboard.vendor-settings.edit',   'match' => 'dashboard.vendor-settings.*',     'label' => __('Store contact'),  'icon' => 'storefront'],
-          ['route' => 'dashboard.favorites.index',        'match' => 'dashboard.favorites.*',           'label' => __('Saved'),          'icon' => 'heart'],
+          ['route' => 'dashboard', 'match' => 'dashboard', 'label' => __('Overview'), 'icon' => 'grid'],
+          ['route' => 'dashboard.vehicles.index', 'match' => 'dealer.vehicles.list', 'label' => __('My products'), 'icon' => 'box'],
+          ['route' => 'dashboard.vendor-settings.edit', 'match' => 'dashboard.vendor-settings.*', 'label' => __('Store contact'), 'icon' => 'storefront'],
+          ['route' => 'dashboard.favorites.index', 'match' => 'dashboard.favorites.*', 'label' => __('Saved'), 'icon' => 'heart'],
       ];
 
-  $mediaUploadUrl = $isAdminRole ? route('admin.media.upload') : route('dashboard.api.media.upload');
-  $mediaListUrl = $isAdminRole ? route('admin.media.list') : route('dashboard.api.media');
+  $mediaUploadUrl = ($user && $user->can('media.manage') && $user->isStaff())
+      ? route('admin.media.upload')
+      : route('dashboard.api.media.upload');
+  $mediaListUrl = ($user && $user->can('media.manage') && $user->isStaff())
+      ? route('admin.media.list')
+      : route('dashboard.api.media');
   $viteReady = file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'));
 
   // Pages with sticky save bars or canvas elements opt out of the standard wrapper
@@ -85,7 +92,7 @@
         </a>
       </div>
 
-      <nav class="flex-1 flex flex-col py-2 min-h-0 overflow-y-auto custom-scrollbar text-[13px]" aria-label="{{ $isAdminRole ? __('Admin') : __('Account') }}">
+      <nav class="flex-1 flex flex-col py-2 min-h-0 overflow-y-auto custom-scrollbar text-[13px]" aria-label="{{ $isStaff ? __('Admin') : __('Account') }}">
         @foreach ($navItems as $item)
           @php
             $match = $item['match'];
@@ -111,10 +118,17 @@
           <x-icon name="user" class="w-4 h-4" />
           <span>{{ __('My account') }}</span>
         </a>
-        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs($isAdminRole ? 'admin.settings.*' : 'dashboard.vendor-settings.*') ? 'is-active' : '' }}">
+        @if ($user?->can('settings.manage'))
+        <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ request()->routeIs('admin.settings.*') ? 'is-active' : '' }}">
           <x-icon name="cog" class="w-4 h-4" />
           <span>{{ __('Settings') }}</span>
         </a>
+        @elseif (! $isStaff)
+        <a href="{{ route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-5 py-2.5 transition-colors">
+          <x-icon name="cog" class="w-4 h-4" />
+          <span>{{ __('Settings') }}</span>
+        </a>
+        @endif
         <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-5 py-2.5 transition-colors">
           <x-icon name="storefront" class="w-4 h-4" />
           <span>{{ __('View site') }}</span>
@@ -177,9 +191,15 @@
         <a href="{{ route('profile.edit') }}" @click="drawerOpen = false" @if (request()->routeIs('profile.*')) aria-current="page" @endif class="flex items-center gap-3 px-4 py-2.5 {{ request()->routeIs('profile.*') ? 'is-active' : '' }}">
           <x-icon name="user" class="w-4 h-4" /> {{ __('My account') }}
         </a>
-        <a href="{{ $isAdminRole ? route('admin.settings.edit') : route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
+        @if ($user?->can('settings.manage'))
+        <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
           <x-icon name="cog" class="w-4 h-4" /> {{ __('Settings') }}
         </a>
+        @elseif (! $isStaff)
+        <a href="{{ route('dashboard.vendor-settings.edit') }}" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
+          <x-icon name="cog" class="w-4 h-4" /> {{ __('Settings') }}
+        </a>
+        @endif
         <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-2.5" @click="drawerOpen = false">
           <x-icon name="storefront" class="w-4 h-4" /> {{ __('View site') }}
         </a>

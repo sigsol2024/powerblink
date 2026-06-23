@@ -74,7 +74,7 @@
       </div>
 
       <div class="space-y-10">
-        @if(auth()->user()?->hasRole('admin'))
+        @if(auth()->user()?->isStaff())
           <section class="space-y-4">
             <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.3em] uppercase">{{ __('Visibility') }}</h3>
             <div class="flex items-center justify-between p-4 border border-outline-variant bg-surface-container-lowest gap-4">

@@ -42,9 +42,7 @@ class LoginOtpChallengeController extends Controller
         Auth::login($user, (bool) $request->session()->pull('login_otp_remember', false));
         $request->session()->regenerate();
 
-        $home = $user->hasRole('admin')
-            ? route('admin.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
+        $home = $user->staffHomeRoute();
 
         return redirect()->intended($home);
     }

@@ -11,36 +11,40 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
-class AdminUserController extends Controller
+class AdminStaffController extends Controller
 {
     public function index(): View
     {
-        $users = User::query()
-            ->role('user')
+        $this->authorize('manageStaff', User::class);
+
+        $staff = User::query()
+            ->role(['admin', 'editor'])
             ->with('roles')
             ->orderBy('name')
             ->paginate(20)
             ->withQueryString();
 
         $stats = [
-            'total' => User::query()->role('user')->count(),
+            'total' => User::query()->role(['admin', 'editor'])->count(),
+            'admins' => User::query()->role('admin')->count(),
+            'editors' => User::query()->role('editor')->count(),
         ];
 
-        return view('admin.users.index', [
-            'users' => $users,
-            'userStats' => $stats,
-            'canManageCustomers' => request()->user()?->can('customers.manage') ?? false,
+        return view('admin.staff.index', [
+            'staff' => $staff,
+            'staffStats' => $stats,
         ]);
     }
 
     public function store(Request $request, AdminAuditLogger $audit): RedirectResponse
     {
-        $this->authorize('manageCustomers', User::class);
+        $this->authorize('manageStaff', User::class);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'role' => ['required', 'in:admin,editor'],
         ]);
 
         $user = User::query()->create([
@@ -50,16 +54,20 @@ class AdminUserController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        $user->assignRole('user');
+        $user->assignRole($data['role']);
 
-        $audit->logCustomerCreated($request, $user);
+        $audit->logStaffCreated($request, $user, $data['role']);
 
-        return back()->with('status', __('Customer account created.'));
+        return back()->with('status', __('Staff account created.'));
     }
 
     public function update(Request $request, User $user, AdminAuditLogger $audit): RedirectResponse
     {
-        $this->authorize('updateCustomer', $user);
+        $this->authorize('updateStaff', $user);
+
+        if ($user->isSuperAdmin()) {
+            $request->merge(['role' => 'admin']);
+        }
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -70,7 +78,16 @@ class AdminUserController extends Controller
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'password' => ['nullable', 'confirmed', Password::defaults()],
+            'role' => ['required', 'in:admin,editor'],
         ]);
+
+        if ($user->isSuperAdmin() && $data['role'] !== 'admin') {
+            return back()->withErrors(['role' => __('The super admin account must remain an admin.')]);
+        }
+
+        if ($user->hasRole('admin') && $data['role'] !== 'admin') {
+            $this->ensureAdminLockoutPrevented($user);
+        }
 
         $changedFields = [];
         if ($user->name !== $data['name']) {
@@ -78,6 +95,9 @@ class AdminUserController extends Controller
         }
         if ($user->email !== $data['email']) {
             $changedFields[] = 'email';
+        }
+        if (! $user->hasRole($data['role'])) {
+            $changedFields[] = 'role';
         }
 
         $passwordChanged = ! empty($data['password'] ?? null);
@@ -93,15 +113,18 @@ class AdminUserController extends Controller
         }
 
         $user->save();
+        $user->syncRoles([$data['role']]);
 
-        $audit->logCustomerUpdated($request, $user, $changedFields, $passwordChanged);
+        $audit->logStaffUpdated($request, $user, $changedFields, $passwordChanged);
 
-        return back()->with('status', __('Customer account updated.'));
+        return back()->with('status', __('Staff account updated.'));
     }
 
     public function destroy(Request $request, User $user, AdminAuditLogger $audit): RedirectResponse
     {
-        $this->authorize('deleteCustomer', $user);
+        $this->authorize('deleteStaff', $user);
+
+        $this->ensureAdminLockoutPrevented($user);
 
         $snapshot = clone $user;
 
@@ -112,8 +135,29 @@ class AdminUserController extends Controller
             $user->delete();
         });
 
-        $audit->logCustomerDeleted($request, $snapshot);
+        $audit->logStaffDeleted($request, $snapshot);
 
-        return back()->with('status', __('Customer account deleted.'));
+        return back()->with('status', __('Staff account deleted.'));
+    }
+
+    private function ensureAdminLockoutPrevented(User $user): void
+    {
+        if (! $user->hasRole('admin')) {
+            return;
+        }
+
+        $remainingAdmins = User::query()
+            ->role('admin')
+            ->where('id', '!=', $user->id)
+            ->count();
+
+        $hasSuperAdmin = User::query()
+            ->where('is_super_admin', true)
+            ->where('id', '!=', $user->id)
+            ->exists();
+
+        if ($remainingAdmins === 0 && ! $hasSuperAdmin) {
+            abort(400, __('Cannot delete the last admin account.'));
+        }
     }
 }

@@ -13,11 +13,16 @@ class TrackAdminAuditTrail
     {
         $response = $next($request);
 
-        if (! $request->user() || ! $request->user()->hasRole('admin')) {
+        if (! $request->user() || ! $request->user()->isStaff()) {
             return $response;
         }
 
         if (! in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
+            return $response;
+        }
+
+        $statusCode = (int) $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 400) {
             return $response;
         }
 
@@ -27,7 +32,7 @@ class TrackAdminAuditTrail
                 'method' => strtoupper($request->method()),
                 'path' => '/'.ltrim((string) $request->path(), '/'),
                 'route_name' => optional($request->route())->getName(),
-                'status_code' => (int) $response->getStatusCode(),
+                'status_code' => $statusCode,
                 'ip_address' => (string) $request->ip(),
                 'user_agent' => substr((string) $request->userAgent(), 0, 1000),
                 'meta' => [

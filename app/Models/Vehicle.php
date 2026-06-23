@@ -57,7 +57,7 @@ class Vehicle extends Model
     /** Same rule as dashboard “Staff listing” vs vendor: owner is console staff. */
     public function isStaffListing(): bool
     {
-        return $this->user?->hasRole('admin') ?? false;
+        return $this->user?->isStaff() ?? false;
     }
 
     public function approver(): BelongsTo

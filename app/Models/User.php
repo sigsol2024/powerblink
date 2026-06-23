@@ -56,7 +56,46 @@ class User extends Authenticatable
             'password' => 'hashed',
             'email_login_otp_enabled' => 'boolean',
             'currency_selection_prompt_dismissed' => 'boolean',
+            'is_super_admin' => 'boolean',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->hasRole('editor');
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isEditor();
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->isStaff();
+    }
+
+    public function staffHomeRoute(): string
+    {
+        if ($this->isAdmin()) {
+            return route('admin.dashboard', absolute: false);
+        }
+
+        if ($this->isEditor()) {
+            return route('dashboard.vehicles.index', absolute: false);
+        }
+
+        return route('dashboard', absolute: false);
     }
 
     public function vehicles(): HasMany

@@ -34,10 +34,10 @@
         </div>
         @auth
             @php
-                $mtMediaUpload = auth()->user()->hasRole('admin')
+                $mtMediaUpload = auth()->user()->can('media.manage') && auth()->user()->isStaff()
                     ? route('admin.media.upload')
                     : route('dashboard.api.media.upload');
-                $mtMediaList = auth()->user()->hasRole('admin')
+                $mtMediaList = auth()->user()->can('media.manage') && auth()->user()->isStaff()
                     ? route('admin.media.list')
                     : route('dashboard.api.media');
             @endphp

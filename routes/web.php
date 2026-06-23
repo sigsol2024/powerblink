@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminMediaController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\AdminSiteSettingsController;
+use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminVehicleController;
 use App\Http\Controllers\Auth\GoogleAuthController;
@@ -107,7 +108,7 @@ Route::get('/media/storage/{path}', [PublicStorageMediaController::class, 'show'
 Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
 
-    if ($user->hasRole('admin')) {
+    if ($user->isAdmin()) {
         return view('dashboard', [
             'stats' => [
                 'total' => Vehicle::query()->count(),
@@ -142,14 +143,16 @@ Route::middleware(['auth', 'vendor.idle'])->group(function () {
 
         Route::get('/vehicles', [UserVehicleController::class, 'index'])->name('dashboard.vehicles.index');
         Route::get('/vehicles/create', [UserVehicleController::class, 'create'])->name('dashboard.vehicles.create');
-        Route::post('/vehicles', [UserVehicleController::class, 'store'])->name('dashboard.vehicles.store');
         Route::get('/vehicles/{vehicle}/edit', [UserVehicleController::class, 'edit'])->name('dashboard.vehicles.edit');
-        Route::put('/vehicles/{vehicle}', [UserVehicleController::class, 'update'])->name('dashboard.vehicles.update');
-        Route::post('/vehicles/{vehicle}/submit', [UserVehicleController::class, 'submit'])->name('dashboard.vehicles.submit');
-        Route::delete('/vehicles/{vehicle}', [UserVehicleController::class, 'destroy'])->name('dashboard.vehicles.destroy');
-        Route::delete('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy');
-        // Some hosting/WAF setups block DELETE requests; accept POST as well.
-        Route::post('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy.post');
+
+        Route::middleware('admin.audit')->group(function () {
+            Route::post('/vehicles', [UserVehicleController::class, 'store'])->name('dashboard.vehicles.store');
+            Route::put('/vehicles/{vehicle}', [UserVehicleController::class, 'update'])->name('dashboard.vehicles.update');
+            Route::post('/vehicles/{vehicle}/submit', [UserVehicleController::class, 'submit'])->name('dashboard.vehicles.submit');
+            Route::delete('/vehicles/{vehicle}', [UserVehicleController::class, 'destroy'])->name('dashboard.vehicles.destroy');
+            Route::delete('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy');
+            Route::post('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy.post');
+        });
     });
 
     Route::get('/dashboard/listing-models/{make}', [ListingOptionLookupController::class, 'modelsForMake'])
@@ -160,7 +163,7 @@ Route::middleware(['auth', 'vendor.idle'])->group(function () {
     Route::post('/dashboard/api/media', [MediaLibraryController::class, 'upload'])->name('dashboard.api.media.upload');
 });
 
-Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(function () {
     Route::get('/', function () {
         $analyticsStart = now()->subDays(89)->startOfDay();
         $analyticsEnd = now();
@@ -219,10 +222,10 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
                 'recent' => (clone $auditBase)->with('user:id,name,email')->latest()->take(8)->get(),
             ],
         ]);
-    })->name('admin.dashboard');
+    })->middleware('permission:dashboard.view')->name('admin.dashboard');
 
-    Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('admin.analytics.index');
-    Route::get('/analytics/data', [AdminAnalyticsController::class, 'data'])->name('admin.analytics.data');
+    Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('admin.analytics.index');
+    Route::get('/analytics/data', [AdminAnalyticsController::class, 'data'])->middleware('permission:analytics.view')->name('admin.analytics.data');
     Route::get('/audit', function (Request $request) {
         $filters = $request->validate([
             'method' => ['nullable', 'string', 'max:10'],
@@ -230,6 +233,7 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date'],
             'q' => ['nullable', 'string', 'max:255'],
+            'action' => ['nullable', 'string', 'max:64'],
         ]);
 
         $query = AdminAuditTrail::query()->with('user:id,name,email')->latest();
@@ -259,8 +263,15 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
                 $builder
                     ->where('path', 'like', '%'.$search.'%')
                     ->orWhere('route_name', 'like', '%'.$search.'%')
-                    ->orWhere('ip_address', 'like', '%'.$search.'%');
+                    ->orWhere('ip_address', 'like', '%'.$search.'%')
+                    ->orWhere('meta->summary', 'like', '%'.$search.'%')
+                    ->orWhere('meta->subject_label', 'like', '%'.$search.'%');
             });
+        }
+
+        $action = trim((string) ($filters['action'] ?? ''));
+        if ($action !== '') {
+            $query->where('meta->action', $action);
         }
 
         return view('admin.audit.index', [
@@ -270,57 +281,67 @@ Route::middleware(['auth', 'role:admin', 'admin.audit'])->prefix('admin')->group
             'from' => (string) ($filters['from'] ?? ''),
             'to' => (string) ($filters['to'] ?? ''),
             'search' => $search,
-            'admins' => User::query()->role('admin')->orderBy('name')->get(['id', 'name', 'email']),
+            'actionFilter' => $action,
+            'staffActors' => User::query()
+                ->whereHas('roles', fn ($q) => $q->whereIn('name', ['admin', 'editor']))
+                ->orderBy('name')
+                ->get(['id', 'name', 'email']),
         ]);
-    })->name('admin.audit.index');
+    })->middleware('permission:audit.view')->name('admin.audit.index');
 
     Route::redirect('/vehicles', '/dashboard/vehicles')->name('admin.vehicles.index');
     Route::get('/vehicles/{vehicle}/edit', fn (Vehicle $vehicle) => redirect()->route('dashboard.vehicles.edit', $vehicle))->name('admin.vehicles.edit');
 
-    Route::post('/vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->name('admin.vehicles.approve');
-    Route::post('/vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->name('admin.vehicles.reject');
+    Route::post('/vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->middleware('permission:products.manage')->name('admin.vehicles.approve');
+    Route::post('/vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->middleware('permission:products.manage')->name('admin.vehicles.reject');
 
-    Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('/staff', [AdminStaffController::class, 'index'])->middleware('permission:staff.manage')->name('admin.staff.index');
+    Route::post('/staff', [AdminStaffController::class, 'store'])->middleware('permission:staff.manage')->name('admin.staff.store');
+    Route::put('/staff/{user}', [AdminStaffController::class, 'update'])->middleware('permission:staff.manage')->name('admin.staff.update');
+    Route::delete('/staff/{user}', [AdminStaffController::class, 'destroy'])->middleware('permission:staff.manage')->name('admin.staff.destroy');
 
-    Route::get('/pages', [AdminPageController::class, 'index'])->name('admin.pages.index');
-    Route::get('/pages/{slug}/edit', [AdminPageController::class, 'edit'])->name('admin.pages.edit');
-    Route::put('/pages/{slug}', [AdminPageController::class, 'update'])->name('admin.pages.update');
-    Route::get('/media', [AdminMediaController::class, 'index'])->name('admin.media.index');
-    Route::post('/media', [MediaLibraryController::class, 'upload'])->name('admin.media.upload');
-    Route::delete('/media/{media}', [AdminMediaController::class, 'destroy'])->name('admin.media.destroy');
-    Route::post('/media/{media}', [AdminMediaController::class, 'destroy'])->name('admin.media.destroy.post');
-    Route::post('/media/bulk-delete', [AdminMediaController::class, 'bulkDestroy'])->name('admin.media.bulk-destroy');
-    Route::get('/api/media', [MediaLibraryController::class, 'list'])->name('admin.media.list');
+    Route::get('/users', [AdminUserController::class, 'index'])->middleware('permission:customers.view')->name('admin.users.index');
+    Route::post('/users', [AdminUserController::class, 'store'])->middleware('permission:customers.manage')->name('admin.users.store');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->middleware('permission:customers.manage')->name('admin.users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->middleware('permission:customers.manage')->name('admin.users.destroy');
 
-    Route::get('/settings', [AdminSiteSettingsController::class, 'edit'])->name('admin.settings.edit');
-    Route::put('/settings', [AdminSiteSettingsController::class, 'update'])->name('admin.settings.update');
+    Route::get('/pages', [AdminPageController::class, 'index'])->middleware('permission:pages.manage')->name('admin.pages.index');
+    Route::get('/pages/{slug}/edit', [AdminPageController::class, 'edit'])->middleware('permission:pages.manage')->name('admin.pages.edit');
+    Route::put('/pages/{slug}', [AdminPageController::class, 'update'])->middleware('permission:pages.manage')->name('admin.pages.update');
+    Route::get('/media', [AdminMediaController::class, 'index'])->middleware('permission:media.manage')->name('admin.media.index');
+    Route::post('/media', [MediaLibraryController::class, 'upload'])->middleware('permission:media.manage')->name('admin.media.upload');
+    Route::delete('/media/{media}', [AdminMediaController::class, 'destroy'])->middleware('permission:media.manage')->name('admin.media.destroy');
+    Route::post('/media/{media}', [AdminMediaController::class, 'destroy'])->middleware('permission:media.manage')->name('admin.media.destroy.post');
+    Route::post('/media/bulk-delete', [AdminMediaController::class, 'bulkDestroy'])->middleware('permission:media.manage')->name('admin.media.bulk-destroy');
+    Route::get('/api/media', [MediaLibraryController::class, 'list'])->middleware('permission:media.manage')->name('admin.media.list');
+
+    Route::get('/settings', [AdminSiteSettingsController::class, 'edit'])->middleware('permission:settings.manage')->name('admin.settings.edit');
+    Route::put('/settings', [AdminSiteSettingsController::class, 'update'])->middleware('permission:settings.manage')->name('admin.settings.update');
     Route::post('/settings/mail-test', [AdminSiteSettingsController::class, 'sendTestMail'])
-        ->middleware('throttle:10,1')
+        ->middleware(['permission:settings.manage', 'throttle:10,1'])
         ->name('admin.settings.mail-test');
 
-    Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
-    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
-    Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.status');
+    Route::get('/orders', [AdminOrderController::class, 'index'])->middleware('permission:orders.manage')->name('admin.orders.index');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->middleware('permission:orders.manage')->name('admin.orders.show');
+    Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage')->name('admin.orders.status');
 
-    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
-    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
-    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
-    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->middleware('permission:categories.manage')->name('admin.categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->middleware('permission:categories.manage')->name('admin.categories.store');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->middleware('permission:categories.manage')->name('admin.categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->middleware('permission:categories.manage')->name('admin.categories.destroy');
 
-    Route::get('/variants', [AdminVariantController::class, 'index'])->name('admin.variants.index');
-    Route::post('/variants', [AdminVariantController::class, 'store'])->name('admin.variants.store');
-    Route::put('/variants/{variant}', [AdminVariantController::class, 'update'])->name('admin.variants.update');
-    Route::delete('/variants/{variant}', [AdminVariantController::class, 'destroy'])->name('admin.variants.destroy');
+    Route::get('/variants', [AdminVariantController::class, 'index'])->middleware('permission:variants.manage')->name('admin.variants.index');
+    Route::post('/variants', [AdminVariantController::class, 'store'])->middleware('permission:variants.manage')->name('admin.variants.store');
+    Route::put('/variants/{variant}', [AdminVariantController::class, 'update'])->middleware('permission:variants.manage')->name('admin.variants.update');
+    Route::delete('/variants/{variant}', [AdminVariantController::class, 'destroy'])->middleware('permission:variants.manage')->name('admin.variants.destroy');
 
-    Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->name('admin.listing-options.index');
-    Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->name('admin.listing-options.show');
-    Route::post('/listing-options/{category}', [AdminListingOptionController::class, 'store'])->name('admin.listing-options.store');
-    Route::put('/listing-options/{category}/batch', [AdminListingOptionController::class, 'batchUpdate'])->name('admin.listing-options.batch-update');
-    Route::put('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'update'])->name('admin.listing-options.update');
-    Route::delete('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'destroy'])->name('admin.listing-options.destroy');
-    Route::post('/listing-options/{category}/options/{option}/move', [AdminListingOptionController::class, 'move'])->name('admin.listing-options.move');
+    Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->middleware('permission:categories.manage')->name('admin.listing-options.index');
+    Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->middleware('permission:categories.manage')->name('admin.listing-options.show');
+    Route::post('/listing-options/{category}', [AdminListingOptionController::class, 'store'])->middleware('permission:categories.manage')->name('admin.listing-options.store');
+    Route::put('/listing-options/{category}/batch', [AdminListingOptionController::class, 'batchUpdate'])->middleware('permission:categories.manage')->name('admin.listing-options.batch-update');
+    Route::put('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'update'])->middleware('permission:categories.manage')->name('admin.listing-options.update');
+    Route::delete('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'destroy'])->middleware('permission:categories.manage')->name('admin.listing-options.destroy');
+    Route::post('/listing-options/{category}/options/{option}/move', [AdminListingOptionController::class, 'move'])->middleware('permission:categories.manage')->name('admin.listing-options.move');
 });
 
 require __DIR__.'/auth.php';

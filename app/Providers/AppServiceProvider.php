@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Models\SiteSetting;
+use App\Models\User;
+use App\Policies\UserPolicy;
 use App\Support\SiteSettingDefaults;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -67,5 +70,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         View::share('site', $site);
+
+        Gate::policy(User::class, UserPolicy::class);
     }
 }

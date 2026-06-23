@@ -29,7 +29,7 @@ class FavoriteController extends Controller
         $user = $request->user();
 
         $canSee = $vehicle->status === 'approved'
-            || $user->hasRole('admin')
+            || $user->isStaff()
             || $vehicle->user_id === $user->id;
 
         if (! $canSee) {

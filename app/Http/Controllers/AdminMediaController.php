@@ -18,7 +18,7 @@ class AdminMediaController extends Controller
     protected function mediaItems(Request $request): array
     {
         $user = $request->user();
-        abort_unless($user?->hasRole('admin'), Response::HTTP_FORBIDDEN);
+        abort_unless($user?->can('media.manage'), Response::HTTP_FORBIDDEN);
 
         return MediaLibraryCatalog::toListItems(MediaLibraryCatalog::visibleFor($user));
     }
@@ -40,7 +40,7 @@ class AdminMediaController extends Controller
     public function destroy(Request $request, Media $media): RedirectResponse|JsonResponse
     {
         $user = $request->user();
-        abort_unless($user?->hasRole('admin'), Response::HTTP_FORBIDDEN);
+        abort_unless($user?->can('media.manage'), Response::HTTP_FORBIDDEN);
 
         if (! MediaLibraryCatalog::visibleFor($user)->whereKey($media->id)->exists()) {
             abort(Response::HTTP_FORBIDDEN);
@@ -65,7 +65,7 @@ class AdminMediaController extends Controller
     public function bulkDestroy(Request $request): RedirectResponse
     {
         $user = $request->user();
-        abort_unless($user?->hasRole('admin'), Response::HTTP_FORBIDDEN);
+        abort_unless($user?->can('media.manage'), Response::HTTP_FORBIDDEN);
 
         $data = $request->validate([
             'ids' => ['required', 'array'],

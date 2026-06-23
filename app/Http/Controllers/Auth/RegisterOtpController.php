@@ -55,11 +55,9 @@ class RegisterOtpController extends Controller
 
         Auth::login($user);
 
-        $home = $user->hasRole('admin')
-            ? route('admin.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
-
-        return redirect()->to($home)->with('status', __('Welcome! Your account is ready.'));
+        return redirect()
+            ->route('dashboard')
+            ->with('status', __('Welcome! Your account is ready.'));
     }
 
     public function resend(Request $request, EmailOtpService $otp): RedirectResponse

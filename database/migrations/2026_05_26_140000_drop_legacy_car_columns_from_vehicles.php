@@ -70,8 +70,6 @@ return new class extends Migration
             return;
         }
 
-        $this->dropTypeListingOptionFk();
-
         foreach (self::indexNamesToDropBeforeColumns() as $indexName) {
             $this->dropIndexIfExists($indexName);
         }
@@ -89,7 +87,7 @@ return new class extends Migration
 
         if (Schema::hasColumn('vehicles', 'type_listing_option_id')) {
             Schema::table('vehicles', function (Blueprint $table) {
-                $table->dropColumn('type_listing_option_id');
+                $table->dropConstrainedForeignId('type_listing_option_id');
             });
         }
     }
@@ -155,37 +153,6 @@ return new class extends Migration
             }
         } catch (\Throwable) {
             // Best-effort cleanup; dropping the column afterwards also clears the index.
-        }
-    }
-
-    /** type_listing_option_id was added with `constrained()`, so it has a real FK. */
-    private function dropTypeListingOptionFk(): void
-    {
-        if (! Schema::hasColumn('vehicles', 'type_listing_option_id')) {
-            return;
-        }
-
-        $driver = DB::getDriverName();
-        if (! in_array($driver, ['mysql', 'mariadb'], true)) {
-            return;
-        }
-
-        try {
-            $rows = DB::select(
-                "SELECT CONSTRAINT_NAME AS name FROM information_schema.KEY_COLUMN_USAGE
-                 WHERE TABLE_SCHEMA = DATABASE()
-                   AND TABLE_NAME = 'vehicles'
-                   AND COLUMN_NAME = 'type_listing_option_id'
-                   AND REFERENCED_TABLE_NAME IS NOT NULL"
-            );
-            foreach ($rows as $row) {
-                $name = (string) ($row->name ?? '');
-                if ($name !== '') {
-                    DB::statement('ALTER TABLE vehicles DROP FOREIGN KEY `'.$name.'`');
-                }
-            }
-        } catch (\Throwable) {
-            // Constraint may already be gone; non-fatal.
         }
     }
 };
