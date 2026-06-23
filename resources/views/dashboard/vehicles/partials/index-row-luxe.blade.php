@@ -18,7 +18,7 @@
   $sku = $vehicle->vin ?: ('PRD-'.$vehicle->id);
 @endphp
 
-<tr class="group" x-show="matchesStatus('{{ $vehicle->status }}') && rowMatchesSearch(@js($vehicle->title))">
+<tr class="group">
   <td>
     <div class="w-12 h-14 bg-wp-bg overflow-hidden rounded">
       <img src="{{ $thumbUrl }}" alt="" class="w-full h-full object-cover" loading="lazy" />

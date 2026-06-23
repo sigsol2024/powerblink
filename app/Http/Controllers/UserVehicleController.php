@@ -36,19 +36,43 @@ class UserVehicleController extends Controller
             if (is_string($status) && in_array($status, ['pending', 'approved', 'draft', 'rejected'], true)) {
                 $query->where('status', $status);
             }
+
+            $search = trim((string) $request->query('q', ''));
+            if ($search !== '') {
+                $like = '%'.$search.'%';
+                $query->where(function ($builder) use ($like): void {
+                    $builder
+                        ->where('title', 'like', $like)
+                        ->orWhere('slug', 'like', $like)
+                        ->orWhere('vin', 'like', $like)
+                        ->orWhereHas('user', function ($userQuery) use ($like): void {
+                            $userQuery
+                                ->where('name', 'like', $like)
+                                ->orWhere('email', 'like', $like);
+                        });
+                });
+            }
         }
 
         $vehicles = $query->paginate(15)->withQueryString();
+
+        $staffStats = null;
+        if ($isStaffList) {
+            $staffStats = [
+                'total' => Vehicle::query()->count(),
+                'pending' => Vehicle::query()->where('status', 'pending')->count(),
+                'approved' => Vehicle::query()->where('status', 'approved')->count(),
+                'draft' => Vehicle::query()->where('status', 'draft')->count(),
+                'rejected' => Vehicle::query()->where('status', 'rejected')->count(),
+            ];
+        }
 
         return view('dashboard.vehicles.index', [
             'vehicles' => $vehicles,
             'isAdminList' => $isStaffList,
             'statusFilter' => $isStaffList ? (string) $request->query('status', '') : '',
-            'stats' => $isStaffList ? [
-                'total' => Vehicle::query()->count(),
-                'pending' => Vehicle::query()->where('status', 'pending')->count(),
-                'approved' => Vehicle::query()->where('status', 'approved')->count(),
-            ] : null,
+            'searchQuery' => $isStaffList ? trim((string) $request->query('q', '')) : '',
+            'stats' => $staffStats,
         ]);
     }
 

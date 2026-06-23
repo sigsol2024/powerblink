@@ -1,6 +1,13 @@
 @php
   $isAdminList = $isAdminList ?? false;
   $statusFilter = $statusFilter ?? '';
+  $searchQuery = $searchQuery ?? '';
+  $listQuery = static function (array $extra = []) use ($statusFilter, $searchQuery): array {
+      return array_filter(array_merge([
+          'status' => $statusFilter !== '' ? $statusFilter : null,
+          'q' => $searchQuery !== '' ? $searchQuery : null,
+      ], $extra), static fn ($value) => $value !== null && $value !== '');
+  };
 @endphp
 <x-app-layout>
   <div
@@ -10,13 +17,6 @@
       openMenuId: null,
       rejectExpandedId: null,
       expandedMobileId: null,
-      selectedStatus: @js((string) $statusFilter),
-      searchQuery: '',
-      pageStatuses: @js($vehicles->pluck('status')->values()->all()),
-      rowMatchesSearch(title) {
-        if (!this.searchQuery.trim()) return true;
-        return title.toLowerCase().includes(this.searchQuery.trim().toLowerCase());
-      },
       toggleOpen(id) {
         this.openId = this.openId === id ? null : id;
       },
@@ -38,16 +38,6 @@
       },
       toggleReject(id) {
         this.rejectExpandedId = this.rejectExpandedId === id ? null : id;
-      },
-      matchesStatus(status) {
-        return this.selectedStatus === '' || this.selectedStatus === status;
-      },
-      countFor(status) {
-        if (status === '') return this.pageStatuses.length;
-        return this.pageStatuses.filter((s) => s === status).length;
-      },
-      filteredCount() {
-        return this.countFor(this.selectedStatus);
       },
     }"
     @keydown.escape.window="closeMenus(); openId = null"
@@ -85,40 +75,51 @@
           </div>
 
           <x-admin.card variant="toolbar">
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <form method="get" action="{{ route('dashboard.vehicles.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              @if ($statusFilter !== '')
+                <input type="hidden" name="status" value="{{ $statusFilter }}" />
+              @endif
               <div class="relative flex-1 sm:flex-initial">
                 <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-wp-text-muted pointer-events-none">
                   <x-icon name="search" class="w-4 h-4" />
                 </span>
                 <input
                   type="search"
-                  x-model.debounce.250ms="searchQuery"
+                  name="q"
+                  value="{{ $searchQuery }}"
                   class="w-full sm:w-72 pl-9 pr-3 text-sm"
                   placeholder="{{ __('Search products…') }}"
                   aria-label="{{ __('Search products') }}"
-                  @keydown.enter.prevent
                 />
               </div>
               <button
-                type="button"
-                @click="searchQuery = $refs.searchInput?.value ?? searchQuery"
+                type="submit"
                 class="bg-black text-white border border-black hover:opacity-90 px-4 py-2 text-xs font-medium rounded transition-opacity inline-flex items-center justify-center"
               >
                 {{ __('Search') }}
               </button>
-              <button
-                type="button"
-                x-show="searchQuery.length > 0"
-                x-cloak
-                @click="searchQuery = ''"
-                class="text-xs text-wp-text-muted hover:text-wp-text underline"
-              >{{ __('Clear') }}</button>
-            </div>
+              @if ($searchQuery !== '')
+                <a href="{{ route('dashboard.vehicles.index', $listQuery(['q' => null])) }}" class="text-xs text-wp-text-muted hover:text-wp-text underline self-center">
+                  {{ __('Clear') }}
+                </a>
+              @endif
+            </form>
             <div class="flex flex-wrap items-center gap-1.5">
               <span class="text-[11px] text-wp-text-muted mr-1">{{ __('Filter') }}:</span>
-              <button type="button" @click="selectedStatus = ''" :class="selectedStatus === '' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'" class="border px-2.5 py-1 text-xs rounded">{{ __('All') }} (<span x-text="countFor('')"></span>)</button>
-              @foreach (['pending' => __('Pending'), 'approved' => __('Approved'), 'draft' => __('Draft'), 'rejected' => __('Rejected')] as $st => $label)
-                <button type="button" @click="selectedStatus = '{{ $st }}'" :class="selectedStatus === '{{ $st }}' ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text'" class="border px-2.5 py-1 text-xs rounded">{{ $label }} (<span x-text="countFor('{{ $st }}')"></span>)</button>
+              @php
+                $statusLinks = [
+                    '' => [__('All'), (int) ($stats['total'] ?? 0)],
+                    'pending' => [__('Pending'), (int) ($stats['pending'] ?? 0)],
+                    'approved' => [__('Approved'), (int) ($stats['approved'] ?? 0)],
+                    'draft' => [__('Draft'), (int) ($stats['draft'] ?? 0)],
+                    'rejected' => [__('Rejected'), (int) ($stats['rejected'] ?? 0)],
+                ];
+              @endphp
+              @foreach ($statusLinks as $st => [$label, $count])
+                <a
+                  href="{{ route('dashboard.vehicles.index', $listQuery(['status' => $st !== '' ? $st : null])) }}"
+                  class="border px-2.5 py-1 text-xs rounded {{ $statusFilter === $st ? 'bg-wp-link text-white border-wp-link' : 'border-wp-border bg-white hover:bg-wp-bg text-wp-text' }}"
+                >{{ $label }} ({{ number_format($count) }})</a>
               @endforeach
             </div>
           </x-admin.card>

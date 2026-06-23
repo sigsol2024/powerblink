@@ -89,6 +89,7 @@
         </div>
       </form>
 
+      @unless ($user->isEditor())
       <section class="overflow-hidden rounded-xl border border-red-200 bg-white shadow-sm">
         <div class="border-b border-red-100 bg-red-50 px-6 py-4">
           <h2 class="text-sm font-semibold uppercase tracking-wide text-red-800">{{ __('Delete account') }}</h2>
@@ -98,6 +99,7 @@
           @include('profile.partials.delete-user-form')
         </div>
       </section>
+      @endunless
     </x-admin.page-content>
   </div>
 </x-app-layout>

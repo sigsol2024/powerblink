@@ -19,7 +19,6 @@
 
 <div
   class="bg-white border border-wp-border rounded overflow-hidden"
-  x-show="matchesStatus('{{ $vehicle->status }}') && rowMatchesSearch(@js($vehicle->title))"
 >
   <div class="flex items-center gap-3 p-3">
     <button
