@@ -29,7 +29,7 @@ New tests: `ShowcaseSeedDensityTest`, `FreshInstallSimulationTest`, `DemoLoginSm
 
 ## Staging gate (manual)
 
-1. Empty MySQL → import `powerblink_academy.sql`
+1. Empty MySQL → generate `powerblink_academy.sql` locally, import via phpMyAdmin (file is gitignored)
 2. `php artisan migrate --force`
 3. Login all four demo roles
 4. Mobile check: Home, Registration, Player/Parent/Admin dashboards at 375px

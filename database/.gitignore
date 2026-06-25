@@ -1,2 +1,7 @@
+# Local export artifacts — generate on your machine, import via phpMyAdmin (not committed)
+powerblink_academy.sql
+/schema/mysql-schema.sql
+
+# Temporary SQLite used only when running db:export-powerblink-sql --sqlite
 *.sqlite*
 powerblink_export.sqlite
