@@ -16,7 +16,12 @@ final class MediaLibraryCatalog
 {
     public static function mediaDir(): string
     {
-        return public_path('asset/images/media');
+        return public_path('asset/images/powerblink');
+    }
+
+    public static function mediaPathPrefix(): string
+    {
+        return 'asset/images/powerblink/';
     }
 
     public static function syncDiscoveredFiles(): void
@@ -29,7 +34,7 @@ final class MediaLibraryCatalog
         foreach (File::files($dir) as $file) {
             $name = $file->getFilename();
             Media::query()->firstOrCreate(
-                ['file_path' => 'asset/images/media/'.$name],
+                ['file_path' => self::mediaPathPrefix().$name],
                 [
                     'filename' => $name,
                     'original_name' => $name,
@@ -90,7 +95,7 @@ final class MediaLibraryCatalog
         $p = str_replace('\\', '/', trim($path));
         $p = ltrim($p, '/');
 
-        return str_starts_with($p, 'asset/images/media/')
+        return str_starts_with($p, 'asset/images/powerblink/')
             && ! str_contains($p, '..');
     }
 

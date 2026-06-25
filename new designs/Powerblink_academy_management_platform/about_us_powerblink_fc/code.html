@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About Us | Powerblink Football Club Limited</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&amp;family=Inter:wght@400;500;700&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f7f9fb",
+                    "surface-container-highest": "#e0e3e5",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e6e8ea",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-on-surface": "#eff1f3",
+                    "tertiary": "#000000",
+                    "on-secondary-container": "#007436",
+                    "outline": "#75777e",
+                    "tertiary-fixed-dim": "#efc13e",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#44474d",
+                    "on-error-container": "#93000a",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c5c6ce",
+                    "on-secondary-fixed-variant": "#005224",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#64ff92",
+                    "tertiary-container": "#241a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#f7f9fb",
+                    "secondary-container": "#64ff92",
+                    "primary-container": "#0b1c34",
+                    "surface-tint": "#505f7a",
+                    "secondary": "#006d32",
+                    "surface-container-low": "#f2f4f6",
+                    "on-background": "#191c1e",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed-variant": "#594400",
+                    "inverse-surface": "#2d3133",
+                    "on-surface": "#191c1e",
+                    "on-secondary-fixed": "#00210b",
+                    "tertiary-fixed": "#ffdf94",
+                    "surface-dim": "#d8dadc",
+                    "primary": "#000000",
+                    "on-primary-fixed-variant": "#384761",
+                    "on-tertiary-container": "#a47f00",
+                    "primary-fixed": "#d6e3ff",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#7584a2",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#b7c7e7",
+                    "on-error": "#ffffff",
+                    "secondary-fixed-dim": "#41e279",
+                    "inverse-primary": "#b7c7e7",
+                    "surface-container": "#eceef0",
+                    "on-primary-fixed": "#0b1c34"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "80px",
+                    "margin-desktop": "48px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "element-gap": "24px"
+            },
+            "fontFamily": {
+                    "display-hero": ["Montserrat"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Montserrat"],
+                    "headline-md": ["Montserrat"],
+                    "stat-xl": ["Bebas Neue"],
+                    "headline-lg-mobile": ["Montserrat"],
+                    "stat-md": ["Bebas Neue"],
+                    "label-caps": ["Inter"]
+            },
+            "fontSize": {
+                    "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                    "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-glass-gradient {
+            background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- Header / Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-md">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<span class="font-display-hero text-headline-md font-extrabold text-primary">Powerblink FC</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-300" href="#">Home</a>
+<a class="text-secondary font-bold border-b-2 border-secondary pb-1" href="#">Programs</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-300" href="#">Coaching</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-300" href="#">Tournaments</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-300" href="#">Gallery</a>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all active:scale-95">Login</button>
+<button class="px-6 py-2 bg-secondary text-white font-bold rounded-lg shadow-md hover:opacity-90 transition-all active:scale-95">Registration</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative h-[870px] flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center scale-105 animate-pulse" data-alt="A cinematic, low-angle shot of a high-intensity football training session at dusk in Ibeju Lekki. Young Nigerian athletes in professional navy and green kits are captured in sharp motion, with dramatic stadium lighting casting long shadows across a lush, perfectly manicured grass pitch. The atmosphere is aspirational and professional, with a cool blue and green color grade reflecting the Elite Performance Framework." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCyDcPuAWDjsn5hIkMGmpYXejB3DgPdktthSKl_oVAcZ2nSv2MsqwB1qrII-PEGKq-k_rnPUML3F4_pnfhmnFtJDLM_BtkmvtCPwg-cv4M1wK90LnhoFMLu96SNQX3uq9qM9BEV2Ja1xxRADbFrqwca5ZGJlqkyBRh-SxPFm7te3UE6aNgJdTpJMQPKL1Ea7J3YgqG4lJ86s3bcAO7tyIjBbshSJ76fNZOva_jHg0Qq_FItlFAruzmXcdV0KBUbPQ69msFnwxEpB6xy')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/90 via-primary-container/40 to-transparent"></div>
+</div>
+<div class="relative z-10 px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl">
+<span class="inline-block px-4 py-1 bg-secondary-container text-on-secondary-fixed font-bold text-label-caps rounded-full mb-6 uppercase tracking-widest">About the Academy</span>
+<h1 class="font-display-hero text-display-hero text-white mb-6">Our Story</h1>
+<p class="font-body-lg text-body-lg text-white/90 mb-8 leading-relaxed">
+                    Rooted in the heart of Ibeju Lekki, Powerblink Football Club Limited is more than an academy—it's a high-performance ecosystem dedicated to transforming raw potential into world-class athletic excellence. We are building the next generation of football leaders.
+                </p>
+<div class="flex gap-4">
+<button class="px-8 py-4 bg-secondary text-white font-bold text-lg rounded-xl shadow-lg hover:scale-105 transition-transform">Explore Programs</button>
+<button class="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-lg rounded-xl hover:bg-white/20 transition-all">Download Brochure</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Mission, Vision, Values -->
+<section class="py-section-gap px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Mission -->
+<div class="bg-white p-10 rounded-xl shadow-[0_20px_40px_rgba(11,28,52,0.05)] border border-outline-variant/20 hover:scale-[1.02] transition-transform duration-500">
+<div class="w-16 h-16 bg-primary-container rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-secondary-fixed text-4xl" data-icon="target">target</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Mission</h3>
+<p class="font-body-md text-on-surface-variant">To discover, develop, mentor, and showcase young football talent through structured coaching, ensuring every player reaches their professional ceiling.</p>
+</div>
+<!-- Vision -->
+<div class="bg-white p-10 rounded-xl shadow-[0_20px_40px_rgba(11,28,52,0.05)] border border-outline-variant/20 hover:scale-[1.02] transition-transform duration-500">
+<div class="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-white text-4xl" data-icon="visibility">visibility</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Vision</h3>
+<p class="font-body-md text-on-surface-variant">To be Nigeria's most professional youth football academy, recognized globally for producing elite athletes and disciplined leaders on and off the pitch.</p>
+</div>
+<!-- Core Values -->
+<div class="bg-primary-container p-10 rounded-xl shadow-2xl hover:scale-[1.02] transition-transform duration-500">
+<div class="w-16 h-16 bg-secondary-container rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-on-secondary-fixed text-4xl" data-icon="verified">verified</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-white mb-6">Core Values</h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-white/80 font-bold">
+<span class="w-2 h-2 bg-secondary-fixed rounded-full"></span> Discipline
+                    </li>
+<li class="flex items-center gap-3 text-white/80 font-bold">
+<span class="w-2 h-2 bg-secondary-fixed rounded-full"></span> Excellence
+                    </li>
+<li class="flex items-center gap-3 text-white/80 font-bold">
+<span class="w-2 h-2 bg-secondary-fixed rounded-full"></span> Development
+                    </li>
+<li class="flex items-center gap-3 text-white/80 font-bold">
+<span class="w-2 h-2 bg-secondary-fixed rounded-full"></span> Community
+                    </li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Interactive Timeline -->
+<section class="py-section-gap bg-surface-container-low overflow-hidden">
+<div class="px-margin-desktop max-w-container-max mx-auto text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Our Journey</h2>
+<div class="w-24 h-1 bg-secondary mx-auto rounded-full"></div>
+</div>
+<div class="relative px-margin-desktop max-w-container-max mx-auto">
+<!-- Timeline Center Line -->
+<div class="absolute left-1/2 top-0 bottom-0 w-px bg-outline-variant/30 hidden md:block"></div>
+<div class="space-y-24">
+<!-- 2025: Academy Launch -->
+<div class="relative flex flex-col md:flex-row items-center justify-between group">
+<div class="md:w-5/12 text-center md:text-right mb-8 md:mb-0">
+<span class="font-stat-md text-stat-md text-secondary block mb-2">2025</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Academy Launch</h4>
+<p class="font-body-md text-on-surface-variant">Official opening of our state-of-the-art Ibeju Lekki facility, setting a new benchmark for youth training infrastructure in Nigeria.</p>
+</div>
+<div class="absolute left-1/2 -translate-x-1/2 w-12 h-12 bg-white border-4 border-secondary rounded-full z-10 hidden md:flex items-center justify-center">
+<div class="w-3 h-3 bg-secondary rounded-full"></div>
+</div>
+<div class="md:w-5/12 rounded-xl overflow-hidden shadow-xl aspect-video relative">
+<img class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" data-alt="A bright, wide-angle architectural photograph of a modern football academy entrance in a coastal Nigerian setting. The building features sleek glass and wood accents with the Powerblink FC logo prominently displayed. The sun is shining, casting soft shadows, and the surrounding grounds are lush and professional, mirroring a corporate athletic facility style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPIJnmeDsZFAJrqeBSZJ3t_e3NTWkVwbouhG2OgaQtzq-PcvlWuxPQNJAJnkusBuVSnV3z6hRf8NZvtra2Bh36Jwx7HIF-N9VOLvFezMrK-BWJEFEd3lQs_EhRboiTOubDygR_OeqCCpxGaPCML0E-larvobRkIezdnlfNh4AOM3Z_QcMYZmnx2TtBNV_CtHc1KtQu0zQw3_8Zgi0f4jWSFeeVu_M9yJydx9TM7oAHhBQIXjf8fYwuQBWMAbQ4YcIKwVZaOHsRWw1g"/>
+</div>
+</div>
+<!-- 2025: Tournament -->
+<div class="relative flex flex-col md:flex-row-reverse items-center justify-between group">
+<div class="md:w-5/12 text-center md:text-left mb-8 md:mb-0">
+<span class="font-stat-md text-stat-md text-secondary block mb-2">2025</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Independence Day Cup</h4>
+<p class="font-body-md text-on-surface-variant">Over 600 young athletes competed in our flagship tournament, marking our arrival as a major force in national youth development.</p>
+</div>
+<div class="absolute left-1/2 -translate-x-1/2 w-12 h-12 bg-white border-4 border-secondary rounded-full z-10 hidden md:flex items-center justify-center">
+<div class="w-3 h-3 bg-secondary rounded-full"></div>
+</div>
+<div class="md:w-5/12 rounded-xl overflow-hidden shadow-xl aspect-video relative">
+<img class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" data-alt="Action-packed sports photography of a crowded youth football tournament under a bright blue sky. Hundreds of young players in vibrant jerseys are visible in the background, while the foreground captures a winning moment with players celebrating. The style is energetic and editorial, like a high-end sports magazine spread with high contrast and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1Y_20DzzMUZG45ClCLsIj9uep8KbcQ5KcnRw1g3K8uacNSU_KgXGN4JDVBs_UxGcRZqIhWHpNhXlQJAoy3UAIjPp2VAnGJCU7pjU-QIKUJ5Bp46U2NEho-TXIHUIdAUlhTO5XP8_9MBt0vE8rFlel3gY-BTsk1Eo9Wi7bxYNKqqwTl0hm_dfVMcTq9Crj55mav882Uso-OHR-Dzt0qP9bD7bWPutjDGEmtbkls70DJ2GutUBxsILWKAQAQR-VjAOUFAcR2nv5WLbE"/>
+</div>
+</div>
+<!-- 2026 & Beyond -->
+<div class="relative flex flex-col md:flex-row items-center justify-between group">
+<div class="md:w-5/12 text-center md:text-right mb-8 md:mb-0">
+<span class="font-stat-md text-stat-md text-secondary block mb-2">2026 &amp; Beyond</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Global Expansion</h4>
+<p class="font-body-md text-on-surface-variant">Solidifying international partnerships with European clubs and launching academic scholarship pathways for elite player-students.</p>
+</div>
+<div class="absolute left-1/2 -translate-x-1/2 w-12 h-12 bg-white border-4 border-secondary rounded-full z-10 hidden md:flex items-center justify-center">
+<div class="w-3 h-3 bg-secondary rounded-full animate-ping"></div>
+</div>
+<div class="md:w-5/12 rounded-xl overflow-hidden shadow-xl aspect-video relative">
+<img class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" data-alt="A futuristic and aspirational digital composite showing a silhouette of a football player looking towards a bright urban skyline with integrated football stadium elements. The image uses a palette of victory gold and deep navy, symbolizing success and global reach. Light trails and subtle geometric overlays suggest growth, connectivity, and technological advancement in sports." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbNoNsH3XrAQRnSWbCwJqlHPkrBwsMGoX3s-VCZIktKMsZTGW3mQ7K9Itx2fn-tl2vXFzEUgLonYGc4Uti6B0OkgYR_OiQACgsWuPZWkU3lSTn2_QoOChD0xkFXdp6w4Kx5UA3I0ixf1p8Sscio_9lcTzHgXQEMoKHYVlksK6uUWvKBuvTOiAs200HcUYtBt1ZwPTM2nWTSFcJI-spfvZBTsgixlTx1xtuXGe5ESS8Hkk4PVeyKu6EdYgepqjlL-Ub2tdD-TOKZMyN"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Leadership Section -->
+<section class="py-section-gap px-margin-desktop max-w-container-max mx-auto">
+<div class="mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary text-center">Board &amp; Leadership</h2>
+<p class="text-center text-on-surface-variant max-w-xl mx-auto mt-4">The visionary minds steering Powerblink FC toward international football excellence.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Leader 1 -->
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container rounded-xl overflow-hidden relative mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional studio portrait of a charismatic Nigerian male executive in his 40s. He wears a tailored charcoal suit with a subtle navy tie, standing against a clean, minimalist studio background. His expression is confident and welcoming. The lighting is soft and professional, emphasizing a corporate leadership aesthetic with high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYvPQ00kXLGwBu3KLNZUCTz8gfmNDZC6vsWrV_ftgj07TaHkkx-jPk1HshdN3iP0s6lJl6wYKTXi-ekHfNUDQVorbrV_Er49JEPAq_4idVuZGIeB-bQs47u4N4JTh3mXqDVhSqmMnzwATxmyhE1FV7XJUMXi6r4m4tS8kaABYwgfkyEQLTLMOEHfIN81337y-Zb4bjXeJKSZG0-c4jXP7pIdJhGFmx0e8ZSe0Sk71Bo7uxIryjiqYj2uNzVnAkY2YQM2YOA2bBR7RU"/>
+<div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-primary-container to-transparent opacity-80"></div>
+<div class="absolute bottom-6 left-6">
+<span class="block text-white font-bold text-lg">Dr. Segun Adeyemi</span>
+<span class="block text-secondary-fixed text-sm uppercase font-bold tracking-widest">Chairman</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-3">A seasoned sports administrator with over 20 years of experience in talent scouting and management across Sub-Saharan Africa.</p>
+</div>
+<!-- Leader 2 -->
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container rounded-xl overflow-hidden relative mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A high-end professional headshot of a sophisticated Nigerian female executive in her 30s. She is dressed in business professional attire with a minimalist aesthetic. Her posture is poised and authoritative. The background is a blurred corporate office setting with soft natural light, maintaining a premium and professional atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChJaiOxqjZ99Zk1499a4A6sBEF1_5vYqrPotakV_lHseYENNPurJjvrhRHgLyjPuytxnK1a3XFWOu1LlKVsP1aPptMnAwbZLvP0AesCAuBZlAhtD-G5xbbiGVuNsPDWSojFhfj_I8W3s7-k7ldLFdMDeizEcYRxf6C-UoWs8s-PQMBppWDCt5Iy25tyAkPcq86rpKbQhgLNc3YGcpuCAR1-f3WWwu7FZ1dr8VQegVxaN3BBB3wz4ALK-sbUGYjjJI3NmVBOsr_Mmsy"/>
+<div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-primary-container to-transparent opacity-80"></div>
+<div class="absolute bottom-6 left-6">
+<span class="block text-white font-bold text-lg">Chidinma Okafor</span>
+<span class="block text-secondary-fixed text-sm uppercase font-bold tracking-widest">Managing Director</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-3">Visionary strategist specializing in sports infrastructure development and community engagement initiatives.</p>
+</div>
+<!-- Leader 3 -->
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container rounded-xl overflow-hidden relative mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional portrait of an athletic Nigerian male leader in his late 40s, wearing a premium team-branded polo shirt. He has a warm smile and an authoritative presence. The setting is a bright, outdoor football facility with green fields blurred in the background. The lighting is natural and crisp, highlighting his role as a bridge between the board and the pitch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDurtOJrj2WF1kebIMtLu0q9fTg98bBh6bdB_bDzOWyhhAYrRGLsxSIQI9JuvHyAuVdcMkDh7yF6F6ju-swkJKWxPCeqsJzNWjHm82iFFcZ02bUy_JPn4D4xVS51iRfpOVhQW-2jWEf47fjWdxnm_AMqr3uVTjKWQ_BJyPTI_MIzT-2Ki8VnDdNPyOVwzPegd77OXm-usZWXdpHSXgjQtTzOKHTWAK_LBVdb4U-QvVzv3DHQTR7Nhsz6zHn49GsOS3klCsP9AHjsVGo"/>
+<div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-primary-container to-transparent opacity-80"></div>
+<div class="absolute bottom-6 left-6">
+<span class="block text-white font-bold text-lg">Capt. Ibrahim Musa</span>
+<span class="block text-secondary-fixed text-sm uppercase font-bold tracking-widest">Technical Director</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-3">Former professional player with a deep understanding of tactical development and elite performance standards.</p>
+</div>
+<!-- Leader 4 -->
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container rounded-xl overflow-hidden relative mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A corporate portrait of a Nigerian man in his late 30s wearing glasses and a formal white shirt. He represents the financial and operational backbone of the academy. The style is clean and modern, with a neutral gray background. The lighting is balanced and professional, projecting trust and organizational excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbx4wKlxRD9AJJvI_wg_vRRHplIIkhk2u-h0f4WObtuI_kEjIhCtFCzzwxEaJ20QgmtGNOP5MkK3I8PX1dea_SBQZul5qO-B04PXMKoGxEqgQ4RDarxgvM7y90O8r6oHJU-jgMoZDeTskvFJI7Sq4IamVX71E8N6kufzsXGTWovwnPuZS_D5kWnT4DHx0Aw4HRM1JThZQMayRlBF4J9VmyJv_CcZlN8-rczO9gZUsnGxUXGz7S-QExUKEHZ-b13LKQbqR73Duqsq3F"/>
+<div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-primary-container to-transparent opacity-80"></div>
+<div class="absolute bottom-6 left-6">
+<span class="block text-white font-bold text-lg">David Bello</span>
+<span class="block text-secondary-fixed text-sm uppercase font-bold tracking-widest">Chief Operations Officer</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-3">Operations expert with a focus on administrative efficiency and international scout relations.</p>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-section-gap px-margin-desktop">
+<div class="max-w-container-max mx-auto bg-primary-container rounded-3xl overflow-hidden relative flex flex-col md:flex-row items-center">
+<div class="p-12 md:p-20 md:w-3/5 z-10">
+<h2 class="font-display-hero text-headline-lg text-white mb-6">Ready to Join the Family?</h2>
+<p class="font-body-lg text-white/80 mb-10">Trials are now open for our elite performance squads. Secure your spot and start your journey toward professional football excellence in Ibeju Lekki.</p>
+<a class="inline-block px-10 py-5 bg-secondary-container text-on-secondary-fixed font-bold text-xl rounded-xl shadow-2xl hover:scale-105 transition-transform" href="#">Register for Trials Now</a>
+</div>
+<div class="md:w-2/5 h-64 md:h-full relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="An atmospheric, close-up shot of a young football player tying the laces of their vibrant performance boots on a lush grass pitch. The background is a soft bokeh of a football goal and a training field. The lighting is golden hour, creating a warm and hopeful mood. The color palette emphasizes the green of the grass and the navy of the academy socks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx8-OcFn3l0yrvdbvdz1mB_mYetlJZoYB54Vd5YBycLd00mE6vpQPbX88QfvCFL4UmHCBGZsjEH0YjgsvT6uoolyY_i64_cF8OwajdK7LWMGQWHVXVk7e6s-vE2V8gkyc_0LjZam1JewuuWVhbnxQX8HAFskja1fU6Dg_0dTxvmdmwT66794tRs_0d_ebQLHrE1Xj2pzVEtU6J0VhesP5msCalV2SAfqJ7V2MZttU0ufiHac0kOmx5Sk4GrdvZRvnG9aaFJojawn0-"/>
+<div class="absolute inset-0 bg-primary-container/20"></div>
+</div>
+<!-- Decorative background elements -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-secondary/10 blur-[100px] -mr-32 -mt-32 rounded-full"></div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary-container text-on-primary-container w-full py-section-gap border-t border-outline-variant/20">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-element-gap px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-display-hero text-headline-md text-on-primary block mb-6">Powerblink FC</span>
+<p class="font-body-md text-on-primary-container/80 mb-8 leading-relaxed">
+                    © 2024 Powerblink Football Club Limited. Elite Excellence in Ibeju Lekki.
+                </p>
+</div>
+<div>
+<h4 class="font-bold text-white mb-6">Quick Links</h4>
+<ul class="space-y-4">
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">About Us</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Academy Mission</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Programs</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Gallery</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-white mb-6">Support</h4>
+<ul class="space-y-4">
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Contact</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Terms of Service</a></li>
+<li><a class="text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#">Trial FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-white mb-6">Join Our Newsletter</h4>
+<p class="text-sm text-on-primary-container/80 mb-4">Stay updated with the latest trials and academy news.</p>
+<form class="flex gap-2">
+<input class="bg-white/5 border border-white/20 rounded-lg px-4 py-2 w-full text-white placeholder-white/40 focus:outline-none focus:border-secondary" placeholder="Email address" type="email"/>
+<button class="bg-secondary p-2 rounded-lg text-white">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</form>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Header scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-xl', 'bg-surface/95');
+                nav.classList.remove('bg-surface/90');
+            } else {
+                nav.classList.remove('shadow-xl', 'bg-surface/95');
+                nav.classList.add('bg-surface/90');
+            }
+        });
+
+        // Simple observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div').forEach(el => {
+            el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(el);
+        });
+    </script>
+</body></html>

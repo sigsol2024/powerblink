@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Powerblink FC | Player Dashboard</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;700&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#44474d",
+                    "on-primary-fixed": "#0b1c34",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffdf94",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#594400",
+                    "inverse-surface": "#2d3133",
+                    "surface-container": "#eceef0",
+                    "inverse-primary": "#b7c7e7",
+                    "secondary-container": "#64ff92",
+                    "secondary": "#006d32",
+                    "surface-bright": "#f7f9fb",
+                    "surface-dim": "#d8dadc",
+                    "on-tertiary-container": "#a47f00",
+                    "surface-tint": "#505f7a",
+                    "background": "#f7f9fb",
+                    "primary-fixed-dim": "#b7c7e7",
+                    "on-primary-container": "#7584a2",
+                    "surface-container-highest": "#e0e3e5",
+                    "tertiary": "#000000",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#efc13e",
+                    "tertiary-container": "#241a00",
+                    "on-secondary-fixed": "#00210b",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#64ff92",
+                    "outline-variant": "#c5c6ce",
+                    "on-background": "#191c1e",
+                    "surface": "#f7f9fb",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#005224",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary-container": "#0b1c34",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-secondary-container": "#007436",
+                    "primary": "#000000",
+                    "outline": "#75777e",
+                    "surface-variant": "#e0e3e5",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface": "#191c1e",
+                    "on-primary-fixed-variant": "#384761",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#64ff92",
+                    "on-surface-variant-fixed": "#44474d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px",
+                    "performance": "18px"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "gutter": "24px",
+                    "element-gap": "24px",
+                    "section-gap": "80px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Montserrat"],
+                    "label-caps": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Montserrat"],
+                    "stat-xl": ["Bebas Neue"],
+                    "display-hero": ["Montserrat"],
+                    "stat-md": ["Bebas Neue"],
+                    "headline-lg-mobile": ["Montserrat"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                    "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                    "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { backdrop-filter: blur(20px); background: rgba(11, 28, 52, 0.7); }
+        .stat-card-shadow { box-shadow: 0 4px 20px rgba(11, 28, 52, 0.15); }
+        .card-hover:hover { transform: scale(1.02); transition: all 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-primary-container flex flex-col p-6 shadow-lg z-50">
+<div class="mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-surface-container-lowest leading-tight">Powerblink FC</h1>
+<p class="font-label-caps text-label-caps text-on-primary-fixed-variant">Elite Performance</p>
+</div>
+<nav class="flex-grow space-y-2">
+<!-- Active Navigation -->
+<a class="flex items-center gap-3 px-4 py-3 text-secondary-fixed bg-on-primary-fixed-variant rounded-performance font-bold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-fixed-variant hover:text-surface-container-lowest hover:bg-on-primary-fixed-variant rounded-performance transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-fixed-variant hover:text-surface-container-lowest hover:bg-on-primary-fixed-variant rounded-performance transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event_upcoming">event_upcoming</span>
+<span class="font-body-md text-body-md">Training Schedule</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-fixed-variant hover:text-surface-container-lowest hover:bg-on-primary-fixed-variant rounded-performance transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-body-md text-body-md">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-fixed-variant hover:text-surface-container-lowest hover:bg-on-primary-fixed-variant rounded-performance transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-md text-body-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-fixed-variant hover:text-surface-container-lowest hover:bg-on-primary-fixed-variant rounded-performance transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="font-body-md text-body-md">Announcements</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-secondary text-on-primary font-headline-md text-body-md py-3 rounded-performance font-bold hover:scale-105 transition-transform">
+                Join Trials
+            </button>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="flex justify-between items-center ml-64 px-8 py-4 w-[calc(100%-16rem)] sticky top-0 bg-surface-bright shadow-sm z-40">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface" placeholder="Search performance data..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-primary">Kelechi Iheanacho</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Midfielder • U19</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-secondary object-cover" data-alt="A professional studio portrait of a young African football player in a dark navy blue Powerblink FC jersey, smiling confidently against a soft gray background. The lighting is crisp and highlights the athletic build and professional demeanor of a rising star in sports." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe-J-lfmGAU4NGGpeAu76lhyxWbbomHk10gGpNi_tsHRjQWDruwxsmnL7edqfLwLAIEogFAl4MNK1ECngL0aS5P56aW7DShZ2tDhe1WWRWuZ989qwdlzkq2whvzAuNf_qJc8H21AI0VgZ0M-y0ZXWRBnG7E_AyA1K8qWXw56sc0xnKxjQK7gLRvlJVyOOXp4gTlsk91DfRDMd67PN7kVOolqOscYSbKC7nS4iTHhIW1JGNWFNpPMk40LR7WCkvUkDAeDXx5ek9UmW8"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 p-8">
+<!-- Welcome Hero -->
+<section class="relative h-[300px] rounded-performance overflow-hidden mb-gutter group">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A cinematic wide shot of a pristine green football pitch at sunrise in Ibeju Lekki, Nigeria. Golden light sweeps across the grass as a lone player practices dribbling in the distance. The mood is aspirational and focused, embodying the quiet dedication of elite performance training." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBPqOX9scOkN9YBUMDpzKdJYHksK6VOz3nh1DPUOjqI-YP-LkQGrqc5xp7TZGN7rN9Q7_V9NtZFcQDGHogKsZkSEcqvhieWG2uZ6m3HTRaLigV3uIye_C-V1fzGJm5J3zLmoT0gEJHyD5Ym1ANQn4NGrixpdVCC-am7Ud1r4t1iWVoX9rBJhkiHG9e_elFn4OsBmnIEexXJEwVEWkWmjxCVTFUhkoMDwZ1yBVHqCedxL3nUvdnuRZwjOQuhUnsMzBQyaPVFSUD1IjDB')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container via-primary-container/60 to-transparent"></div>
+<div class="relative h-full flex flex-col justify-center px-12 text-white">
+<h2 class="font-display-hero text-[48px] font-extrabold mb-2">Welcome back, Kelechi</h2>
+<p class="font-body-lg text-body-lg italic text-secondary-fixed max-w-xl mb-6">"Success is no accident. It is hard work, perseverance, learning, studying, sacrifice and most of all, love of what you are doing."</p>
+<div class="flex items-center gap-4">
+<span class="px-4 py-1 bg-secondary rounded-full font-label-caps text-label-caps">Status: Elite Tier</span>
+<span class="px-4 py-1 bg-white/20 backdrop-blur-sm rounded-full font-label-caps text-label-caps">Next Session: 14:00 Today</span>
+</div>
+</div>
+</section>
+<!-- Quick Stats Row -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-gutter">
+<div class="bg-surface-container-lowest p-6 rounded-performance stat-card-shadow card-hover border-l-4 border-secondary">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Attendance Rate</p>
+<div class="flex items-baseline gap-2">
+<span class="font-stat-xl text-stat-xl text-primary">95%</span>
+<span class="text-secondary text-sm font-bold flex items-center"><span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span> +2%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-performance stat-card-shadow card-hover border-l-4 border-tertiary-fixed-dim">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Performance Score</p>
+<div class="flex items-baseline gap-2">
+<span class="font-stat-xl text-stat-xl text-primary">88<span class="text-body-md font-sans text-on-surface-variant">/100</span></span>
+<span class="text-secondary text-sm font-bold flex items-center"><span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Top 5%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-performance stat-card-shadow card-hover border-l-4 border-primary">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Next Match</p>
+<div class="font-stat-md text-stat-md text-primary leading-tight mt-1 uppercase">Lagos Elite</div>
+<p class="text-label-caps text-[10px] text-on-surface-variant mt-1">Saturday • Home Ground</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-performance stat-card-shadow card-hover border-l-4 border-secondary-fixed">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Training Sessions</p>
+<div class="flex items-baseline gap-2">
+<span class="font-stat-xl text-stat-xl text-primary">14</span>
+<span class="text-on-surface-variant text-sm font-body-md italic">This Month</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Performance & Schedule -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-gutter">
+<!-- Performance Visualization -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-8 rounded-performance stat-card-shadow">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Technical Evaluation</h3>
+<p class="font-body-md text-on-surface-variant">Monthly Performance Metrics Breakdown</p>
+</div>
+<button class="flex items-center gap-2 text-secondary font-bold font-label-caps text-label-caps hover:underline">
+                        FULL REPORT <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-5 gap-4 items-end h-64">
+<!-- Custom Bar Chart Simulation -->
+<div class="flex flex-col items-center gap-4 h-full justify-end group">
+<div class="w-full bg-secondary rounded-t-lg transition-all duration-500 group-hover:brightness-110" style="height: 85%;">
+<div class="text-center text-white font-stat-md pt-2">85</div>
+</div>
+<p class="font-label-caps text-[10px] text-center uppercase whitespace-nowrap">Passing</p>
+</div>
+<div class="flex flex-col items-center gap-4 h-full justify-end group">
+<div class="w-full bg-primary-container rounded-t-lg transition-all duration-500 group-hover:brightness-125" style="height: 72%;">
+<div class="text-center text-white font-stat-md pt-2">72</div>
+</div>
+<p class="font-label-caps text-[10px] text-center uppercase whitespace-nowrap">Dribbling</p>
+</div>
+<div class="flex flex-col items-center gap-4 h-full justify-end group">
+<div class="w-full bg-secondary rounded-t-lg transition-all duration-500 group-hover:brightness-110" style="height: 94%;">
+<div class="text-center text-white font-stat-md pt-2">94</div>
+</div>
+<p class="font-label-caps text-[10px] text-center uppercase whitespace-nowrap">Speed</p>
+</div>
+<div class="flex flex-col items-center gap-4 h-full justify-end group">
+<div class="w-full bg-primary-container rounded-t-lg transition-all duration-500 group-hover:brightness-125" style="height: 80%;">
+<div class="text-center text-white font-stat-md pt-2">80</div>
+</div>
+<p class="font-label-caps text-[10px] text-center uppercase whitespace-nowrap">Fitness</p>
+</div>
+<div class="flex flex-col items-center gap-4 h-full justify-end group">
+<div class="w-full bg-tertiary-fixed-dim rounded-t-lg transition-all duration-500 group-hover:brightness-90" style="height: 88%;">
+<div class="text-center text-primary font-stat-md pt-2">88</div>
+</div>
+<p class="font-label-caps text-[10px] text-center uppercase whitespace-nowrap">Teamwork</p>
+</div>
+</div>
+</div>
+<!-- Weekly Schedule -->
+<div class="lg:col-span-4 bg-primary-container text-white p-8 rounded-performance shadow-xl overflow-hidden relative">
+<div class="absolute -right-10 -top-10 opacity-10">
+<span class="material-symbols-outlined text-[200px]" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-6 relative">Training Pipeline</h3>
+<div class="space-y-6 relative">
+<div class="flex gap-4 items-start border-l-2 border-secondary-fixed pl-4">
+<div>
+<p class="font-label-caps text-[10px] text-secondary-fixed">TODAY • 14:00</p>
+<h4 class="font-bold font-body-md">Tactical Positioning</h4>
+<p class="text-[12px] opacity-70">Ibeju Lekki Pitch A</p>
+</div>
+</div>
+<div class="flex gap-4 items-start border-l-2 border-white/30 pl-4">
+<div>
+<p class="font-label-caps text-[10px] opacity-50">THU • 09:00</p>
+<h4 class="font-bold font-body-md">Set Piece Mastery</h4>
+<p class="text-[12px] opacity-70">Ibeju Lekki Pitch B</p>
+</div>
+</div>
+<div class="flex gap-4 items-start border-l-2 border-white/30 pl-4">
+<div>
+<p class="font-label-caps text-[10px] opacity-50">FRI • 16:00</p>
+<h4 class="font-bold font-body-md">Recovery &amp; Video Analysis</h4>
+<p class="text-[12px] opacity-70">Performance Lab</p>
+</div>
+</div>
+</div>
+<button class="mt-10 w-full py-3 bg-white/10 border border-white/20 rounded-lg font-label-caps text-label-caps hover:bg-white hover:text-primary-container transition-all">
+                    VIEW FULL CALENDAR
+                </button>
+</div>
+</section>
+<!-- Bottom Grid: Announcements & Coach's Notes -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Latest Announcement -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-8 rounded-performance stat-card-shadow flex gap-8">
+<div class="w-1/3 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A vibrant and energetic graphic for the Independence Day Tournament Trials at Powerblink FC. The image features silhouettes of football players in action against a backdrop of the Nigerian flag's green and white colors, mixed with modern digital textures and bold golden typography announcing the event. High energy and competitive spirit are captured in this sports editorial style visual." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTmGrrQIjLdCMmlAYkckT61gdhZJyY-iy52T6n36VygJQtU0ArGH1Id3ogCQ02MqhNVeGE583k6PYVdtnsjAfIq3pVX4ga6gESla3qWaJ5oWn4gvJuiTXqyUOrk0B9XDh5KABCIV_1vG9UBZ1QIYnSPchHGadoaIuiNaFvlCLsASAcJS2JI3T-19avUAJ_p_upDQPyd57Mkn6Z-NehKsfES-ijHfrher3TZZittlvKOdof2lJAFdWZB6wqA2jAcNP_e4YUGUCnYdhF"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="inline-block px-3 py-1 bg-error-container text-on-error-container rounded-full text-[10px] font-bold uppercase mb-3 w-fit">Urgent Update</span>
+<h3 class="font-headline-md text-headline-md text-primary leading-tight mb-2">Independence Day Tournament Trials</h3>
+<p class="font-body-md text-on-surface-variant mb-4">Final scouts from European leagues will be present. Ensure all medical clearances are updated by Friday 6 PM.</p>
+<a class="text-secondary font-bold font-label-caps text-label-caps flex items-center gap-1" href="#">LEARN MORE <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span></a>
+</div>
+</div>
+<!-- Coach's Notes -->
+<div class="lg:col-span-5 bg-tertiary-fixed p-8 rounded-performance stat-card-shadow flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<img class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md" data-alt="A portrait of Coach Elijah Opetunde, a seasoned Nigerian football coach with a look of intense focus and wisdom. He wears a professional black Powerblink FC coaching polo. The background is a slightly blurred training ground, giving the impression of an authoritative and experienced leader in youth sports development." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA92EH2FFNPzmOcoa----Rv-9lzR3PrhX-MvIqyoembnr9JAZd1UiwzUwyBuNGyeaolhxe-q9HvmeuuuspJM4TZnAOKHqVOILYeYzHgQgbgZ7vFQcEtU0OVveBjtuf0DB7dsWBWMrAOE5wP64_3K4F73tRyoSWpz2-5SqnAtf6H_JNu4NieDvKDJsOp2KABaNnALOJTU-9oDkWXBwY8JRiLe1Fkec1_JuY-KVY70H2-u6st8IFTtetPHIvU-JybZ5YM38eG6syOQC3a"/>
+<div>
+<h4 class="font-bold text-primary">Coach Elijah Opetunde</h4>
+<p class="font-label-caps text-[10px] text-on-tertiary-fixed-variant">Head of Technical Development</p>
+</div>
+</div>
+<div class="bg-white/50 p-6 rounded-xl relative">
+<span class="material-symbols-outlined absolute top-2 right-4 text-primary/20 text-4xl" data-icon="format_quote">format_quote</span>
+<p class="font-body-md text-primary italic leading-relaxed">
+                        "Kelechi, your transition from defense to attack has improved drastically this week. I want to see more vocal leadership on the pitch today. You have the vision—now use your voice to direct the play."
+                    </p>
+</div>
+<div class="mt-4 flex items-center gap-2 text-primary/60 font-label-caps text-[10px]">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> Posted 2 hours ago
+                </div>
+</div>
+</section>
+</main>
+<!-- Success Message Micro-interaction -->
+<div class="fixed bottom-8 right-8 bg-secondary text-white px-6 py-3 rounded-full shadow-2xl translate-y-20 opacity-0 transition-all duration-500 z-50 flex items-center gap-3" id="toast">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-label-caps text-label-caps">Sync Complete: Data is up to date</span>
+</div>
+<script>
+        // Simple Micro-interaction for UI feel
+        window.addEventListener('load', () => {
+            const toast = document.getElementById('toast');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 4000);
+            }, 1000);
+        });
+
+        // Toggle search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/30', 'bg-white');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/30', 'bg-white');
+        });
+    </script>
+</body></html>

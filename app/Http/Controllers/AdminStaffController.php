@@ -18,16 +18,15 @@ class AdminStaffController extends Controller
         $this->authorize('manageStaff', User::class);
 
         $staff = User::query()
-            ->role(['admin', 'editor'])
+            ->role('admin')
             ->with('roles')
             ->orderBy('name')
             ->paginate(20)
             ->withQueryString();
 
         $stats = [
-            'total' => User::query()->role(['admin', 'editor'])->count(),
+            'total' => User::query()->role('admin')->count(),
             'admins' => User::query()->role('admin')->count(),
-            'editors' => User::query()->role('editor')->count(),
         ];
 
         return view('admin.staff.index', [
@@ -44,7 +43,7 @@ class AdminStaffController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,editor'],
+            'role' => ['required', 'in:admin'],
         ]);
 
         $user = User::query()->create([
@@ -78,7 +77,7 @@ class AdminStaffController extends Controller
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'password' => ['nullable', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,editor'],
+            'role' => ['required', 'in:admin'],
         ]);
 
         if ($user->isSuperAdmin() && $data['role'] !== 'admin') {

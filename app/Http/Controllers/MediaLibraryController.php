@@ -92,7 +92,7 @@ class MediaLibraryController extends Controller
             Media::query()->create([
                 'filename' => $filename,
                 'original_name' => (string) $file->getClientOriginalName(),
-                'file_path' => 'asset/images/media/'.$filename,
+                'file_path' => MediaLibraryCatalog::mediaPathPrefix().$filename,
                 'file_type' => $ext,
                 'file_size' => $size,
                 'uploaded_by' => $user->id,

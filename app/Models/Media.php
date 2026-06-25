@@ -16,6 +16,8 @@ class Media extends Model
         'file_type',
         'file_size',
         'uploaded_by',
+        'category',
+        'alt_text',
     ];
 
     public function uploader(): BelongsTo

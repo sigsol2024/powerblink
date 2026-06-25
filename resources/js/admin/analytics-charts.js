@@ -244,21 +244,10 @@ function referrerOptions(state) {
     };
 }
 
-function listingShortCode(slug) {
-    const parts = String(slug || '')
-        .split('-')
-        .filter(Boolean);
-    if (!parts.length) {
-        return '—';
-    }
-    const part = parts.length >= 2 ? parts[parts.length - 1] : parts[0];
-    return part.toUpperCase();
-}
-
 function listingsOptions(state) {
     const base = baseChartOptions();
-    const top = (state.topListings || []).filter((r) => r.vehicle_slug).slice(0, 8);
-    const categories = top.map((r) => listingShortCode(r.vehicle_slug));
+    const top = (state.topPrograms || []).filter((r) => r.route_name).slice(0, 8);
+    const categories = top.map((r) => String(r.label || r.route_name || '—'));
     const data = top.map((r) => Number(r.views ?? 0));
 
     return {

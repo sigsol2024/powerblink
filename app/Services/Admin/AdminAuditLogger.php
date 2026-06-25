@@ -109,49 +109,4 @@ class AdminAuditLogger
             'subject_label' => $target->name.' ('.$target->email.')',
         ]);
     }
-
-    public function logProductCreated(Request $request, \App\Models\Vehicle $vehicle): void
-    {
-        $this->log($request, 'product.created', __('Created product :title', ['title' => $vehicle->title]), [
-            'subject_type' => 'product',
-            'subject_id' => $vehicle->id,
-            'subject_label' => $vehicle->title,
-        ]);
-    }
-
-    public function logProductUpdated(Request $request, \App\Models\Vehicle $vehicle): void
-    {
-        $this->log($request, 'product.updated', __('Updated product :title', ['title' => $vehicle->title]), [
-            'subject_type' => 'product',
-            'subject_id' => $vehicle->id,
-            'subject_label' => $vehicle->title,
-        ]);
-    }
-
-    public function logProductDeleted(Request $request, \App\Models\Vehicle $vehicle): void
-    {
-        $this->log($request, 'product.deleted', __('Deleted product :title', ['title' => $vehicle->title]), [
-            'subject_type' => 'product',
-            'subject_id' => $vehicle->id,
-            'subject_label' => $vehicle->title,
-        ]);
-    }
-
-    public function logProductApproved(Request $request, \App\Models\Vehicle $vehicle): void
-    {
-        $this->log($request, 'product.approved', __('Approved product :title', ['title' => $vehicle->title]), [
-            'subject_type' => 'product',
-            'subject_id' => $vehicle->id,
-            'subject_label' => $vehicle->title,
-        ]);
-    }
-
-    public function logProductRejected(Request $request, \App\Models\Vehicle $vehicle): void
-    {
-        $this->log($request, 'product.rejected', __('Rejected product :title', ['title' => $vehicle->title]), [
-            'subject_type' => 'product',
-            'subject_id' => $vehicle->id,
-            'subject_label' => $vehicle->title,
-        ]);
-    }
 }

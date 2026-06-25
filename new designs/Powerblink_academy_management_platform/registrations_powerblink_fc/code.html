@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registrations Management | Ibeju Lekki Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@400;600;700&family=Bebas+Neue&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .registration-card:hover .action-overlay {
+            opacity: 1;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "on-primary-fixed-variant": "#384761",
+                        "tertiary-container": "#241a00",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f7f9fb",
+                        "surface": "#f7f9fb",
+                        "primary": "#000000",
+                        "secondary-container": "#64ff92",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#a47f00",
+                        "tertiary-fixed": "#ffdf94",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-primary-container": "#7584a2",
+                        "secondary": "#006d32",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#64ff92",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed-dim": "#41e279",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-fixed": "#00210b",
+                        "inverse-primary": "#b7c7e7",
+                        "surface-tint": "#505f7a",
+                        "primary-container": "#0b1c34",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "on-secondary-container": "#007436",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c5c6ce",
+                        "surface-container-high": "#e6e8ea",
+                        "outline": "#75777e",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005224",
+                        "primary-fixed": "#d6e3ff",
+                        "on-primary-fixed": "#0b1c34",
+                        "background": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "stat-md": ["Bebas Neue"],
+                        "stat-xl": ["Bebas Neue"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest shadow-sm flex flex-col py-6 px-4 border-r border-outline-variant z-40">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary">Ibeju Lekki Academy</h1>
+<p class="text-[10px] tracking-widest uppercase text-on-surface-variant font-bold opacity-70">Elite Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[13px]">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-caps text-[13px]">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">how_to_reg</span>
+<span class="font-label-caps text-[13px]">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-[13px]">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+<span class="font-label-caps text-[13px]">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-caps text-[13px]">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-caps text-[13px]">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">supervisor_account</span>
+<span class="font-label-caps text-[13px]">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-label-caps text-[13px]">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-caps text-[13px]">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-[13px]">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[13px]">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                New Registration
+            </button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-30 flex justify-between items-center h-16 px-12 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Admin Dashboard</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 w-64 focus:ring-2 focus:ring-secondary text-sm" placeholder="Search applications..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">help_outline</span></button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant ml-2">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged Nigerian academy administrator wearing a navy blue branded polo shirt, smiling confidently in a brightly lit modern office environment with blurred trophies in the background. The photo style is corporate, clean, and high-resolution with a warm, welcoming color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL5nRjRbkUUoDPNGOm9Ib2Cyk-n89O3_iANUpPufUKmarfeMOE8T9pkjr1ZvJ72lGUbN13V7s4M-Z4KnJDuL28b2yU8YU8f46PWlPtgbiOI0UBGfObfqklsimLOatnhkK2TuWa2pIaddnQcFM69oP4vX9Ys3l5YLorQQOvIXEeW-911fWq5PSsZwrudZhvMllWMIMN1IlC4BJJSYWo1DBxVIIJMxKO3_OoX6T8hNs6WuVv8YJaaJAtqXPRj1bTowXNChWstZRylEcP"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-24 px-12 pb-12">
+<!-- Workflow Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-2">Registrations Workflow</h3>
+<p class="text-on-surface-variant max-w-2xl">Review and manage intake for the 2024 Elite Program. Ensure all documentation is verified before approval.</p>
+</div>
+<div class="flex bg-surface-container-high rounded-xl p-1">
+<button class="px-6 py-2 rounded-lg font-bold text-sm bg-surface shadow-sm text-primary transition-all">Pending (24)</button>
+<button class="px-6 py-2 rounded-lg font-bold text-sm text-on-surface-variant hover:text-primary transition-all">Approved</button>
+<button class="px-6 py-2 rounded-lg font-bold text-sm text-on-surface-variant hover:text-primary transition-all">Rejected</button>
+</div>
+</div>
+<!-- Bento Grid Applications -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<!-- Registration Card 1 -->
+<div class="xl:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 relative group transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="flex gap-6">
+<div class="w-24 h-32 rounded-xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A cinematic portrait of a 14-year-old African football player with a determined expression, wearing a simple white athletic jersey. The lighting is dramatic and editorial, highlighting facial features against a soft gray background. The composition is a close-up that emphasizes the player's focus and athletic potential." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUg-0aKmCrI9OxwQc_rGtdozuffIWCN2BU9WeQaCEYcC_kIbCEU1uE0zA75iiIltW_f9AdlCO0ZKAQLVESXdSteXjJqL6av-4U5pS8mbHoKtLE-y2fdznN1bOw9gtThzfAXIOfvFEsKWWtMYXbrWc39oDqg4uOR8r4flMeuZELs3sW75jpASgBn5XyxCckMhjh2JkR2hcF2tGbQoGzBSbNB429JwmLHR45lsANLeqfT9bqSOtDU4ycBT3drhOJ18jvP0cSWxDeTm3A"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-md text-primary">Chidi Okafor</h4>
+<p class="text-on-surface-variant text-sm">Forward • U-15 Elite Intake</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">High Potential</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/50">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Birth Cert</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<span class="text-xs font-bold">Verified</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/50">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">National ID</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<span class="text-xs font-bold">Verified</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/50">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Medicals</p>
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-lg">error_outline</span>
+<span class="text-xs font-bold">Pending</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-surface-container-high py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2" onclick="openReview()">
+<span class="material-symbols-outlined text-xl">description</span>
+                                    Review Documents
+                                </button>
+<button class="px-6 bg-secondary-container text-on-secondary-container py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all">Approve</button>
+<button class="px-6 bg-error-container text-on-error-container py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all">Reject</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Stats / Analytics Mini-Card -->
+<div class="bg-primary text-on-primary rounded-2xl p-6 flex flex-col justify-between overflow-hidden relative">
+<div class="relative z-10">
+<p class="font-label-caps text-on-primary/60 mb-2">Total Queue</p>
+<h4 class="font-stat-xl text-stat-xl">428</h4>
+<p class="text-secondary-fixed text-sm mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +12% from last intake
+                        </p>
+</div>
+<div class="relative z-10 flex gap-2 mt-8">
+<div class="flex-1 bg-white/10 p-4 rounded-xl">
+<p class="text-[10px] uppercase font-bold opacity-60">Verified</p>
+<p class="font-stat-md text-stat-md">312</p>
+</div>
+<div class="flex-1 bg-white/10 p-4 rounded-xl">
+<p class="text-[10px] uppercase font-bold opacity-60">Missing Docs</p>
+<p class="font-stat-md text-stat-md">116</p>
+</div>
+</div>
+<!-- Background Accent -->
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-secondary rounded-full blur-[80px] opacity-30"></div>
+</div>
+<!-- Registration Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A profile photo of a focused teenage boy athlete with short hair, against a vibrant green turf background. High-key natural daylight creates a crisp look, emphasizing a professional sports recruitment aesthetic. The color palette is fresh, with deep greens and clean whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC45qxnzY4ZqTC8hqumPhCWlE53-ZtfosEROjNaKRGO5_7v_Rey8T5FllBjtjuaIiiaVpA9i6AkT9-k-rFJIJAAqk64SqUOEYwBCmfpwm8_mrLoPbjEvQRZ3wQlDFZ3uK4I_X0Cz1wIPLT9yKz7QWnmUcG-MHgdZ6zkwd2_C3M3zxxoj-G6cdZJ3GKLnSJpJX5Dl8hm9hve1DVvefAsODEa8anh780CFjNuOcsXERi2KUW5n8RAWeokTksd3L5S1e4mslXcChAR7jLB"/>
+</div>
+<div>
+<h4 class="font-bold text-lg">Tunde Balogun</h4>
+<p class="text-on-surface-variant text-xs">Midfielder • U-17 Academy</p>
+</div>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between items-center text-sm border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Birth Certificate</span>
+<span class="text-secondary font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> OK</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Academy ID</span>
+<span class="text-error font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">warning</span> RE-UPLOAD</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Guardian Consent</span>
+<span class="text-on-surface-variant font-bold">PENDING</span>
+</div>
+</div>
+<button class="w-full bg-surface-container-high py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all" onclick="openReview()">Review Application</button>
+</div>
+<!-- Registration Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 transition-all hover:shadow-xl hover:shadow-primary/5">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young African football player smiling warmly, wearing a professional green academy jersey. The background is a slightly out-of-focus football field at sunset, giving a golden hour glow to the skin. The style is aspirational and high-quality, capturing the spirit of youth sports." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1G7EET-TBES43SmBc1IW6TDoD57LAbWZcZCDN8c4FYvvBsFZcQVySCIOaE30bOqPUa80s0l7DFiJuXi_XUVx0CDJylCjyQFVY9S5Tj_HflKW49kH0-eyzn5A_zDxGcYgfynM_O_5yK5Ox3DO3foPK_zPgXW_oCCl3ro7jV_Oe8v8kX4o51j8dsV-QDivwm-mmfKiaOopWIoDQlJ8grSeAIxSS9nSKQpjs5qJfvz-P2wi2B8238BBUtJ8ncE7giKd4m-dRQ96op7F1"/>
+</div>
+<div>
+<h4 class="font-bold text-lg">Ibrahim Musa</h4>
+<p class="text-on-surface-variant text-xs">Goalkeeper • U-15 Development</p>
+</div>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between items-center text-sm border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Birth Certificate</span>
+<span class="text-secondary font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> OK</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Passport Photo</span>
+<span class="text-secondary font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> OK</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Health Report</span>
+<span class="text-secondary font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> OK</span>
+</div>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all" onclick="openReview()">Finalize Approval</button>
+</div>
+<!-- Registration Card 4 (Horizontal Long) -->
+<div class="xl:col-span-3 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 flex flex-col lg:flex-row items-center gap-8 group">
+<div class="flex items-center gap-4 lg:w-1/4">
+<div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center font-stat-md text-primary">SB</div>
+<div>
+<h4 class="font-bold">Samuel Bankole</h4>
+<p class="text-xs text-on-surface-variant">Defender • U-13 Grassroots</p>
+</div>
+</div>
+<div class="flex-1 flex gap-10">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Submitted</span>
+<span class="text-sm font-bold">2 hours ago</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Location</span>
+<span class="text-sm font-bold">Lekki Phase 1</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Fee Status</span>
+<span class="text-sm font-bold text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-sm">payments</span> PAID</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-3 bg-surface-container-high rounded-xl hover:bg-primary hover:text-on-primary transition-all"><span class="material-symbols-outlined">visibility</span></button>
+<button class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm">Express Review</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Document Review Modal / Split View -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-primary/40 backdrop-blur-sm hidden transition-opacity duration-300 opacity-0" id="review-modal">
+<div class="bg-surface w-full max-w-6xl h-[870px] rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-outline-variant">
+<!-- Document View Area -->
+<div class="flex-1 bg-surface-container-high relative flex flex-col">
+<div class="h-14 flex items-center justify-between px-6 bg-white border-b border-outline-variant">
+<span class="font-bold text-sm">Birth_Certificate_Chidi_Okafor.pdf</span>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors"><span class="material-symbols-outlined">zoom_in</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors"><span class="material-symbols-outlined">zoom_out</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors"><span class="material-symbols-outlined">download</span></button>
+</div>
+</div>
+<div class="flex-1 p-12 overflow-y-auto custom-scrollbar flex items-center justify-center">
+<div class="bg-white shadow-lg w-full max-w-[600px] aspect-[1/1.4] p-10 flex flex-col items-center justify-center border border-outline-variant relative overflow-hidden">
+<!-- Mock Birth Certificate Content -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
+<h5 class="font-headline-md mb-8 text-primary/50 text-center uppercase tracking-[0.2em]">National Birth Certificate</h5>
+<div class="w-full h-1 bg-primary/20 mb-8"></div>
+<div class="space-y-6 w-full opacity-60">
+<div class="h-4 bg-surface-container rounded w-3/4"></div>
+<div class="h-4 bg-surface-container rounded w-1/2"></div>
+<div class="h-4 bg-surface-container rounded w-5/6"></div>
+<div class="h-4 bg-surface-container rounded w-2/3"></div>
+</div>
+<div class="mt-20 self-end w-32 h-32 border-4 border-secondary/30 rounded-full flex items-center justify-center rotate-12">
+<span class="text-secondary/50 font-black uppercase text-xs">OFFICIAL SEAL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Review Actions Area -->
+<div class="w-full md:w-96 bg-surface p-8 border-l border-outline-variant flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h4 class="font-headline-md text-primary">Verify Documents</h4>
+<p class="text-sm text-on-surface-variant">Applicant: Chidi Okafor</p>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full" onclick="closeReview()"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="flex-1 space-y-6 overflow-y-auto custom-scrollbar">
+<div class="space-y-4">
+<label class="block">
+<span class="font-bold text-xs uppercase tracking-wider text-on-surface-variant">Document Type</span>
+<select class="w-full mt-2 rounded-xl border-outline-variant focus:ring-secondary text-sm">
+<option>Birth Certificate</option>
+<option>National Identification</option>
+<option>Medical Record</option>
+<option>School Result</option>
+</select>
+</label>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<span class="font-bold text-sm">System Check Passed</span>
+</div>
+<p class="text-xs text-on-surface-variant">Metadata matches applicant name and age requirements for U-15 Elite intake.</p>
+</div>
+<label class="block">
+<span class="font-bold text-xs uppercase tracking-wider text-on-surface-variant">Reviewer Notes</span>
+<textarea class="w-full mt-2 rounded-xl border-outline-variant focus:ring-secondary text-sm" placeholder="Add observations here..." rows="4"></textarea>
+</label>
+</div>
+</div>
+<div class="pt-6 space-y-3 mt-auto">
+<div class="flex gap-2">
+<button class="flex-1 bg-secondary text-on-secondary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xl">check</span>
+                            Verify OK
+                        </button>
+<button class="flex-1 border-2 border-error text-error py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-error/5 transition-colors">
+<span class="material-symbols-outlined text-xl">block</span>
+                            Flag Issue
+                        </button>
+</div>
+<button class="w-full py-3 text-on-surface-variant font-bold text-sm hover:underline">View Next Pending (23)</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-secondary-container text-on-secondary-container rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="absolute right-full mr-4 bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add New Applicant</span>
+</button>
+<script>
+        function openReview() {
+            const modal = document.getElementById('review-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeReview() {
+            const modal = document.getElementById('review-modal');
+            modal.classList.remove('opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Add subtle interaction effect to cards
+        document.querySelectorAll('.registration-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

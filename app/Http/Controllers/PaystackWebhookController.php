@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
-use App\Services\OrderPaymentCompletionService;
+use App\Jobs\ProcessPaystackWebhookPayment;
+use App\Models\RegistrationPayment;
+use App\Services\RegistrationPaymentCompletionService;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,7 +15,7 @@ class PaystackWebhookController extends Controller
     public function __invoke(
         Request $request,
         PaystackService $paystack,
-        OrderPaymentCompletionService $completion,
+        RegistrationPaymentCompletionService $completion,
     ): Response {
         $secret = (string) config('services.paystack.webhook_secret');
         if ($secret === '') {
@@ -43,13 +44,17 @@ class PaystackWebhookController extends Controller
             return response('Missing reference', 422);
         }
 
-        $payment = Payment::query()->where('reference', $reference)->with('order')->first();
-        if (! $payment || ! $payment->order) {
+        $payment = RegistrationPayment::query()
+            ->where('reference', $reference)
+            ->with('registration')
+            ->first();
+
+        if (! $payment || ! $payment->registration) {
             return response('Payment not found', 404);
         }
 
-        if ($payment->order->isPaid()) {
-            $completion->fulfillPaidOrder($payment->order);
+        if ($payment->status === 'success' || $payment->registration->status === 'activated') {
+            $completion->fulfillPaidRegistration($payment->registration);
 
             return response('Already processed', 200);
         }
@@ -57,9 +62,13 @@ class PaystackWebhookController extends Controller
         try {
             $verified = $paystack->verify($reference);
         } catch (\Throwable $e) {
-            Log::error('Paystack webhook verify failed', ['reference' => $reference, 'message' => $e->getMessage()]);
+            Log::error('Paystack webhook verify failed; queueing retry', [
+                'reference' => $reference,
+                'message' => $e->getMessage(),
+            ]);
+            ProcessPaystackWebhookPayment::dispatch($payment->id, $reference);
 
-            return response('Verification failed', 502);
+            return response('Queued for retry', 200);
         }
 
         if ($completion->complete($payment, $verified)) {

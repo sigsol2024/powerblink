@@ -12,9 +12,9 @@ class RolesSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        Role::findOrCreate('admin');
-        Role::findOrCreate('editor');
-        Role::findOrCreate('user');
+        Role::findOrCreate('admin', 'web');
+        Role::findOrCreate('coach', 'web');
+        Role::findOrCreate('parent', 'web');
+        Role::findOrCreate('player', 'web');
     }
 }
-

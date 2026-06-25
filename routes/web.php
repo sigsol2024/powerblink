@@ -1,40 +1,39 @@
 <?php
 
 use App\Http\Controllers\AdminAnalyticsController;
-use App\Http\Controllers\AdminCategoryController;
-use App\Http\Controllers\AdminVariantController;
-use App\Http\Controllers\AdminListingOptionController;
+use App\Http\Controllers\AdminAnnouncementController;
+use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\AdminCoachController;
 use App\Http\Controllers\AdminMediaController;
-use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminPageController;
+use App\Http\Controllers\AdminPaymentController;
+use App\Http\Controllers\AdminPerformanceReportController;
+use App\Http\Controllers\AdminPlayerController;
+use App\Http\Controllers\AdminProgramController;
+use App\Http\Controllers\AdminRegistrationController;
 use App\Http\Controllers\AdminSiteSettingsController;
 use App\Http\Controllers\AdminStaffController;
+use App\Http\Controllers\AdminTournamentController;
+use App\Http\Controllers\AdminTrainingSessionController;
 use App\Http\Controllers\AdminUserController;
-use App\Http\Controllers\AdminVehicleController;
+use App\Http\Controllers\PortalController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrderLookupController;
-use App\Http\Controllers\OrderTrackingController;
-use App\Http\Controllers\PaystackWebhookController;
-use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\ListingOptionLookupController;
 use App\Http\Controllers\MediaLibraryController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicStorageMediaController;
+use App\Http\Controllers\RegistrationPaymentController;
+use App\Http\Controllers\RegistrationWizardController;
 use App\Http\Controllers\TemporaryAdminController;
-use App\Http\Controllers\UserVehicleController;
-use App\Http\Controllers\VehicleInquiryController;
-use App\Http\Controllers\VendorSettingsController;
 use App\Models\AdminAuditTrail;
-use App\Models\Order;
+use App\Models\Player;
+use App\Models\Registration;
 use App\Models\SiteTrafficEvent;
 use App\Models\User;
-use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
@@ -54,11 +53,14 @@ if (config('app.admin_bootstrap_enabled')) {
     });
 }
 
-// There is no separate admin login URL; admins use the same session as other users.
 Route::redirect('/admin/login', '/login', 302);
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/programs', [PageController::class, 'programs'])->name('programs');
+Route::get('/coaching', [PageController::class, 'coaching'])->name('coaching');
+Route::get('/gallery', [PageController::class, 'gallery'])->name('gallery');
+Route::get('/tournaments', [PageController::class, 'tournaments'])->name('tournaments');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
@@ -71,36 +73,17 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:10,1')
     ->name('newsletter.subscribe');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-Route::get('/makes', [PageController::class, 'makesIndex'])->name('makes.index');
-Route::get('/shop', [PageController::class, 'inventory'])->name('shop.index');
-Route::get('/product/{slug}', [PageController::class, 'vehicleShow'])->name('product.show');
-Route::get('/inventory', [PageController::class, 'inventory'])->name('inventory.index');
-Route::post('/inventory/{slug}/inquiry', [VehicleInquiryController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('inventory.inquiry');
-Route::get('/inventory/{slug?}', [PageController::class, 'vehicleShow'])->name('inventory.show');
 
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::get('/cart/state', [CartController::class, 'index'])->name('cart.state');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/payment/paystack/callback', [CheckoutController::class, 'paystackCallback'])->name('payment.paystack.callback');
 Route::post('/payment/paystack/webhook', PaystackWebhookController::class)->name('payment.paystack.webhook');
-Route::get('/orders/lookup', [OrderLookupController::class, 'index'])->name('orders.lookup.index');
-Route::post('/orders/lookup', [OrderLookupController::class, 'lookup'])->middleware('throttle:10,1')->name('orders.lookup');
-Route::get('/orders/track', [OrderTrackingController::class, 'index'])->name('orders.track.index');
-Route::post('/orders/track', [OrderTrackingController::class, 'track'])->middleware('throttle:10,1')->name('orders.track');
-Route::get('/order/confirmed/{order}', [CheckoutController::class, 'confirmed'])->name('order.confirmed');
-Route::get('/order/placed/{order}', [CheckoutController::class, 'placed'])->name('order.placed');
-Route::get('/order/{order}', [CheckoutController::class, 'show'])->name('order.show');
-Route::get('/compare', [PageController::class, 'compare'])->name('compare');
-Route::post('/compare/add/{vehicle}', [CompareController::class, 'add'])->name('compare.add');
-Route::post('/compare/remove/{vehicle}', [CompareController::class, 'remove'])->name('compare.remove');
-Route::post('/compare/clear', [CompareController::class, 'clear'])->name('compare.clear');
+Route::get('/registration/pay/callback', [RegistrationPaymentController::class, 'callback'])->name('registration.pay.callback');
+
+Route::middleware('registration.payment.token')->group(function () {
+    Route::get('/registration/pay/{token}', [RegistrationPaymentController::class, 'show'])->name('registration.pay.show');
+    Route::post('/registration/pay/{token}', [RegistrationPaymentController::class, 'initialize'])
+        ->middleware('throttle:10,1')
+        ->name('registration.pay.initialize');
+});
+
 Route::get('/media/storage/{path}', [PublicStorageMediaController::class, 'show'])
     ->where('path', '.*')
     ->name('media.storage.show');
@@ -108,56 +91,31 @@ Route::get('/media/storage/{path}', [PublicStorageMediaController::class, 'show'
 Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
 
-    if ($user->isAdmin()) {
-        return view('dashboard', [
-            'stats' => [
-                'total' => Vehicle::query()->count(),
-                'pending' => Vehicle::query()->where('status', 'pending')->count(),
-                'approved' => Vehicle::query()->where('status', 'approved')->count(),
-            ],
-            'adminOverview' => true,
-        ]);
+    if ($user && $user->canAccessAdminPanel()) {
+        return redirect($user->staffHomeRoute());
+    }
+
+    if ($user && $user->isMember()) {
+        return redirect()->route('portal.dashboard');
     }
 
     return view('dashboard', [
-        'stats' => [
-            'total' => $user->vehicles()->count(),
-            'pending' => $user->vehicles()->where('status', 'pending')->count(),
-            'approved' => $user->vehicles()->where('status', 'approved')->count(),
-        ],
-        'adminOverview' => false,
+        'user' => $user,
     ]);
-})->middleware(['auth', 'verified', 'vendor.idle'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'vendor.idle'])->group(function () {
-    Route::get('/dashboard/favorites', [FavoriteController::class, 'index'])->name('dashboard.favorites.index');
-    Route::post('/favorites/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+Route::get('/portal', [PortalController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('portal.dashboard');
 
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/seller-profile', [VendorSettingsController::class, 'edit'])->name('dashboard.vendor-settings.edit');
-        Route::put('/seller-profile', [VendorSettingsController::class, 'update'])->name('dashboard.vendor-settings.update');
-
-        Route::get('/vehicles', [UserVehicleController::class, 'index'])->name('dashboard.vehicles.index');
-        Route::get('/vehicles/create', [UserVehicleController::class, 'create'])->name('dashboard.vehicles.create');
-        Route::get('/vehicles/{vehicle}/edit', [UserVehicleController::class, 'edit'])->name('dashboard.vehicles.edit');
-
-        Route::middleware('admin.audit')->group(function () {
-            Route::post('/vehicles', [UserVehicleController::class, 'store'])->name('dashboard.vehicles.store');
-            Route::put('/vehicles/{vehicle}', [UserVehicleController::class, 'update'])->name('dashboard.vehicles.update');
-            Route::post('/vehicles/{vehicle}/submit', [UserVehicleController::class, 'submit'])->name('dashboard.vehicles.submit');
-            Route::delete('/vehicles/{vehicle}', [UserVehicleController::class, 'destroy'])->name('dashboard.vehicles.destroy');
-            Route::delete('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy');
-            Route::post('/vehicles/{vehicle}/images/{image}', [UserVehicleController::class, 'destroyImage'])->name('dashboard.vehicles.images.destroy.post');
-        });
-    });
-
-    Route::get('/dashboard/listing-models/{make}', [ListingOptionLookupController::class, 'modelsForMake'])
-        ->whereNumber('make')
-        ->name('dashboard.listing-models');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
     Route::get('/dashboard/api/media', [MediaLibraryController::class, 'list'])->name('dashboard.api.media');
     Route::post('/dashboard/api/media', [MediaLibraryController::class, 'upload'])->name('dashboard.api.media.upload');
@@ -167,7 +125,7 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
     Route::get('/', function () {
         $user = request()->user();
         if ($user && ! $user->can('dashboard.view')) {
-            return redirect()->route('dashboard.vehicles.index');
+            return redirect()->route('admin.registrations.index');
         }
 
         $analyticsStart = now()->subDays(89)->startOfDay();
@@ -179,8 +137,6 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
         if ($topPagePath !== '') {
             if ($topPagePath === '/') {
                 $topPageLabel = 'Homepage';
-            } elseif (str_starts_with($topPagePath, '/product/') || str_starts_with($topPagePath, '/inventory/')) {
-                $topPageLabel = 'Product detail';
             } else {
                 $clean = trim(str_replace(['-', '_', '/'], ' ', $topPagePath));
                 $topPageLabel = ucwords($clean !== '' ? $clean : $topPagePath);
@@ -191,32 +147,27 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
         $auditBase = AdminAuditTrail::query()->where('created_at', '>=', $auditStart);
 
         $totalViews = (int) (clone $analyticsBase)->count();
-        $revenuePaidTotal = (int) (Order::query()->where('status', 'paid')->sum('total') ?? 0);
-        $recentOrders = Order::query()
-            ->with(['items'])
-            ->latest()
-            ->take(5)
-            ->get();
 
         return view('admin.dashboard', [
+            'title' => __('Dashboard'),
             'stats' => [
-                'total_listings' => Vehicle::query()->count(),
-                'pending_listings' => Vehicle::query()->where('status', 'pending')->count(),
-                'approved_listings' => Vehicle::query()->where('status', 'approved')->count(),
+                'pending_registrations' => Registration::query()->where('status', 'pending_review')->count(),
+                'awaiting_payment' => Registration::query()->where('status', 'awaiting_payment')->count(),
+                'active_players' => Player::query()->where('status', 'active')->count(),
                 'users_count' => User::query()->count(),
-                'orders_count' => Order::query()->count(),
-                'paid_orders_count' => Order::query()->where('status', 'paid')->count(),
-                'revenue_paid_total' => $revenuePaidTotal,
                 'visitors_total' => $totalViews,
             ],
-            'recentOrders' => $recentOrders,
+            'recentRegistrations' => Registration::query()
+                ->with(['program'])
+                ->latest('submitted_at')
+                ->take(8)
+                ->get(),
             'analyticsSummary' => [
                 'range_days' => 90,
                 'total_views' => $totalViews,
                 'unique_sessions' => (clone $analyticsBase)->whereNotNull('session_id')->distinct('session_id')->count('session_id'),
                 'top_page' => $topPage,
                 'top_page_label' => $topPageLabel,
-                'top_listing' => (clone $analyticsBase)->whereNotNull('vehicle_slug')->selectRaw('vehicle_slug, COUNT(*) as views')->groupBy('vehicle_slug')->orderByDesc('views')->first(),
             ],
             'auditSummary' => [
                 'range_days' => 30,
@@ -288,17 +239,84 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
             'search' => $search,
             'actionFilter' => $action,
             'staffActors' => User::query()
-                ->whereHas('roles', fn ($q) => $q->whereIn('name', ['admin', 'editor']))
+                ->whereHas('roles', fn ($q) => $q->whereIn('name', ['admin', 'coach']))
                 ->orderBy('name')
                 ->get(['id', 'name', 'email']),
         ]);
     })->middleware('permission:audit.view')->name('admin.audit.index');
 
-    Route::redirect('/vehicles', '/dashboard/vehicles')->name('admin.vehicles.index');
-    Route::get('/vehicles/{vehicle}/edit', fn (Vehicle $vehicle) => redirect()->route('dashboard.vehicles.edit', $vehicle))->name('admin.vehicles.edit');
+    Route::get('/players', [AdminPlayerController::class, 'index'])->middleware('permission:players.view')->name('admin.players.index');
+    Route::get('/players/create', [AdminPlayerController::class, 'create'])->middleware('permission:players.create')->name('admin.players.create');
+    Route::post('/players', [AdminPlayerController::class, 'store'])->middleware('permission:players.create')->name('admin.players.store');
+    Route::get('/players/{player}', [AdminPlayerController::class, 'show'])->middleware('permission:players.view')->name('admin.players.show');
+    Route::get('/players/{player}/edit', [AdminPlayerController::class, 'edit'])->middleware('permission:players.update')->name('admin.players.edit');
+    Route::put('/players/{player}', [AdminPlayerController::class, 'update'])->middleware('permission:players.update')->name('admin.players.update');
+    Route::delete('/players/{player}', [AdminPlayerController::class, 'destroy'])->middleware('permission:players.delete')->name('admin.players.destroy');
 
-    Route::post('/vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->middleware('permission:products.manage')->name('admin.vehicles.approve');
-    Route::post('/vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->middleware('permission:products.manage')->name('admin.vehicles.reject');
+    Route::get('/programs', [AdminProgramController::class, 'index'])->middleware('permission:programs.view')->name('admin.programs.index');
+    Route::get('/programs/create', [AdminProgramController::class, 'create'])->middleware('permission:programs.manage')->name('admin.programs.create');
+    Route::post('/programs', [AdminProgramController::class, 'store'])->middleware('permission:programs.manage')->name('admin.programs.store');
+    Route::get('/programs/{program}', [AdminProgramController::class, 'show'])->middleware('permission:programs.view')->name('admin.programs.show');
+    Route::get('/programs/{program}/edit', [AdminProgramController::class, 'edit'])->middleware('permission:programs.manage')->name('admin.programs.edit');
+    Route::put('/programs/{program}', [AdminProgramController::class, 'update'])->middleware('permission:programs.manage')->name('admin.programs.update');
+    Route::delete('/programs/{program}', [AdminProgramController::class, 'destroy'])->middleware('permission:programs.manage')->name('admin.programs.destroy');
+
+    Route::get('/coaches', [AdminCoachController::class, 'index'])->middleware('permission:coaches.view')->name('admin.coaches.index');
+    Route::get('/coaches/create', [AdminCoachController::class, 'create'])->middleware('permission:coaches.manage')->name('admin.coaches.create');
+    Route::post('/coaches', [AdminCoachController::class, 'store'])->middleware('permission:coaches.manage')->name('admin.coaches.store');
+    Route::get('/coaches/{coach}', [AdminCoachController::class, 'show'])->middleware('permission:coaches.view')->name('admin.coaches.show');
+    Route::get('/coaches/{coach}/edit', [AdminCoachController::class, 'edit'])->middleware('permission:coaches.manage')->name('admin.coaches.edit');
+    Route::put('/coaches/{coach}', [AdminCoachController::class, 'update'])->middleware('permission:coaches.manage')->name('admin.coaches.update');
+    Route::delete('/coaches/{coach}', [AdminCoachController::class, 'destroy'])->middleware('permission:coaches.manage')->name('admin.coaches.destroy');
+
+    Route::get('/payments', [AdminPaymentController::class, 'index'])->middleware('permission:payments.view')->name('admin.payments.index');
+    Route::get('/payments/registration/{payment}', [AdminPaymentController::class, 'showRegistration'])->middleware('permission:payments.view')->name('admin.payments.registration.show');
+    Route::get('/payments/academy/{payment}', [AdminPaymentController::class, 'showAcademy'])->middleware('permission:payments.view')->name('admin.payments.academy.show');
+
+    Route::get('/training-sessions', [AdminTrainingSessionController::class, 'index'])->middleware('permission:training_sessions.view')->name('admin.training-sessions.index');
+    Route::get('/training-sessions/create', [AdminTrainingSessionController::class, 'create'])->middleware('permission:training_sessions.manage')->name('admin.training-sessions.create');
+    Route::post('/training-sessions', [AdminTrainingSessionController::class, 'store'])->middleware('permission:training_sessions.manage')->name('admin.training-sessions.store');
+    Route::get('/training-sessions/{trainingSession}', [AdminTrainingSessionController::class, 'show'])->middleware('permission:training_sessions.view')->name('admin.training-sessions.show');
+    Route::get('/training-sessions/{trainingSession}/edit', [AdminTrainingSessionController::class, 'edit'])->middleware('permission:training_sessions.manage')->name('admin.training-sessions.edit');
+    Route::put('/training-sessions/{trainingSession}', [AdminTrainingSessionController::class, 'update'])->middleware('permission:training_sessions.manage')->name('admin.training-sessions.update');
+    Route::delete('/training-sessions/{trainingSession}', [AdminTrainingSessionController::class, 'destroy'])->middleware('permission:training_sessions.manage')->name('admin.training-sessions.destroy');
+
+    Route::get('/attendance', [AdminAttendanceController::class, 'index'])->middleware('permission:attendance.view')->name('admin.attendance.index');
+    Route::get('/attendance/{trainingSession}', [AdminAttendanceController::class, 'show'])->middleware('permission:attendance.view')->name('admin.attendance.show');
+
+    Route::get('/performance', [AdminPerformanceReportController::class, 'index'])->middleware('permission:performance.view')->name('admin.performance.index');
+    Route::get('/performance/create', [AdminPerformanceReportController::class, 'create'])->middleware('permission:performance.manage')->name('admin.performance.create');
+    Route::post('/performance', [AdminPerformanceReportController::class, 'store'])->middleware('permission:performance.manage')->name('admin.performance.store');
+    Route::get('/performance/{performanceReport}', [AdminPerformanceReportController::class, 'show'])->middleware('permission:performance.view')->name('admin.performance.show');
+
+    Route::get('/tournaments', [AdminTournamentController::class, 'index'])->middleware('permission:tournaments.view')->name('admin.tournaments.index');
+    Route::get('/tournaments/create', [AdminTournamentController::class, 'create'])->middleware('permission:tournaments.manage')->name('admin.tournaments.create');
+    Route::post('/tournaments', [AdminTournamentController::class, 'store'])->middleware('permission:tournaments.manage')->name('admin.tournaments.store');
+    Route::get('/tournaments/{tournament}', [AdminTournamentController::class, 'show'])->middleware('permission:tournaments.view')->name('admin.tournaments.show');
+    Route::get('/tournaments/{tournament}/edit', [AdminTournamentController::class, 'edit'])->middleware('permission:tournaments.manage')->name('admin.tournaments.edit');
+    Route::put('/tournaments/{tournament}', [AdminTournamentController::class, 'update'])->middleware('permission:tournaments.manage')->name('admin.tournaments.update');
+    Route::delete('/tournaments/{tournament}', [AdminTournamentController::class, 'destroy'])->middleware('permission:tournaments.manage')->name('admin.tournaments.destroy');
+
+    Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->middleware('permission:announcements.view')->name('admin.announcements.index');
+    Route::get('/announcements/create', [AdminAnnouncementController::class, 'create'])->middleware('permission:announcements.manage')->name('admin.announcements.create');
+    Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->middleware('permission:announcements.manage')->name('admin.announcements.store');
+    Route::get('/announcements/{announcement}', [AdminAnnouncementController::class, 'show'])->middleware('permission:announcements.view')->name('admin.announcements.show');
+    Route::get('/announcements/{announcement}/edit', [AdminAnnouncementController::class, 'edit'])->middleware('permission:announcements.manage')->name('admin.announcements.edit');
+    Route::put('/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])->middleware('permission:announcements.manage')->name('admin.announcements.update');
+    Route::delete('/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy'])->middleware('permission:announcements.manage')->name('admin.announcements.destroy');
+
+    Route::get('/registrations', [AdminRegistrationController::class, 'index'])
+        ->middleware('permission:registrations.view')
+        ->name('admin.registrations.index');
+    Route::post('/registrations/{registration}/approve', [AdminRegistrationController::class, 'approve'])
+        ->middleware('permission:registrations.approve')
+        ->name('admin.registrations.approve');
+    Route::post('/registrations/{registration}/reject', [AdminRegistrationController::class, 'reject'])
+        ->middleware('permission:registrations.reject')
+        ->name('admin.registrations.reject');
+    Route::post('/registrations/{registration}/regenerate-token', [AdminRegistrationController::class, 'regenerateToken'])
+        ->middleware('permission:registrations.approve')
+        ->name('admin.registrations.regenerate-token');
 
     Route::get('/staff', [AdminStaffController::class, 'index'])->middleware('permission:staff.manage')->name('admin.staff.index');
     Route::post('/staff', [AdminStaffController::class, 'store'])->middleware('permission:staff.manage')->name('admin.staff.store');
@@ -325,28 +343,15 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
     Route::post('/settings/mail-test', [AdminSiteSettingsController::class, 'sendTestMail'])
         ->middleware(['permission:settings.manage', 'throttle:10,1'])
         ->name('admin.settings.mail-test');
-
-    Route::get('/orders', [AdminOrderController::class, 'index'])->middleware('permission:orders.manage')->name('admin.orders.index');
-    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->middleware('permission:orders.manage')->name('admin.orders.show');
-    Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage')->name('admin.orders.status');
-
-    Route::get('/categories', [AdminCategoryController::class, 'index'])->middleware('permission:categories.manage')->name('admin.categories.index');
-    Route::post('/categories', [AdminCategoryController::class, 'store'])->middleware('permission:categories.manage')->name('admin.categories.store');
-    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->middleware('permission:categories.manage')->name('admin.categories.update');
-    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->middleware('permission:categories.manage')->name('admin.categories.destroy');
-
-    Route::get('/variants', [AdminVariantController::class, 'index'])->middleware('permission:variants.manage')->name('admin.variants.index');
-    Route::post('/variants', [AdminVariantController::class, 'store'])->middleware('permission:variants.manage')->name('admin.variants.store');
-    Route::put('/variants/{variant}', [AdminVariantController::class, 'update'])->middleware('permission:variants.manage')->name('admin.variants.update');
-    Route::delete('/variants/{variant}', [AdminVariantController::class, 'destroy'])->middleware('permission:variants.manage')->name('admin.variants.destroy');
-
-    Route::get('/listing-options', [AdminListingOptionController::class, 'index'])->middleware('permission:categories.manage')->name('admin.listing-options.index');
-    Route::get('/listing-options/{category}', [AdminListingOptionController::class, 'show'])->middleware('permission:categories.manage')->name('admin.listing-options.show');
-    Route::post('/listing-options/{category}', [AdminListingOptionController::class, 'store'])->middleware('permission:categories.manage')->name('admin.listing-options.store');
-    Route::put('/listing-options/{category}/batch', [AdminListingOptionController::class, 'batchUpdate'])->middleware('permission:categories.manage')->name('admin.listing-options.batch-update');
-    Route::put('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'update'])->middleware('permission:categories.manage')->name('admin.listing-options.update');
-    Route::delete('/listing-options/{category}/options/{option}', [AdminListingOptionController::class, 'destroy'])->middleware('permission:categories.manage')->name('admin.listing-options.destroy');
-    Route::post('/listing-options/{category}/options/{option}/move', [AdminListingOptionController::class, 'move'])->middleware('permission:categories.manage')->name('admin.listing-options.move');
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/register', [RegistrationWizardController::class, 'show'])->name('registration.wizard');
+Route::post('/register/step', [RegistrationWizardController::class, 'storeStep'])
+    ->middleware('throttle:20,1')
+    ->name('registration.wizard.step');
+Route::post('/register/submit', [RegistrationWizardController::class, 'submit'])
+    ->middleware('throttle:10,1')
+    ->name('registration.wizard.submit');
+Route::get('/register/complete', [RegistrationWizardController::class, 'complete'])->name('registration.complete');

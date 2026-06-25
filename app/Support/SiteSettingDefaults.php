@@ -18,7 +18,7 @@ final class SiteSettingDefaults
         $hours = "Monday - Friday: 09:00AM - 09:00PM\nSaturday: 09:00AM - 07:00PM\nSunday: Closed";
 
         return [
-            'site_display_name' => 'Vogue Dress 4Less',
+            'site_display_name' => 'Powerblink FC',
             'logo_path' => '',
             'logo_light_path' => '',
             'favicon_path' => '',
@@ -35,7 +35,7 @@ final class SiteSettingDefaults
             'social_linkedin' => '',
             'social_youtube' => '',
             'copyright_line' => '',
-            'footer_tagline' => 'Premium automotive retail experience. Redefining the way you browse and buy luxury vehicles with curated inventory and bespoke service.',
+            'footer_tagline' => 'Elite Excellence in Ibeju Lekki. Shaping the future of football, one star at a time.',
             'footer_blog_title' => 'Latest Blog Posts',
             'footer_blog_entries_json' => '[]',
             'newsletter_enabled' => '0',

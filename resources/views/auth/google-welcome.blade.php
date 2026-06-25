@@ -17,10 +17,10 @@
 
       <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         <a
-          href="{{ route('inventory.index') }}"
+          href="{{ route('home') }}"
           class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
-          {{ __('Browse inventory') }}
+          {{ __('Visit site') }}
         </a>
         <a
           href="{{ route('dashboard') }}"

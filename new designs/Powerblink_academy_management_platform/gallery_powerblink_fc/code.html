@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gallery | Powerblink FC Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;family=Bebas+Neue&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#594400",
+                        "on-primary-fixed": "#0b1c34",
+                        "inverse-primary": "#b7c7e7",
+                        "secondary-container": "#64ff92",
+                        "surface-tint": "#505f7a",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container": "#eceef0",
+                        "tertiary-fixed": "#ffdf94",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "surface": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "outline-variant": "#c5c6ce",
+                        "tertiary-container": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#00210b",
+                        "inverse-surface": "#2d3133",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "secondary-fixed-dim": "#41e279",
+                        "on-error": "#ffffff",
+                        "primary-container": "#0b1c34",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "outline": "#75777e",
+                        "secondary": "#006d32",
+                        "on-primary-fixed-variant": "#384761",
+                        "on-secondary-container": "#007436",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e6e8ea",
+                        "on-surface-variant": "#44474d",
+                        "primary-fixed": "#d6e3ff",
+                        "background": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005224",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-tertiary-container": "#a47f00",
+                        "secondary-fixed": "#64ff92",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#7584a2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "element-gap": "24px",
+                        "section-gap": "80px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "stat-xl": ["Bebas Neue"],
+                        "display-hero": ["Montserrat"],
+                        "stat-md": ["Bebas Neue"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-md": ["Montserrat"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 24px;
+        }
+        @media (min-width: 768px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 24px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gallery-overlay {
+            background: linear-gradient(to top, rgba(11, 28, 52, 0.95) 0%, rgba(11, 28, 52, 0) 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #0b1c34;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface custom-scrollbar">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface shadow-md">
+<nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-black text-primary">Powerblink FC</div>
+<!-- Desktop Nav -->
+<ul class="hidden md:flex items-center gap-8">
+<li><a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Home</a></li>
+<li><a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Programs</a></li>
+<li><a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Coaching</a></li>
+<li><a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Tournaments</a></li>
+<li><a class="text-primary border-b-2 border-primary pb-1 font-bold" href="#">Gallery</a></li>
+</ul>
+<div class="flex items-center gap-4">
+<button class="hidden md:block text-on-surface-variant font-medium hover:text-primary transition-colors">Login</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-headline-md text-sm scale-102 active:scale-95 transition-transform">Registration</button>
+<button class="md:hidden flex items-center">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+</div>
+</nav>
+</header>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative w-full overflow-hidden py-section-gap px-margin-mobile md:px-margin-desktop bg-primary-container text-on-primary">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+
+</div>
+<div class="relative z-10 max-w-container-max mx-auto text-center">
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase tracking-widest mb-4 block">Our Visual Legacy</span>
+<h1 class="font-display-hero text-headline-lg-mobile md:text-display-hero mb-6 text-white uppercase italic">Academy Moments</h1>
+<p class="font-body-lg text-body-lg max-w-2xl mx-auto opacity-80">Capturing the relentless pursuit of excellence, the discipline of daily training, and the raw emotion of footballing triumph on the Lekki coast.</p>
+</div>
+</section>
+<!-- Filters & Gallery -->
+<section class="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Professional Filter Bar -->
+<div class="flex flex-wrap justify-center gap-3 mb-12">
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-primary bg-primary text-on-primary font-bold transition-all hover:shadow-lg active:scale-95" data-filter="all">All</button>
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-outline text-on-surface-variant font-medium transition-all hover:border-primary hover:text-primary active:scale-95" data-filter="training">Training</button>
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-outline text-on-surface-variant font-medium transition-all hover:border-primary hover:text-primary active:scale-95" data-filter="matches">Matches</button>
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-outline text-on-surface-variant font-medium transition-all hover:border-primary hover:text-primary active:scale-95" data-filter="tournaments">Tournaments</button>
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-outline text-on-surface-variant font-medium transition-all hover:border-primary hover:text-primary active:scale-95" data-filter="community">Community</button>
+<button class="filter-btn px-6 py-2 rounded-full border-2 border-outline text-on-surface-variant font-medium transition-all hover:border-primary hover:text-primary active:scale-95" data-filter="awards">Awards</button>
+</div>
+<!-- Masonry Grid -->
+<div class="masonry-grid" id="gallery-grid">
+<!-- Training -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="training">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A cinematic low-angle shot of a young African football player in a navy training kit performing a high-intensity agility drill on a lush green pitch at sunset. The lighting is golden and dramatic, highlighting beads of sweat and the crisp movement of the athlete. The background shows the professional academy facilities of Powerblink FC in a high-contrast editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRBsXCzus6sd5Mxyi_bi2tUNVXFff_ib1bfwlKporZ8XbvQjh6s4HGDdcB-aQX291Afn9FBBEkH-fFIrawq-HMeuGjsYVjsfUeHZFN_lVLRA7xXeOVijcTfXVT3d1pXlAotsgF7MT19wLKT-iyNRogaA8vX8OB_kfEfq3LM9LIe9ivk7c7HIQUxvZzJZF5EVqzSIoxik2GiPclhPcFUnAXt9qAM3bQPwLCcR4G_vM80zhLJHsVDjHJkb7gRZYqPpFbNFrJZ7VXPnHa"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Training</span>
+<h3 class="font-headline-md text-white text-lg">Morning Agility Drills</h3>
+<p class="text-white text-sm opacity-80">Precision and speed under the Ibeju Lekki sunrise.</p>
+</div>
+</div>
+<!-- Matches -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="matches">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A dynamic sports action photograph capturing a pivotal moment during a high-stakes football match. A striker is seen mid-air executing a bicycle kick, with the football perfectly centered in the frame. The stadium lighting is intense, creating sharp shadows and vibrant colors. The Powerblink FC home jersey is prominently visible, symbolizing elite performance and competition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCMbelvI5ipMNOLonXrvQuddPg1N81gdrrJQK_nbaLHjXgXrezXuQS86sXEeU32heSzevlAKkx37_KFroyTA375rf0NIBj-AB2-Ne7oVDyXo6eMLIKO2HOz648HHN8BH8FBN7qQLh422H9I5vAOebQgvN_eHAXs5O7vUXhkeQR3Ysxsblx16Wfv72lOVjK71b3xI3xQPwVhDE-4KieW6gC4eBvUmXyE4cI-U0-9lxo4ZaJjJeuyHs-6ou_AkeFs8VcRm7T4ZvX4I09"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Matches</span>
+<h3 class="font-headline-md text-white text-lg">Under the Lights</h3>
+<p class="text-white text-sm opacity-80">Defining moments of technical mastery in league play.</p>
+</div>
+</div>
+<!-- Awards -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="awards">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A professional studio-style portrait of a group of diverse young athletes holding a gleaming gold trophy. They are wearing Powerblink FC navy and gold tracksuits, looking proud and victorious. The lighting is soft yet focused, highlighting the victory gold details of the brand. The mood is aspirational and authoritative, showcasing the success of the academy's elite program." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvlc_jyywQfgBl93oJGrp06W5Sbf-Icptkr15H3wfwJcvWnTbF59HUzkUhik34d1OkpI9wdULiZiuPp04n_qSPebBlK2ZxMFSmaTo8VZ596xL4LqXJ7HZOwSxQqCgZP8Bj9Z7V72uI35YxttGbY1SyAj1t-jLkYGG3tiC3a8PPqSk-IEOENAhWrzM22E9I0-Qo5PU1tkzhA-V371ll-dX7NDIYQtq1BT_zUjDK-ZziH6h5grNad2CwLWIj6lmIM9BWYgCmihIrs-RS"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Awards</span>
+<h3 class="font-headline-md text-white text-lg">Regional Champions</h3>
+<p class="text-white text-sm opacity-80">Celebrating the hard-earned fruits of relentless discipline.</p>
+</div>
+</div>
+<!-- Community -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="community">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="An authentic, candid photograph of professional football coaches interacting with local youth during a community outreach program in Lagos. The setting is a coastal pitch with the Atlantic ocean visible in the background. The mood is heartwarming and inspiring, with high-energy smiles and engagement. The lighting is natural and bright, reinforcing a professional yet community-focused aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-WRt2baARLOdmwJe_WojnnGgsU1kdamgm_BqWwEqX56fid5ES_nNGR7JkPK4s4S2q_6fcQTuSNuII2lR8nUKh_UtEXWHob8RbzPuIckI23-PqImyu59MCBMJo-389x_T3BuXDIiEnGDfWv05BrTxFrYk2_6D2_6ZEJXTu4fzp7wHWqxMULxXMNHIwJHjH5DlvNbiqHp3VTrizSRZLFGcdaQ4uzsxCk3hsSnLFg1k1xdTHqKDVOIzv5F9uRLDMhkXb_xHyePip5Rl2"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Community</span>
+<h3 class="font-headline-md text-white text-lg">Lekki Outreach</h3>
+<p class="text-white text-sm opacity-80">Building the future of Nigerian football beyond the academy.</p>
+</div>
+</div>
+<!-- Tournaments -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="tournaments">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A high-angle wide shot of a pristine football stadium during an international youth tournament. Multiple games are being played simultaneously on perfectly manicured grass. The color palette is dominated by deep navy blue, vibrant performance green, and clean white. The atmosphere is professional and organized, with clear branding for Powerblink FC visible on banners around the pitch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYYqPxKVQibY7VVjWcEh-Rw448ZKXRJpMFrSfv-q6T9CfGvcTwpJZX8LAE8SCQUuToV4jhkiKyv4BEcs2QLxkcLvjnRF81UfzvVPAfklQJOYyMGX1I3Fdbq0xfHqyoTkw15HSWnY79BUnldlfRcvWOT3QbuxyuvAEXN7XEOWwM1rBFOsvCdQ91TItdKrrFlrghznUn3qjRuPb_06BkWNK9diEbPFeUYtigtWAm6mLlIw92M_7jEZFFbdgZzQ1URn_Zz9KroswI0Vlx"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Tournaments</span>
+<h3 class="font-headline-md text-white text-lg">International Cup</h3>
+<p class="text-white text-sm opacity-80">Competing on the global stage against elite academies.</p>
+</div>
+</div>
+<!-- Training 2 -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="training">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A close-up shot of professional football boots making contact with a ball, kicking up tiny drops of dew from the grass. The focus is sharp on the ball and the motion, with the background blurred in a cinematic bokeh effect. The colors are crisp and vibrant, following the academy's elite performance visual guidelines with deep blacks and performance greens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5NG46dyX86VUQT5cFWF1PFPZfkr1fiCpNJLSinPHVBEsdoa8eE_4XmN1bdD4sabQEc-C_evhv3LB9BFeiQ_gzEDtPj66a7eDRBzCnqn7dlHQhmu8oGQyIw-wbvLTdVwOYEmlmCXAr505baSNGGDZf5MQLNpJBbLEXrpqSrEo_iaOP4ILjVAU7z_uctEFYkIfsFyjjib5RfCWmn9oiJy3Y67i5RIKfBfYw_k6QPNiRhNtlY0RGgPkd0sJNByAqNInCwlMI21B-9lbc"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Training</span>
+<h3 class="font-headline-md text-white text-lg">Precision Touches</h3>
+<p class="text-white text-sm opacity-80">Focusing on the micro-details of professional technique.</p>
+</div>
+</div>
+<!-- Matches 2 -->
+<div class="gallery-item group relative rounded-xl overflow-hidden shadow-md" data-category="matches">
+<img class="w-full h-auto object-cover transition-transform duration-500" data-alt="A dramatic night-time action shot of a goalkeeper diving to save a high-velocity shot. The lighting is high-contrast, casting deep shadows and bright highlights on the goalkeeper's specialized navy kit. The intensity and athletic discipline are palpable. The style is sports editorial, evoking the feeling of a premium athletic brand's digital experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByIu2Z7zdmt77XDsSH0BXnuoltfn_Cn4XADAcrK-9jrFzey-v_1R6A3kyKkOr8bNT0CJ45cEKG9KInEB8D8eoaQTTLkxOx_Ng97iUhyCAPYeVewbyPsrzm7o1UJuktinY-XSThKEMSxI4KRYi1NTYNxekqXaK7ykiGasMUeOgc4wqezhegahnTFZN81_S6a6LvPQrzA_vfmj3jHyh_o9x1FE3VZIXd9zt4uc75IqVJcPqk2JtJD6gJ--KGw4OQst7K17nUNJ-9Mv3f"/>
+<div class="gallery-overlay absolute inset-0 flex flex-col justify-end p-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-caps text-[10px] uppercase w-fit px-2 py-1 mb-2">Matches</span>
+<h3 class="font-headline-md text-white text-lg">The Wall</h3>
+<p class="text-white text-sm opacity-80">Unshakeable defense and heroic saves under pressure.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface-container">
+<div class="max-w-container-max mx-auto bg-primary-container rounded-[32px] p-12 text-center relative overflow-hidden shadow-2xl">
+<div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-secondary-fixed opacity-10 rounded-full blur-3xl"></div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-6 uppercase italic">Start Your Legacy Today</h2>
+<p class="font-body-lg text-white opacity-70 mb-8 max-w-xl mx-auto">Trials are currently open for the 2024 Elite Development Program. Join the ranks of Nigeria's next generation of stars.</p>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="bg-secondary-fixed text-on-secondary-fixed px-8 py-4 rounded-full font-headline-md uppercase tracking-wider hover:bg-white hover:text-primary transition-all shadow-xl active:scale-95">Apply for Trials</button>
+<button class="border-2 border-white text-white px-8 py-4 rounded-full font-headline-md uppercase tracking-wider hover:bg-white hover:text-primary transition-all active:scale-95">Contact Admissions</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap bg-primary-container border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div>
+<div class="font-headline-md text-headline-md text-on-primary-container mb-4">Powerblink FC</div>
+<p class="text-on-primary-container opacity-70 mb-6 font-body-md">Elite Performance in Football. Developing world-class talent in the heart of Lagos.</p>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="font-headline-md text-white text-sm uppercase tracking-widest">Navigation</h4>
+<ul class="flex flex-col gap-2">
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed transition-all font-body-md" href="#">Mission</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed transition-all font-body-md" href="#">Admissions</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed transition-all font-body-md" href="#">Facilities</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed transition-all font-body-md" href="#">Contact Us</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed transition-all font-body-md" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="font-headline-md text-white text-sm uppercase tracking-widest">Connect</h4>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined text-white text-lg">public</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined text-white text-lg">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined text-white text-lg">mail</span>
+</a>
+</div>
+<p class="text-on-primary-container opacity-60 text-xs mt-8">© 2024 Powerblink FC Academy. All rights reserved. Elite Performance in Football.</p>
+</div>
+</div>
+</footer>
+<script>
+        // Gallery Filtering Logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+                
+                // Update button styles
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+                    b.classList.add('border-outline', 'text-on-surface-variant', 'font-medium');
+                });
+                btn.classList.remove('border-outline', 'text-on-surface-variant', 'font-medium');
+                btn.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+
+                // Filter items
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Simple Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
+            observer.observe(item);
+        });
+    </script>
+</body></html>

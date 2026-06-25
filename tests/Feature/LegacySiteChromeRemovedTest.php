@@ -14,7 +14,13 @@ class LegacySiteChromeRemovedTest extends TestCase
         $this->assertFalse(view()->exists('partials.footer'));
     }
 
-    public function test_site_layout_does_not_reference_legacy_chrome(): void
+    public function test_legacy_luxe_store_chrome_partials_do_not_exist(): void
+    {
+        $this->assertFileDoesNotExist(resource_path('views/partials/luxe-store-header.blade.php'));
+        $this->assertFalse(view()->exists('partials.luxe-store-header'));
+    }
+
+    public function test_site_layout_uses_powerblink_chrome(): void
     {
         $layout = (string) file_get_contents(resource_path('views/layouts/site.blade.php'));
 
@@ -26,6 +32,6 @@ class LegacySiteChromeRemovedTest extends TestCase
             "/@include\s*\(\s*['\"]partials\.footer['\"]/",
             $layout
         );
-        $this->assertStringContainsString('partials.luxe-store-header', $layout);
+        $this->assertStringContainsString('partials.powerblink.public-header', $layout);
     }
 }

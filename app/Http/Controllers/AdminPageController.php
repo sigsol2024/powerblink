@@ -20,97 +20,74 @@ class AdminPageController extends Controller
             'home' => [
                 'label' => 'Home',
                 'default_title' => 'Home',
-                'default_description' => 'Homepage SEO and section copy for the Vogue Atelier storefront.',
+                'default_description' => 'Homepage hero, mission, and program highlights for PowerBlink FC.',
                 'fields' => [
-                    ['name' => 'hero_title', 'label' => 'Hero Title', 'type' => 'text', 'default' => 'Artisanship Redefined', 'group' => 'Hero'],
-                    ['name' => 'hero_subtitle', 'label' => 'Hero Subtitle', 'type' => 'textarea', 'default' => 'Luxury apparel and accessories cut, sewn, and finished in our Lagos atelier.', 'group' => 'Hero'],
-                    ['name' => 'hero_cta_text', 'label' => 'Hero CTA Button Text', 'type' => 'text', 'default' => 'Explore Collection', 'group' => 'Hero'],
-                    ['name' => 'hero_cta_href', 'label' => 'Hero CTA Link (path or URL)', 'type' => 'text', 'default' => '/shop', 'group' => 'Hero'],
-                    ['name' => 'hero_image', 'label' => 'Hero Background Image', 'type' => 'image', 'default' => 'asset/images/media/home-hero-main.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
-
-                    ['name' => 'shop_categories_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'Shop Categories', 'group' => 'Shop categories (tiles come from Admin → Categories)'],
-                    ['name' => 'bestsellers_title', 'label' => 'Section title only', 'type' => 'text', 'default' => 'The Bestsellers', 'group' => 'Bestsellers (8 random products per page load)'],
-
-                    ['name' => 'dealer_cta_bg', 'label' => 'Promo banner background', 'type' => 'image', 'default' => 'asset/images/media/home-cta-left.jpg', 'group' => 'Promo banner', 'preview' => 'thumbnail'],
-                    ['name' => 'promo_eyebrow', 'label' => 'Promo eyebrow', 'type' => 'text', 'default' => 'LIMITED CAPSULE', 'group' => 'Promo banner'],
-                    ['name' => 'promo_title', 'label' => 'Promo title', 'type' => 'text', 'default' => 'The Diaspora Series', 'group' => 'Promo banner'],
-                    ['name' => 'promo_cta', 'label' => 'Promo button text', 'type' => 'text', 'default' => 'Explore Series', 'group' => 'Promo banner'],
-                    ['name' => 'promo_cta_href', 'label' => 'Promo button link (path or URL)', 'type' => 'text', 'default' => '/shop', 'group' => 'Promo banner'],
-
-                    ['name' => 'welcome_eyebrow', 'label' => 'Heritage eyebrow', 'type' => 'text', 'default' => 'OUR HERITAGE', 'group' => 'Heritage block'],
-                    ['name' => 'welcome_title', 'label' => 'Heritage block title', 'type' => 'text', 'default' => 'Crafting a New Legacy', 'group' => 'Heritage block'],
-                    ['name' => 'welcome_body', 'label' => 'Heritage block body', 'type' => 'textarea', 'default' => 'We collaborate with master artisans to bring exceptional pieces to a global audience. Each product reflects quality, story, and craft.', 'group' => 'Heritage block'],
-                    ['name' => 'welcome_body_2', 'label' => 'Heritage block secondary paragraph (optional)', 'type' => 'textarea', 'default' => '', 'group' => 'Heritage block'],
-                ],
-            ],
-            'inventory' => [
-                'label' => 'Shop',
-                'default_title' => 'Shop',
-                'default_description' => 'Shop page heading and SEO. Product cards always load from active products.',
-                'fields' => [
-                    ['name' => 'heading', 'label' => 'Shop Heading', 'type' => 'text', 'default' => 'Shop the Collection', 'group' => 'Page header'],
-                    ['name' => 'fallback_image', 'label' => 'Product Card Fallback Image', 'type' => 'image', 'default' => 'asset/images/media/inventory-listing-fallback.jpg', 'group' => 'Media', 'preview' => 'thumbnail'],
-                ],
-            ],
-            'contact' => [
-                'label' => 'Contact',
-                'default_title' => 'Contact Us',
-                'default_description' => 'Concierge contact page hero, client services, studio, and form imagery.',
-                'fields' => [
-                    ['name' => 'hero_kicker', 'label' => 'Hero kicker', 'type' => 'text', 'default' => 'Concierge', 'group' => 'Hero'],
-                    ['name' => 'hero_title', 'label' => 'Hero title', 'type' => 'text', 'default' => 'Get in Touch', 'group' => 'Hero'],
-                    ['name' => 'hero_intro', 'label' => 'Hero intro', 'type' => 'textarea', 'default' => 'Experience bespoke service tailored to your style. Our specialists are available for styling consultations and inquiries about our collections.', 'group' => 'Hero'],
-
-                    ['name' => 'services_email', 'label' => 'Client services email', 'type' => 'text', 'default' => '', 'group' => 'Client services'],
-                    ['name' => 'services_phone', 'label' => 'Client services phone', 'type' => 'text', 'default' => '', 'group' => 'Client services'],
-                    ['name' => 'services_hours', 'label' => 'Client services hours', 'type' => 'textarea', 'default' => "Mon — Fri: 09:00 - 18:00\nSat: 10:00 - 16:00\nSun: Closed", 'group' => 'Client services'],
-
-                    ['name' => 'studio_title', 'label' => 'Studio section title', 'type' => 'text', 'default' => 'Flagship Studio', 'group' => 'Studio'],
-                    ['name' => 'studio_address', 'label' => 'Studio address', 'type' => 'textarea', 'default' => '', 'group' => 'Studio'],
-                    ['name' => 'map_link_url', 'label' => 'Map link URL (optional)', 'type' => 'text', 'default' => '', 'group' => 'Studio'],
-
-                    ['name' => 'social_instagram_label', 'label' => 'Instagram label', 'type' => 'text', 'default' => 'Instagram', 'group' => 'Social'],
-                    ['name' => 'social_instagram_url', 'label' => 'Instagram URL', 'type' => 'text', 'default' => '', 'group' => 'Social'],
-                    ['name' => 'social_twitter_label', 'label' => 'Second social label', 'type' => 'text', 'default' => 'Twitter', 'group' => 'Social'],
-                    ['name' => 'social_twitter_url', 'label' => 'Second social URL', 'type' => 'text', 'default' => '', 'group' => 'Social'],
-
-                    ['name' => 'atmospheric_image', 'label' => 'Atmospheric image', 'type' => 'image', 'default' => 'asset/images/media/contact-map.jpg', 'group' => 'Atmospheric', 'preview' => 'thumbnail'],
-                    ['name' => 'atmospheric_quote', 'label' => 'Atmospheric quote', 'type' => 'text', 'default' => '"Crafted with care, for the world."', 'group' => 'Atmospheric'],
+                    ['name' => 'hero_eyebrow', 'label' => 'Hero eyebrow', 'type' => 'text', 'default' => 'ELITE ACADEMY TRIALS OPEN', 'group' => 'Hero'],
+                    ['name' => 'hero_title', 'label' => 'Hero title', 'type' => 'text', 'default' => "Developing Tomorrow's Football Stars Today", 'group' => 'Hero'],
+                    ['name' => 'hero_subtitle', 'label' => 'Hero subtitle', 'type' => 'textarea', 'default' => 'Structured football development for players aged 7–15 through elite coaching, competitive tournaments, and professional mentorship in Ibeju Lekki.', 'group' => 'Hero'],
+                    ['name' => 'hero_cta_text', 'label' => 'Hero CTA text', 'type' => 'text', 'default' => 'Register Now', 'group' => 'Hero'],
+                    ['name' => 'hero_cta_href', 'label' => 'Hero CTA link', 'type' => 'text', 'default' => '/register', 'group' => 'Hero'],
+                    ['name' => 'hero_image', 'label' => 'Hero image', 'type' => 'image', 'default' => 'asset/images/powerblink/home-powerblink-fc-044.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
+                    ['name' => 'about_preview_image', 'label' => 'About preview image', 'type' => 'image', 'default' => 'asset/images/powerblink/home-powerblink-fc-045.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
+                    ['name' => 'shop_categories_title', 'label' => 'Programs section title', 'type' => 'text', 'default' => 'Development Programs', 'group' => 'Programs section'],
+                    ['name' => 'promo_eyebrow', 'label' => 'Promo eyebrow', 'type' => 'text', 'default' => 'SEASON REGISTRATION', 'group' => 'Promo banner'],
+                    ['name' => 'promo_title', 'label' => 'Promo title', 'type' => 'text', 'default' => 'Ready To Begin Your Football Journey?', 'group' => 'Promo banner'],
+                    ['name' => 'promo_cta', 'label' => 'Promo button text', 'type' => 'text', 'default' => 'Register Today', 'group' => 'Promo banner'],
+                    ['name' => 'welcome_eyebrow', 'label' => 'Mission eyebrow', 'type' => 'text', 'default' => 'OUR MISSION', 'group' => 'Mission block'],
+                    ['name' => 'welcome_title', 'label' => 'Mission title', 'type' => 'text', 'default' => 'Elite Excellence in Ibeju Lekki', 'group' => 'Mission block'],
+                    ['name' => 'welcome_body', 'label' => 'Mission body', 'type' => 'textarea', 'default' => 'Powerblink Football Club Limited is a launchpad for dreams — a safe, world-class environment where young athletes transform raw passion into professional competence.', 'group' => 'Mission block'],
                 ],
             ],
             'about' => [
                 'label' => 'About',
                 'default_title' => 'About Us',
-                'default_description' => 'About page hero, story, artisan spotlight, values, and newsletter.',
+                'default_description' => 'About page hero, story, coaching spotlight, and values.',
                 'fields' => [
-                    ['name' => 'hero_image', 'label' => 'Hero image', 'type' => 'image', 'default' => 'asset/images/media/about-hero-bg.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
-                    ['name' => 'hero_title', 'label' => 'Hero headline', 'type' => 'text', 'default' => 'The Hands Behind the Heritage', 'group' => 'Hero'],
-
+                    ['name' => 'hero_image', 'label' => 'Hero image', 'type' => 'image', 'default' => 'asset/images/powerblink/about-us-powerblink-fc-001.jpg', 'group' => 'Hero', 'preview' => 'thumbnail'],
+                    ['name' => 'hero_title', 'label' => 'Hero headline', 'type' => 'text', 'default' => 'Our Story', 'group' => 'Hero'],
                     ['name' => 'philosophy_kicker', 'label' => 'Philosophy kicker', 'type' => 'text', 'default' => 'Our Philosophy', 'group' => 'Our story'],
-                    ['name' => 'philosophy_title', 'label' => 'Philosophy title', 'type' => 'text', 'default' => 'Modern Heritage', 'group' => 'Our story'],
-                    ['name' => 'philosophy_quote', 'label' => 'Philosophy quote', 'type' => 'textarea', 'default' => '"Luxury is not found in excess, but in the silence of perfect craftsmanship and the weight of history held in a single thread."', 'group' => 'Our story'],
-                    ['name' => 'story_paragraph_1', 'label' => 'Story paragraph 1', 'type' => 'textarea', 'default' => 'Born in the vibrant heart of Lagos and refined through a global lens, our atelier represents the convergence of ancient West African textile traditions and contemporary minimalist design.', 'group' => 'Our story'],
-                    ['name' => 'story_paragraph_2', 'label' => 'Story paragraph 2', 'type' => 'textarea', 'default' => 'Each collection is a curated exploration of form, texture, and cultural narrative. Our silhouette is modern, but its soul is ancestral.', 'group' => 'Our story'],
-                    ['name' => 'story_cta_text', 'label' => 'Story CTA text', 'type' => 'text', 'default' => 'View the Collection', 'group' => 'Our story'],
-                    ['name' => 'story_cta_href', 'label' => 'Story CTA link', 'type' => 'text', 'default' => '/shop', 'group' => 'Our story'],
-
-                    ['name' => 'artisan_kicker', 'label' => 'Artisan kicker', 'type' => 'text', 'default' => 'The Master Weaver', 'group' => 'Artisan'],
-                    ['name' => 'artisan_title', 'label' => 'Artisan title', 'type' => 'text', 'default' => 'Meticulous Craft', 'group' => 'Artisan'],
-                    ['name' => 'artisan_body', 'label' => 'Artisan body', 'type' => 'textarea', 'default' => 'Meet the artisans who shape every piece in our studio.', 'group' => 'Artisan'],
-                    ['name' => 'artisan_image', 'label' => 'Artisan image', 'type' => 'image', 'default' => 'asset/images/media/about-values-1.jpg', 'group' => 'Artisan', 'preview' => 'thumbnail'],
-                    ['name' => 'artisan_location_label', 'label' => 'Artisan location label', 'type' => 'text', 'default' => 'Location: Lagos Studio', 'group' => 'Artisan'],
-                    ['name' => 'artisan_location_detail', 'label' => 'Artisan location detail', 'type' => 'text', 'default' => 'Lagos, Nigeria', 'group' => 'Artisan'],
-
+                    ['name' => 'philosophy_title', 'label' => 'Philosophy title', 'type' => 'text', 'default' => 'Excellence On and Off the Pitch', 'group' => 'Our story'],
+                    ['name' => 'philosophy_quote', 'label' => 'Philosophy quote', 'type' => 'textarea', 'default' => '"We develop players who compete with courage, discipline, and joy."', 'group' => 'Our story'],
+                    ['name' => 'story_paragraph_1', 'label' => 'Story paragraph 1', 'type' => 'textarea', 'default' => 'PowerBlink FC is a youth football academy committed to holistic player development.', 'group' => 'Our story'],
+                    ['name' => 'story_paragraph_2', 'label' => 'Story paragraph 2', 'type' => 'textarea', 'default' => 'Our programs blend technical training, match intelligence, and character building for athletes aged U7 through U15.', 'group' => 'Our story'],
+                    ['name' => 'story_cta_text', 'label' => 'Story CTA text', 'type' => 'text', 'default' => 'View Programs', 'group' => 'Our story'],
+                    ['name' => 'story_cta_href', 'label' => 'Story CTA link', 'type' => 'text', 'default' => '/register', 'group' => 'Our story'],
+                    ['name' => 'artisan_kicker', 'label' => 'Coaches kicker', 'type' => 'text', 'default' => 'Our Coaches', 'group' => 'Coaches'],
+                    ['name' => 'artisan_title', 'label' => 'Coaches title', 'type' => 'text', 'default' => 'Licensed, Experienced Staff', 'group' => 'Coaches'],
+                    ['name' => 'artisan_body', 'label' => 'Coaches body', 'type' => 'textarea', 'default' => 'Our coaching team brings UEFA and CAF qualifications alongside years of academy experience.', 'group' => 'Coaches'],
+                    ['name' => 'artisan_image', 'label' => 'Coaches image', 'type' => 'image', 'default' => 'asset/images/powerblink/about-us-powerblink-fc-009.jpg', 'group' => 'Coaches', 'preview' => 'thumbnail'],
+                    ['name' => 'artisan_location_label', 'label' => 'Location label', 'type' => 'text', 'default' => 'Location', 'group' => 'Coaches'],
+                    ['name' => 'artisan_location_detail', 'label' => 'Location detail', 'type' => 'text', 'default' => 'Lagos, Nigeria', 'group' => 'Coaches'],
                     ['name' => 'values_title', 'label' => 'Core values heading', 'type' => 'text', 'default' => 'Core Values', 'group' => 'Core values'],
-                    ['name' => 'val_1_title', 'label' => 'Value 1 title', 'type' => 'text', 'default' => 'Craftsmanship', 'group' => 'Core values'],
-                    ['name' => 'val_1_body', 'label' => 'Value 1 body', 'type' => 'textarea', 'default' => 'Slow fashion at its pinnacle. We prioritize quality over speed.', 'group' => 'Core values'],
-                    ['name' => 'val_2_title', 'label' => 'Value 2 title', 'type' => 'text', 'default' => 'Sustainability', 'group' => 'Core values'],
-                    ['name' => 'val_2_body', 'label' => 'Value 2 body', 'type' => 'textarea', 'default' => 'Ethical sourcing and fair-wage partnerships that empower local communities.', 'group' => 'Core values'],
-                    ['name' => 'val_3_title', 'label' => 'Value 3 title', 'type' => 'text', 'default' => 'Heritage', 'group' => 'Core values'],
-                    ['name' => 'val_3_body', 'label' => 'Value 3 body', 'type' => 'textarea', 'default' => 'Preserving and evolving cultural narratives through modern design.', 'group' => 'Core values'],
-
-                    ['name' => 'newsletter_title', 'label' => 'Newsletter title', 'type' => 'text', 'default' => 'Join the Circle', 'group' => 'Newsletter'],
-                    ['name' => 'newsletter_body', 'label' => 'Newsletter body', 'type' => 'textarea', 'default' => 'Receive early access to limited drops and stories from the studio.', 'group' => 'Newsletter'],
+                    ['name' => 'val_1_title', 'label' => 'Value 1 title', 'type' => 'text', 'default' => 'Discipline', 'group' => 'Core values'],
+                    ['name' => 'val_1_body', 'label' => 'Value 1 body', 'type' => 'textarea', 'default' => 'Consistent effort and respect for teammates, coaches, and the game.', 'group' => 'Core values'],
+                    ['name' => 'val_2_title', 'label' => 'Value 2 title', 'type' => 'text', 'default' => 'Development', 'group' => 'Core values'],
+                    ['name' => 'val_2_body', 'label' => 'Value 2 body', 'type' => 'textarea', 'default' => 'Age-appropriate training that challenges players to grow every session.', 'group' => 'Core values'],
+                    ['name' => 'val_3_title', 'label' => 'Value 3 title', 'type' => 'text', 'default' => 'Community', 'group' => 'Core values'],
+                    ['name' => 'val_3_body', 'label' => 'Value 3 body', 'type' => 'textarea', 'default' => 'Families, players, and staff united around shared goals.', 'group' => 'Core values'],
+                    ['name' => 'newsletter_title', 'label' => 'Newsletter title', 'type' => 'text', 'default' => 'Stay Connected', 'group' => 'Newsletter'],
+                    ['name' => 'newsletter_body', 'label' => 'Newsletter body', 'type' => 'textarea', 'default' => 'Receive academy news and registration updates.', 'group' => 'Newsletter'],
+                ],
+            ],
+            'contact' => [
+                'label' => 'Contact',
+                'default_title' => 'Contact Us',
+                'default_description' => 'Contact page hero, office details, and imagery.',
+                'fields' => [
+                    ['name' => 'hero_title', 'label' => 'Hero title', 'type' => 'text', 'default' => 'Contact Powerblink FC', 'group' => 'Hero'],
+                    ['name' => 'hero_intro', 'label' => 'Hero intro', 'type' => 'textarea', 'default' => 'Our academy staff are available to answer questions about programs, trials, and registration.', 'group' => 'Hero'],
+                    ['name' => 'services_email', 'label' => 'Contact email', 'type' => 'text', 'default' => '', 'group' => 'Contact details'],
+                    ['name' => 'services_phone', 'label' => 'Contact phone', 'type' => 'text', 'default' => '', 'group' => 'Contact details'],
+                    ['name' => 'services_hours', 'label' => 'Office hours', 'type' => 'textarea', 'default' => "Mon — Fri: 09:00 - 18:00\nSat: 10:00 - 16:00\nSun: Closed", 'group' => 'Contact details'],
+                    ['name' => 'studio_title', 'label' => 'Office section title', 'type' => 'text', 'default' => 'Academy Office', 'group' => 'Office'],
+                    ['name' => 'studio_address', 'label' => 'Office address', 'type' => 'textarea', 'default' => '', 'group' => 'Office'],
+                    ['name' => 'map_link_url', 'label' => 'Map link URL', 'type' => 'text', 'default' => 'https://maps.google.com', 'group' => 'Office'],
+                    ['name' => 'social_instagram_label', 'label' => 'Instagram label', 'type' => 'text', 'default' => 'Instagram', 'group' => 'Social'],
+                    ['name' => 'social_instagram_url', 'label' => 'Instagram URL', 'type' => 'text', 'default' => '', 'group' => 'Social'],
+                    ['name' => 'social_twitter_label', 'label' => 'Second social label', 'type' => 'text', 'default' => 'Twitter', 'group' => 'Social'],
+                    ['name' => 'social_twitter_url', 'label' => 'Second social URL', 'type' => 'text', 'default' => '', 'group' => 'Social'],
+                    ['name' => 'atmospheric_image', 'label' => 'Side image', 'type' => 'image', 'default' => 'asset/images/powerblink/contact-us-powerblink-fc-033.jpg', 'group' => 'Imagery', 'preview' => 'thumbnail'],
+                    ['name' => 'atmospheric_quote', 'label' => 'Quote', 'type' => 'text', 'default' => 'The distance between dreams and reality is called discipline.', 'group' => 'Imagery'],
                 ],
             ],
             'faq' => [
@@ -118,78 +95,55 @@ class AdminPageController extends Controller
                 'default_title' => 'Frequently Asked Questions',
                 'default_description' => 'FAQ page copy and SEO metadata.',
                 'fields' => [
-                    ['name' => 'kicker', 'label' => 'Header Kicker', 'type' => 'text', 'default' => 'Need Help?', 'group' => 'Page hero'],
-                    ['name' => 'heading', 'label' => 'Header Title', 'type' => 'text', 'default' => 'HELP CENTER', 'group' => 'Page hero'],
-                    ['name' => 'intro', 'label' => 'Header Intro', 'type' => 'textarea', 'default' => 'Everything you need to know about the Vogue Atelier experience — sizing, shipping, styling, and aftercare.', 'group' => 'Page hero'],
-                    ['name' => 'hero_image', 'label' => 'Hero Background Image', 'type' => 'image', 'default' => 'asset/images/media/faq-hero-bg.jpg', 'group' => 'Media', 'preview' => 'thumbnail'],
-
-                    ['name' => 'cat_1_title', 'label' => 'Category 1 Title', 'type' => 'text', 'default' => 'Orders & Shipping', 'group' => 'Category 1: Orders'],
-                    ['name' => 'cat_1_icon', 'label' => 'Category 1 Icon', 'type' => 'text', 'default' => 'shopping_bag', 'group' => 'Category 1: Orders'],
-                    ['name' => 'cat_1_faqs', 'label' => 'Category 1 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 1: Orders', 'schema' => [
+                    ['name' => 'kicker', 'label' => 'Header kicker', 'type' => 'text', 'default' => 'Need Help?', 'group' => 'Page hero'],
+                    ['name' => 'heading', 'label' => 'Header title', 'type' => 'text', 'default' => 'HELP CENTER', 'group' => 'Page hero'],
+                    ['name' => 'intro', 'label' => 'Header intro', 'type' => 'textarea', 'default' => 'Common questions about registration, training, and academy policies.', 'group' => 'Page hero'],
+                    ['name' => 'hero_image', 'label' => 'Hero image', 'type' => 'image', 'default' => 'asset/images/powerblink/home-powerblink-fc-044.jpg', 'group' => 'Media', 'preview' => 'thumbnail'],
+                    ['name' => 'cat_1_title', 'label' => 'Category 1 title', 'type' => 'text', 'default' => 'Registration', 'group' => 'Category 1'],
+                    ['name' => 'cat_1_icon', 'label' => 'Category 1 icon', 'type' => 'text', 'default' => 'how_to_reg', 'group' => 'Category 1'],
+                    ['name' => 'cat_1_faqs', 'label' => 'Category 1 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 1', 'schema' => [
                         ['name' => 'q', 'label' => 'Question', 'type' => 'text'],
                         ['name' => 'a', 'label' => 'Answer', 'type' => 'textarea'],
                     ]],
-
-                    ['name' => 'cat_2_title', 'label' => 'Category 2 Title', 'type' => 'text', 'default' => 'Sizing & Fit', 'group' => 'Category 2: Sizing'],
-                    ['name' => 'cat_2_icon', 'label' => 'Category 2 Icon', 'type' => 'text', 'default' => 'straighten', 'group' => 'Category 2: Sizing'],
-                    ['name' => 'cat_2_faqs', 'label' => 'Category 2 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 2: Sizing', 'schema' => [
+                    ['name' => 'cat_2_title', 'label' => 'Category 2 title', 'type' => 'text', 'default' => 'Programs', 'group' => 'Category 2'],
+                    ['name' => 'cat_2_icon', 'label' => 'Category 2 icon', 'type' => 'text', 'default' => 'sports_soccer', 'group' => 'Category 2'],
+                    ['name' => 'cat_2_faqs', 'label' => 'Category 2 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 2', 'schema' => [
                         ['name' => 'q', 'label' => 'Question', 'type' => 'text'],
                         ['name' => 'a', 'label' => 'Answer', 'type' => 'textarea'],
                     ]],
-
-                    ['name' => 'cat_3_title', 'label' => 'Category 3 Title', 'type' => 'text', 'default' => 'Returns & Aftercare', 'group' => 'Category 3: Returns'],
-                    ['name' => 'cat_3_icon', 'label' => 'Category 3 Icon', 'type' => 'text', 'default' => 'autorenew', 'group' => 'Category 3: Returns'],
-                    ['name' => 'cat_3_faqs', 'label' => 'Category 3 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 3: Returns', 'schema' => [
+                    ['name' => 'cat_3_title', 'label' => 'Category 3 title', 'type' => 'text', 'default' => 'Training', 'group' => 'Category 3'],
+                    ['name' => 'cat_3_icon', 'label' => 'Category 3 icon', 'type' => 'text', 'default' => 'calendar_month', 'group' => 'Category 3'],
+                    ['name' => 'cat_3_faqs', 'label' => 'Category 3 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 3', 'schema' => [
                         ['name' => 'q', 'label' => 'Question', 'type' => 'text'],
                         ['name' => 'a', 'label' => 'Answer', 'type' => 'textarea'],
                     ]],
-
-                    ['name' => 'cat_4_title', 'label' => 'Category 4 Title', 'type' => 'text', 'default' => 'Personal Styling', 'group' => 'Category 4: Styling'],
-                    ['name' => 'cat_4_icon', 'label' => 'Category 4 Icon', 'type' => 'text', 'default' => 'auto_awesome', 'group' => 'Category 4: Styling'],
-                    ['name' => 'cat_4_faqs', 'label' => 'Category 4 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 4: Styling', 'schema' => [
+                    ['name' => 'cat_4_title', 'label' => 'Category 4 title', 'type' => 'text', 'default' => 'Medical', 'group' => 'Category 4'],
+                    ['name' => 'cat_4_icon', 'label' => 'Category 4 icon', 'type' => 'text', 'default' => 'health_and_safety', 'group' => 'Category 4'],
+                    ['name' => 'cat_4_faqs', 'label' => 'Category 4 FAQs', 'type' => 'repeater', 'default' => '[]', 'group' => 'Category 4', 'schema' => [
                         ['name' => 'q', 'label' => 'Question', 'type' => 'text'],
                         ['name' => 'a', 'label' => 'Answer', 'type' => 'textarea'],
                     ]],
-
-                    ['name' => 'cta_title', 'label' => 'CTA Title', 'type' => 'text', 'default' => 'STILL HAVE QUESTIONS?', 'group' => 'CTA Section'],
-                    ['name' => 'cta_body', 'label' => 'CTA Body', 'type' => 'textarea', 'default' => 'Our concierge team is available seven days a week to help with sizing, styling, or order enquiries.', 'group' => 'CTA Section'],
-                    ['name' => 'cta_image', 'label' => 'CTA Side Image', 'type' => 'image', 'default' => 'asset/images/media/faq-cta.jpg', 'group' => 'CTA Section', 'preview' => 'thumbnail'],
-                ],
-            ],
-            'compare' => [
-                'label' => 'Compare',
-                'default_title' => 'Compare Products',
-                'default_description' => 'Compare page heading and intro copy.',
-                'fields' => [
-                    ['name' => 'heading', 'label' => 'Compare Heading', 'type' => 'text', 'default' => 'Compare Products', 'group' => 'Page intro'],
-                    ['name' => 'intro', 'label' => 'Compare Intro', 'type' => 'textarea', 'default' => 'Compare list is dynamic and comes from visitor selections.', 'group' => 'Page intro'],
+                    ['name' => 'cta_title', 'label' => 'CTA title', 'type' => 'text', 'default' => 'STILL HAVE QUESTIONS?', 'group' => 'CTA section'],
+                    ['name' => 'cta_body', 'label' => 'CTA body', 'type' => 'textarea', 'default' => 'Contact our academy office Monday through Saturday.', 'group' => 'CTA section'],
+                    ['name' => 'cta_image', 'label' => 'CTA image', 'type' => 'image', 'default' => 'asset/images/powerblink/contact-us-powerblink-fc-034.jpg', 'group' => 'CTA section', 'preview' => 'thumbnail'],
                 ],
             ],
             'privacy-policy' => [
                 'label' => 'Privacy Policy',
                 'default_title' => 'Privacy Policy',
-                'default_description' => 'Privacy policy content for store customers.',
+                'default_description' => 'Privacy policy content for academy families.',
                 'fields' => [
                     ['name' => 'heading', 'label' => 'Page heading', 'type' => 'text', 'default' => 'Privacy Policy', 'group' => 'Content'],
-                    ['name' => 'body', 'label' => 'Policy body', 'type' => 'textarea', 'default' => "This Privacy Policy explains how we collect, use, and protect information when you use our online store.\n\nIf you create an account, sign in (including via Google), save favourites, place orders, or contact us, we may process the information you provide to deliver these features.\n\nWe do not sell your personal information. We use it to operate the store, process and ship your orders, communicate with you, prevent fraud, and comply with legal obligations.\n\nFor questions about this policy or to request access, correction, or deletion of your data, please use the Contact page.", 'group' => 'Content'],
+                    ['name' => 'body', 'label' => 'Policy body', 'type' => 'textarea', 'default' => "This Privacy Policy explains how PowerBlink FC collects, uses, and protects information when you use our website and registration services.\n\nWe process guardian and player information to manage registrations, training, and academy communications.\n\nWe do not sell personal information. For data requests, please use the Contact page.", 'group' => 'Content'],
                 ],
             ],
             'terms' => [
                 'label' => 'Terms & Conditions',
                 'default_title' => 'Terms & Conditions',
-                'default_description' => 'Terms and conditions for shopping with us.',
+                'default_description' => 'Terms governing use of the academy platform.',
                 'fields' => [
                     ['name' => 'heading', 'label' => 'Page heading', 'type' => 'text', 'default' => 'Terms & Conditions', 'group' => 'Content'],
-                    ['name' => 'body', 'label' => 'Terms body', 'type' => 'textarea', 'default' => "These Terms & Conditions govern your use of our online store.\n\nBy using the site, you agree not to misuse the platform, attempt unauthorized access, or submit false or misleading information when placing an order.\n\nProduct details, pricing, and stock availability are provided in good faith and may change. We reserve the right to refuse or cancel any order at our discretion.\n\nIf you place an order, you agree that we may contact you using the information you provide for fulfilment, shipping, and aftercare.\n\nWe may suspend or close accounts that violate these terms. These terms may be updated from time to time; continued use indicates acceptance of updates.", 'group' => 'Content'],
-                ],
-            ],
-            'listing-detail' => [
-                'label' => 'Product Detail',
-                'default_title' => 'Product Detail',
-                'default_description' => 'Product detail page heading and intro copy.',
-                'fields' => [
-                    ['name' => 'heading', 'label' => 'Product Detail Heading', 'type' => 'text', 'default' => 'Product Detail', 'group' => 'Page intro'],
-                    ['name' => 'intro', 'label' => 'Product Detail Intro', 'type' => 'textarea', 'default' => 'Product details and gallery are dynamic from the product record.', 'group' => 'Page intro'],
+                    ['name' => 'body', 'label' => 'Terms body', 'type' => 'textarea', 'default' => "These Terms govern your use of the PowerBlink FC website and registration system.\n\nBy submitting a registration application, you agree to provide accurate information and comply with academy policies.\n\nProgram fees, schedules, and policies may be updated from time to time.", 'group' => 'Content'],
                 ],
             ],
         ];
@@ -263,9 +217,15 @@ class AdminPageController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        // About + listing-detail are section-fields only: never persist arbitrary HTML dumps.
-        if (in_array($slug, ['about', 'listing-detail'], true)) {
+        if ($slug === 'about') {
             $data['content_html'] = '';
+        }
+
+        if (! empty($data['content_html'])) {
+            $data['content_html'] = strip_tags(
+                (string) $data['content_html'],
+                '<p><br><strong><em><ul><ol><li><a><h2><h3><h4>'
+            );
         }
 
         CmsPage::query()->updateOrCreate(
@@ -283,6 +243,10 @@ class AdminPageController extends Controller
         foreach ($editable[$slug]['fields'] as $field) {
             $name = $field['name'];
             $value = $request->input('sections.'.$name, $field['default']);
+            $content = is_string($value) ? $value : (string) $value;
+            if (in_array($field['type'], ['text', 'textarea'], true)) {
+                $content = strip_tags($content);
+            }
             PageSection::query()->updateOrCreate(
                 [
                     'page' => $slug,
@@ -290,7 +254,7 @@ class AdminPageController extends Controller
                 ],
                 [
                     'content_type' => $field['type'],
-                    'content' => is_string($value) ? $value : (string) $value,
+                    'content' => $content,
                 ]
             );
         }
@@ -300,3 +264,4 @@ class AdminPageController extends Controller
             ->with('status', 'Page updated successfully.');
     }
 }
+

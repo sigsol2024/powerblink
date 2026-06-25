@@ -8,7 +8,7 @@
   if ($loaderLogoPath === '') {
     $loaderLogoPath = trim((string) ($site['logo_url'] ?? ''));
   }
-  $loaderLogoUrl = $loaderLogoPath !== '' ? \App\Support\VehicleImageUrl::url($loaderLogoPath) : null;
+  $loaderLogoUrl = $loaderLogoPath !== '' ? \App\Support\MediaImageUrl::url($loaderLogoPath) : null;
 @endphp
 <div
   id="site-page-loader"

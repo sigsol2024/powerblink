@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Services\Mail\OutboundMailService;
+use Database\Seeders\AcademyPermissionsSeeder;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,6 +16,7 @@ class AdminSettingsMailTest extends TestCase
     private function makeAdmin(): User
     {
         $this->seed(RolesSeeder::class);
+        $this->seed(AcademyPermissionsSeeder::class);
         $user = User::factory()->create();
         $user->assignRole('admin');
 
@@ -31,8 +33,9 @@ class AdminSettingsMailTest extends TestCase
     public function test_non_admin_cannot_send_settings_mail_test(): void
     {
         $this->seed(RolesSeeder::class);
+        $this->seed(AcademyPermissionsSeeder::class);
         $user = User::factory()->create();
-        $user->assignRole('user');
+        $user->assignRole('parent');
 
         $this->actingAs($user)
             ->post(route('admin.settings.mail-test'), ['test_email' => 'test@example.com'])

@@ -17,7 +17,7 @@ class UserPolicy
             return false;
         }
 
-        return $target->hasAnyRole(['admin', 'editor']);
+        return $target->hasRole('admin');
     }
 
     public function deleteStaff(User $actor, User $target): bool
@@ -34,7 +34,7 @@ class UserPolicy
             return false;
         }
 
-        return $target->hasAnyRole(['admin', 'editor']);
+        return $target->hasRole('admin');
     }
 
     public function manageCustomers(User $actor): bool

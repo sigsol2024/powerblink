@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us | Powerblink FC</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;700&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "on-tertiary-container": "#a47f00",
+                        "inverse-primary": "#b7c7e7",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#64ff92",
+                        "on-primary-fixed-variant": "#384761",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdf94",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed": "#d6e3ff",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#0b1c34",
+                        "on-primary-fixed": "#0b1c34",
+                        "on-surface-variant": "#44474d",
+                        "tertiary-container": "#241a00",
+                        "tertiary": "#000000",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-tertiary-fixed": "#241a00",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1e",
+                        "outline": "#75777e",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-fixed-variant": "#005224",
+                        "surface-container": "#eceef0",
+                        "primary": "#000000",
+                        "background": "#f7f9fb",
+                        "surface-tint": "#505f7a",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "on-surface": "#191c1e",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006d32",
+                        "on-secondary-fixed": "#00210b",
+                        "secondary-fixed-dim": "#41e279",
+                        "on-secondary-container": "#007436",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e0e3e5",
+                        "secondary-container": "#64ff92",
+                        "outline-variant": "#c5c6ce",
+                        "on-primary-container": "#7584a2",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "brand": "18px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "element-gap": "24px"
+                    },
+                    "fontFamily": {
+                        "stat-xl": ["Bebas Neue"],
+                        "headline-lg": ["Montserrat"],
+                        "label-caps": ["Inter"],
+                        "display-hero": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "stat-md": ["Bebas Neue"],
+                        "headline-md": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                        "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .cinematic-overlay {
+            background: linear-gradient(to bottom, rgba(4, 21, 45, 0.7), rgba(4, 21, 45, 0.9));
+        }
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 shadow-sm bg-surface/90 backdrop-blur-md">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<span class="font-headline-md text-headline-md font-extrabold text-primary">Powerblink FC</span>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Programs</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Coaching Team</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Tournaments</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Gallery</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Contact</a>
+</div>
+<div class="flex gap-4">
+<button class="hidden sm:block px-6 py-2 border-2 border-primary rounded-brand font-bold text-primary hover:bg-primary hover:text-white transition-all">Login</button>
+<button class="px-6 py-2 bg-primary rounded-brand font-bold text-white scale-105 transition-transform hover:bg-opacity-90">Register</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative h-[716px] flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center" data-alt="A cinematic, wide-angle shot of a pristine, lush green football pitch in Ibeju Lekki, Lagos, during the golden hour. The sunlight casts long shadows across the grass, creating a high-contrast and elite sports atmosphere. The scene captures the professional infrastructure of a world-class academy with a deep navy blue color correction to evoke a sense of authority and excellence." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDw_gEkvoJvKLUHiR2JBdqH6JcH0PaeB2ZPDH4fV0AbIALTKBeRqrH-XKBZ8oqopUuV2Wn1Xl2cQ-RrTyxw4xcFGApjJd__rfhyDknPMndAZ1izYE7mGx7d_nFqjPPSSGTiHgtV57mSVeiBXwiq2kC-CYjpont4z9AQFYgfvcHEIlVVClLx3rj4gSRTVfsFCKXs4MP5J6wEiAhPxBV5s-1w8UMnpXLXfkSrQBVIWpDxQV5BcQ05IXKIlPFWVs7xk71uXPqIAwOo0zMx')"></div>
+<div class="absolute inset-0 cinematic-overlay"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-margin-desktop text-white">
+<div class="max-w-2xl">
+<h1 class="font-display-hero text-display-hero mb-6 animate-fade-in">Connect With Our Team</h1>
+<p class="font-body-lg text-body-lg opacity-90 leading-relaxed mb-8">
+                    Whether you're looking for trial information, partnership opportunities, or general inquiries, we're here to help you navigate the pathway to excellence.
+                </p>
+<div class="flex flex-wrap gap-4">
+<a class="px-8 py-4 bg-secondary-container text-on-secondary-container rounded-brand font-bold flex items-center gap-2 hover:scale-105 transition-transform" href="#contact-form">
+<span class="material-symbols-outlined">mail</span> Start Inquiry
+                    </a>
+</div>
+</div>
+</div>
+</header>
+<!-- Contact Cards Section -->
+<section class="py-section-gap max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover transition-all group">
+<div class="w-12 h-12 bg-secondary-container flex items-center justify-center rounded-xl mb-6 text-on-secondary-container">
+<span class="material-symbols-outlined text-2xl">sports_soccer</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 text-primary">Academy Admissions</h3>
+<p class="text-on-surface-variant mb-6">For player registration, trial dates, and youth scouting inquiries.</p>
+<div class="space-y-4">
+<a class="flex items-center gap-3 text-secondary font-bold hover:underline" href="https://wa.me/234000000000">
+<span class="material-symbols-outlined">chat</span> WhatsApp Admissions
+                    </a>
+<p class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined">call</span> +234 800 POWERBLINK
+                    </p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover transition-all group">
+<div class="w-12 h-12 bg-tertiary-fixed flex items-center justify-center rounded-xl mb-6 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-2xl">corporate_fare</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 text-primary">General Inquiries</h3>
+<p class="text-on-surface-variant mb-6">Corporate partnerships, media requests, and administrative support.</p>
+<div class="space-y-4">
+<a class="flex items-center gap-3 text-primary font-bold hover:underline" href="mailto:info@powerblinkfc.com">
+<span class="material-symbols-outlined">alternate_email</span> info@powerblinkfc.com
+                    </a>
+<p class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined">schedule</span> Mon - Fri: 9am - 5pm
+                    </p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover transition-all group">
+<div class="w-12 h-12 bg-primary-container flex items-center justify-center rounded-xl mb-6 text-primary-fixed">
+<span class="material-symbols-outlined text-2xl">location_on</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 text-primary">Training Facility</h3>
+<p class="text-on-surface-variant mb-6">Visit our elite training grounds and performance center in Lagos.</p>
+<div class="space-y-4">
+<p class="text-on-surface leading-tight font-bold">
+                        Ibeju Lekki Coastal Way, Lagos, Nigeria.
+                    </p>
+<a class="flex items-center gap-3 text-primary-container/70 hover:text-primary transition-colors" href="#map">
+<span class="material-symbols-outlined">map</span> View Map Location
+                    </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Inquiry Form Section -->
+<section class="py-section-gap bg-primary-container text-white overflow-hidden relative" id="contact-form">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<!-- Left Side: Form -->
+<div class="bg-white p-10 rounded-brand shadow-xl text-on-surface">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-8">Send a Message</h2>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline">Full Name</label>
+<input class="w-full bg-surface border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-fixed outline-none" placeholder="John Doe" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline">Email Address</label>
+<input class="w-full bg-surface border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-fixed outline-none" placeholder="john@example.com" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline">Phone Number</label>
+<input class="w-full bg-surface border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-fixed outline-none" placeholder="+234 ..." type="tel"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline">Subject</label>
+<select class="w-full bg-surface border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-fixed outline-none">
+<option>Academy Trials</option>
+<option>Partnership Inquiry</option>
+<option>Facility Visit</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline">Your Message</label>
+<textarea class="w-full bg-surface border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-fixed outline-none" placeholder="How can we help you reach the next level?" rows="4"></textarea>
+</div>
+<button class="w-full py-4 bg-primary text-white rounded-brand font-bold text-lg hover:bg-secondary-container hover:text-on-secondary-container transition-all flex items-center justify-center gap-2" type="submit">
+                        Send Inquiry <span class="material-symbols-outlined">send</span>
+</button>
+</form>
+</div>
+<!-- Right Side: Text & Quote -->
+<div class="space-y-12">
+<div>
+<h3 class="font-headline-md text-headline-md text-tertiary-fixed mb-4">Elite Response Commitment</h3>
+<p class="font-body-lg text-body-lg text-on-primary-fixed-variant leading-relaxed">
+                        We value precision both on the field and in our communications. Our administrative team typically responds to all inquiries within <span class="font-bold text-white">24-48 hours</span>. For urgent trial registrations, please use our WhatsApp line.
+                    </p>
+</div>
+<div class="relative pl-8 border-l-4 border-secondary-fixed">
+<span class="material-symbols-outlined text-secondary-fixed text-4xl absolute -left-6 -top-4 opacity-50">format_quote</span>
+<blockquote class="font-headline-md italic text-white mb-4">
+                        "The distance between dreams and reality is called discipline. Our goal is to provide the bridge for every young talent in Nigeria."
+                    </blockquote>
+<cite class="font-label-caps text-label-caps text-secondary-fixed">— COACH ELIJAH OPETUNDE, HEAD OF ACADEMY</cite>
+</div>
+</div>
+</div>
+</section>
+<!-- Training Location Map -->
+<section class="h-[600px] relative flex flex-col md:flex-row bg-surface-container" id="map">
+<div class="w-full h-full bg-surface-container-highest" data-location="Ibeju Lekki, Lagos, Nigeria" style="">
+<div class="w-full h-full bg-cover bg-center grayscale contrast-125 opacity-40" data-alt="A professional architectural map visualization of a luxury sports complex area in Ibeju Lekki. The aesthetic is clean, minimalist, and technical, featuring sleek lines and modern iconography. The color palette is restricted to grayscale and deep navy accents to align with the elite performance branding of Powerblink FC." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBpr1oXEwB2owRTrKEddaHRUp0jhAZdUjJi-EKSTGQatBCG7q_4vHfzeyTpjLEjjn8pWOto_OVZT3eQq3C60WAfTKNGjety5qpPQ9gdzbge9Lz5AsJN6yfmQ7vPghu67bWjdZla_bLNIihoGHeymfyJIXLJtOGvsqFFaw0gjFVds3eamwYyWRLsfmR4-Mul7ZpHCPxIIvDP7ZO-esj0WFyQoQ98OcGnBCBbP7VwIBj5FklqMsgdlZSgGyNX4n3o30mU-nNi-LYZeXKX')"></div>
+</div>
+<!-- Map Sidebar Overlay -->
+<div class="absolute bottom-10 left-10 md:top-20 md:left-margin-desktop md:bottom-auto w-full max-w-sm">
+<div class="bg-white p-8 rounded-brand shadow-2xl border-t-8 border-primary">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Training Facility</h3>
+<div class="space-y-6">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+<div>
+<p class="font-bold">Physical Address</p>
+<p class="text-on-surface-variant">Plot 42, Powerblink Avenue, Coastal Way, Ibeju Lekki, Lagos.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-secondary">schedule</span>
+<div>
+<p class="font-bold">Operating Hours</p>
+<ul class="text-on-surface-variant">
+<li>Training: 06:30 - 18:00 (Daily)</li>
+<li>Office: 09:00 - 17:00 (Mon - Fri)</li>
+</ul>
+</div>
+</div>
+<a class="block w-full py-3 bg-surface-container text-center rounded-lg font-bold text-primary hover:bg-primary hover:text-white transition-all" href="https://maps.google.com" target="_blank">
+                        Get Directions
+                    </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Connectivity -->
+<section class="py-24 bg-white border-y border-outline-variant/20">
+<div class="max-w-container-max mx-auto px-margin-desktop text-center">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Follow the Journey</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12">Stay updated with live trial results, player highlights, and academy news.</p>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="group flex items-center gap-4 px-8 py-4 bg-surface rounded-full hover:bg-primary-container hover:text-white transition-all" href="#">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-white group-hover:bg-secondary-fixed group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">photo_camera</span>
+</div>
+<span class="font-bold">Instagram</span>
+</a>
+<a class="group flex items-center gap-4 px-8 py-4 bg-surface rounded-full hover:bg-primary-container hover:text-white transition-all" href="#">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-white group-hover:bg-secondary-fixed group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</div>
+<span class="font-bold">Twitter / X</span>
+</a>
+<a class="group flex items-center gap-4 px-8 py-4 bg-surface rounded-full hover:bg-primary-container hover:text-white transition-all" href="#">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-white group-hover:bg-secondary-fixed group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">play_circle</span>
+</div>
+<span class="font-bold">YouTube</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary-container text-on-primary-fixed py-section-gap w-full">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-headline-md text-headline-md font-extrabold text-on-primary-fixed mb-6 block">Powerblink FC</span>
+<p class="text-on-primary-container opacity-80 font-body-md">Empowering the next generation of Nigerian football superstars through world-class training and elite mentorship.</p>
+</div>
+<div>
+<h4 class="font-bold text-secondary-fixed mb-6 uppercase tracking-wider">Quick Links</h4>
+<ul class="space-y-4">
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Programs</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Trials</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Coaching</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-secondary-fixed mb-6 uppercase tracking-wider">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-on-primary-container opacity-80 hover:text-secondary-fixed hover:opacity-100 transition-all" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-secondary-fixed mb-6 uppercase tracking-wider">Newsletter</h4>
+<p class="text-on-primary-container opacity-80 mb-4 text-sm">Get trial alerts delivered to your inbox.</p>
+<div class="flex">
+<input class="bg-white/10 border-none rounded-l-lg p-3 text-white w-full focus:ring-1 focus:ring-secondary-fixed" placeholder="Email" type="email"/>
+<button class="bg-secondary-fixed text-primary px-4 rounded-r-lg font-bold">Join</button>
+</div>
+</div>
+</div>
+<div class="mt-16 pt-8 border-t border-white/5 px-margin-desktop max-w-container-max mx-auto text-center md:text-left">
+<p class="text-on-primary-container opacity-50 text-sm">© 2024 Powerblink Football Academy. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Micro-interactions for form inputs
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.parentElement.querySelector('label')?.classList.add('text-secondary-fixed');
+            });
+            el.addEventListener('blur', () => {
+                el.parentElement.querySelector('label')?.classList.remove('text-secondary-fixed');
+            });
+        });
+
+        // Simple smooth scroll enhancement
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body></html>

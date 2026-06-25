@@ -6,7 +6,7 @@ use App\Http\Middleware\EnsureStaff;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\TrackAdminAuditTrail;
 use App\Http\Middleware\TrackPublicTraffic;
-use App\Http\Middleware\VendorIdleTimeout;
+use App\Http\Middleware\ValidateRegistrationPaymentToken;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
@@ -37,13 +37,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.audit' => TrackAdminAuditTrail::class,
             'login.otp.pending' => EnsureLoginOtpPending::class,
             'pending.registration' => EnsurePendingRegistration::class,
-            'vendor.idle' => VendorIdleTimeout::class,
+            'registration.payment.token' => ValidateRegistrationPaymentToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
     ->withSchedule(function (Schedule $schedule): void {
-        //
+        $schedule->command('powerblink:reconcile-payments')->hourly();
     })
     ->create();

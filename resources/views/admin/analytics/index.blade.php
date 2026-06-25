@@ -1,44 +1,29 @@
 @push('head')
   <style>
-    .anx-canvas {
-      --anx-navy-deep: #040d18;
-      --anx-shadow-elevated: 0 1px 0 rgba(255, 255, 255, 0.72) inset, 0 1px 2px rgba(11, 31, 58, 0.05), 0 16px 48px -16px rgba(11, 31, 58, 0.18);
-      --anx-shadow-soft: 0 1px 3px rgba(11, 31, 58, 0.06), 0 8px 24px -8px rgba(11, 31, 58, 0.1);
-      background: linear-gradient(180deg, #eef2f8 0%, #f7f9fc 32%, #f4f6fa 100%);
+    .pb-analytics-canvas {
+      background: linear-gradient(180deg, #f2f4f6 0%, #fafbfd 100%);
     }
-    .anx-glass-toolbar {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(247, 249, 252, 0.88) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, var(--anx-shadow-soft);
+    .pb-analytics-toolbar {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(11, 28, 52, 0.08);
+      box-shadow: 0 4px 24px -4px rgba(11, 28, 52, 0.08);
     }
-    .anx-kpi-card {
-      background: linear-gradient(155deg, #ffffff 0%, #f8fafc 48%, #f0f3f8 100%);
-      box-shadow: var(--anx-shadow-elevated);
-      border: 1px solid rgba(11, 31, 58, 0.08);
+    .pb-analytics-kpi {
+      background: #fff;
+      border: 1px solid rgba(11, 28, 52, 0.08);
+      box-shadow: 0 4px 24px -4px rgba(11, 28, 52, 0.08);
     }
-    .anx-kpi-metric { font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
-    .anx-card {
-      background: linear-gradient(180deg, #ffffff 0%, #fafbfd 100%);
-      box-shadow: var(--anx-shadow-soft);
-      border: 1px solid rgba(11, 31, 58, 0.07);
+    .pb-analytics-card {
+      background: #fff;
+      border: 1px solid rgba(11, 28, 52, 0.08);
+      box-shadow: 0 4px 24px -4px rgba(11, 28, 52, 0.06);
     }
-    .anx-card-hero {
-      background: linear-gradient(165deg, #ffffff 0%, #f5f7fb 55%, #eef1f7 100%);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset, 0 20px 50px -18px rgba(11, 31, 58, 0.2);
-      border: 1px solid rgba(11, 31, 58, 0.08);
+    .pb-analytics-metric { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .pb-analytics-bar-track {
+      background: #e8ecf2;
+      box-shadow: inset 0 1px 2px rgba(11, 28, 52, 0.06);
     }
-    .anx-bar-track {
-      background: linear-gradient(180deg, #e8ecf2 0%, #f2f4f7 100%);
-      box-shadow: inset 0 1px 2px rgba(11, 31, 58, 0.06);
-    }
-    .anx-table-head {
-      background: linear-gradient(180deg, rgba(245, 247, 251, 0.95) 0%, rgba(238, 242, 248, 0.98) 100%);
-    }
-    .anx-table-row:hover td {
-      background: linear-gradient(90deg, rgba(11, 31, 58, 0.03) 0%, rgba(11, 31, 58, 0.015) 100%);
-    }
-    .anx-pill-positive { box-shadow: 0 1px 2px rgba(168, 126, 89, 0.12); }
   </style>
 @endpush
 
@@ -47,10 +32,10 @@
 @endpush
 
 <x-app-layout>
-  <x-admin.page-header :title="__('Analytics')" :subtitle="__('Store traffic and engagement')" />
+  <x-admin.page-header :title="__('Analytics')" :subtitle="__('Academy site traffic and engagement')" />
 
   <x-admin.page-content
-    class="anx-canvas text-wp-text relative w-full min-h-0 antialiased"
+    class="pb-analytics-canvas text-on-surface relative w-full min-h-0 antialiased overflow-x-hidden"
     x-data="analyticsPage({
       trafficSubTemplate: @js(__('User engagement and volume over the last :count days', ['count' => '__N__'])),
       endpoint: '{{ route('admin.analytics.data') }}',
@@ -66,7 +51,8 @@
         'trendXLabels' => $trendXLabels,
         'lineChart' => $lineChart,
         'topPages' => $topPages,
-        'topListings' => $topListings,
+        'topPrograms' => $topPrograms,
+        'engagementRatio' => $engagementRatio,
         'topReferrers' => $topReferrers,
         'deviceBreakdown' => $deviceBreakdown,
       ]),
@@ -79,7 +65,7 @@
       @if (! empty($diag['last_event_at']))
         {{ __('Last event :time (:count total)', ['time' => $diag['last_event_at'], 'count' => number_format((int) ($diag['total_events'] ?? 0))]) }}
       @else
-        {{ __('No events recorded yet. Visit the public shop while logged out, then click Apply.') }}
+        {{ __('No events recorded yet. Visit the public site while logged out, then click Apply.') }}
       @endif
     </p>
 
@@ -94,7 +80,7 @@
       </a>
     </div>
 
-      <x-admin.card variant="toolbar" class="anx-glass-toolbar w-full min-w-0">
+      <x-admin.card variant="toolbar" class="pb-analytics-toolbar w-full min-w-0">
         <div class="mb-3 flex items-center gap-2">
           <x-icon name="filter" class="w-4 h-4 text-primary-container" />
           <span class="text-xs font-semibold uppercase tracking-wider text-[#0b1f3a]">{{ __('Date Range') }}</span>
@@ -127,52 +113,52 @@
       </x-admin.card>
 
     <section class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <div class="anx-kpi-card flex flex-col rounded-2xl p-6 md:p-7">
+      <div class="pb-analytics-kpi flex flex-col rounded-2xl p-6 md:p-7">
         <div class="mb-5 flex items-start justify-between gap-2">
           <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Total Page Views') }}</span>
           <span class="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums" :class="kpiPillClass(state.kpiDeltas?.views)" x-text="formatKpiDelta(state.kpiDeltas?.views)"></span>
         </div>
-        <div class="anx-kpi-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.total_views)"></div>
-        <div class="anx-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
+        <div class="pb-analytics-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.total_views)"></div>
+        <div class="pb-analytics-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
           <div class="h-full rounded-full bg-gradient-to-r from-primary-container to-[#152a45] shadow-sm transition-all duration-500" :style="`width:${kpiBarWidth(1)}%`"></div>
         </div>
       </div>
-      <div class="anx-kpi-card flex flex-col rounded-2xl p-6 md:p-7">
+      <div class="pb-analytics-kpi flex flex-col rounded-2xl p-6 md:p-7">
         <div class="mb-5 flex items-start justify-between gap-2">
           <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Unique Sessions') }}</span>
           <span class="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums" :class="kpiPillClass(state.kpiDeltas?.sessions)" x-text="formatKpiDelta(state.kpiDeltas?.sessions)"></span>
         </div>
-        <div class="anx-kpi-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.unique_sessions)"></div>
-        <div class="anx-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
+        <div class="pb-analytics-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.unique_sessions)"></div>
+        <div class="pb-analytics-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
           <div class="h-full rounded-full bg-gradient-to-r from-on-tertiary-container to-[#c49a6c] shadow-sm transition-all duration-500" :style="`width:${kpiBarWidth(2)}%`"></div>
         </div>
       </div>
-      <div class="anx-kpi-card flex flex-col rounded-2xl p-6 md:p-7">
+      <div class="pb-analytics-kpi flex flex-col rounded-2xl p-6 md:p-7">
         <div class="mb-5 flex items-start justify-between gap-2">
           <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Unique Pages Visited') }}</span>
           <span class="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums" :class="kpiPillClass(state.kpiDeltas?.pages)" x-text="formatKpiDelta(state.kpiDeltas?.pages)"></span>
         </div>
-        <div class="anx-kpi-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.unique_pages)"></div>
-        <div class="anx-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
+        <div class="pb-analytics-metric text-[2rem] font-semibold leading-none tracking-tight text-[#061018] md:text-[2.125rem]" x-text="num(state.summary.unique_pages)"></div>
+        <div class="pb-analytics-bar-track mt-4 h-1.5 w-full overflow-hidden rounded-full">
           <div class="h-full rounded-full bg-gradient-to-r from-error to-[#d32f2f] shadow-sm transition-all duration-500" :style="`width:${kpiBarWidth(3)}%`"></div>
         </div>
       </div>
-      <div class="anx-kpi-card flex flex-col rounded-2xl p-6 md:p-7">
+      <div class="pb-analytics-kpi flex flex-col rounded-2xl p-6 md:p-7">
         <div class="mb-5 flex items-start justify-between gap-2">
-          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Top Listing') }}</span>
+          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">{{ __('Top Page') }}</span>
           <span class="rounded-full border border-on-tertiary-container/20 bg-gradient-to-br from-on-tertiary-container/15 to-on-tertiary-container/5 px-2.5 py-1 text-[10px] font-bold text-on-tertiary-container shadow-sm">{{ __('Hot') }}</span>
         </div>
-        <div class="anx-kpi-metric truncate text-xl font-semibold tracking-tight text-[#061018]" x-text="topListingTitle()"></div>
+        <div class="pb-analytics-metric truncate text-xl font-semibold tracking-tight text-[#061018]" x-text="topProgramTitle()"></div>
         <p class="mt-2 text-[11px] font-medium leading-snug text-on-surface-variant">
-          <span x-show="!topListingViews()">—</span>
-          <span x-show="topListingViews() && Number(range) === 1"><span x-text="num(topListingViews())"></span> {{ __('views today') }}</span>
-          <span x-show="topListingViews() && Number(range) !== 1"><span x-text="num(topListingViews())"></span> {{ __('views in this range') }}</span>
+          <span x-show="!topProgramViews()">—</span>
+          <span x-show="topProgramViews() && Number(range) === 1"><span x-text="num(topProgramViews())"></span> {{ __('views today') }}</span>
+          <span x-show="topProgramViews() && Number(range) !== 1"><span x-text="num(topProgramViews())"></span> {{ __('views in this range') }}</span>
         </p>
       </div>
     </section>
 
     <section class="mb-10">
-      <div class="anx-card-hero rounded-2xl p-6 md:p-8">
+      <div class="pb-analytics-card-hero rounded-2xl p-6 md:p-8">
         <div class="mb-8 flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
           <div>
             <h3 class="text-lg font-bold tracking-tight text-[#061018]">{{ __('Traffic Analytics') }}</h3>
@@ -194,7 +180,7 @@
     </section>
 
     <section class="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="anx-card rounded-2xl p-6 md:p-8">
+      <div class="pb-analytics-card rounded-2xl p-6 md:p-8">
         <h3 class="mb-8 text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('Traffic Distribution') }}</h3>
         <div class="flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:gap-10">
           <div class="mx-auto w-full max-w-[280px] min-w-0 shrink-0 lg:mx-0">
@@ -214,14 +200,14 @@
         </div>
       </div>
 
-      <div class="anx-card rounded-2xl p-6 md:p-8">
+      <div class="pb-analytics-card rounded-2xl p-6 md:p-8">
         <h3 class="mb-8 text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('Referrer Performance') }}</h3>
         <div x-ref="referrerChart" class="min-h-[220px] w-full"></div>
         <p class="mt-4 text-center text-sm text-on-surface-variant" x-show="!state.topReferrers || !state.topReferrers.length" x-cloak>{{ __('No referrer data in this range yet') }}</p>
       </div>
     </section>
 
-    <section class="anx-card mb-10 overflow-hidden rounded-2xl">
+    <section class="pb-analytics-card mb-10 overflow-hidden rounded-2xl">
       <div class="border-b border-[#0a1628]/06 bg-gradient-to-r from-[#f8fafc] to-white px-6 py-6 md:px-8">
         <h3 class="text-lg font-bold tracking-tight text-[#061018]">{{ __('Most Visited Pages') }}</h3>
         <p class="mt-1.5 text-sm text-on-surface-variant">{{ __('Listing performance and viewer conversion') }}</p>
@@ -240,7 +226,7 @@
         <div class="hidden lg:block overflow-x-auto rounded-xl border border-[#0a1628]/06 bg-white/50">
           <table class="w-full min-w-[600px] border-collapse text-left">
             <thead>
-              <tr class="anx-table-head border-b border-[#0a1628]/08 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+              <tr class="pb-admin-table border-b border-outline-variant/30 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                 <th class="px-5 py-4 md:px-6">{{ __('Page title') }}</th>
                 <th class="px-5 py-4 md:px-6">{{ __('Views') }}</th>
                 <th class="px-5 py-4 md:px-6">{{ __('Avg. time') }}</th>
@@ -250,14 +236,14 @@
             </thead>
             <tbody class="divide-y divide-[#0a1628]/06">
               <template x-for="row in (state.topPages || [])" :key="row.path">
-                <tr class="anx-table-row transition-colors duration-150">
+                <tr class="transition-colors duration-150 hover:bg-surface-container-low">
                   <td class="px-5 py-4 text-sm font-medium text-[#1a1d21] md:px-6 md:py-5" x-text="pathTitle(row)"></td>
                   <td class="px-5 py-4 text-sm tabular-nums text-[#1a1d21] md:px-6 md:py-5" x-text="num(row.views)"></td>
                   <td class="px-5 py-4 text-sm text-on-surface-variant md:px-6 md:py-5">—</td>
                   <td class="px-5 py-4 text-sm tabular-nums text-[#1a1d21] md:px-6 md:py-5" x-text="bounceProxy(row) + '%'"></td>
                   <td class="px-5 py-4 md:px-6 md:py-5">
                     <div class="flex min-w-[10rem] items-center gap-3 sm:min-w-0">
-                      <div class="anx-bar-track h-2 w-28 shrink-0 overflow-hidden rounded-full">
+                      <div class="pb-analytics-bar-track h-2 w-28 shrink-0 overflow-hidden rounded-full">
                         <div class="h-full rounded-full shadow-sm transition-all duration-500" :class="perfBarClass(performanceScore(row))" :style="`width: ${performanceScore(row)}%`"></div>
                       </div>
                       <span class="w-9 shrink-0 text-right text-xs font-bold tabular-nums" :class="perfTextClass(performanceScore(row))" x-text="performanceScore(row) + '%'"></span>
@@ -273,24 +259,26 @@
     </section>
 
     <section class="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="anx-card rounded-2xl p-6 md:p-8">
-        <h3 class="mb-6 text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('Top Car Listings') }}</h3>
+      <div class="pb-analytics-card rounded-2xl p-6 md:p-8">
+        <h3 class="mb-6 text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('Top Academy Pages') }}</h3>
         <div x-ref="listingsChart" class="min-h-[260px] w-full"></div>
-        <p class="mt-4 text-center text-sm text-on-surface-variant" x-show="!hasVehicleListings()" x-cloak>{{ __('No listing views in this range yet') }}</p>
+        <p class="mt-4 text-center text-sm text-on-surface-variant" x-show="!hasProgramViews()" x-cloak>{{ __('No route views in this range yet') }}</p>
       </div>
 
-      <div class="anx-card flex flex-col rounded-2xl p-6 md:p-8">
+      <div class="pb-analytics-card flex flex-col rounded-2xl p-6 md:p-8">
         <h3 class="mb-4 w-full text-left text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('User Engagement Ratio') }}</h3>
         <div class="flex w-full flex-col items-center justify-center overflow-hidden">
           <div x-ref="gaugeChart" class="min-h-[240px] w-full max-w-[280px]"></div>
         </div>
         <p class="mt-6 max-w-sm text-center text-xs leading-relaxed text-on-surface-variant sm:mx-auto">
-          {{ __('Your platform engagement is') }} <span class="font-semibold text-on-tertiary-container">12% {{ __('higher') }}</span> {{ __('than the luxury industry average this quarter.') }}
+          <span x-text="engagementLabel()"></span>
+          <span class="font-semibold text-on-tertiary-container" x-text="engagementRatio() + '%'"></span>
+          {{ __('engagement score based on bounce rate and session depth.') }}
         </p>
       </div>
     </section>
 
-    <section class="anx-card mb-10 rounded-2xl p-6 md:p-8">
+    <section class="pb-analytics-card mb-10 rounded-2xl p-6 md:p-8">
       <div class="mb-8 flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
         <h3 class="text-lg font-bold tracking-tight text-[#061018]">{{ __('Daily Activity: Views vs Sessions') }}</h3>
         <div class="flex flex-wrap gap-5">

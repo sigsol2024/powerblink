@@ -31,7 +31,7 @@ Route::middleware(['guest', 'throttle:30,1'])->group(function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [UnifiedAuthController::class, 'show'])->name('register');
+    Route::get('signup', [UnifiedAuthController::class, 'show'])->name('register');
     Route::get('login', [UnifiedAuthController::class, 'show'])->name('login');
 
     Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])

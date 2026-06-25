@@ -19,6 +19,8 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_URL" value="https://powerblinkfc.com"/>
+        <env name="POWERBLINK_SITE_URL" value="https://powerblinkfc.com"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
@@ -32,7 +34,11 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
-        <!-- External HTTP import disabled for tests unless explicitly enabled -->
         <env name="IMPORT_STYLEMIX_SOLD_LISTINGS" value="false"/>
+        <env name="PAYSTACK_SECRET_KEY" value="sk_test_powerblink"/>
+        <env name="PAYSTACK_PUBLIC_KEY" value="pk_test_powerblink"/>
+        <env name="PAYSTACK_WEBHOOK_SECRET" value="whsec_test_powerblink"/>
+        <env name="BOOTSTRAP_ADMIN_PASSWORD" value="password"/>
+        <env name="DEMO_USER_PASSWORD" value="password"/>
     </php>
 </phpunit>

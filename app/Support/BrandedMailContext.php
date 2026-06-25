@@ -28,7 +28,7 @@ final class BrandedMailContext
             ? trim($site['site_display_name'])
             : (string) config('app.name', 'Laravel');
         $logoPath = trim((string) ($site['logo_path'] ?? ''));
-        $logoUrl = $logoPath !== '' ? VehicleImageUrl::url($logoPath) : null;
+        $logoUrl = $logoPath !== '' ? PlaceholderMedia::url($logoPath) : null;
 
         return [
             'site' => $site,

@@ -4,7 +4,7 @@ namespace App\Support;
 
 final class SiteBrand
 {
-    public const DEFAULT_NAME = 'Vogue Dress 4Less';
+    public const DEFAULT_NAME = 'PowerBlink FC';
 
     public static function displayName(?array $site = null): string
     {

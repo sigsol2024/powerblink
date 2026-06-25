@@ -18,6 +18,9 @@
 /node_modules
 /public/hot
 /public/storage
+# Runtime registration uploads on production — not added locally via Git
+/public/asset/images/powerblink/documents/*
+!/public/asset/images/powerblink/documents/.gitignore
 /storage/*.key
 /storage/pail
 Homestead.json

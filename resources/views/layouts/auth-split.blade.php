@@ -6,7 +6,7 @@
     }
     $hasLogo = $logoPath !== '';
     $panelPath = trim((string) ($site['auth_panel_image_path'] ?? ''));
-    $authPanelFallback = public_path('asset/images/media/placeholder-lorem.svg');
+    $authPanelFallback = public_path('asset/images/powerblink/placeholder.svg');
     $useAuthPanelFallback = $panelPath === '' && is_file($authPanelFallback);
 
     $authPatternRel = null;
@@ -116,14 +116,14 @@
             <div class="auth-split__panel">
                 @if ($panelPath !== '')
                     <img
-                        src="{{ \App\Support\VehicleImageUrl::url($panelPath) }}"
+                        src="{{ \App\Support\MediaImageUrl::url($panelPath) }}"
                         alt=""
                         class="absolute inset-0 z-0 h-full w-full object-cover"
                         decoding="async"
                     />
                 @elseif ($useAuthPanelFallback)
                     <img
-                        src="{{ asset('asset/images/media/placeholder-lorem.svg') }}"
+                        src="{{ asset('asset/images/powerblink/placeholder.svg') }}"
                         alt=""
                         class="absolute inset-0 z-0 h-full w-full object-cover opacity-95"
                     />
@@ -148,7 +148,7 @@
                     <a href="{{ url('/') }}" class="auth-split__brand">
                         @if ($hasLogo)
                             <img
-                                src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}"
+                                src="{{ \App\Support\MediaImageUrl::url($logoPath) }}"
                                 alt="{{ $brandName }}"
                                 class="h-12 w-auto max-h-14 max-w-[min(100%,16rem)] object-contain sm:h-14 sm:max-h-16"
                             />

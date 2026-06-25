@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
  */
 final class PlaceholderMedia
 {
-    public const FALLBACK_RELATIVE = 'asset/images/media/placeholder-lorem.svg';
+    public const FALLBACK_RELATIVE = 'asset/images/powerblink/placeholder.svg';
 
     public static function fallbackUrl(): string
     {
@@ -20,7 +20,7 @@ final class PlaceholderMedia
     /**
      * Return URL for a public-site image path, or the lorem placeholder if the file is missing.
      *
-     * @param  string|null  $relativePath  e.g. `asset/images/media/foo.jpg` (under `public/`)
+     * @param  string|null  $relativePath  e.g. `asset/images/powerblink/foo.jpg` (under `public/`)
      */
     public static function url(?string $relativePath): string
     {

@@ -18,11 +18,13 @@ final class CmsNavigation
     {
         return [
             'home',
-            'inventory',
+            'programs',
+            'coaching',
+            'gallery',
+            'tournaments',
             'about',
             'contact',
             'faq',
-            'compare',
             'privacy-policy',
             'terms',
         ];

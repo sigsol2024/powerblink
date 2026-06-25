@@ -1,0 +1,25 @@
+﻿
+   FAIL  Tests\Feature\ShowcaseSeedDensityTest
+  Γ¿» showcase seed meets minimum row counts
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\ShowcaseSeedDensityTest > showcase seed meets minimum row counts      BadMethodCallException   
+  Received Mockery_1_Illuminate_Console_OutputStyle::askQuestion(), but no expectations were specified
+
+  at vendor\symfony\console\Style\SymfonyStyle.php:234
+    230Γûò     }
+    231Γûò 
+    232Γûò     public function confirm(string $question, bool $default = true): bool
+    233Γûò     {
+  Γ₧£ 234Γûò         return $this->askQuestion(new ConfirmationQuestion($question, $default));
+    235Γûò     }
+    236Γûò 
+    237Γûò     public function choice(string $question, array $choices, mixed $default = null, bool $multiSelect = false): mixed
+    238Γûò     {
+
+  1   vendor\symfony\console\Style\SymfonyStyle.php:234
+  2   vendor\laravel\framework\src\Illuminate\Console\View\Components\Confirm.php:17
+
+
+  Tests:    1 failed (0 assertions)
+  Duration: 4.69s
+

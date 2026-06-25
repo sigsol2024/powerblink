@@ -6,9 +6,8 @@ return [
     |--------------------------------------------------------------------------
     | Public static assets (under public/)
     |--------------------------------------------------------------------------
-    | asset/images/branding/ — logo, marketing thumbnails
-    | asset/images/media/     — static demo / marketing raster assets
-    | asset/images/vendor/    — legacy dealer-skin fonts & icons (CSS url() targets)
+    | asset/images/powerblink/ — academy design and CMS images
+    | asset/images/branding/   — logo, favicon uploads (optional)
     */
 
     'public_image_root' => 'asset/images',
@@ -19,5 +18,5 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'listing_photos_directory' => 'listings/vehicles',
+    'listing_photos_directory' => 'powerblink/uploads',
 ];

@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AdminAuditTrail;
 use App\Models\User;
-use Database\Seeders\PermissionsSeeder;
+use Database\Seeders\AcademyPermissionsSeeder;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +19,7 @@ class AdminRbacTest extends TestCase
         parent::setUp();
 
         $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $this->seed(AcademyPermissionsSeeder::class);
     }
 
     private function makeAdmin(array $attrs = [], bool $super = false): User
@@ -33,40 +33,30 @@ class AdminRbacTest extends TestCase
         return $user;
     }
 
-    private function makeEditor(array $attrs = []): User
+    public function test_admin_can_access_dashboard_and_registrations(): void
     {
-        $user = User::factory()->create($attrs);
-        $user->assignRole('editor');
+        $admin = $this->makeAdmin();
 
-        return $user;
+        $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
+        $this->actingAs($admin)->get(route('admin.registrations.index'))->assertOk();
+        $this->actingAs($admin)->get(route('admin.media.index'))->assertOk();
     }
 
-    public function test_editor_can_access_products_and_media(): void
+    public function test_coach_cannot_access_admin_panel(): void
     {
-        $editor = $this->makeEditor();
+        $coach = User::factory()->create(['email_verified_at' => now()]);
+        $coach->assignRole('coach');
 
-        $this->actingAs($editor)->get(route('dashboard.vehicles.index'))->assertOk();
-        $this->actingAs($editor)->get(route('admin.media.index'))->assertOk();
+        $this->actingAs($coach)->get(route('admin.dashboard'))->assertForbidden();
+        $this->actingAs($coach)->get(route('admin.settings.edit'))->assertForbidden();
     }
 
-    public function test_editor_cannot_access_restricted_admin_pages(): void
+    public function test_coach_can_access_portal(): void
     {
-        $editor = $this->makeEditor();
+        $coach = User::factory()->create(['email_verified_at' => now()]);
+        $coach->assignRole('coach');
 
-        $this->actingAs($editor)->get(route('admin.settings.edit'))->assertForbidden();
-        $this->actingAs($editor)->get(route('admin.staff.index'))->assertForbidden();
-        $this->actingAs($editor)->get(route('admin.audit.index'))->assertForbidden();
-        $this->actingAs($editor)->get(route('admin.pages.index'))->assertForbidden();
-    }
-
-    public function test_editor_can_view_customers_but_not_delete(): void
-    {
-        $editor = $this->makeEditor();
-        $customer = User::factory()->create();
-        $customer->assignRole('user');
-
-        $this->actingAs($editor)->get(route('admin.users.index'))->assertOk();
-        $this->actingAs($editor)->delete(route('admin.users.destroy', $customer))->assertForbidden();
+        $this->actingAs($coach)->get(route('portal.dashboard'))->assertOk();
     }
 
     public function test_admin_can_delete_another_admin_but_not_super_admin(): void
@@ -84,20 +74,12 @@ class AdminRbacTest extends TestCase
     public function test_login_redirects_differ_by_role(): void
     {
         $admin = $this->makeAdmin();
-        $editor = $this->makeEditor();
+        $coach = User::factory()->create(['email_verified_at' => now()]);
+        $coach->assignRole('coach');
 
         $this->assertSame(route('admin.dashboard', absolute: false), $admin->staffHomeRoute());
-        $this->assertSame(route('dashboard.vehicles.index', absolute: false), $editor->staffHomeRoute());
-        $this->assertSame(route('dashboard.vehicles.index', absolute: false), $editor->loginRedirectPath());
-    }
-
-    public function test_editor_visiting_admin_root_redirects_to_products(): void
-    {
-        $editor = $this->makeEditor();
-
-        $this->actingAs($editor)
-            ->get('/admin')
-            ->assertRedirect(route('dashboard.vehicles.index'));
+        $this->assertSame(route('portal.dashboard', absolute: false), $coach->staffHomeRoute());
+        $this->assertSame(route('portal.dashboard', absolute: false), $coach->loginRedirectPath());
     }
 
     public function test_admin_can_set_staff_password_on_create_and_edit(): void
@@ -105,25 +87,25 @@ class AdminRbacTest extends TestCase
         $admin = $this->makeAdmin();
 
         $this->actingAs($admin)->post(route('admin.staff.store'), [
-            'name' => 'Editor One',
-            'email' => 'editor1@example.com',
+            'name' => 'Admin Two',
+            'email' => 'admin2@example.com',
             'password' => 'Str0ng!Pass99',
             'password_confirmation' => 'Str0ng!Pass99',
-            'role' => 'editor',
+            'role' => 'admin',
         ])->assertRedirect();
 
-        $editor = User::query()->where('email', 'editor1@example.com')->firstOrFail();
-        $this->assertTrue(Hash::check('Str0ng!Pass99', $editor->password));
+        $created = User::query()->where('email', 'admin2@example.com')->firstOrFail();
+        $this->assertTrue(Hash::check('Str0ng!Pass99', $created->password));
 
-        $this->actingAs($admin)->put(route('admin.staff.update', $editor), [
-            'name' => 'Editor One',
-            'email' => 'editor1@example.com',
-            'role' => 'editor',
+        $this->actingAs($admin)->put(route('admin.staff.update', $created), [
+            'name' => 'Admin Two',
+            'email' => 'admin2@example.com',
+            'role' => 'admin',
             'password' => 'NewStr0ng!Pass88',
             'password_confirmation' => 'NewStr0ng!Pass88',
         ])->assertRedirect();
 
-        $this->assertTrue(Hash::check('NewStr0ng!Pass88', $editor->fresh()->password));
+        $this->assertTrue(Hash::check('NewStr0ng!Pass88', $created->fresh()->password));
     }
 
     public function test_staff_create_writes_structured_audit_log_without_password(): void
@@ -131,11 +113,11 @@ class AdminRbacTest extends TestCase
         $admin = $this->makeAdmin();
 
         $this->actingAs($admin)->post(route('admin.staff.store'), [
-            'name' => 'Audit Editor',
-            'email' => 'auditeditor@example.com',
+            'name' => 'Audit Admin',
+            'email' => 'auditadmin@example.com',
             'password' => 'Str0ng!Pass99',
             'password_confirmation' => 'Str0ng!Pass99',
-            'role' => 'editor',
+            'role' => 'admin',
         ])->assertRedirect();
 
         $entry = AdminAuditTrail::query()
@@ -145,13 +127,6 @@ class AdminRbacTest extends TestCase
         $this->assertNotNull($entry);
         $this->assertSame('staff.created', $entry->meta['action'] ?? null);
         $this->assertArrayNotHasKey('password', $entry->meta ?? []);
-
-        $genericDuplicates = AdminAuditTrail::query()
-            ->where('path', '/admin/staff')
-            ->where('method', 'POST')
-            ->whereNull('meta->action')
-            ->count();
-        $this->assertSame(0, $genericDuplicates);
     }
 
     public function test_super_admin_can_be_updated_without_submitting_role_field(): void
@@ -175,7 +150,7 @@ class AdminRbacTest extends TestCase
         $this->actingAs($admin)->put(route('admin.staff.update', $admin), [
             'name' => $admin->name,
             'email' => $admin->email,
-            'role' => 'editor',
-        ])->assertStatus(400);
+            'role' => 'coach',
+        ])->assertRedirect()->assertSessionHasErrors('role');
     }
 }

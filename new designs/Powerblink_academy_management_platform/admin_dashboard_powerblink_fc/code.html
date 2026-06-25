@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Powerblink FC | Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;700&amp;family=Bebas+Neue&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "on-primary-fixed-variant": "#384761",
+                        "tertiary-container": "#241a00",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f7f9fb",
+                        "surface": "#f7f9fb",
+                        "primary": "#000000",
+                        "secondary-container": "#64ff92",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#a47f00",
+                        "tertiary-fixed": "#ffdf94",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-primary-container": "#7584a2",
+                        "secondary": "#006d32",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#64ff92",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed-dim": "#41e279",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-fixed": "#00210b",
+                        "inverse-primary": "#b7c7e7",
+                        "surface-tint": "#505f7a",
+                        "primary-container": "#0b1c34",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "on-secondary-container": "#007436",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c5c6ce",
+                        "surface-container-high": "#e6e8ea",
+                        "outline": "#75777e",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005224",
+                        "primary-fixed": "#d6e3ff",
+                        "on-primary-fixed": "#0b1c34",
+                        "background": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "section-gap": "80px",
+                        "margin-desktop": "48px",
+                        "element-gap": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Montserrat"],
+                        "headline-md": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Montserrat"],
+                        "stat-md": ["Bebas Neue"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "stat-xl": ["Bebas Neue"],
+                        "display-hero": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                        "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- SIDE NAVIGATION -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-inverse-surface shadow-sm border-r border-outline-variant dark:border-outline flex flex-col h-full py-6 px-4 z-40 hidden md:flex">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed leading-tight">Ibeju Lekki Academy</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant opacity-70 tracking-widest mt-1">ELITE ADMIN PORTAL</p>
+</div>
+<nav class="flex-grow space-y-1 custom-scrollbar overflow-y-auto">
+<!-- Dashboard (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<!-- Other Tabs -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-caps text-label-caps">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="font-label-caps text-label-caps">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+<span class="font-label-caps text-label-caps">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-caps text-label-caps">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-caps text-label-caps">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">supervisor_account</span>
+<span class="font-label-caps text-label-caps">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-label-caps text-label-caps">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-caps text-label-caps">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</nav>
+<div class="mt-6">
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold font-headline-md text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Registration
+            </button>
+</div>
+</aside>
+<!-- MAIN CONTENT AREA -->
+<main class="md:ml-64 min-h-screen">
+<!-- TOP APP BAR -->
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">Admin Dashboard</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-secondary w-64" placeholder="Search players, payments..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-80 active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-80 active:opacity-80">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border-2 border-secondary">
+<img class="h-full w-full object-cover" data-alt="A professional headshot of a middle-aged male administrator with a confident expression, wearing a navy blue Powerblink FC branded polo shirt. The background is a brightly lit, modern office environment with blurred sporting trophies and academy branding. The lighting is crisp and corporate, highlighting the elite status of the academy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMZo-f081lQlYhFBOI96njaxGFEQ3cGycr7tJrvUhv8MDpU4XmwNqW9uMRPnU5IsH-j-ZELEsYd1MKVG-LDUM8bNAy9HqvnnOKtY_6750W_OsAvY11UTtiqp8pHWmwXPQUMJR14TTTPa2O7vJ74gGt5WQsHNUY5oaEfe-zxEYyjm-MAeVc8XCa7dnfrvG93Tn1d1Ca1dOlBqoy9Pu_0Lw_-QE9ybT_KS0oGV0BAOJIYft2Jp38kOVqNpkPhGgJ90qJDO2hgw-Uj1H2"/>
+</div>
+</div>
+</div>
+</header>
+<!-- DASHBOARD CANVAS -->
+<div class="pt-24 pb-12 px-margin-mobile md:px-margin-desktop">
+<!-- KPI GRID (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Total Players -->
+<div class="glass-card p-6 rounded-3xl flex flex-col justify-between shadow-[4px_15px_20px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-primary-container rounded-2xl">
+<span class="material-symbols-outlined text-secondary-container">groups</span>
+</div>
+<span class="text-secondary font-bold text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                            +12%
+                        </span>
+</div>
+<div class="mt-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant">TOTAL PLAYERS</p>
+<h3 class="font-stat-xl text-stat-xl text-primary">1,248</h3>
+</div>
+</div>
+<!-- Active Registrations -->
+<div class="glass-card p-6 rounded-3xl flex flex-col justify-between shadow-[4px_15px_20px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-secondary-container rounded-2xl">
+<span class="material-symbols-outlined text-on-secondary-container">how_to_reg</span>
+</div>
+<span class="text-secondary font-bold text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">check_circle</span>
+                            Active
+                        </span>
+</div>
+<div class="mt-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant">ACTIVE REGISTRATIONS</p>
+<h3 class="font-stat-xl text-stat-xl text-primary">942</h3>
+</div>
+</div>
+<!-- Monthly Revenue -->
+<div class="glass-card p-6 rounded-3xl flex flex-col justify-between shadow-[4px_15px_20px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-tertiary-fixed rounded-2xl">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant">payments</span>
+</div>
+<span class="text-error font-bold text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_down</span>
+                            -2.4%
+                        </span>
+</div>
+<div class="mt-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant">MONTHLY REVENUE</p>
+<h3 class="font-stat-xl text-stat-xl text-primary">₦4.2M</h3>
+</div>
+</div>
+<!-- Attendance Rate -->
+<div class="glass-card p-6 rounded-3xl flex flex-col justify-between shadow-[4px_15px_20px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-surface-container-highest rounded-2xl">
+<span class="material-symbols-outlined text-primary">event_available</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white bg-secondary"></div>
+<div class="w-6 h-6 rounded-full border-2 border-white bg-primary"></div>
+</div>
+</div>
+<div class="mt-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant">ATTENDANCE RATE</p>
+<h3 class="font-stat-xl text-stat-xl text-primary">88.5%</h3>
+</div>
+</div>
+</section>
+<!-- ASYMMETRIC CONTENT ROW -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- RECENT REGISTRATIONS (2/3 Width) -->
+<div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-[4px_15px_30px_-10px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md text-primary">Recent Registrations</h4>
+<button class="text-secondary font-bold text-sm hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="pb-4 font-label-caps text-label-caps text-on-surface-variant">PLAYER</th>
+<th class="pb-4 font-label-caps text-label-caps text-on-surface-variant">CATEGORY</th>
+<th class="pb-4 font-label-caps text-label-caps text-on-surface-variant">DATE</th>
+<th class="pb-4 font-label-caps text-label-caps text-on-surface-variant">STATUS</th>
+<th class="pb-4 font-label-caps text-label-caps text-on-surface-variant">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a young African boy aged 12 with a determined expression, short cropped hair, and wearing the white and green Powerblink FC academy jersey. The lighting is natural morning sunlight, giving a fresh and optimistic feel to the professional sports portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC652UfdkX3FYADmPHGDeDAU51oxW1p0mGpg0XoUPyqIMQApIkM2mFKSwpSjJRIprW2fPxwsmpPHKX1e5AiBRjuYFDQ8yPrsM6hPmhEePcB9gc7ULxMBjTfE_I7PSpBxlLmOLs0G4Oy9fJems_-FIr89yLEfxysrlwJgPeFqsZ9sGD0Xx8E_PwEWEK_kKMbPhbJxzJ44wjJzpnxGmRboOfG1pDxjyrtjRB7JkhErvpr7iQmvfF6dE7UI5BsbvnC6nn13GPqs9yffSuH"/>
+</div>
+<div>
+<p class="font-bold text-primary text-sm">Chidi Okafor</p>
+<p class="text-xs text-on-surface-variant">ID: PB-2401</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm font-stat-md">U-13 Elite</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 24, 2023</td>
+<td class="py-4">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">Completed</span>
+</td>
+<td class="py-4">
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a teenage African boy with an athletic build, wearing a professional football training bib. He has a focused gaze directed at the camera. The setting is a lush green football pitch at dusk, with the stadium lights beginning to glow in the background. The visual style is editorial sports photography with high contrast and rich textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr_nKq65mmiQwkI0d0Q6LGAhYpFEpIPlO6T7S2Ad0tHD4cIfpc81Nr-0zwWgRI9S7ChjE_V5DXHhcM2Uy2tRONvn6JuKcUzUAnjnuGiIn_LD6rHWU9N4XEQY4trqUN_qxvMqX4iYqFB-B_j2FkggSKw5toIEaNe7UZpTUhycjBZA1qoL5d-fvnRez9dwbkGFKYPk5StRwgpMysYyMfxRHySROcBg5fMFfowvElkjyNOwLfQk_bYNBCrZAuaelTij4U9h1E7BfpT3Jk"/>
+</div>
+<div>
+<p class="font-bold text-primary text-sm">Kofi Mensah</p>
+<p class="text-xs text-on-surface-variant">ID: PB-2402</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm font-stat-md">U-17 Pro</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 23, 2023</td>
+<td class="py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</td>
+<td class="py-4">
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A dynamic action portrait of a young African boy laughing while holding a football. He is wearing the vibrant green away kit of Powerblink FC. The shot is taken from a low angle, making the subject appear heroic. The lighting is warm and golden, captured during the 'golden hour' on a well-maintained football field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTZVNjYqK2TQcppx853Fb9BWM7XFd4b8G0Rc9IjkPQ3Ee3ddDWoHmwA6Sb475Hr2GiUjbTxQEMjKrqGN1jVXZKxQYKw9VHpKT6HjAR8XCjA4XY-52msHXaIwxbDVWGSFilDuFgOx1zkHWv4c3LoMbIhPFTaGQUAkRPii4C71v5TOYIsQfIl3DTK7NoAXujya_avVi5i-nTC6IJequ2c2kgZxWABKHKbKyAdX0A1RHHly8Z969G2Zza7TdqZ9bUQdwmwIZGggUoX7xd"/>
+</div>
+<div>
+<p class="font-bold text-primary text-sm">Ade Wale</p>
+<p class="text-xs text-on-surface-variant">ID: PB-2403</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm font-stat-md">U-11 Grassroots</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 22, 2023</td>
+<td class="py-4">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">Completed</span>
+</td>
+<td class="py-4">
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- UPCOMING EVENTS / WIDGET (1/3 Width) -->
+<div class="flex flex-col gap-6">
+<div class="bg-primary-container text-on-primary rounded-3xl p-8 shadow-xl relative overflow-hidden h-full">
+<!-- Decorative Shader Background -->
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+
+</div>
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md mb-6">Upcoming Events</h4>
+<div class="space-y-6">
+<!-- Event 1 -->
+<div class="flex gap-4 group cursor-pointer">
+<div class="flex-shrink-0 w-14 h-14 bg-white/10 rounded-2xl flex flex-col items-center justify-center border border-white/20 group-hover:bg-secondary group-hover:border-secondary transition-colors">
+<span class="font-stat-md text-xl leading-none">12</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">NOV</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-sm">Elite Trials Lagos</p>
+<p class="text-xs text-white/60 mt-1">Teslim Balogun Stadium</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="text-[10px] font-bold uppercase text-secondary-container">Scouting Event</span>
+</div>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="flex gap-4 group cursor-pointer">
+<div class="flex-shrink-0 w-14 h-14 bg-white/10 rounded-2xl flex flex-col items-center justify-center border border-white/20 group-hover:bg-secondary group-hover:border-secondary transition-colors">
+<span class="font-stat-md text-xl leading-none">18</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">NOV</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-sm">Youth League Match</p>
+<p class="text-xs text-white/60 mt-1">Home vs Ikoyi Warriors</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span>
+<span class="text-[10px] font-bold uppercase text-tertiary-fixed">Matchday</span>
+</div>
+</div>
+</div>
+<!-- Event 3 -->
+<div class="flex gap-4 group cursor-pointer">
+<div class="flex-shrink-0 w-14 h-14 bg-white/10 rounded-2xl flex flex-col items-center justify-center border border-white/20 group-hover:bg-secondary group-hover:border-secondary transition-colors">
+<span class="font-stat-md text-xl leading-none">02</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">DEC</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-sm">Parent-Coach Seminar</p>
+<p class="text-xs text-white/60 mt-1">Main Hall &amp; Virtual</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-on-primary-fixed-variant"></span>
+<span class="text-[10px] font-bold uppercase text-on-primary-fixed-variant">Administrative</span>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-10 w-full py-4 border border-white/20 rounded-2xl font-bold text-xs hover:bg-white/10 transition-colors">
+                                CALENDAR OVERVIEW
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- LOWER DATA SECTION -->
+<section class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Payment Status Card -->
+<div class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-error-container rounded-lg">
+<span class="material-symbols-outlined text-on-error-container text-sm">priority_high</span>
+</div>
+<h5 class="font-bold text-primary">Pending Payments</h5>
+</div>
+<span class="font-stat-md text-2xl text-error">₦840k</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Overdue (&gt;30 days)</span>
+<span class="font-bold">12 Players</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-error h-1.5 rounded-full" style="width: 35%"></div>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Due this week</span>
+<span class="font-bold">28 Players</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Academy Health Chart Placeholder -->
+<div class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30 lg:col-span-2 relative overflow-hidden">
+<div class="flex items-center justify-between mb-4">
+<h5 class="font-bold text-primary">Performance Trends</h5>
+<select class="text-xs border-none bg-surface-container-low rounded-lg focus:ring-0">
+<option>Last 6 Months</option>
+<option>Last Year</option>
+</select>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="h-32 flex items-end justify-between gap-2 mt-8">
+<div class="w-full bg-secondary-container/30 rounded-t-lg h-[40%] transition-all hover:h-[45%]"></div>
+<div class="w-full bg-secondary-container/30 rounded-t-lg h-[60%] transition-all hover:h-[65%]"></div>
+<div class="w-full bg-secondary-container/30 rounded-t-lg h-[45%] transition-all hover:h-[50%]"></div>
+<div class="w-full bg-secondary-container/30 rounded-t-lg h-[80%] transition-all hover:h-[85%]"></div>
+<div class="w-full bg-secondary-container rounded-t-lg h-[75%] transition-all hover:h-[80%]"></div>
+<div class="w-full bg-primary rounded-t-lg h-[95%] transition-all hover:h-[100%]"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<span>May</span>
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant z-40 px-4 py-2 flex justify-around items-center">
+<a class="flex flex-col items-center p-2 text-secondary" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[10px] font-bold uppercase mt-1">Players</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-bold uppercase mt-1">Pay</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="text-[10px] font-bold uppercase mt-1">Events</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for KPI card hover effects
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.02) translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1) translateY(0)';
+            });
+        });
+
+        // Simple Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('header button.md\\:hidden');
+        mobileMenuBtn.addEventListener('click', () => {
+            const sidebar = document.querySelector('aside');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+            sidebar.classList.add('w-full');
+            sidebar.classList.remove('w-64');
+        });
+    </script>
+</body></html>

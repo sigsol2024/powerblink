@@ -65,24 +65,16 @@ export function createAnalyticsPage(config) {
             return 0;
         },
 
-        topListingTitle() {
-            const row = (this.state.topListings && this.state.topListings[0]) || null;
+        topProgramTitle() {
+            const row = (this.state.topPrograms && this.state.topPrograms[0]) || null;
             if (!row) {
                 return '—';
             }
-            const slug = String(row.vehicle_slug || '');
-            if (!slug) {
-                return '—';
-            }
-            return slug
-                .split('-')
-                .filter(Boolean)
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ');
+            return row.label || row.route_name || '—';
         },
 
-        topListingViews() {
-            const row = (this.state.topListings && this.state.topListings[0]) || null;
+        topProgramViews() {
+            const row = (this.state.topPrograms && this.state.topPrograms[0]) || null;
             return row ? row.views : 0;
         },
 
@@ -140,12 +132,19 @@ export function createAnalyticsPage(config) {
         },
 
         engagementRatio() {
+            if (this.state.engagementRatio?.percent != null) {
+                return Number(this.state.engagementRatio.percent);
+            }
             const bounce = Number(this.state.summary?.bounce_rate || 0);
             return Math.max(0, Math.min(100, 100 - bounce));
         },
 
-        hasVehicleListings() {
-            return (this.state.topListings || []).some((r) => r.vehicle_slug);
+        engagementLabel() {
+            return this.state.engagementRatio?.label || '';
+        },
+
+        hasProgramViews() {
+            return (this.state.topPrograms || []).some((r) => r.route_name);
         },
 
         async initCharts() {

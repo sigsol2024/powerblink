@@ -25,7 +25,7 @@
                 <a href="/">
                     @if (!empty($logoPath))
                         <img
-                            src="{{ \App\Support\VehicleImageUrl::url($logoPath) }}"
+                            src="{{ \App\Support\MediaImageUrl::url($logoPath) }}"
                             alt="{{ $brandName }}"
                             class="h-20 w-20 rounded-lg object-contain"
                         />

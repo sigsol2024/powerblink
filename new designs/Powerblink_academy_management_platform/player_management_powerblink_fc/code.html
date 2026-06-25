@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Player Directory | Ibeju Lekki Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@400;600;700&family=Bebas+Neue&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom Scrollbar for modern look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #75777e;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #000000;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-background": "#191c1e",
+                      "on-primary-fixed-variant": "#384761",
+                      "tertiary-container": "#241a00",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#000000",
+                      "surface-bright": "#f7f9fb",
+                      "surface": "#f7f9fb",
+                      "primary": "#000000",
+                      "secondary-container": "#64ff92",
+                      "on-surface-variant": "#44474d",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#a47f00",
+                      "tertiary-fixed": "#ffdf94",
+                      "surface-dim": "#d8dadc",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#efc13e",
+                      "on-primary-container": "#7584a2",
+                      "secondary": "#006d32",
+                      "primary-fixed-dim": "#b7c7e7",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-surface": "#191c1e",
+                      "secondary-fixed": "#64ff92",
+                      "inverse-surface": "#2d3133",
+                      "surface-container-low": "#f2f4f6",
+                      "secondary-fixed-dim": "#41e279",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#eceef0",
+                      "on-tertiary-fixed": "#241a00",
+                      "on-secondary-fixed": "#00210b",
+                      "inverse-primary": "#b7c7e7",
+                      "surface-tint": "#505f7a",
+                      "primary-container": "#0b1c34",
+                      "on-tertiary-fixed-variant": "#594400",
+                      "on-secondary-container": "#007436",
+                      "error": "#ba1a1a",
+                      "surface-variant": "#e0e3e5",
+                      "outline-variant": "#c5c6ce",
+                      "surface-container-high": "#e6e8ea",
+                      "outline": "#75777e",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#005224",
+                      "primary-fixed": "#d6e3ff",
+                      "on-primary-fixed": "#0b1c34",
+                      "background": "#f7f9fb"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "section-gap": "80px",
+                      "margin-desktop": "48px",
+                      "element-gap": "24px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Montserrat"],
+                      "headline-md": ["Montserrat"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Montserrat"],
+                      "stat-md": ["Bebas Neue"],
+                      "body-lg": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "stat-xl": ["Bebas Neue"],
+                      "display-hero": ["Montserrat"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                      "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                      "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest shadow-sm z-40 border-r border-outline-variant flex flex-col py-6 px-4">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary">Ibeju Lekki Academy</h1>
+<p class="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest mt-1">Elite Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+<span class="font-body-md">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+<span class="font-body-md">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="font-body-md">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-body-md">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="supervisor_account">supervisor_account</span>
+<span class="font-body-md">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-body-md">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-body-md">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span>New Registration</span>
+</button>
+</div>
+</aside>
+<!-- Top AppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-30 flex justify-between items-center px-8">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Admin Dashboard</h2>
+<nav class="hidden md:flex ml-8 gap-6">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Overview</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Performance Tracking</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Scouting Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-sm w-64 focus:outline-none focus:ring-2 focus:ring-secondary-container" placeholder="Global search..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold leading-tight">Admin User</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Super Admin</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-secondary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a confident sports administrator in their late 30s wearing a high-quality navy blue academy polo shirt. The background is a clean, softly blurred modern sports office with warm natural lighting and high-end tech equipment. The mood is authoritative yet accessible, reflecting an elite performance environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC50HE4y3z9pC2eaMUWtNuhCeCsaOzbhxoC4eJoZ2YYb4HjUXiKJb1fNkCpFZCqm3DOR3tuS-gVkCibmHjgvYoSCB4wr4JLj2bbM6uKMOB4zSXWotCPr8_ExWeAW6xmNuCvg3-r82pd3gdQQOzcnWqSC_xQfMPiJKQTQ_RwtZduiDcfq27oOoPnxxAd5MF3lzQmvDE3nd21G_Ij6pGOWDClPTfbWOsY5TzRNdLugZAUJ_aLTrVNPtnrY1ZNiZANMS7OWiEQFb02YbS"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<!-- Header Section -->
+<section class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-2">Player Directory</h3>
+<p class="text-on-surface-variant max-w-2xl">Manage and monitor all academy talents across all age groups. Track health status, registration details, and performance metrics in one central hub.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high border border-outline-variant rounded-xl font-bold hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined" data-icon="file_download">file_download</span>
+<span>Export CSV</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-xl font-bold hover:opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span>Register Player</span>
+</button>
+</div>
+</section>
+<!-- Filters Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-8">
+<div class="md:col-span-2 bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant">
+<label class="block text-xs font-label-caps text-on-surface-variant mb-3">Search Players</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-4 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</span>
+<input class="w-full pl-12 pr-4 py-3 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all" placeholder="Search by name, ID or position..." type="text"/>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant">
+<label class="block text-xs font-label-caps text-on-surface-variant mb-3">Age Group</label>
+<select class="w-full px-4 py-3 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container appearance-none">
+<option>All Categories</option>
+<option>Under-13 (U-13)</option>
+<option>Under-15 (U-15)</option>
+<option>Under-17 (U-17)</option>
+<option>Elite U-21</option>
+</select>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant">
+<label class="block text-xs font-label-caps text-on-surface-variant mb-3">Status</label>
+<div class="flex gap-2">
+<button class="px-3 py-2 bg-secondary-container text-on-secondary-container rounded-lg text-xs font-bold border border-secondary/20">Active</button>
+<button class="px-3 py-2 bg-white text-on-surface-variant rounded-lg text-xs font-bold border border-outline-variant hover:bg-surface-container transition-all">Injured</button>
+<button class="px-3 py-2 bg-white text-on-surface-variant rounded-lg text-xs font-bold border border-outline-variant hover:bg-surface-container transition-all">Inactive</button>
+</div>
+</div>
+</section>
+<!-- Stats Overview Row -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-primary p-6 rounded-2xl text-on-primary">
+<p class="text-xs font-label-caps opacity-70 mb-1">Total Players</p>
+<p class="font-stat-md text-stat-md">142</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant">
+<p class="text-xs font-label-caps text-on-surface-variant mb-1">Active Trials</p>
+<p class="font-stat-md text-stat-md text-primary">28</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant">
+<p class="text-xs font-label-caps text-on-surface-variant mb-1">Medical Clearances</p>
+<p class="font-stat-md text-stat-md text-secondary">94%</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant">
+<p class="text-xs font-label-caps text-on-surface-variant mb-1">New this month</p>
+<div class="flex items-center gap-2">
+<p class="font-stat-md text-stat-md text-primary">+12</p>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">GROWTH</span>
+</div>
+</div>
+</section>
+<!-- Main Data Table Container -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Player Name</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Age Group</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Position</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Reg. Date</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Medical Status</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant">Status</th>
+<th class="px-6 py-4 text-xs font-label-caps text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Player Row 1 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A focused portrait of a young 15-year-old Nigerian football player with a short-cropped haircut, looking directly into the camera with determination. He is wearing the academy's official white and gold jersey. High-contrast athletic lighting, professional sports studio background with subtle bokeh." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxZmmyQPenaAnbIb8nQe2feHblwii5adU_OyJW_sotPqxJ4a3OWkN-3CkhdozT7tNWLHKowZUdh340wjjs0c_l_0wk624G6K5X5CkQYyrWFhsYDcS0zmbwjJWJ83Y2MCfyZ6dU17reipGZY8pa-kTmsH_OoWxqHCSFL8VKiSEhLy_CrdeqrXnsw3bagS3aGgTjYcvEAd4t46DYEWeTacspUbZ_PZPlYM0tErpT9WRjiAK9sgFxiHvOSGgs_kslMfM8SlvnfEmH9j0u"/>
+</div>
+<div>
+<p class="font-bold text-on-surface group-hover:text-primary transition-colors">Kelechi Okafor</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2024-089</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container text-on-surface text-xs font-bold rounded-full">U-15</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-on-surface">Striker</p>
+<p class="text-[10px] text-on-surface-variant">Secondary: LW</p>
+</td>
+<td class="px-6 py-4">
+<p class="font-stat-md text-base text-on-surface">12 JAN 2024</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<p class="text-xs text-on-surface-variant">No major concerns</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-extrabold rounded uppercase tracking-wider">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors" title="View Profile">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors" title="Edit">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Player Row 2 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up headshot of a 13-year-old talented youth player with vibrant energy, smiling confidently. He has athletic features and is wearing a green training bib over the academy kit. Sunlight filters through the scene, highlighting the texture of his jersey and the intensity in his eyes. Editorial sports photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHkaysxw2dcibtVEhUC4F8D3PuwsVBce8bWHtp-3SNstZffCTyM6OQwRoPIFs1Y4fih2DS5Y54fD77MqHrsfUY4x-UctXb1Ip9RRLHjK2142eyGwmwNY5XX1sPJP6SqbtajNyFhI5xlTkM-_P7O54holgaLCliTPNZGuHj1V-oEZCTKHC6YOcJXcNkmiiF_iFVHjOh9K6rudvf1JxMmW7fAbgRjGeKOe43oGC1Bsa3ekZvXW0b2hcNNt1WxfSHjfboC1id0rlwtzad"/>
+</div>
+<div>
+<p class="font-bold text-on-surface group-hover:text-primary transition-colors">Tunde Adeyemi</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-112</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container text-on-surface text-xs font-bold rounded-full">U-13</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-on-surface">Goalkeeper</p>
+<p class="text-[10px] text-on-surface-variant">Captain</p>
+</td>
+<td class="px-6 py-4">
+<p class="font-stat-md text-base text-on-surface">05 OCT 2023</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<p class="text-xs text-on-surface-variant">Ankle strain (Day 5)</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-error-container text-on-error-container text-[10px] font-extrabold rounded uppercase tracking-wider">Injured</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Player Row 3 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A profile shot of a teenage elite football prospect, aged 17, with a sharp jawline and athletic build. He is captured in a professional sports media pose, looking slightly off-camera. He wears the black and primary navy away kit of Ibeju Lekki Academy. Lighting is dramatic, casting soft shadows on one side of his face. Cinematic quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn5Y3YAeyukS25nh50J8A51xumhSaUa8y_3OBTmrWagDoUJJAIf-D5UmwIVDAbbjXrls3_pxT-T_EKANNNneshHbZch-2YUU4va4Z1R-ezZBjiLWk9zZQIYO4Xk807qVQzqmvv1uNhyaab6TOh_mlMXIkiOZNr28Py879chk3VwRtYal60P-0TDUnTJl50p2NgbUIsmZh_AFSTzddwVCkuaekngjex2ez3oDeqlP0smQUUZYyEQDQFq01l8se5eyX8-gXPNsPO-Klv"/>
+</div>
+<div>
+<p class="font-bold text-on-surface group-hover:text-primary transition-colors">Emmanuel Chuku</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2024-012</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container text-on-surface text-xs font-bold rounded-full">U-17</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-on-surface">Midfielder</p>
+<p class="text-[10px] text-on-surface-variant">Playmaker (CAM)</p>
+</td>
+<td class="px-6 py-4">
+<p class="font-stat-md text-base text-on-surface">15 MAR 2024</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<p class="text-xs text-on-surface-variant">Fully cleared</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-extrabold rounded uppercase tracking-wider">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Player Row 4 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Full portrait of a 14-year-old female youth academy player, athletic and poised, with her hair styled in neat braids. She is wearing the vibrant performance-green training kit. The background shows the lush green turf of a premium football pitch at sunset, creating a warm, hopeful atmosphere. High-end athletic brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFSAJfL5eqO-6Wnh_SwB49EyoUad8NayIT-qjEGK964Khy53PzWL2An-bMZaFZB7gU7wmnsUNviet9qogl1mLNX1tJnYLnKUemqyz5CxphEG1YfqzZQMm6i5a4Al6nGti3ZdXucIzW4-O5AUtZAzQ0cm9jb3_LJi_8HAN2vFhpfOBC6-Z7r5ALKuAifdHemM4BOac7j5p2ZSdp8_pJENEbEdQ6Tgo2kqVBecL_JEYxQdyNvNmIfRj2gK8mDr68SJWIHHHifADKYTy5"/>
+</div>
+<div>
+<p class="font-bold text-on-surface group-hover:text-primary transition-colors">Blessing Udoh</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-045</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container text-on-surface text-xs font-bold rounded-full">U-15</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-on-surface">Defender</p>
+<p class="text-[10px] text-on-surface-variant">Center Back</p>
+</td>
+<td class="px-6 py-4">
+<p class="font-stat-md text-base text-on-surface">22 NOV 2023</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<p class="text-xs text-on-surface-variant">Assessment pending</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container-high text-on-surface-variant text-[10px] font-extrabold rounded uppercase tracking-wider">Inactive</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Container -->
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<p class="text-xs text-on-surface-variant">Showing <span class="font-bold text-on-surface">1 - 4</span> of <span class="font-bold text-on-surface">142</span> players</p>
+<div class="flex gap-1">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-lg text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-bold">3</button>
+<span class="w-8 h-8 flex items-center justify-center text-on-surface-variant text-xs">...</span>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-bold">36</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions and effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('click', (e) => {
+                    // Prevent trigger if action buttons are clicked
+                    if (e.target.closest('button')) return;
+                    
+                    // Ripple effect or scale could be added here
+                    console.log('Navigating to player profile...');
+                });
+            });
+
+            // Search bar interaction
+            const searchInputs = document.querySelectorAll('input[type="text"]');
+            searchInputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('scale-[1.01]');
+                });
+                input.addEventListener('blur', () => {
+                    input.parentElement.classList.remove('scale-[1.01]');
+                });
+            });
+        });
+    </script>
+</body></html>

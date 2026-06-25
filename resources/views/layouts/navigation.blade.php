@@ -16,16 +16,14 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('dashboard.vehicles.index')" :active="request()->routeIs('dashboard.vehicles.*')">
-                        {{ __('My Vehicles') }}
-                    </x-nav-link>
+                    @if (Auth::user()->isMember())
+                        <x-nav-link :href="route('portal.dashboard')" :active="request()->routeIs('portal.*')">
+                            {{ __('Portal') }}
+                        </x-nav-link>
+                    @endif
 
-                    <x-nav-link :href="route('dashboard.vendor-settings.edit')" :active="request()->routeIs('dashboard.vendor-settings.*')">
-                        {{ __('Dealer profile') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
-                        {{ __('Public Inventory') }}
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                        {{ __('Public Site') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -83,16 +81,14 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('dashboard.vehicles.index')" :active="request()->routeIs('dashboard.vehicles.*')">
-                {{ __('My Vehicles') }}
-            </x-responsive-nav-link>
+            @if (Auth::user()->isMember())
+                <x-responsive-nav-link :href="route('portal.dashboard')" :active="request()->routeIs('portal.*')">
+                    {{ __('Portal') }}
+                </x-responsive-nav-link>
+            @endif
 
-            <x-responsive-nav-link :href="route('dashboard.vendor-settings.edit')" :active="request()->routeIs('dashboard.vendor-settings.*')">
-                {{ __('Dealer profile') }}
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
-                {{ __('Public Inventory') }}
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                {{ __('Public Site') }}
             </x-responsive-nav-link>
         </div>
 
@@ -104,10 +100,6 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('dashboard.vendor-settings.edit')">
-                    {{ __('Dealer profile') }}
-                </x-responsive-nav-link>
-
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>

@@ -3,22 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\CmsPage;
+use App\Models\Coach;
+use App\Models\GalleryItem;
+use App\Models\LeadershipMember;
 use App\Models\PageSection;
+use App\Models\Program;
 use App\Models\SiteSetting;
-use App\Models\Vehicle;
-use App\Models\VehicleVariant;
-use App\Support\Compare;
+use App\Models\Tournament;
+use App\Support\PlaceholderMedia;
 use App\Support\SiteBrand;
 use App\Support\SiteSettingDefaults;
-use App\Support\VehicleImageUrl;
-use App\Support\VehicleListingCatalog;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class PageController extends Controller
 {
@@ -39,68 +33,6 @@ class PageController extends Controller
         return $out;
     }
 
-    protected function sanitizeShopHeading(string $heading): string
-    {
-        $trimmed = trim($heading);
-        if ($trimmed === '') {
-            return (string) __('Shop the Collection');
-        }
-
-        if (preg_match('/\b(vehicle|automotive|car\s+for\s+sale)\b/i', $trimmed)) {
-            return (string) __('Shop the Collection');
-        }
-
-        return $trimmed;
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<string, mixed>  $filterOptions
-     */
-    protected function resolveShopHeading(string $storedHeading, array $filters, array $filterOptions): string
-    {
-        if (! empty($filters['featured'])) {
-            return (string) __('Featured products');
-        }
-
-        $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
-        if ($categoryId > 0) {
-            $category = collect($filterOptions['categories'] ?? [])->firstWhere('id', $categoryId);
-            if ($category && trim((string) ($category->value ?? '')) !== '') {
-                return trim((string) $category->value);
-            }
-        }
-
-        $search = trim((string) ($filters['q'] ?? ''));
-        if ($search !== '') {
-            return (string) __('Search results');
-        }
-
-        return $this->sanitizeShopHeading($storedHeading);
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<string, mixed>  $filterOptions
-     */
-    protected function resolveShopKicker(array $filters, array $filterOptions): string
-    {
-        if (! empty($filters['featured'])) {
-            return (string) __('FEATURED');
-        }
-
-        $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
-        if ($categoryId > 0) {
-            return (string) __('SHOP');
-        }
-
-        if (trim((string) ($filters['q'] ?? '')) !== '') {
-            return (string) __('SEARCH');
-        }
-
-        return (string) __('CURATED SERIES');
-    }
-
     protected function resolvePublicPage(string $slug, string $defaultTitle, string $defaultDescription = ''): CmsPage
     {
         return CmsPage::query()->firstOrCreate(
@@ -118,47 +50,27 @@ class PageController extends Controller
     {
         $page = CmsPage::query()->where('slug', 'home')->where('is_active', true)->firstOrFail();
         $siteName = SiteBrand::displayName();
-        $heroVehicles = Vehicle::query()
-            ->with(['images', 'categoryOption'])
-            ->where('status', 'approved')
-            ->orderByDesc('approved_at')
-            ->orderByDesc('id')
-            ->take(5)
-            ->get();
-
-        $featuredVehicles = Vehicle::query()
-            ->with(['images', 'categoryOption'])
-            ->where('status', 'approved')
-            ->inRandomOrder()
-            ->take(8)
-            ->get();
-
-        $filterOptions = $this->approvedVehicleFilterOptions();
-        $filters = $this->defaultInventoryFilters();
-
-        $heroCover = $heroVehicles->first()?->images->first();
-        $ogImage = $heroCover ? url(VehicleImageUrl::url($heroCover->path)) : null;
 
         $homeSections = $this->pageSections('home', [
-            'hero_title' => 'Artisanship Redefined',
-            'hero_subtitle' => 'Luxury apparel and accessories cut, sewn, and finished in our Lagos atelier.',
-            'hero_cta_text' => 'Explore Collection',
-            'hero_cta_href' => '/shop',
-            'hero_image' => 'asset/images/media/home-hero-main.jpg',
-            'shop_categories_title' => 'Shop Categories',
-            'bestsellers_title' => 'The Bestsellers',
-            'dealer_cta_bg' => 'asset/images/media/home-cta-left.jpg',
-            'promo_eyebrow' => 'LIMITED CAPSULE',
-            'promo_title' => 'The Diaspora Series',
-            'promo_cta' => 'Explore Series',
-            'promo_cta_href' => '/shop',
-            'welcome_eyebrow' => 'OUR HERITAGE',
-            'welcome_title' => 'Crafting a New Legacy',
-            'welcome_body' => 'We collaborate with master artisans to bring exceptional pieces to a global audience. Each product reflects quality, story, and craft.',
-            'welcome_body_2' => '',
+            'hero_eyebrow' => 'ELITE ACADEMY TRIALS OPEN',
+            'hero_title' => "Developing Tomorrow's Football Stars Today",
+            'hero_subtitle' => 'Structured football development for players aged 7–15 through elite coaching, competitive tournaments, and professional mentorship in Ibeju Lekki.',
+            'hero_cta_text' => 'Register Now',
+            'hero_cta_href' => '/register',
+            'hero_image' => 'asset/images/powerblink/home-powerblink-fc-044.jpg',
+            'about_preview_image' => 'asset/images/powerblink/home-powerblink-fc-045.jpg',
+            'shop_categories_title' => 'Development Programs',
+            'promo_eyebrow' => 'SEASON REGISTRATION',
+            'promo_title' => 'Ready To Begin Your Football Journey?',
+            'promo_cta' => 'Register Today',
+            'welcome_eyebrow' => 'OUR MISSION',
+            'welcome_title' => 'Elite Excellence in Ibeju Lekki',
+            'welcome_body' => 'Powerblink Football Club Limited is a launchpad for dreams — a safe, world-class environment where young athletes transform raw passion into professional competence.',
         ]);
 
-        return view('pages.home-luxemotive', [
+        $ogImage = PlaceholderMedia::url($homeSections['hero_image'] ?? '');
+
+        return view('pages.powerblink.home', [
             'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('home', [], true),
@@ -167,91 +79,117 @@ class PageController extends Controller
             'ogUrl' => route('home', [], true),
             'ogImage' => $ogImage,
             'page' => $page,
-            'heroVehicle' => $heroVehicles->first(),
-            'heroVehicles' => $heroVehicles,
-            'featuredVehicles' => $featuredVehicles,
-            'filterOptions' => $filterOptions,
-            'filters' => $filters,
-            'dealerPhone' => SiteSetting::getValue('dealer_phone', '+1 878-9674-4455'),
-            'approvedListingCount' => Vehicle::query()->where('status', 'approved')->count(),
             'sections' => $homeSections,
+            'programs' => Program::query()
+                ->with(['season', 'heroImage'])
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->take(6)
+                ->get(),
+            'stats' => [
+                'active_players' => \App\Models\Player::query()->where('status', 'active')->count(),
+                'programs_count' => Program::query()->where('is_active', true)->count(),
+                'coaches_count' => Coach::query()->where('is_active', true)->count(),
+                'seasons_count' => \App\Models\Season::query()->where('is_active', true)->count(),
+                'location' => SiteSetting::getValue('dealer_address', 'Lagos, Nigeria'),
+            ],
+            'featuredCoach' => Coach::query()
+                ->with('photo')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->first(),
+            'featuredTournament' => Tournament::query()
+                ->with('featuredImage')
+                ->whereIn('status', ['upcoming', 'active'])
+                ->orderBy('start_date')
+                ->first(),
         ]);
     }
 
     public function about()
     {
-        $page = $this->resolvePublicPage('about', 'About Us', 'Our story, values, and the artisans behind every piece.');
+        $page = $this->resolvePublicPage('about', 'About Us', 'Our story, values, and coaching philosophy.');
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('about', [
-            'hero_image' => 'asset/images/media/about-hero-bg.jpg',
-            'hero_title' => 'The Hands Behind the Heritage',
+            'hero_image' => 'asset/images/powerblink/about-us-powerblink-fc-001.jpg',
+            'hero_title' => 'Our Story',
             'philosophy_kicker' => 'Our Philosophy',
-            'philosophy_title' => 'Modern Heritage',
-            'philosophy_quote' => '"Luxury is not found in excess, but in the silence of perfect craftsmanship and the weight of history held in a single thread."',
-            'story_paragraph_1' => 'Born in the vibrant heart of Lagos and refined through a global lens, our atelier represents the convergence of ancient West African textile traditions and contemporary minimalist design. We believe that true luxury is a dialogue between the past and the present.',
-            'story_paragraph_2' => 'Each collection is a curated exploration of form, texture, and cultural narrative. By stripping away the superfluous, we allow the intrinsic beauty of hand-finished fabrics to speak. Our silhouette is modern, but its soul is ancestral.',
-            'story_cta_text' => 'View the Collection',
-            'story_cta_href' => '/shop',
-            'artisan_kicker' => 'The Master Weaver',
-            'artisan_title' => 'Meticulous Craft',
-            'artisan_body' => 'Meet the artisans who shape every piece in our studio. With decades of experience, their hands navigate each stitch with an intuitive grace that machines can never replicate. Every garment carries the rhythm of their work — a tangible connection to heritage artistry.',
-            'artisan_image' => 'asset/images/media/about-values-1.jpg',
-            'artisan_location_label' => 'Location: Lagos Studio',
+            'philosophy_title' => 'Excellence On and Off the Pitch',
+            'philosophy_quote' => '"We develop players who compete with courage, discipline, and joy."',
+            'story_paragraph_1' => 'PowerBlink FC is a youth football academy committed to holistic player development.',
+            'story_paragraph_2' => 'Our programs blend technical training, match intelligence, and character building for athletes aged U7 through U15.',
+            'story_cta_text' => 'View Programs',
+            'story_cta_href' => '/register',
+            'artisan_kicker' => 'Our Coaches',
+            'artisan_title' => 'Licensed, Experienced Staff',
+            'artisan_body' => 'Our coaching team brings UEFA and CAF qualifications alongside years of academy experience.',
+            'artisan_image' => 'asset/images/powerblink/about-us-powerblink-fc-009.jpg',
+            'artisan_location_label' => 'Location',
             'artisan_location_detail' => 'Lagos, Nigeria',
             'values_title' => 'Core Values',
-            'val_1_title' => 'Craftsmanship',
-            'val_1_body' => 'Slow fashion at its pinnacle. We prioritize quality over speed, ensuring every seam is a testament to artisanal skill.',
-            'val_2_title' => 'Sustainability',
-            'val_2_body' => 'Ethical sourcing of materials and fair-wage partnerships that empower local communities and protect the earth.',
-            'val_3_title' => 'Heritage',
-            'val_3_body' => 'A commitment to preserving and evolving cultural narratives through modern design and visual storytelling.',
-            'newsletter_title' => 'Join the Circle',
-            'newsletter_body' => 'Receive early access to limited drops and stories from the studio.',
+            'val_1_title' => 'Discipline',
+            'val_1_body' => 'Consistent effort and respect for teammates, coaches, and the game.',
+            'val_2_title' => 'Development',
+            'val_2_body' => 'Age-appropriate training that challenges players to grow every session.',
+            'val_3_title' => 'Community',
+            'val_3_body' => 'Families, players, and staff united around shared goals.',
+            'newsletter_title' => 'Stay Connected',
+            'newsletter_body' => 'Receive academy news and registration updates.',
         ]);
 
-        return view('pages.about', [
+        return view('pages.powerblink.about', [
             'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('about', [], true),
             'ogTitle' => $page->title,
             'ogDescription' => $page->meta_description,
             'ogUrl' => route('about', [], true),
+            'ogImage' => PlaceholderMedia::url($sections['hero_image'] ?? ''),
             'page' => $page,
             'sections' => $sections,
+            'leadership' => LeadershipMember::query()
+                ->with('photo')
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get(),
         ]);
     }
 
     public function contact()
     {
-        $page = $this->resolvePublicPage('contact', 'Contact Us', 'Reach our concierge team for styling consultations and order inquiries.');
+        $page = $this->resolvePublicPage('contact', 'Contact Us', 'Reach our academy team for registration and program inquiries.');
         $siteName = SiteBrand::displayName();
         $dealerEmail = SiteSetting::getValue('dealer_public_email', '') ?: SiteSettingDefaults::resolvedNotifyEmail();
 
-        return view('pages.contact', [
+        $contactSections = $this->pageSections('contact', [
+            'hero_title' => 'Contact Powerblink FC',
+            'hero_intro' => 'Our academy staff are available to answer questions about programs, trials, and registration.',
+            'services_email' => $dealerEmail,
+            'services_phone' => SiteSetting::getValue('dealer_sales_phone', '') ?: SiteSetting::getValue('dealer_phone', ''),
+            'services_hours' => SiteSetting::getValue('dealer_sales_hours', "Mon — Fri: 09:00 - 18:00\nSat: 10:00 - 16:00\nSun: Closed"),
+            'studio_title' => 'Academy Office',
+            'studio_address' => SiteSetting::getValue('dealer_address', 'Plot 42, Powerblink Avenue, Coastal Way, Ibeju Lekki, Lagos.'),
+            'map_link_url' => 'https://maps.google.com',
+            'social_instagram_label' => 'Instagram',
+            'social_instagram_url' => '',
+            'social_twitter_label' => 'Twitter',
+            'social_twitter_url' => '',
+            'atmospheric_image' => 'asset/images/powerblink/contact-us-powerblink-fc-033.jpg',
+            'atmospheric_quote' => 'The distance between dreams and reality is called discipline. Our goal is to provide the bridge for every young talent in Nigeria.',
+        ]);
+
+        return view('pages.powerblink.contact', [
             'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('contact', [], true),
             'ogTitle' => $page->title,
             'ogDescription' => $page->meta_description,
             'ogUrl' => route('contact', [], true),
+            'ogImage' => PlaceholderMedia::url($contactSections['atmospheric_image'] ?? ''),
             'page' => $page,
-            'sections' => $this->pageSections('contact', [
-                'hero_kicker' => 'Concierge',
-                'hero_title' => 'Get in Touch',
-                'hero_intro' => 'Experience bespoke service tailored to your style. Our specialists are available for styling consultations and inquiries about our collections.',
-                'services_email' => $dealerEmail,
-                'services_phone' => SiteSetting::getValue('dealer_sales_phone', '') ?: SiteSetting::getValue('dealer_phone', ''),
-                'services_hours' => SiteSetting::getValue('dealer_sales_hours', "Mon — Fri: 09:00 - 18:00\nSat: 10:00 - 16:00\nSun: Closed"),
-                'studio_title' => 'Flagship Studio',
-                'studio_address' => SiteSetting::getValue('dealer_address', ''),
-                'map_link_url' => '',
-                'social_instagram_label' => 'Instagram',
-                'social_instagram_url' => '',
-                'social_twitter_label' => 'Twitter',
-                'social_twitter_url' => '',
-                'atmospheric_image' => 'asset/images/media/contact-map.jpg',
-                'atmospheric_quote' => '"Crafted with care, for the world."',
-            ]),
+            'sections' => $contactSections,
         ]);
     }
 
@@ -262,37 +200,35 @@ class PageController extends Controller
         $sections = $this->pageSections('faq', [
             'kicker' => 'Need Help?',
             'heading' => 'HELP CENTER',
-            'intro' => 'Everything you need to know about ordering, shipping, and returns.',
-            'hero_image' => 'asset/images/media/faq-hero-bg.jpg',
-            'cat_1_title' => 'Ordering',
-            'cat_1_icon' => 'shopping_bag',
+            'intro' => 'Common questions about registration, training, and academy policies.',
+            'hero_image' => 'asset/images/powerblink/home-powerblink-fc-044.jpg',
+            'cat_1_title' => 'Registration',
+            'cat_1_icon' => 'how_to_reg',
             'cat_1_faqs' => json_encode([
-                ['q' => 'How long does processing take?', 'a' => 'Orders are processed within 1-2 business days. You will receive a tracking number once your order ships.'],
-                ['q' => 'Can I modify or cancel my order?', 'a' => 'Contact us within 24 hours of placing the order and we will do our best to accommodate changes.'],
-                ['q' => 'Do you ship internationally?', 'a' => 'Yes — international shipping is available at checkout for most regions.'],
+                ['q' => 'When can I pay the registration fee?', 'a' => 'Payment is only available after your application is approved. You will receive an email with a secure payment link.'],
+                ['q' => 'How long does review take?', 'a' => 'Our team typically reviews applications within a few business days.'],
             ]),
-            'cat_2_title' => 'Returns & Exchanges',
-            'cat_2_icon' => 'autorenew',
+            'cat_2_title' => 'Programs',
+            'cat_2_icon' => 'sports_soccer',
             'cat_2_faqs' => json_encode([
-                ['q' => 'What is your return policy?', 'a' => 'Returns are accepted within 30 days of delivery for unworn items in original condition.'],
-                ['q' => 'How do I exchange a size?', 'a' => 'Request an exchange via the returns portal — we will ship the new size as soon as we receive the original.'],
+                ['q' => 'What age groups do you serve?', 'a' => 'We offer pathways from U7 through U15.'],
             ]),
-            'cat_3_title' => 'Fit & Sizing',
-            'cat_3_icon' => 'straighten',
+            'cat_3_title' => 'Training',
+            'cat_3_icon' => 'calendar_month',
             'cat_3_faqs' => json_encode([
-                ['q' => 'Where can I find size guides?', 'a' => 'Each product page includes a size guide tab with measurements.'],
+                ['q' => 'How often do teams train?', 'a' => 'Frequency depends on the program — typically 2–4 sessions per week.'],
             ]),
-            'cat_4_title' => 'Care',
-            'cat_4_icon' => 'water_drop',
+            'cat_4_title' => 'Medical',
+            'cat_4_icon' => 'health_and_safety',
             'cat_4_faqs' => json_encode([
-                ['q' => 'How should I care for my pieces?', 'a' => 'Care instructions are printed on each garment and noted on its product page.'],
+                ['q' => 'What medical information is required?', 'a' => 'Please disclose allergies, relevant medical history, and fitness clearance during registration.'],
             ]),
             'cta_title' => 'STILL HAVE QUESTIONS?',
-            'cta_body' => 'Our customer care team is available Monday through Saturday.',
-            'cta_image' => 'asset/images/media/faq-cta.jpg',
+            'cta_body' => 'Contact our academy office Monday through Saturday.',
+            'cta_image' => 'asset/images/powerblink/contact-us-powerblink-fc-034.jpg',
         ]);
 
-        return view('pages.faq', [
+        return view('pages.powerblink.faq', [
             'title' => $page->title.' | '.$siteName,
             'metaDescription' => $page->meta_description,
             'canonicalUrl' => route('faq', [], true),
@@ -310,7 +246,7 @@ class PageController extends Controller
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('privacy-policy', [
             'heading' => 'Privacy Policy',
-            'body' => "This Privacy Policy explains how we collect, use, and protect information when you use our online store.\n\nIf you create an account, sign in (including via Google), save items, submit inquiries, or contact us, we may process the information you provide to deliver these features.\n\nWe do not sell your personal information. We use your information to operate the site, communicate with you, prevent fraud, and comply with legal obligations.\n\nFor questions about this policy or to request access, correction, or deletion of your data, please use the Contact page.",
+            'body' => "This Privacy Policy explains how PowerBlink FC collects, uses, and protects information when you use our website and registration services.\n\nWe process guardian and player information to manage registrations, training, and academy communications.\n\nWe do not sell personal information. For data requests, please use the Contact page.",
         ]);
 
         return view('pages.legal', [
@@ -325,13 +261,99 @@ class PageController extends Controller
         ]);
     }
 
+    public function programs()
+    {
+        $page = $this->resolvePublicPage('programs', 'Programs', 'Age-group pathways and academy programs.');
+        $siteName = SiteBrand::displayName();
+
+        return view('pages.powerblink.programs', [
+            'title' => $page->title.' | '.$siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('programs', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('programs', [], true),
+            'page' => $page,
+            'programs' => Program::query()
+                ->with(['season', 'heroImage'])
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get(),
+        ]);
+    }
+
+    public function coaching()
+    {
+        $page = $this->resolvePublicPage('coaching', 'Coaching Team', 'Meet our licensed coaching staff.');
+        $siteName = SiteBrand::displayName();
+
+        return view('pages.powerblink.coaching', [
+            'title' => $page->title.' | '.$siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('coaching', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('coaching', [], true),
+            'page' => $page,
+            'coaches' => Coach::query()
+                ->with('photo')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get(),
+        ]);
+    }
+
+    public function gallery()
+    {
+        $page = $this->resolvePublicPage('gallery', 'Gallery', 'Academy moments and match highlights.');
+        $siteName = SiteBrand::displayName();
+
+        return view('pages.powerblink.gallery', [
+            'title' => $page->title.' | '.$siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('gallery', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('gallery', [], true),
+            'page' => $page,
+            'items' => GalleryItem::query()
+                ->with('media')
+                ->where('is_published', true)
+                ->orderBy('sort_order')
+                ->orderBy('title')
+                ->get(),
+        ]);
+    }
+
+    public function tournaments()
+    {
+        $page = $this->resolvePublicPage('tournaments', 'Tournaments', 'Competitive fixtures and academy tournaments.');
+        $siteName = SiteBrand::displayName();
+
+        return view('pages.powerblink.tournaments', [
+            'title' => $page->title.' | '.$siteName,
+            'metaDescription' => $page->meta_description,
+            'canonicalUrl' => route('tournaments', [], true),
+            'ogTitle' => $page->title,
+            'ogDescription' => $page->meta_description,
+            'ogUrl' => route('tournaments', [], true),
+            'page' => $page,
+            'tournaments' => Tournament::query()
+                ->with(['season', 'featuredImage'])
+                ->latest('start_date')
+                ->get(),
+        ]);
+    }
+
     public function terms()
     {
-        $page = $this->resolvePublicPage('terms', 'Terms & Conditions', 'Terms governing use of our online store.');
+        $page = $this->resolvePublicPage('terms', 'Terms & Conditions', 'Terms governing use of our academy platform.');
         $siteName = SiteBrand::displayName();
         $sections = $this->pageSections('terms', [
             'heading' => 'Terms & Conditions',
-            'body' => "These Terms & Conditions govern your use of our online store.\n\nBy using the site, you agree not to misuse the platform, attempt unauthorized access, or submit false or misleading information.\n\nProducts may be added by staff accounts. Product details, pricing, and availability can change and are provided for informational purposes.\n\nIf you submit an inquiry, you agree that we may contact you using the information you provide.\n\nWe may suspend or terminate accounts that violate these terms. These terms may be updated from time to time; continued use indicates acceptance of updates.",
+            'body' => "These Terms govern your use of the PowerBlink FC website and registration system.\n\nBy submitting a registration application, you agree to provide accurate information and comply with academy policies.\n\nProgram fees, schedules, and policies may be updated from time to time.",
         ]);
 
         return view('pages.legal', [
@@ -343,319 +365,6 @@ class PageController extends Controller
             'ogUrl' => route('terms', [], true),
             'page' => $page,
             'sections' => $sections,
-        ]);
-    }
-
-    /**
-     * Legacy /makes endpoint — now redirects to the shop. A "browse by make" landing
-     * page no longer applies to an apparel store.
-     */
-    public function makesIndex()
-    {
-        return redirect()->route('shop.index', [], 301);
-    }
-
-    public function inventory(Request $request)
-    {
-        try {
-            $page = CmsPage::query()->where('slug', 'inventory')->where('is_active', true)->first();
-            $filterOpts = $this->approvedVehicleFilterOptions();
-
-            $idIn = function (Collection $rows): array {
-                $ids = $rows->pluck('id')->filter()->values()->all();
-
-                return $ids === [] ? [] : [Rule::in($ids)];
-            };
-
-            $filters = $request->validate([
-                'q' => ['nullable', 'string', 'max:255'],
-                'featured' => ['nullable', 'boolean'],
-                'product_category_listing_option_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['categories'] ?? []))),
-                'size_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['sizes'] ?? []))),
-                'color_id' => array_merge(['nullable', 'integer'], $idIn(collect($filterOpts['colors'] ?? []))),
-                'price_min' => ['nullable', 'integer', 'min:0', 'max:999999999'],
-                'price_max' => ['nullable', 'integer', 'min:0', 'max:999999999'],
-                'sort' => ['nullable', 'string', Rule::in(['newest', 'price_low', 'price_high'])],
-            ]);
-            $filters['featured'] = $request->boolean('featured');
-
-            if (! empty($filters['price_min']) && ! empty($filters['price_max']) && (int) $filters['price_min'] > (int) $filters['price_max']) {
-                throw ValidationException::withMessages(['price_min' => __('Minimum price cannot be greater than maximum price.')]);
-            }
-
-            // Some installs may be mid-migration; avoid hard 500s when optional product columns
-            // have not been applied yet.
-            $hasCategoryCol = false;
-            $hasOverviewCol = false;
-            $hasDescriptionCol = false;
-            try {
-                $hasCategoryCol = Schema::hasColumn('vehicles', 'product_category_listing_option_id');
-                $hasOverviewCol = Schema::hasColumn('vehicles', 'overview');
-                $hasDescriptionCol = Schema::hasColumn('vehicles', 'description');
-            } catch (\Throwable) {
-                // Fail-open: treat as absent and fall back to basic fields.
-            }
-
-            $query = Vehicle::query()
-                ->with(['images', 'categoryOption'])
-                ->where('status', 'approved')
-                ->latest();
-
-            $search = isset($filters['q']) ? trim((string) $filters['q']) : '';
-            if ($search !== '') {
-                $like = '%'.$search.'%';
-                $query->where(function ($builder) use ($like, $hasDescriptionCol, $hasOverviewCol) {
-                    $builder->where('title', 'like', $like);
-                    if ($hasDescriptionCol) {
-                        $builder->orWhere('description', 'like', $like);
-                    }
-                    if ($hasOverviewCol) {
-                        $builder->orWhere('overview', 'like', $like);
-                    }
-                });
-            }
-
-            if (! empty($filters['featured'])) {
-                $query->where('is_special', true);
-            }
-
-            $categoryId = (int) ($filters['product_category_listing_option_id'] ?? 0);
-            if ($hasCategoryCol && $categoryId > 0) {
-                $query->where('product_category_listing_option_id', $categoryId);
-            }
-
-            $sizeId = (int) ($filters['size_id'] ?? 0);
-            if ($sizeId > 0) {
-                $query->whereIn('id', VehicleVariant::query()
-                    ->where('is_active', true)
-                    ->where('size_listing_option_id', $sizeId)
-                    ->select('vehicle_id')
-                );
-            }
-
-            $colorId = (int) ($filters['color_id'] ?? 0);
-            if ($colorId > 0) {
-                $query->whereIn('id', VehicleVariant::query()
-                    ->where('is_active', true)
-                    ->where('color_listing_option_id', $colorId)
-                    ->select('vehicle_id')
-                );
-            }
-
-            $priceMin = (int) ($filters['price_min'] ?? 0);
-            if ($priceMin > 0) {
-                $query->where('price', '>=', $priceMin);
-            }
-
-            $priceMax = (int) ($filters['price_max'] ?? 0);
-            if ($priceMax > 0) {
-                $query->where('price', '<=', $priceMax);
-            }
-
-            $sort = (string) ($filters['sort'] ?? 'newest');
-            match ($sort) {
-                'price_low' => $query->orderBy('price'),
-                'price_high' => $query->orderByDesc('price'),
-                default => $query->latest(),
-            };
-
-            $vehicles = $query->paginate(30)->withQueryString();
-            $mergedFilters = array_merge($this->defaultInventoryFilters(), $filters);
-            $sections = $this->pageSections('inventory', [
-                'heading' => 'Shop the Collection',
-                'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
-            ]);
-
-            return view('pages.inventory.index', [
-                'title' => ($page?->title ?: 'Shop'),
-                'vehicles' => $vehicles,
-                'filters' => $mergedFilters,
-                'filterOptions' => $filterOpts,
-                'page' => $page,
-                'sections' => $sections,
-                'shopHeading' => $this->resolveShopHeading($sections['heading'] ?? '', $mergedFilters, $filterOpts),
-                'shopKicker' => $this->resolveShopKicker($mergedFilters, $filterOpts),
-            ]);
-        } catch (\Throwable $e) {
-            Log::error('storefront.inventory failed', ['error' => $e->getMessage()]);
-
-            $fallbackFilters = $this->defaultInventoryFilters();
-            $fallbackSections = $this->pageSections('inventory', [
-                'heading' => 'Shop the Collection',
-                'fallback_image' => 'asset/images/media/inventory-listing-fallback.jpg',
-            ]);
-            $emptyFilterOpts = ['categories' => collect()];
-
-            return view('pages.inventory.index', [
-                'title' => 'Shop',
-                'vehicles' => Vehicle::query()->whereRaw('1=0')->paginate(30),
-                'filters' => $fallbackFilters,
-                'filterOptions' => $emptyFilterOpts,
-                'page' => null,
-                'sections' => $fallbackSections,
-                'shopHeading' => $this->resolveShopHeading($fallbackSections['heading'] ?? '', $fallbackFilters, $emptyFilterOpts),
-                'shopKicker' => $this->resolveShopKicker($fallbackFilters, $emptyFilterOpts),
-            ]);
-        }
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function defaultInventoryFilters(): array
-    {
-        return [
-            'q' => '',
-            'featured' => false,
-            'product_category_listing_option_id' => '',
-            'size_id' => '',
-            'color_id' => '',
-            'price_min' => '',
-            'price_max' => '',
-            'sort' => 'newest',
-        ];
-    }
-
-    /**
-     * Filter dropdown values: prefer admin listing catalog when present, else distinct from approved vehicles.
-     *
-     * @return array<string, mixed>
-     */
-    protected function approvedVehicleFilterOptions(): array
-    {
-        return VehicleListingCatalog::filterOptions();
-    }
-
-    public function vehicleShow(Request $request, string $slug = '')
-    {
-        // CMS row is optional: do not 404 listings when `listing-detail` is missing or inactive after a DB import.
-        $page = CmsPage::query()->where('slug', 'listing-detail')->where('is_active', true)->first();
-        $user = $request->user();
-
-        $vehicle = Vehicle::query()
-            ->with([
-                'images',
-                'user.vendorProfile',
-                'categoryOption',
-                'variants.sizeOption',
-                'variants.colorOption',
-            ])
-            ->where('slug', $slug)
-            ->when(! ($user && $user->isStaff()), function ($query) use ($user) {
-                $query->where(function ($visibility) use ($user) {
-                    $visibility->where('status', 'approved');
-
-                    if ($user) {
-                        $visibility->orWhere('user_id', $user->id);
-                    }
-                });
-            })
-            ->firstOrFail();
-
-        $siteMerged = SiteSettingDefaults::mergeWithDatabase(SiteSetting::allKeyed());
-
-        $logoPath = trim((string) ($siteMerged['logo_path'] ?? ''));
-        $logoUrl = trim((string) ($siteMerged['logo_url'] ?? ''));
-        $sitePhone = trim((string) ($siteMerged['dealer_phone'] ?? '')) ?: trim((string) ($siteMerged['dealer_sales_phone'] ?? ''));
-        $siteEmail = trim((string) ($siteMerged['dealer_public_email'] ?? '')) ?: (string) config('mail.from.address', '');
-        $siteAddress = trim((string) ($siteMerged['dealer_address'] ?? ''));
-
-        $posterName = trim((string) ($vehicle->user?->name ?? '')) ?: __('Store');
-        $userAvatar = trim((string) ($vehicle->user?->avatar ?? ''));
-
-        $sellerProfile = [
-            'name' => $posterName,
-            'phone' => $sitePhone,
-            'photo_url' => $userAvatar !== '' ? $userAvatar : null,
-            'fallback_logo_path' => $logoPath !== '' ? $logoPath : null,
-            'fallback_logo_url' => $logoUrl !== '' ? $logoUrl : null,
-        ];
-
-        $siteContact = [
-            'address' => $siteAddress,
-            'phone' => $sitePhone,
-            'email' => $siteEmail,
-        ];
-
-        // Similar products: same category if set, else most recent approvals.
-        $similarVehicles = Vehicle::query()
-            ->with(['images', 'categoryOption'])
-            ->where('status', 'approved')
-            ->whereKeyNot($vehicle->id)
-            ->when(($catId = (int) ($vehicle->product_category_listing_option_id ?? 0)) > 0,
-                fn ($q) => $q->where('product_category_listing_option_id', $catId)
-            )
-            ->orderByDesc('approved_at')
-            ->orderByDesc('id')
-            ->take(12)
-            ->get();
-
-        if ($similarVehicles->count() < 6) {
-            $fallback = Vehicle::query()
-                ->with('images')
-                ->where('status', 'approved')
-                ->whereKeyNot($vehicle->id)
-                ->whereNotIn('id', $similarVehicles->pluck('id'))
-                ->orderByDesc('approved_at')
-                ->orderByDesc('id')
-                ->take(6 - $similarVehicles->count())
-                ->get();
-            $similarVehicles = $similarVehicles->concat($fallback)->values();
-        }
-
-        $siteName = SiteBrand::displayName();
-        $plainDesc = $vehicle->description
-            ? Str::limit(strip_tags($vehicle->description), 160)
-            : Str::limit(trim((string) ($vehicle->title ?? '')), 160);
-
-        $cover = $vehicle->images->first();
-        $listingUrl = request()->routeIs('product.show')
-            ? route('product.show', ['slug' => $vehicle->slug], true)
-            : route('inventory.show', ['slug' => $vehicle->slug], true);
-        $ogImage = $cover ? url(VehicleImageUrl::url($cover->path)) : null;
-
-        $isFavorited = $user && $user->favoriteVehicles()->whereKey($vehicle->id)->exists();
-
-        return view('pages.inventory.show', [
-            'title' => (($page?->title ?: $vehicle->title).' | '.$siteName),
-            'metaDescription' => $page?->meta_description ?: $plainDesc,
-            'canonicalUrl' => $listingUrl,
-            'ogTitle' => $vehicle->title,
-            'ogDescription' => $plainDesc,
-            'ogUrl' => $listingUrl,
-            'ogImage' => $ogImage,
-            'slug' => $slug,
-            'vehicle' => $vehicle,
-            'sellerProfile' => $sellerProfile,
-            'siteContact' => $siteContact,
-            'similarVehicles' => $similarVehicles,
-            'isFavorited' => $isFavorited,
-            'productVariants' => $vehicle->variants,
-            'page' => $page,
-            'sections' => $this->pageSections('listing-detail', [
-                'heading' => 'Product Detail',
-            ]),
-        ]);
-    }
-
-    public function compare()
-    {
-        $page = CmsPage::query()->where('slug', 'compare')->where('is_active', true)->first();
-        $vehicles = Vehicle::query()
-            ->with(['images', 'categoryOption'])
-            ->whereIn('id', Compare::ids())
-            ->get()
-            ->sortBy(fn (Vehicle $v) => array_search($v->id, Compare::ids(), true))
-            ->values();
-
-        return view('pages.compare', [
-            'title' => ($page?->title ?: 'Compare'),
-            'vehicles' => $vehicles,
-            'page' => $page,
-            'sections' => $this->pageSections('compare', [
-                'heading' => 'Compare Products',
-                'intro' => 'Compare list is dynamic and comes from visitor selections.',
-            ]),
         ]);
     }
 }

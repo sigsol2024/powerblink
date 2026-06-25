@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Media;
+use App\Support\MediaLibraryCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -10,15 +11,17 @@ class MediaSeeder extends Seeder
 {
     public function run(): void
     {
-        $dir = public_path('asset/images/media');
+        $dir = MediaLibraryCatalog::mediaDir();
         if (! is_dir($dir)) {
             return;
         }
 
+        $prefix = MediaLibraryCatalog::mediaPathPrefix();
+
         foreach (File::files($dir) as $file) {
             $name = $file->getFilename();
             Media::query()->updateOrCreate(
-                ['file_path' => 'asset/images/media/'.$name],
+                ['file_path' => $prefix.$name],
                 [
                     'filename' => $name,
                     'original_name' => $name,

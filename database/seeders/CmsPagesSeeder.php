@@ -12,51 +12,53 @@ class CmsPagesSeeder extends Seeder
         $definitions = [
             'home' => [
                 'title' => 'Home',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => 'cms-home-body.html',
+                'meta_description' => 'PowerBlink FC — elite youth football academy in Ibeju Lekki, Lagos.',
             ],
             'about' => [
                 'title' => 'About Us',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => 'cms-about-body.html',
+                'meta_description' => 'Our story, values, and coaching philosophy.',
+            ],
+            'programs' => [
+                'title' => 'Programs',
+                'meta_description' => 'Age-group pathways and academy programs.',
+            ],
+            'coaching' => [
+                'title' => 'Coaching Team',
+                'meta_description' => 'Meet our licensed coaching staff.',
+            ],
+            'gallery' => [
+                'title' => 'Gallery',
+                'meta_description' => 'Academy moments and match highlights.',
+            ],
+            'tournaments' => [
+                'title' => 'Tournaments',
+                'meta_description' => 'Competitive fixtures and academy tournaments.',
             ],
             'faq' => [
                 'title' => 'FAQ',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => 'cms-faq-body.html',
+                'meta_description' => 'Common questions about registration, training, and academy policies.',
             ],
             'contact' => [
                 'title' => 'Contact Us',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => 'cms-contact-intro-body.html',
+                'meta_description' => 'Reach our academy team for registration and program inquiries.',
             ],
-            'inventory' => [
-                'title' => 'Inventory',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => '',
+            'privacy-policy' => [
+                'title' => 'Privacy Policy',
+                'meta_description' => 'How we collect, use, and protect your information.',
             ],
-            'compare' => [
-                'title' => 'Compare Vehicles',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => '',
-            ],
-            'listing-detail' => [
-                'title' => 'Vehicle Detail',
-                'meta_description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                'file' => '',
+            'terms' => [
+                'title' => 'Terms & Conditions',
+                'meta_description' => 'Terms governing use of our academy platform.',
             ],
         ];
 
         foreach ($definitions as $slug => $def) {
-            $path = database_path('seed-data/' . $def['file']);
-            $html = is_file($path) ? (string) file_get_contents($path) : '';
-
             CmsPage::query()->updateOrCreate(
                 ['slug' => $slug],
                 [
                     'title' => $def['title'],
                     'meta_description' => $def['meta_description'],
-                    'content_html' => $html,
+                    'content_html' => '',
                     'is_active' => true,
                 ]
             );

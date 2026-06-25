@@ -1,0 +1,9 @@
+<div><label class="block text-sm font-medium mb-1">{{ __('Title') }}</label><input name="title" value="{{ old('title', $session->title) }}" required class="w-full rounded-lg border-outline-variant" /></div>
+<div><label class="block text-sm font-medium mb-1">{{ __('Date') }}</label><input type="date" name="date" value="{{ old('date', $session->date?->format('Y-m-d')) }}" required class="w-full rounded-lg border-outline-variant" /></div>
+<div class="grid grid-cols-2 gap-3">
+  <div><label class="block text-sm font-medium mb-1">{{ __('Start') }}</label><input name="start_time" value="{{ old('start_time', $session->start_time) }}" class="w-full rounded-lg border-outline-variant" /></div>
+  <div><label class="block text-sm font-medium mb-1">{{ __('End') }}</label><input name="end_time" value="{{ old('end_time', $session->end_time) }}" class="w-full rounded-lg border-outline-variant" /></div>
+</div>
+<div><label class="block text-sm font-medium mb-1">{{ __('Program') }}</label><select name="program_id" class="w-full rounded-lg border-outline-variant"><option value="">{{ __('None') }}</option>@foreach($programs as $p)<option value="{{ $p->id }}" @selected(old('program_id', $session->program_id)==$p->id)>{{ $p->name }}</option>@endforeach</select></div>
+<div><label class="block text-sm font-medium mb-1">{{ __('Coach') }}</label><select name="coach_id" class="w-full rounded-lg border-outline-variant"><option value="">{{ __('None') }}</option>@foreach($coaches as $c)<option value="{{ $c->id }}" @selected(old('coach_id', $session->coach_id)==$c->id)>{{ $c->name }}</option>@endforeach</select></div>
+<div><label class="block text-sm font-medium mb-1">{{ __('Location') }}</label><input name="location" value="{{ old('location', $session->location) }}" class="w-full rounded-lg border-outline-variant" /></div>

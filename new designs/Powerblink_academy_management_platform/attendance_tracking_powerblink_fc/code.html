@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Attendance Tracking | Ibeju Lekki Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@400;700&family=Bebas+Neue&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .attendance-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .attendance-card:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#75777e",
+                    "tertiary-fixed-dim": "#efc13e",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#44474d",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c5c6ce",
+                    "on-secondary-fixed-variant": "#005224",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#64ff92",
+                    "surface": "#f7f9fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#f7f9fb",
+                    "tertiary-container": "#241a00",
+                    "surface-tint": "#505f7a",
+                    "secondary-container": "#64ff92",
+                    "primary-container": "#0b1c34",
+                    "surface-container-highest": "#e0e3e5",
+                    "background": "#f7f9fb",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e6e8ea",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-secondary-container": "#007436",
+                    "tertiary": "#000000",
+                    "on-primary-container": "#7584a2",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d6e3ff",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b7c7e7",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#b7c7e7",
+                    "secondary-fixed-dim": "#41e279",
+                    "on-primary-fixed": "#0b1c34",
+                    "surface-container": "#eceef0",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary": "#006d32",
+                    "inverse-surface": "#2d3133",
+                    "on-surface": "#191c1e",
+                    "on-secondary-fixed": "#00210b",
+                    "on-background": "#191c1e",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed-variant": "#594400",
+                    "tertiary-fixed": "#ffdf94",
+                    "surface-dim": "#d8dadc",
+                    "primary": "#000000",
+                    "on-primary-fixed-variant": "#384761",
+                    "on-tertiary-container": "#a47f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "element-gap": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "section-gap": "80px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Montserrat"],
+                    "body-md": ["Inter"],
+                    "display-hero": ["Montserrat"],
+                    "body-lg": ["Inter"],
+                    "stat-xl": ["Bebas Neue"],
+                    "headline-md": ["Montserrat"],
+                    "headline-lg-mobile": ["Montserrat"],
+                    "label-caps": ["Inter"],
+                    "stat-md": ["Bebas Neue"]
+            },
+            "fontSize": {
+                    "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-6 px-4 border-r border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface shadow-sm z-50">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed">Ibeju Lekki Academy</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest mt-1">Elite Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<!-- Navigation items from JSON -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+<span class="font-body-md">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+<span class="font-body-md">Programs</span>
+</a>
+<!-- Active State for Attendance -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="event_available" style="font-variation-settings: 'FILL' 1;">event_available</span>
+<span class="font-body-md">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-body-md">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="supervisor_account">supervisor_account</span>
+<span class="font-body-md">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-body-md">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-body-md">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-3 px-4 rounded-xl font-bold hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span>New Registration</span>
+</button>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-30 flex justify-between items-center h-16 px-margin-desktop bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Admin Dashboard</h2>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<span class="text-on-surface-variant font-medium">Attendance Tracking</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant min-w-[300px]">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search players..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a sports academy administrator with a confident expression, wearing a navy blue polo shirt with a subtle academy logo. The background is a blurred high-end athletic facility. Modern lighting, sharp focus on the face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7Mv_hUc4EPhIYZSkWAgqKv7vFyV8dOmV9cV5zNHU2Wiz_7sXhQ0qIyY9aEpMk1oGbTpj_ohcoENC_EwbBc3CtviFLFuz1rZ9ErmjZtb1ilu5_vHMxsVUB_cy5kCrwJJNxsynK_7cYY8VDkW9o8759CyakxCuV95fazKeIDCu9x4IhdoHNtmxTgIzUtULgTQonarCScFHjlf-TSpwUr-JyZvKE5QzAudH8U_-RTQ3jSzm9Y_ZPP28w_XawbK97wWn-JmM9hZRVSJIJ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-margin-desktop min-h-[calc(100vh-64px)]">
+<!-- Summary Stats Section -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-section-gap">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30 flex flex-col justify-between">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">WEEKLY AVERAGE</span>
+<h3 class="font-stat-xl text-stat-xl mt-2">92<span class="text-stat-md">%</span></h3>
+</div>
+<div class="mt-4 flex items-center gap-2 text-secondary text-sm font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span>+2.4% from last week</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SQUAD PRESENT TODAY</span>
+<h3 class="font-stat-xl text-stat-xl mt-2 text-primary">142<span class="text-stat-md text-on-surface-variant">/156</span></h3>
+<div class="w-full bg-surface-container mt-4 h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 91%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<span class="font-label-caps text-label-caps text-on-surface-variant">UNEXCUSED ABSENCES</span>
+<h3 class="font-stat-xl text-stat-xl mt-2 text-error">08</h3>
+<p class="text-sm text-on-surface-variant mt-2 italic">Needs immediate review</p>
+</div>
+<div class="bg-primary text-on-primary p-6 rounded-xl shadow-sm overflow-hidden relative">
+<div class="relative z-10 h-full flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-primary-fixed opacity-80">NEXT SESSION</span>
+<div>
+<h4 class="font-headline-md text-lg font-bold">U-17 Elite Practice</h4>
+<p class="text-primary-fixed opacity-90 text-sm mt-1">Field 2 • 16:30 WAT</p>
+</div>
+</div>
+<!-- Abstract sports geometry background -->
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-9xl" data-icon="sports_soccer">sports_soccer</span>
+</div>
+</div>
+</section>
+<!-- Attendance Controls & List -->
+<section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+<!-- Filter Bar -->
+<div class="p-6 border-b border-outline-variant/50 flex flex-wrap gap-gutter items-center justify-between">
+<div class="flex gap-4">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">SQUAD</label>
+<select class="bg-surface-container-low border-outline-variant rounded-lg text-sm px-4 py-2 pr-10 focus:ring-secondary focus:border-secondary transition-all">
+<option>U-17 Elite Academy</option>
+<option>U-15 Junior Team</option>
+<option>U-13 Grassroots</option>
+<option>Developmental B</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">DATE</label>
+<div class="relative">
+<input class="bg-surface-container-low border-outline-variant rounded-lg text-sm px-4 py-2 pr-10 focus:ring-secondary focus:border-secondary transition-all" type="date" value="2023-10-27"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg">
+<button class="px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-primary transition-all">Marking</button>
+<button class="px-4 py-1.5 rounded-md text-sm font-medium text-on-surface-variant hover:text-primary transition-all">Review Mode</button>
+</div>
+<button class="bg-secondary text-on-secondary px-6 py-2 rounded-lg font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+                        Submit List
+                    </button>
+</div>
+</div>
+<!-- List Header -->
+<div class="bg-surface-container-low px-8 py-3 grid grid-cols-12 gap-gutter border-b border-outline-variant/50 items-center">
+<div class="col-span-1 flex items-center">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</div>
+<div class="col-span-5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">PLAYER NAME & ID</span>
+</div>
+<div class="col-span-2 text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">POSITION</span>
+</div>
+<div class="col-span-4 text-right pr-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ATTENDANCE STATUS</span>
+</div>
+</div>
+<!-- Student List -->
+<div class="divide-y divide-outline-variant/30">
+<!-- Player Row 1 -->
+<div class="px-8 py-4 grid grid-cols-12 gap-gutter items-center hover:bg-surface-container-low/50 transition-colors group">
+<div class="col-span-1">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</div>
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a young African male football player with a focused gaze, wearing a white training jersey. Cinematic lighting, soft bokeh background of a green pitch, high resolution sports editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyj8yxmKxb9NmmDdJDb1Z1pGOBdAJXIM6bAmdun7D40Vpf6ev2623r8n9vaSvgqpXa_H1Z4zSJRhZEFPMRImhY0ffq-0Ny3LcVVlJ8ELBxa-KuZSpXQKymmYOxCTx9E0ZHNo9DOeWoLdcfl0oes9Ha4vhQlUiQ7ERGgaZ7vVl6y-EEaCZDPLExzsOiMA2Y_C92dgmY8QpWA-BU7jpX9Y0Qdhvgu0-ZdTBXivRHoqpGYqpoVeE95oxSRl6zSpwRJBT5LzZojtftP1Bk"/>
+</div>
+<div>
+<p class="font-bold text-primary">Kelechi Okafor</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-084</p>
+</div>
+</div>
+<div class="col-span-2 text-center">
+<span class="bg-primary-container/10 text-on-primary-fixed-variant text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider border border-primary-container/20">Forward</span>
+</div>
+<div class="col-span-4 flex justify-end">
+<div class="inline-flex bg-surface-container rounded-xl p-1 gap-1 border border-outline-variant/30">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-secondary text-on-secondary shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Present
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="cancel">cancel</span>
+                                Absent
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="medical_services">medical_services</span>
+                                Excused
+                            </button>
+</div>
+</div>
+</div>
+<!-- Player Row 2 (Excused State) -->
+<div class="px-8 py-4 grid grid-cols-12 gap-gutter items-center hover:bg-surface-container-low/50 transition-colors group">
+<div class="col-span-1">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</div>
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young athletic girl with braided hair, smiling confidently, wearing a blue football jersey. Soft morning sunlight, vibrant green grass in the background, sharp details, elite sports photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6OcAqfmsYtoXDuWhrp35XKLaqwGxd9Mk3wqqdgSvnIqXcey52NoGd32WIhkk5qJupl3hAh6K4hfLZdtvyQQ1pEPTqYuAqnJrJ7ew-ws96sMosBKYHChaYtQYpvHR_w7c7SZwJz_j35wbAHu7s-NA2LDVpeqqdFH3ibPFEhcn6QDZ8mLy_nUHO9PTx33IVD_4OHu8Tga7Papss_2wj1mkdPO38OJbnC8_gLLIpKbget6cg3A_-9Xc6TMVlikryVED_0KDfQVEnf6uX"/>
+</div>
+<div>
+<p class="font-bold text-primary">Fatima Yusuf</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-112</p>
+</div>
+</div>
+<div class="col-span-2 text-center">
+<span class="bg-primary-container/10 text-on-primary-fixed-variant text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider border border-primary-container/20">Midfielder</span>
+</div>
+<div class="col-span-4 flex justify-end">
+<div class="inline-flex bg-surface-container rounded-xl p-1 gap-1 border border-outline-variant/30">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                                Present
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="cancel">cancel</span>
+                                Absent
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-tertiary-fixed text-on-tertiary-fixed shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="medical_services" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                                Excused
+                            </button>
+</div>
+</div>
+</div>
+<!-- Player Row 3 (Absent State) -->
+<div class="px-8 py-4 grid grid-cols-12 gap-gutter items-center hover:bg-surface-container-low/50 transition-colors group">
+<div class="col-span-1">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</div>
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Dynamic shot of a young male goalkeeper in action pose, wearing bright orange gloves and a goalkeeper jersey. Professional sports lighting with strong contrast, clear focus, athletic academy environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgY6RhFGsvgYGtn3e1RrrMhFkSPKgYAiyCrDvZHAIN26kH15oFjDUie_jsBwLn3kq6gK9tUY6P80jejZuk-MD3p4IEuCUItR_vvqdZMfDIiFkHBX6HHxpJOLfEHi78JP1qDlw2MJMw23vPJVJDsKOXMXGUkVLmkfkljo1l1nCmcnaG-Qn-HVlOV_BEwJIzypFh_5FaGk4OB0Q2OnmErJUnQa7_5hlHT8_SJAuWYxxCLCbZF5pu_GBohPfAAMtwWaF0uvKaUO4mmOp9"/>
+</div>
+<div>
+<p class="font-bold text-primary">Emeka Daniel</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-045</p>
+</div>
+</div>
+<div class="col-span-2 text-center">
+<span class="bg-primary-container/10 text-on-primary-fixed-variant text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider border border-primary-container/20">Goalkeeper</span>
+</div>
+<div class="col-span-4 flex justify-end">
+<div class="inline-flex bg-surface-container rounded-xl p-1 gap-1 border border-outline-variant/30">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                                Present
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-error text-on-error shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span>
+                                Absent
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="medical_services">medical_services</span>
+                                Excused
+                            </button>
+</div>
+</div>
+</div>
+<!-- Player Row 4 (Default) -->
+<div class="px-8 py-4 grid grid-cols-12 gap-gutter items-center hover:bg-surface-container-low/50 transition-colors group">
+<div class="col-span-1">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</div>
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young male soccer player with determination, wearing a sleek black and gold academy jersey. Dramatic stadium lighting, professional athlete portfolio style, sharp and crisp textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf65aDUx0DPqcDtNdhrY9HxiH43CC44v1gfn2S1A07T3-A_qMjhUYKPZ9cH5gYoJItj1laEnjZz1FNczc0E-Q5ks6Nf99PAy5szBgXVPOmjkbCdR-T4h2g42uNTvzNMjEV5yCE4EyuV7Qng9oOxo3t79vKYaW_IdADYNdiOzXXo-0VZpDhZh66hRAQMRLIvRIVY2pVbni4EsEOvtqKjcx8hRVSRdjBkhEDWhkw2cYKDpVOsKHldj2lQDMAmq21MAN9YjGT8BEo5We6"/>
+</div>
+<div>
+<p class="font-bold text-primary">Tunde Johnson</p>
+<p class="text-xs text-on-surface-variant">ID: ILA-2023-091</p>
+</div>
+</div>
+<div class="col-span-2 text-center">
+<span class="bg-primary-container/10 text-on-primary-fixed-variant text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider border border-primary-container/20">Defender</span>
+</div>
+<div class="col-span-4 flex justify-end">
+<div class="inline-flex bg-surface-container rounded-xl p-1 gap-1 border border-outline-variant/30">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                                Present
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="cancel">cancel</span>
+                                Absent
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="medical_services">medical_services</span>
+                                Excused
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Footer -->
+<div class="p-6 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-sm text-on-surface-variant font-medium">Showing 1-4 of 28 players in U-17 Elite</span>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors">2</button>
+<button class="w-10 h-10 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors">3</button>
+<button class="p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Weekly Insights Section (Asymmetric / Sports Editorial edge) -->
+<section class="mt-section-gap grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant/30">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md">Weekly Attendance Trend</h3>
+<p class="text-on-surface-variant">Real-time attendance tracking for the current training cycle.</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="text-xs font-bold text-on-surface-variant">PRESENT</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="text-xs font-bold text-on-surface-variant">ABSENT</span>
+</div>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-4 px-4">
+<!-- Simple Bar Chart Visualization -->
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden">
+<div class="bg-secondary opacity-20 hover:opacity-100 transition-all cursor-pointer" style="height: 85%"></div>
+<div class="bg-error opacity-10" style="height: 15%"></div>
+</div>
+<span class="font-label-caps text-xs text-on-surface-variant">MON</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden">
+<div class="bg-secondary opacity-20 hover:opacity-100 transition-all cursor-pointer" style="height: 92%"></div>
+<div class="bg-error opacity-8" style="height: 8%"></div>
+</div>
+<span class="font-label-caps text-xs text-on-surface-variant">TUE</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden border-2 border-primary/20">
+<div class="bg-secondary hover:opacity-100 transition-all cursor-pointer" style="height: 95%"></div>
+<div class="bg-error opacity-5" style="height: 5%"></div>
+</div>
+<span class="font-label-caps text-xs text-primary font-extrabold">WED</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden">
+<div class="bg-secondary opacity-20 hover:opacity-100 transition-all cursor-pointer" style="height: 78%"></div>
+<div class="bg-error opacity-22" style="height: 22%"></div>
+</div>
+<span class="font-label-caps text-xs text-on-surface-variant">THU</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden">
+<div class="bg-secondary opacity-20 hover:opacity-100 transition-all cursor-pointer" style="height: 88%"></div>
+<div class="bg-error opacity-12" style="height: 12%"></div>
+</div>
+<span class="font-label-caps text-xs text-on-surface-variant">FRI</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 group">
+<div class="w-full flex flex-col-reverse h-full bg-surface-container rounded-t-lg overflow-hidden">
+<div class="bg-surface-container-high h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline/30" data-icon="block">block</span>
+</div>
+</div>
+<span class="font-label-caps text-xs text-on-surface-variant">SAT</span>
+</div>
+</div>
+</div>
+<div class="bg-primary p-8 rounded-2xl flex flex-col justify-between text-on-primary shadow-lg group overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary-container to-secondary opacity-50"></div>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-white mb-2">Performance Alert</h3>
+<p class="text-primary-fixed opacity-80 text-sm">3 players have missed 2+ sessions this week without prior notification.</p>
+</div>
+<div class="mt-8 space-y-4 relative z-10">
+<div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-error flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="warning">warning</span>
+</div>
+<div>
+<p class="font-bold text-sm">Chidi Azubuike</p>
+<p class="text-[10px] uppercase font-bold text-error">Unexcused: 3</p>
+</div>
+<button class="ml-auto text-white/50 hover:text-white">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</button>
+</div>
+<div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-error flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="warning">warning</span>
+</div>
+<div>
+<p class="font-bold text-sm">Musa Ibrahim</p>
+<p class="text-[10px] uppercase font-bold text-error">Unexcused: 2</p>
+</div>
+<button class="ml-auto text-white/50 hover:text-white">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</button>
+</div>
+</div>
+<button class="mt-8 w-full py-3 bg-secondary text-on-secondary rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all relative z-10">
+                    Run Full Report
+                </button>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interactions for marking attendance
+        document.querySelectorAll('.divide-y > div').forEach(row => {
+            const buttons = row.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Reset all buttons in this row's group
+                    buttons.forEach(b => {
+                        b.classList.remove('bg-secondary', 'text-on-secondary', 'bg-error', 'text-on-error', 'bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-bold', 'shadow-md');
+                        b.classList.add('font-medium', 'text-on-surface-variant');
+                        const icon = b.querySelector('.material-symbols-outlined');
+                        if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                    });
+
+                    // Set active state for clicked button
+                    this.classList.remove('font-medium', 'text-on-surface-variant');
+                    this.classList.add('font-bold', 'shadow-md');
+                    const icon = this.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+
+                    const text = this.innerText.trim();
+                    if(text === 'Present') {
+                        this.classList.add('bg-secondary', 'text-on-secondary');
+                    } else if(text === 'Absent') {
+                        this.classList.add('bg-error', 'text-on-error');
+                    } else if(text === 'Excused') {
+                        this.classList.add('bg-tertiary-fixed', 'text-on-tertiary-fixed');
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>

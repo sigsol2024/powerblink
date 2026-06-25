@@ -9,8 +9,8 @@ use Illuminate\View\View;
 class AppLayout extends Component
 {
     /**
-     * Pages with sticky save bars, canvases, or full-bleed visuals (e.g. the product
-     * create/edit form) set this to true to bypass the standard max-width wrapper.
+     * Pages with sticky save bars, canvases, or full-bleed visuals set this to true
+     * to bypass the standard max-width wrapper.
      */
     public bool $fullBleed;
 
@@ -19,13 +19,18 @@ class AppLayout extends Component
         $this->fullBleed = $fullBleed;
     }
 
-    /**
-     * Get the view / contents that represents the component.
-     */
     public function render(): View
     {
         if (Auth::check()) {
-            return view('layouts.admin');
+            $user = Auth::user();
+
+            if ($user->canAccessAdminPanel()) {
+                return view('layouts.admin-portal');
+            }
+
+            if ($user->isCoach() || $user->isParent() || $user->isPlayer()) {
+                return view('layouts.member-portal');
+            }
         }
 
         return view('layouts.app');

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coaching Team | Ibeju Lekki Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@400;600;700&family=Bebas+Neue&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .performance-gradient {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(11, 28, 52, 0.9) 100%);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#75777e",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c5c6ce",
+                        "on-secondary-fixed-variant": "#005224",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#64ff92",
+                        "surface": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-container": "#241a00",
+                        "surface-tint": "#505f7a",
+                        "secondary-container": "#64ff92",
+                        "primary-container": "#0b1c34",
+                        "surface-container-highest": "#e0e3e5",
+                        "background": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed": "#241a00",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-container": "#007436",
+                        "tertiary": "#000000",
+                        "on-primary-container": "#7584a2",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#d6e3ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b7c7e7",
+                        "secondary-fixed-dim": "#41e279",
+                        "on-primary-fixed": "#0b1c34",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary": "#006d32",
+                        "inverse-surface": "#2d3133",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed": "#00210b",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "tertiary-fixed": "#ffdf94",
+                        "surface-dim": "#d8dadc",
+                        "primary": "#000000",
+                        "on-primary-fixed-variant": "#384761",
+                        "on-tertiary-container": "#a47f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "element-gap": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "display-hero": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "stat-xl": ["Bebas Neue"],
+                        "headline-md": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "label-caps": ["Inter"],
+                        "stat-md": ["Bebas Neue"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-inverse-surface shadow-sm flex flex-col py-6 px-4 border-r border-outline-variant dark:border-outline z-50">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed">Ibeju Lekki Academy</h1>
+<p class="text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest mt-1">Elite Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto hide-scrollbar">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-md">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="font-body-md">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+<span class="font-body-md">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-body-md">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-body-md">Performance</span>
+</a>
+<!-- Active Navigation -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">supervisor_account</span>
+<span class="font-body-md">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-body-md">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-body-md">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full py-3 bg-primary text-on-primary rounded-lg font-headline-md text-sm uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Registration
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center h-16 px-margin-desktop">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Coaching Team</h2>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-full text-sm focus:ring-2 focus:ring-secondary focus:border-transparent transition-all w-64" placeholder="Search coaches..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border-2 border-secondary-container">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a senior administrator for a sports academy, wearing a crisp navy polo shirt with a subtle logo, set against a blurred background of a modern stadium office. The lighting is bright and professional, suggesting an authoritative yet approachable leadership figure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWWULqpRFVqJX3jwoQfBjTgu7wqh_DzLQvaOiphcH0UBOT2k5IpzlQbSj6wQ8iATydgeG1wnZNFnWw3SGosbAg91-pS6rPlHvCILbz8D2sUEBmv8cUPyZfQivkSIT2zqcEGkpU1vEEZQR0UC0WOPRXsGMqNCfR-xfGlDTI_KhoT2KXXXbonglqG320a-hebkpVOystfsTryRHTCZAkhmQRrzERKdiIYC5ikfwu4-9Zj_KsWKMmMftHJgjN6VPybcp5wYYM9Kw8Z1wO"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="pt-24 pb-12 px-margin-desktop">
+<!-- Dashboard Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-section-gap">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Total Staff</p>
+<p class="font-stat-xl text-stat-xl text-primary">24</p>
+<div class="mt-4 flex items-center gap-2 text-secondary font-bold text-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+2 This Quarter</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">A-Licensed</p>
+<p class="font-stat-xl text-stat-xl text-primary">09</p>
+<p class="mt-4 text-on-surface-variant text-sm">CAF / UEFA Standard</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Avg Experience</p>
+<p class="font-stat-xl text-stat-xl text-primary">12<span class="text-headline-md">yrs</span></p>
+<p class="mt-4 text-on-surface-variant text-sm">Elite Level Expertise</p>
+</div>
+<div class="bg-secondary-container p-6 rounded-xl shadow-sm border border-secondary/20 flex flex-col justify-center items-center text-center group cursor-pointer hover:bg-secondary hover:text-on-secondary transition-all duration-300">
+<span class="material-symbols-outlined text-4xl mb-2">person_add</span>
+<h3 class="font-headline-md text-lg">Hire New Coach</h3>
+<p class="text-xs opacity-80 mt-1">Onboard elite talent</p>
+</div>
+</div>
+<!-- Directory Filter & Title -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary">Academy Directory</h3>
+<p class="text-on-surface-variant mt-2 font-body-lg">Managing the technical minds behind our future champions.</p>
+</div>
+<div class="flex gap-4">
+<select class="bg-surface-container-lowest border-outline-variant rounded-lg font-body-md text-sm px-4 py-2 focus:ring-secondary">
+<option>All Squads</option>
+<option>U-15 Elite</option>
+<option>U-17 Professional</option>
+<option>U-19 Reserve</option>
+<option>Senior First Team</option>
+</select>
+<select class="bg-surface-container-lowest border-outline-variant rounded-lg font-body-md text-sm px-4 py-2 focus:ring-secondary">
+<option>Rank</option>
+<option>Head Coach</option>
+<option>Technical Director</option>
+<option>Physiotherapist</option>
+</select>
+</div>
+</div>
+<!-- Coach Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Coach Card 1 -->
+<div class="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+<div class="h-80 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A cinematic portrait of a charismatic Nigerian football coach in his 40s, wearing official navy blue academy training gear. He is standing on a sun-drenched green pitch during golden hour, with an authoritative and focused expression. The visual style is premium sports editorial, with high contrast and sharp focus on the subject's face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB--ubyUpvnJ_brlotG0p6IabFxbT5GypIxsYzbGIuFz0moSZhH0l7Qf8M4CuM5AgSeUc3BFymYuDbgdOBEHNu5bZ7PaW9oON1N7UoTayJRfasZGb_cIHkOk4rTPAle2sK7rY8rBwc9WX03Wi0QZaITpRWvC1p5PC8EXoiAHT6lcOwo9FEEovr_zdyf-6hYfAbH738RYdlbzvjXW9wWWr3VD_K8v-Vi_NfbcNgy597FUUiYPFLca8TfJsLc_h1WAPRPBqx5UGjGPha"/>
+<div class="absolute inset-0 performance-gradient"></div>
+<div class="absolute bottom-4 left-6">
+<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container font-label-caps text-[10px] rounded-full mb-2">HEAD COACH</span>
+<h4 class="font-headline-md text-white">Coach Sunday Oliseh</h4>
+</div>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-4 mb-6">
+<div class="flex-1">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Assigned Squad</p>
+<p class="font-bold text-primary">U-19 Reserve Elite</p>
+</div>
+<div class="flex-1 border-l border-outline-variant pl-4">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Credentials</p>
+<p class="font-bold text-primary">UEFA Pro License</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">mail</span>
+<span class="text-sm">s.oliseh@lekkicacademy.com</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">call</span>
+<span class="text-sm">+234 801 234 5678</span>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all">View Profile</button>
+<button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Coach Card 2 -->
+<div class="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+<div class="h-80 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Professional portrait of a female sports technical director with a determined gaze, wearing a sleek black academy track jacket. The background features the modern architecture of an elite training facility with glass walls and clean lines. Lighting is crisp and cool-toned, emphasizing professional discipline and high-performance standards." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkl-mOICblHUmZPa-OGnsGSDuKbWEAPqgm6hWii4495miVeTSfTUv1SLvjb2F7h12rx9_LAWu5hFoyjtABRtJ7rXxiKbiBeDdyYDwBIMEpnK2fdhCkLcJccdh4PKZ6dnEey8StitPfT2JCNkZYn3yWQqtjurE8q6KtLCXXpssQfiOtJseOHu_a9lOpM4tdJeYkZYnV3W9XYgW4QKuRYAVZIpxY7AM8JZRq78XnDCEg8LRzgy4s_MyNsGxsNqAe9hRCBD355O2ZC-8X"/>
+<div class="absolute inset-0 performance-gradient"></div>
+<div class="absolute bottom-4 left-6">
+<span class="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[10px] rounded-full mb-2">TECHNICAL DIRECTOR</span>
+<h4 class="font-headline-md text-white">Sarah Boateng</h4>
+</div>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-4 mb-6">
+<div class="flex-1">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Department</p>
+<p class="font-bold text-primary">Performance & Scouting</p>
+</div>
+<div class="flex-1 border-l border-outline-variant pl-4">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Experience</p>
+<p class="font-bold text-primary">15+ Years Pro</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">mail</span>
+<span class="text-sm">s.boateng@lekkicacademy.com</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">call</span>
+<span class="text-sm">+234 802 987 6543</span>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all">View Profile</button>
+<button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Coach Card 3 -->
+<div class="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+<div class="h-80 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A high-intensity action-style portrait of a goalkeeper coach, mid-thirties, wearing neon-accented academy sports gear. He is holding a football and wearing goalie gloves, with a bright, energized stadium background during a training session. The image uses a cinematic shallow depth of field, with vibrant greens and professional navy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX-4t7d9h-NQ1Zyd7hj0L9kl5UgBNDcByvgBW5nDPsqwWZL1ZEL95kWw_LaigRa4H1rBEdKw1Wh4IPQ9qLxaUAvtMPmZyXvmLHqLGLU9asBrkgD8oQMVMUkTzkHMggCc8PFTx_DaIXg5uC1SgCJzchShaUftwosf5wrrmRM-8U3IvA9QqBVFvGzgDj-AzrGjcsworIg9Z-bCWURljXMfzFFVZL1ZvW3g_jF-pcfOwNVFauNHv4FmDfbUnaQyiyM5fKpl5HfR4MjrW5"/>
+<div class="absolute inset-0 performance-gradient"></div>
+<div class="absolute bottom-4 left-6">
+<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container font-label-caps text-[10px] rounded-full mb-2">SPECIALIST COACH</span>
+<h4 class="font-headline-md text-white">Adebayo Tunde</h4>
+</div>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-4 mb-6">
+<div class="flex-1">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Assigned Squad</p>
+<p class="font-bold text-primary">All Academy GKs</p>
+</div>
+<div class="flex-1 border-l border-outline-variant pl-4">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Specialty</p>
+<p class="font-bold text-primary">Goalkeeping Elite</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">mail</span>
+<span class="text-sm">a.tunde@lekkicacademy.com</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">call</span>
+<span class="text-sm">+234 815 000 1122</span>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all">View Profile</button>
+<button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Coach Card 4 (Secondary Row) -->
+<div class="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+<div class="h-80 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A professional portrait of a sports science and conditioning coach, mid-forties, wearing a technical gilet and holding a digital tablet. The setting is a state-of-the-art academy gym with high-end equipment. The visual style is focused and technical, using a palette of white, gray, and academy navy, with bright, clean studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbTpRs-3G4ltTQRvHeQjsbZ1VEqsNkOrkhXnZIxFmpLOt58dRl5FXLa_rM39YFITnFNEQEMUZjtCrb4Vy0Nj_n4bojZcVuhwZrHJ-KeHee9x1swbn93TOkvAOv1WL315-G1y9NwECBPXVLT_BCRdrcYzDome6jMTySWZZxZAXWcxv6S_1OWKK04NapnBsU_v7cP_3gkMGDUoEwY-VaPNZNWNomk0CwvqkJumPTSfVdB6DT9VwgPJ8cBONBGiBjFDwIPj9xzhj3NCCG"/>
+<div class="absolute inset-0 performance-gradient"></div>
+<div class="absolute bottom-4 left-6">
+<span class="inline-block px-3 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[10px] rounded-full mb-2">SPORTS SCIENCE</span>
+<h4 class="font-headline-md text-white">Dr. Kofi Mensah</h4>
+</div>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-4 mb-6">
+<div class="flex-1">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Focus Area</p>
+<p class="font-bold text-primary">Strength & Bio-metrics</p>
+</div>
+<div class="flex-1 border-l border-outline-variant pl-4">
+<p class="text-on-surface-variant font-label-caps text-[10px] uppercase">Qualification</p>
+<p class="font-bold text-primary">PhD Sports Science</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">mail</span>
+<span class="text-sm">k.mensah@lekkicacademy.com</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">call</span>
+<span class="text-sm">+234 901 333 4444</span>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all">View Profile</button>
+<button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty "Add" State Card -->
+<div class="border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center p-12 text-center group cursor-pointer hover:border-secondary transition-colors h-full min-h-[500px]">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant group-hover:text-secondary">person_add</span>
+</div>
+<h4 class="font-headline-md text-lg text-primary">Hire New Coach</h4>
+<p class="text-on-surface-variant mt-2 max-w-[200px] text-sm">Expand your elite technical team and nurture the next generation of football stars.</p>
+<button class="mt-6 px-6 py-2 bg-secondary text-white rounded-full font-bold text-sm transform transition-transform group-hover:scale-105">Open Recruitment</button>
+</div>
+</div>
+<!-- Team Schedule / Timeline Section -->
+<div class="mt-section-gap">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-primary">Current Training Assignments</h3>
+<button class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline">
+                        Download Full Schedule
+                        <span class="material-symbols-outlined text-sm">download</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/30">
+<table class="w-full text-left">
+<thead class="bg-surface-container-high border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Time Slot</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Pitch A (U-19)</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Pitch B (U-17)</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Indoor Facility</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr>
+<td class="px-6 py-4 font-stat-md text-sm text-primary">08:00 - 10:00</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+<span class="text-sm font-bold">Sunday Oliseh</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Tactical Drills</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest"></div>
+<span class="text-sm font-bold">Moses Simon</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Ball Control</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed"></div>
+<span class="text-sm font-bold">Sarah Boateng</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Video Analysis</p>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30">
+<td class="px-6 py-4 font-stat-md text-sm text-primary">10:30 - 12:30</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-fixed"></div>
+<span class="text-sm font-bold">Adebayo Tunde</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">GK Handling</p>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs italic text-on-surface-variant">Maintenance Window</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed"></div>
+<span class="text-sm font-bold">Dr. Kofi Mensah</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Physio Sessions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Footer Footer -->
+<footer class="mt-auto py-12 px-margin-desktop border-t border-outline-variant bg-surface-container-lowest flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-6">
+<h4 class="font-headline-md text-headline-md text-primary">IL Academy</h4>
+<div class="flex gap-4">
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">language</span></a>
+</div>
+</div>
+<div class="text-on-surface-variant text-sm font-body-md text-center md:text-right">
+<p>© 2024 Ibeju Lekki Academy. Technical Administration Suite.</p>
+<p class="mt-1">Built for the future of Nigerian Football.</p>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button for Hire Action -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-secondary text-on-secondary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 lg:hidden">
+<span class="material-symbols-outlined text-2xl">person_add</span>
+</button>
+<script>
+        // Simple Micro-interaction for Card Hover
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for adding dynamic GSAP or Vanilla animations here
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.classList.add('w-80');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.classList.remove('w-80');
+            });
+        }
+    </script>
+</body></html>

@@ -5,12 +5,13 @@
 ])
 
 @php
-  $base = 'inline-flex items-center justify-center gap-2 text-sm font-medium rounded transition-colors';
+  $base = 'inline-flex items-center justify-center gap-2 text-sm font-semibold rounded-lg transition-all min-h-11 px-4';
   $variants = [
-      'primary' => 'admin-luxe-btn-primary',
-      'secondary' => 'px-3.5 py-2 border border-wp-border bg-white text-wp-text hover:bg-wp-bg',
-      'danger' => 'px-3.5 py-2 border border-rose-300 bg-white text-rose-700 hover:bg-rose-50',
-      'ghost' => 'px-2 py-1.5 text-wp-link hover:text-wp-link-hover bg-transparent border-0',
+      'primary' => 'bg-secondary text-on-secondary hover:brightness-110 active:scale-[0.98]',
+      'secondary' => 'px-4 py-2.5 border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-high',
+      'danger' => 'px-4 py-2.5 border border-error/30 bg-error-container text-on-error-container hover:bg-error-container/80',
+      'ghost' => 'px-3 py-2 text-secondary hover:bg-secondary-container/20 bg-transparent border-0 min-h-11',
+      'navy' => 'bg-primary text-on-primary hover:brightness-110',
   ];
   $classes = $base.' '.($variants[$variant] ?? $variants['primary']);
 @endphp

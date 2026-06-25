@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Models\SiteTrafficEvent;
-use App\Models\Vehicle;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,9 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TrackPublicTraffic
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
@@ -23,7 +19,6 @@ class TrackPublicTraffic
         }
 
         $routeName = $request->route()?->getName();
-        $vehicleMeta = $this->resolveVehicleMetadata($request, $routeName);
 
         try {
             SiteTrafficEvent::query()->create([
@@ -36,12 +31,9 @@ class TrackPublicTraffic
                 'user_agent' => $request->userAgent(),
                 'ip_hash' => $this->hashIp((string) $request->ip()),
                 'session_id' => $request->hasSession() ? $request->session()->getId() : null,
-                'vehicle_id' => $vehicleMeta['vehicle_id'],
-                'vehicle_slug' => $vehicleMeta['vehicle_slug'],
                 'viewed_at' => now(),
             ]);
         } catch (\Throwable $exception) {
-            // Fail-open: analytics must never break public page delivery.
             Log::warning('Public traffic tracking failed.', [
                 'route' => $routeName,
                 'path' => $request->path(),
@@ -79,7 +71,6 @@ class TrackPublicTraffic
             'verification.',
             'password.',
             'profile.',
-            'favorites.',
             'bootstrap.admin',
         ];
 
@@ -94,31 +85,6 @@ class TrackPublicTraffic
         }
 
         return true;
-    }
-
-    /**
-     * @return array{vehicle_id:int|null,vehicle_slug:string|null}
-     */
-    protected function resolveVehicleMetadata(Request $request, ?string $routeName): array
-    {
-        if ($routeName !== 'inventory.show' && $routeName !== 'product.show') {
-            return ['vehicle_id' => null, 'vehicle_slug' => null];
-        }
-
-        $slug = $request->route('slug');
-        if (! is_string($slug) || trim($slug) === '') {
-            return ['vehicle_id' => null, 'vehicle_slug' => null];
-        }
-
-        $vehicle = Vehicle::query()
-            ->select(['id', 'slug'])
-            ->where('slug', $slug)
-            ->first();
-
-        return [
-            'vehicle_id' => $vehicle?->id,
-            'vehicle_slug' => $vehicle?->slug ?? $slug,
-        ];
     }
 
     protected function hashIp(string $ip): ?string

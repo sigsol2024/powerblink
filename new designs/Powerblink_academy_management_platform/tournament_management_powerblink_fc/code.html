@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tournament Command Center | Ibeju Lekki Academy</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;700&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#75777e",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c5c6ce",
+                        "on-secondary-fixed-variant": "#005224",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#64ff92",
+                        "surface": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-container": "#241a00",
+                        "surface-tint": "#505f7a",
+                        "secondary-container": "#64ff92",
+                        "primary-container": "#0b1c34",
+                        "surface-container-highest": "#e0e3e5",
+                        "background": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed": "#241a00",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-container": "#007436",
+                        "tertiary": "#000000",
+                        "on-primary-container": "#7584a2",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#d6e3ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b7c7e7",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b7c7e7",
+                        "secondary-fixed-dim": "#41e279",
+                        "on-primary-fixed": "#0b1c34",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary": "#006d32",
+                        "inverse-surface": "#2d3133",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed": "#00210b",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "tertiary-fixed": "#ffdf94",
+                        "surface-dim": "#d8dadc",
+                        "primary": "#000000",
+                        "on-primary-fixed-variant": "#384761",
+                        "on-tertiary-container": "#a47f00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "element-gap": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "display-hero": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "stat-xl": ["Bebas Neue"],
+                        "headline-md": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "label-caps": ["Inter"],
+                        "stat-md": ["Bebas Neue"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "stat-xl": ["56px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "stat-md": ["32px", {"lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .premium-card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .glass-overlay {
+            backdrop-filter: blur(20px);
+            background: rgba(11, 28, 52, 0.7);
+        }
+        .active-nav-item {
+            transform: scale(0.95);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #75777e;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Sidebar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-inverse-surface shadow-sm z-50 flex flex-col py-6 px-4 border-r border-outline-variant dark:border-outline">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed">Ibeju Lekki Academy</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">Elite Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-caps">Players</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="font-label-caps">Registrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+<span class="font-label-caps">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-label-caps">Tournaments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-caps">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-caps">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">supervisor_account</span>
+<span class="font-label-caps">Coaches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-caps">Communications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-headline-md text-[14px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                NEW TOURNAMENT
+            </button>
+</div>
+</aside>
+<!-- Header Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-30 flex justify-between items-center h-16 px-margin-desktop bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Admin Dashboard</h2>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:ring-2 focus:ring-secondary focus:border-transparent outline-none w-64" placeholder="Search tournaments..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">help_outline</button>
+<div class="h-8 w-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a sports administrator in a clean office setting, looking confident and focused. The image has high-end editorial lighting, a shallow depth of field, and a modern corporate sports aesthetic with navy and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL2ztOuaRxUULf6ruObiK-A18n91JPa9fHxYCMsUM8VXtHQGWv993UVvFf9Li39ypXE2cmUwwWWGeZ0gZv0Cd9ngE0XMXb84okiO0f5W--abJ9Iw0laaeoFep8hTXX02fqAytZvC30OGFj2M5898yPhVEbD1yq2_NvFAeC9oKsl6wgG6xgGfr64XuWw6G7ubu-EetabtLA1TfcHlKlfYKHmkFxwSVjruGbFY2ddppUPwBjatgkT4O1J6l3kL1xhCKy0ZwOr_bsg5vW"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-margin-desktop min-h-screen">
+<!-- Hero Section: Tournament Highlights -->
+<section class="grid grid-cols-12 gap-gutter mb-section-gap">
+<div class="col-span-12 lg:col-span-8 h-80 rounded-xl overflow-hidden relative group premium-card-shadow">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A cinematic, low-angle shot of a vibrant youth football tournament in Lagos, Nigeria. Young players in bright kits are competing under a golden sunset, with dust rising from the pitch and a large crowd cheering in the background. High-contrast, sports-editorial style with rich colors and dynamic energy." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDxWv5LCQOYkQ4pPlRSqG4LqcXmQEDzRwDawbllgfDxkB8_IZ2ARRi1hU9tzvYdnxcfd--wL3u-fRFYCNoZ8Ze2kefiR4bQX-B1TeL6q4U-wjgeiQ7A4xpsqJ8LDa3oFZSluh1CsiSpMC4qA9fXWG1xAVNr7s9qWrWLxwStiW4ii7wnIhGBuk9SY1QbE39Gz1ctKpgR_3YzBfaQZAkaJiF11d6p1ZxLjzggsclct5ZFIJfCh6apNIXMA_r0EMs9SYXEJMMlIem-qr0i')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/90 via-primary-container/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
+<div>
+<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full mb-3">CURRENT LIVE EVENT</span>
+<h3 class="font-headline-lg text-white text-headline-lg uppercase mb-2">Eko Elite Invitational Cup</h3>
+<p class="text-white/80 font-body-md max-w-lg">Finals Day: West Coast Lions vs. Island Rangers. Kickoff at 15:00 WAT.</p>
+</div>
+<button class="bg-secondary text-on-secondary px-6 py-3 rounded-xl font-label-caps hover:scale-105 transition-transform">
+                        LIVE SCOREBOARD
+                    </button>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<div class="flex-1 bg-white p-6 rounded-xl premium-card-shadow border-l-4 border-secondary flex flex-col justify-between">
+<div>
+<p class="font-label-caps text-on-surface-variant">NEXT UP</p>
+<h4 class="font-headline-md text-primary mt-2">Lekki Summer Kickoff</h4>
+<p class="text-body-md text-on-surface-variant mt-1">Starting in 4 days • 16 Teams</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-primary text-[10px] text-white flex items-center justify-center font-bold">+13</div>
+</div>
+<span class="text-secondary font-bold font-label-caps">FULLY BOOKED</span>
+</div>
+</div>
+<div class="flex-1 bg-primary-container p-6 rounded-xl premium-card-shadow flex flex-col justify-between">
+<div>
+<p class="font-label-caps text-on-primary-container">PERFORMANCE INSIGHT</p>
+<h4 class="font-headline-md text-white mt-2">Tournament Retention</h4>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-stat-xl text-stat-xl text-secondary-fixed">+24%</span>
+<span class="text-white/60 text-body-md">vs last season</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Command Center Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left: Upcoming & Recent Tournaments -->
+<div class="col-span-12 xl:col-span-8 space-y-gutter">
+<!-- Section Header -->
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-primary">Active &amp; Upcoming</h3>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</div>
+<!-- Tournament List Card -->
+<div class="bg-white rounded-xl premium-card-shadow overflow-hidden">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 font-label-caps text-on-surface-variant uppercase">Tournament Name</th>
+<th class="px-6 py-4 font-label-caps text-on-surface-variant uppercase">Status</th>
+<th class="px-6 py-4 font-label-caps text-on-surface-variant uppercase">Teams</th>
+<th class="px-6 py-4 font-label-caps text-on-surface-variant uppercase">Dates</th>
+<th class="px-6 py-4 font-label-caps text-on-surface-variant uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">emoji_events</span>
+</div>
+<div>
+<p class="font-bold text-primary">Eko Elite Invitational</p>
+<p class="text-xs text-on-surface-variant">U-17 Professional League</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full font-label-caps text-[10px]">LIVE NOW</span>
+</td>
+<td class="px-6 py-5 font-stat-md text-primary text-[20px]">12/12</td>
+<td class="px-6 py-5 text-on-surface-variant">Oct 12 - Oct 28</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-xs">MANAGE</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">stadium</span>
+</div>
+<div>
+<p class="font-bold text-primary">Lekki Summer Kickoff</p>
+<p class="text-xs text-on-surface-variant">Open Age Amateur</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-on-tertiary-fixed-variant/10 text-on-tertiary-fixed-variant rounded-full font-label-caps text-[10px]">PREPARING</span>
+</td>
+<td class="px-6 py-5 font-stat-md text-primary text-[20px]">16/16</td>
+<td class="px-6 py-5 text-on-surface-variant">Nov 05 - Nov 12</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-xs">MANAGE</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">groups_2</span>
+</div>
+<div>
+<p class="font-bold text-primary">Academy Scout Meet</p>
+<p class="text-xs text-on-surface-variant">U-15 Talent ID</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-outline-variant/30 text-on-surface-variant rounded-full font-label-caps text-[10px]">REGISTRATION</span>
+</td>
+<td class="px-6 py-5 font-stat-md text-primary text-[20px]">08/20</td>
+<td class="px-6 py-5 text-on-surface-variant">Dec 01 - Dec 03</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-xs">MANAGE</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Fixture Generator & Quick Input -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-white p-6 rounded-xl premium-card-shadow">
+<h4 class="font-headline-md text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">auto_awesome</span>
+                            Fixture Generator
+                        </h4>
+<p class="text-body-md text-on-surface-variant mb-6">Select a tournament to automatically generate round-robin or knockout schedules.</p>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-3 mb-4 outline-none focus:ring-2 focus:ring-secondary">
+<option>Select Tournament...</option>
+<option>Lekki Summer Kickoff</option>
+<option>Academy Scout Meet</option>
+</select>
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-caps hover:opacity-90">GENERATE SCHEDULE</button>
+</div>
+<div class="bg-white p-6 rounded-xl premium-card-shadow">
+<h4 class="font-headline-md text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">edit_square</span>
+                            Quick Results Input
+                        </h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between gap-4">
+<div class="flex-1 flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container mb-1"></div>
+<span class="text-[10px] font-bold text-center">LIONS</span>
+</div>
+<input class="w-12 text-center border-b-2 border-outline-variant focus:border-secondary outline-none font-stat-md text-[24px]" type="number" value="0"/>
+<span class="font-bold text-outline-variant">VS</span>
+<input class="w-12 text-center border-b-2 border-outline-variant focus:border-secondary outline-none font-stat-md text-[24px]" type="number" value="0"/>
+<div class="flex-1 flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container mb-1"></div>
+<span class="text-[10px] font-bold text-center">RANGERS</span>
+</div>
+</div>
+<button class="w-full border-2 border-primary text-primary py-2 rounded-lg font-label-caps hover:bg-primary hover:text-on-primary transition-colors">UPDATE SCORE</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Standings & Quick Actions -->
+<div class="col-span-12 xl:col-span-4 space-y-gutter">
+<!-- Live Standings -->
+<div class="bg-primary-container text-white p-6 rounded-xl premium-card-shadow">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-label-caps text-secondary-fixed">LIVE STANDINGS</h4>
+<select class="bg-white/10 text-white border-none text-xs rounded outline-none cursor-pointer">
+<option class="text-black">Group A</option>
+<option class="text-black">Group B</option>
+</select>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<span class="font-stat-md text-white/50 w-6">01</span>
+<div class="w-8 h-8 bg-white/20 rounded flex items-center justify-center font-bold">LC</div>
+<div class="flex-1 font-bold">Lekki City FC</div>
+<span class="font-stat-md text-secondary-fixed">12</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-stat-md text-white/50 w-6">02</span>
+<div class="w-8 h-8 bg-white/20 rounded flex items-center justify-center font-bold">IA</div>
+<div class="flex-1 font-bold">Ikeja Athletic</div>
+<span class="font-stat-md text-secondary-fixed">10</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-stat-md text-white/50 w-6">03</span>
+<div class="w-8 h-8 bg-white/20 rounded flex items-center justify-center font-bold">BR</div>
+<div class="flex-1 font-bold">Badagry Rovers</div>
+<span class="font-stat-md text-secondary-fixed">07</span>
+</div>
+<div class="flex items-center gap-4 opacity-60">
+<span class="font-stat-md text-white/50 w-6">04</span>
+<div class="w-8 h-8 bg-white/20 rounded flex items-center justify-center font-bold">EY</div>
+<div class="flex-1 font-bold">Epe Youth</div>
+<span class="font-stat-md text-secondary-fixed">04</span>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-white/20 rounded-lg text-xs font-label-caps hover:bg-white/10 transition-colors">FULL TABLE VIEW</button>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-white p-6 rounded-xl premium-card-shadow">
+<h4 class="font-label-caps text-on-surface-variant mb-4">TOURNAMENT LOGS</h4>
+<div class="space-y-6 relative before:content-[''] before:absolute before:left-3 before:top-4 before:bottom-0 before:w-[2px] before:bg-surface-container-high">
+<div class="relative flex gap-4">
+<div class="z-10 w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center scale-75 ring-4 ring-white">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="text-[13px] font-bold">Score Approved</p>
+<p class="text-[11px] text-on-surface-variant">Lions 3 - 2 Rangers by Admin</p>
+<span class="text-[10px] text-outline italic">2 mins ago</span>
+</div>
+</div>
+<div class="relative flex gap-4">
+<div class="z-10 w-6 h-6 rounded-full bg-tertiary-fixed-dim text-white flex items-center justify-center scale-75 ring-4 ring-white">
+<span class="material-symbols-outlined text-[12px]">notification_important</span>
+</div>
+<div>
+<p class="text-[13px] font-bold">Protest Logged</p>
+<p class="text-[11px] text-on-surface-variant">Ineligible player reported - Ikeja Athletic</p>
+<span class="text-[10px] text-outline italic">1 hour ago</span>
+</div>
+</div>
+<div class="relative flex gap-4">
+<div class="z-10 w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center scale-75 ring-4 ring-white">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<div>
+<p class="text-[13px] font-bold">Team Registered</p>
+<p class="text-[11px] text-on-surface-variant">Surulere Stars joined Summer Kickoff</p>
+<span class="text-[10px] text-outline italic">3 hours ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ad/Promo Card -->
+<div class="bg-secondary text-on-secondary p-6 rounded-xl premium-card-shadow flex items-center justify-between overflow-hidden relative group">
+<div class="relative z-10">
+<p class="font-label-caps text-[10px]">NEW FEATURE</p>
+<h4 class="font-headline-md leading-tight mt-1">Export<br/>Scout Reports</h4>
+<button class="mt-4 text-xs font-bold underline decoration-2 underline-offset-4">DOWNLOAD PDF</button>
+</div>
+<span class="material-symbols-outlined text-[80px] opacity-20 absolute -right-4 -bottom-4 rotate-12 group-hover:scale-110 transition-transform">analytics</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for rows
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mousedown', () => {
+                row.classList.add('active-nav-item');
+            });
+            row.addEventListener('mouseup', () => {
+                row.classList.remove('active-nav-item');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('active-nav-item');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-105');
+            searchInput.parentElement.classList.add('transition-transform');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body></html>

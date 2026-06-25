@@ -125,13 +125,18 @@ class AdminAnalyticsController extends Controller
                 return $row;
             });
 
-        $topListings = (clone $baseQuery)
-            ->whereNotNull('vehicle_slug')
-            ->selectRaw('vehicle_slug, COUNT(*) as views, COUNT(DISTINCT session_id) as sessions')
-            ->groupBy('vehicle_slug')
+        $topPrograms = (clone $baseQuery)
+            ->whereNotNull('route_name')
+            ->selectRaw('route_name, COUNT(*) as views, COUNT(DISTINCT session_id) as sessions')
+            ->groupBy('route_name')
             ->orderByDesc('views')
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $row->label = $this->friendlyRouteLabel((string) $row->route_name);
+
+                return $row;
+            });
 
         $topReferrers = (clone $baseQuery)
             ->whereNotNull('referrer_host')
@@ -171,7 +176,8 @@ class AdminAnalyticsController extends Controller
             'lineChart' => $lineChart,
             'deviceBreakdown' => $deviceBreakdown,
             'topPages' => $topPages,
-            'topListings' => $topListings,
+            'topPrograms' => $topPrograms,
+            'engagementRatio' => $this->buildEngagementRatio(round($bounceRate, 1), round((float) $avgViewsPerSession, 2)),
             'topReferrers' => $topReferrers,
         ];
     }
@@ -186,17 +192,34 @@ class AdminAnalyticsController extends Controller
         // Stored paths may be saved with or without a leading slash.
         $normalized = ltrim($normalized, '/');
 
-        if (str_starts_with($normalized, 'inventory/')) {
-            return 'Listing: '.str_replace('-', ' ', substr($normalized, 10));
-        }
-        if ($normalized === 'inventory') {
-            return 'Inventory';
-        }
-        if ($normalized === 'compare') {
-            return 'Compare';
-        }
-
+        // Academy public routes only — no legacy ecommerce path labels.
         return ucfirst(str_replace(['/', '-'], [' / ', ' '], $normalized));
+    }
+
+    protected function friendlyRouteLabel(string $routeName): string
+    {
+        return match ($routeName) {
+            'home' => 'Home',
+            'programs.index' => 'Programs',
+            'about' => 'About',
+            'gallery' => 'Gallery',
+            'contact' => 'Contact',
+            'registration.wizard' => 'Registration',
+            default => str_replace(['.', '-'], [' / ', ' '], $routeName),
+        };
+    }
+
+    /**
+     * @return array{percent:float,label:string}
+     */
+    protected function buildEngagementRatio(float $bounceRate, float $avgViewsPerSession): array
+    {
+        $engagement = max(0.0, min(100.0, (100.0 - $bounceRate) * min(1.0, $avgViewsPerSession / 3)));
+
+        return [
+            'percent' => round($engagement, 1),
+            'label' => $engagement >= 50 ? __('Healthy engagement') : __('Room to improve'),
+        ];
     }
 
     /**
@@ -309,10 +332,12 @@ class AdminAnalyticsController extends Controller
      */
     protected function buildTrendBarHeights(array $dailyTrend): array
     {
-        $demo = [60, 45, 80, 65, 50, 95, 75, 60, 40, 85, 70, 55];
         $n = count($dailyTrend);
         if ($n === 0) {
-            return array_map(fn (int $h, int $i) => ['h' => $h, 'highlight' => $i === 5], $demo, array_keys($demo));
+            return array_map(
+                static fn (int $i): array => ['h' => 8, 'highlight' => false],
+                range(0, 11)
+            );
         }
 
         $barCount = 12;

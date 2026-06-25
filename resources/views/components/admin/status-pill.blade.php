@@ -3,13 +3,24 @@
 ])
 
 @php
-  $variants = [
-      'success' => 'bg-emerald-100 text-emerald-800 border-emerald-200',
-      'warning' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'danger' => 'bg-red-100 text-red-800 border-red-200',
-      'neutral' => 'bg-slate-100 text-slate-700 border-slate-200',
+  $map = [
+      'success' => 'activated',
+      'activated' => 'activated',
+      'warning' => 'pending_review',
+      'pending_review' => 'pending_review',
+      'awaiting_payment' => 'awaiting_payment',
+      'danger' => 'rejected',
+      'rejected' => 'rejected',
   ];
-  $classes = 'inline-flex items-center px-2 py-0.5 border rounded text-[10px] font-medium '.($variants[$variant] ?? $variants['neutral']);
+  $key = $map[$variant] ?? $variant;
+  $variants = [
+      'activated' => 'bg-secondary-container/40 text-on-secondary-container border-secondary/30',
+      'pending_review' => 'bg-tertiary-fixed/30 text-on-tertiary-fixed-variant border-tertiary-fixed-dim/40',
+      'awaiting_payment' => 'bg-primary-fixed/40 text-on-primary-fixed border-primary-fixed-dim/40',
+      'rejected' => 'bg-error-container text-on-error-container border-error/20',
+      'neutral' => 'bg-surface-container text-on-surface-variant border-outline-variant',
+  ];
+  $classes = 'inline-flex items-center px-2.5 py-1 border rounded-full text-[10px] font-bold uppercase tracking-wide '.($variants[$key] ?? $variants['neutral']);
 @endphp
 
 <span {{ $attributes->merge(['class' => $classes]) }}>{{ $slot }}</span>
