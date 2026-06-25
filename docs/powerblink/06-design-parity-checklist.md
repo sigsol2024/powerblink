@@ -1,6 +1,6 @@
 # PowerBlink FC — Design Parity Checklist
 
-Phase B design parity against Stitch screens in `new designs/Powerblink_academy_management_platform/*/code.html`.
+Phase B design parity against Stitch screens in `new designs/Powerblink_academy_management_platform/*/code.html` (local reference folder — **gitignored**, not deployed).
 
 **Brand tokens:** navy `#0b1c34`, green `#006d32`, gold `#f4c542` (tertiary-fixed), Montserrat headings, Inter body, Bebas Neue stats.
 

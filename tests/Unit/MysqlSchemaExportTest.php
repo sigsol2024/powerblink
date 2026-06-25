@@ -35,6 +35,7 @@ class MysqlSchemaExportTest extends TestCase
         $method->setAccessible(true);
         $schema = $method->invoke($command, $sqlitePath);
 
+        $this->assertStringContainsString('SET FOREIGN_KEY_CHECKS=0;', $schema);
         $this->assertStringContainsString('`reference` VARCHAR(255) NOT NULL', $schema);
         $this->assertStringContainsString('UNIQUE KEY `academy_payments_reference_unique` (`reference`)', $schema);
         $this->assertStringNotContainsString('`reference` TEXT NOT NULL', $schema);

@@ -241,6 +241,7 @@ class ExportPowerblinkSqlCommand extends Command
             'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";',
             'SET time_zone = "+00:00";',
             'SET NAMES utf8mb4;',
+            'SET FOREIGN_KEY_CHECKS=0;',
             '',
         ];
 
@@ -363,6 +364,9 @@ class ExportPowerblinkSqlCommand extends Command
             $lines[] = ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
             $lines[] = '';
         }
+
+        $lines[] = 'SET FOREIGN_KEY_CHECKS=1;';
+        $lines[] = '';
 
         return implode("\n", $lines)."\n";
     }

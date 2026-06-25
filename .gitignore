@@ -26,3 +26,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Stitch/HTML design mockups — local reference only; not used at runtime
+/new designs/

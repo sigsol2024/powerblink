@@ -15,6 +15,8 @@
 
 1. Create utf8mb4 database in hosting panel.
 2. Generate **`database/powerblink_academy.sql`** locally (see Developer workflow), then import it via phpMyAdmin.
+
+   If phpMyAdmin stops on a foreign-key error, confirm the dump includes `SET FOREIGN_KEY_CHECKS=0;` **before** the `CREATE TABLE` statements (tables are created in alphabetical order, not dependency order).
 3. Copy `.env.example` → `.env`; set `APP_KEY`, DB credentials, Paystack keys, mail, and **strong** `BOOTSTRAP_ADMIN_PASSWORD` / `DEMO_USER_PASSWORD` (or reset passwords after import).
 4. Ensure `public/asset/images/powerblink/*.jpg` is deployed (committed in Git — do not rely on manual upload).
 5. `php artisan storage:link`
