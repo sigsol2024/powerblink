@@ -111,6 +111,65 @@
     min-height: 2.75rem;
     min-width: 2.75rem;
   }
+  .pb-admin-form {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 48rem;
+  }
+  .pb-admin-form.pb-admin-form--wide {
+    max-width: none;
+  }
+  .pb-admin-form input[type="file"] {
+    width: 100%;
+    font-size: 0.875rem;
+    color: #44474d;
+  }
+  .pb-admin-form .pb-field label,
+  .pb-admin-form label,
+  .pb-admin-form .block.text-sm.font-medium {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #44474d;
+    margin-bottom: 0.375rem;
+  }
+  .pb-admin-form input[type="text"],
+  .pb-admin-form input[type="email"],
+  .pb-admin-form input[type="number"],
+  .pb-admin-form input[type="tel"],
+  .pb-admin-form input[type="password"],
+  .pb-admin-form input[type="date"],
+  .pb-admin-form input[type="time"],
+  .pb-admin-form select,
+  .pb-admin-form textarea {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid #c5c6ce;
+    background: #f7f9fb;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #191c1e;
+  }
+  .pb-admin-form input:focus,
+  .pb-admin-form select:focus,
+  .pb-admin-form textarea:focus {
+    outline: none;
+    border-color: #006d32;
+    box-shadow: 0 0 0 3px rgba(0, 109, 50, 0.12);
+  }
+  .pb-admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .pb-admin-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1024px) {
+    .pb-admin-detail-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (max-width: 640px) {
     .pb-admin-table th,
     .pb-admin-table td {

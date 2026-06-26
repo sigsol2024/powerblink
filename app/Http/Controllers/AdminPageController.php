@@ -176,6 +176,7 @@ class AdminPageController extends Controller
             ->keyBy('slug');
 
         return view('admin.pages.index', [
+            'title' => __('Pages'),
             'pages' => $editable,
             'existing' => $existing,
         ]);
@@ -198,6 +199,7 @@ class AdminPageController extends Controller
         );
 
         return view('admin.pages.edit', [
+            'title' => __('Edit page'),
             'slug' => $slug,
             'pageInfo' => $defaults,
             'page' => $page,

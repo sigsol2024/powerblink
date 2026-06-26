@@ -4,22 +4,17 @@
     $canManageCustomers = $canManageCustomers ?? false;
   @endphp
 
-  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-wp-border bg-white sticky top-0 z-40 shrink-0">
-    <div class="flex items-center gap-3 min-w-0">
-      <h2 class="text-lg font-semibold text-wp-text">{{ __('Customers') }}</h2>
-      <span class="text-xs text-wp-text-muted">{{ trans_choice(':count account|:count accounts', $userStats['total'], ['count' => number_format($userStats['total'])]) }}</span>
-    </div>
+  <x-admin.page-header :subtitle="trans_choice(':count account|:count accounts', $userStats['total'], ['count' => number_format($userStats['total'])])">
     @if ($canManageCustomers)
-      <div class="shrink-0">
+      <x-slot name="actions">
         <x-admin.button type="button" @click="$dispatch('open-customer-create')">
           <x-icon name="plus" class="w-4 h-4" /> {{ __('Create customer') }}
         </x-admin.button>
-      </div>
+      </x-slot>
     @endif
-  </header>
+  </x-admin.page-header>
 
-  <div
-    class="px-4 md:px-6 py-4 md:py-5 space-y-4"
+  <x-admin.page-content
     x-data="{
       createOpen: {{ $errors->any() && old('_form') === 'create' ? 'true' : 'false' }},
       editOpen: {{ $errors->any() && old('_form') === 'edit' ? 'true' : 'false' }},
@@ -37,21 +32,21 @@
       <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{{ session('status') }}</div>
     @endif
 
-    <div class="bg-white border border-wp-border rounded p-4">
-      <span class="text-xs uppercase tracking-wide text-wp-text-muted">{{ __('Total customers') }}</span>
-      <p class="text-2xl font-semibold text-wp-text">{{ number_format($userStats['total']) }}</p>
+    <div class="bg-surface-container-lowest border border-outline-variant rounded p-4">
+      <span class="text-xs uppercase tracking-wide text-on-surface-variant">{{ __('Total customers') }}</span>
+      <p class="text-2xl font-semibold text-on-surface">{{ number_format($userStats['total']) }}</p>
     </div>
 
-    <div class="bg-white border border-wp-border rounded p-3 md:p-4">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded p-3 md:p-4">
       <input type="search" x-model.debounce.250ms="q" class="w-full sm:w-72 text-sm" placeholder="{{ __('Search by name or email…') }}" />
     </div>
 
     @if ($users->total() === 0)
-      <p class="text-wp-text-muted py-12 text-center text-sm">{{ __('No customers yet.') }}</p>
+      <p class="text-on-surface-variant py-12 text-center text-sm">{{ __('No customers yet.') }}</p>
     @else
-      <div class="bg-white border border-wp-border rounded overflow-hidden">
+      <div class="bg-surface-container-lowest border border-outline-variant rounded overflow-hidden">
         <table class="w-full text-left text-sm">
-          <thead class="bg-wp-bg text-xs uppercase tracking-wide text-wp-text-muted">
+          <thead class="bg-surface-container-low text-xs uppercase tracking-wide text-on-surface-variant">
             <tr>
               <th class="px-4 py-3">{{ __('Name') }}</th>
               <th class="px-4 py-3">{{ __('Email') }}</th>
@@ -60,11 +55,11 @@
               @endif
             </tr>
           </thead>
-          <tbody class="divide-y divide-wp-border">
+          <tbody class="divide-y divide-outline-variant">
             @foreach ($users as $user)
               <tr x-show="!q.trim() || @js(strtolower($user->name.' '.$user->email)).includes(q.trim().toLowerCase())">
                 <td class="px-4 py-3 font-medium">{{ $user->name }}</td>
-                <td class="px-4 py-3 text-wp-text-muted">{{ $user->email }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ $user->email }}</td>
                 @if ($canManageCustomers)
                   <td class="px-4 py-3 text-right">
                     <div class="inline-flex items-center gap-2">
@@ -85,8 +80,8 @@
 
     @if ($canManageCustomers)
       <div class="fixed inset-0 z-[200] flex items-end justify-center sm:items-center" x-show="createOpen" x-cloak>
-        <div class="absolute inset-0 bg-zinc-900/50" @click="createOpen = false"></div>
-        <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl" @click.stop>
+        <div class="absolute inset-0 bg-primary/50" @click="createOpen = false"></div>
+        <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-surface-container-lowest shadow-2xl sm:rounded-2xl" @click.stop>
           <div class="border-b px-6 py-4"><h3 class="font-bold">{{ __('Create customer account') }}</h3></div>
           <form method="post" action="{{ route('admin.users.store') }}" class="space-y-4 px-6 py-6">
             @csrf
@@ -106,8 +101,8 @@
       </div>
 
       <div class="fixed inset-0 z-[200] flex items-end justify-center sm:items-center" x-show="editOpen" x-cloak>
-        <div class="absolute inset-0 bg-zinc-900/50" @click="editOpen = false"></div>
-        <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl" @click.stop>
+        <div class="absolute inset-0 bg-primary/50" @click="editOpen = false"></div>
+        <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-surface-container-lowest shadow-2xl sm:rounded-2xl" @click.stop>
           <div class="border-b px-6 py-4"><h3 class="font-bold">{{ __('Edit customer account') }}</h3></div>
           <form method="post" :action="editUser ? '{{ url('/admin/users') }}/' + editUser.id : '#'" class="space-y-4 px-6 py-6">
             @csrf
@@ -116,10 +111,10 @@
             <input type="hidden" name="user_id" x-bind:value="editUser ? editUser.id : ''" />
             <div><x-input-label for="edit_name" :value="__('Name')" /><x-text-input id="edit_name" name="name" class="mt-1 block w-full" x-bind:value="editUser ? editUser.name : ''" required /></div>
             <div><x-input-label for="edit_email" :value="__('Email')" /><x-text-input id="edit_email" name="email" type="email" class="mt-1 block w-full" x-bind:value="editUser ? editUser.email : ''" required /></div>
-            <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 space-y-4">
+            <div class="rounded-lg border border-outline-variant/60 bg-surface-container-low p-4 space-y-4">
               <div>
                 <h4 class="text-sm font-semibold">{{ __('Change password (optional)') }}</h4>
-                <p class="mt-1 text-xs text-zinc-500">{{ __('Leave blank to keep the current password.') }}</p>
+                <p class="mt-1 text-xs text-on-surface-variant">{{ __('Leave blank to keep the current password.') }}</p>
               </div>
               <div class="grid gap-4 sm:grid-cols-2">
                 <div><x-input-label for="edit_password" :value="__('New password')" /><x-text-input id="edit_password" name="password" type="password" class="mt-1 block w-full" /></div>
@@ -135,13 +130,13 @@
       </div>
 
       <div class="fixed inset-0 z-[200] flex items-end justify-center sm:items-center" x-show="deleteOpen" x-cloak>
-        <div class="absolute inset-0 bg-zinc-900/50" @click="deleteOpen = false"></div>
-        <div class="relative z-10 w-full max-w-md rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl" @click.stop>
+        <div class="absolute inset-0 bg-primary/50" @click="deleteOpen = false"></div>
+        <div class="relative z-10 w-full max-w-md rounded-t-2xl bg-surface-container-lowest shadow-2xl sm:rounded-2xl" @click.stop>
           <div class="border-b px-6 py-4">
-            <h3 class="text-base font-bold text-zinc-900">{{ __('Delete customer account?') }}</h3>
+            <h3 class="text-base font-bold text-on-surface">{{ __('Delete customer account?') }}</h3>
           </div>
           <div class="space-y-4 px-6 py-6">
-            <p class="text-sm text-zinc-600">{{ __('This permanently removes the customer account and cannot be undone.') }}</p>
+            <p class="text-sm text-on-surface-variant">{{ __('This permanently removes the customer account and cannot be undone.') }}</p>
             <div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" x-show="deleteUser">
               <p class="font-semibold" x-text="deleteUser ? deleteUser.name : ''"></p>
               <p class="text-rose-800/80" x-text="deleteUser ? deleteUser.email : ''"></p>
@@ -156,5 +151,5 @@
         </div>
       </div>
     @endif
-  </div>
+  </x-admin.page-content>
 </x-app-layout>

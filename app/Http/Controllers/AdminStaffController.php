@@ -30,6 +30,7 @@ class AdminStaffController extends Controller
         ];
 
         return view('admin.staff.index', [
+            'title' => __('Staff'),
             'staff' => $staff,
             'staffStats' => $stats,
         ]);

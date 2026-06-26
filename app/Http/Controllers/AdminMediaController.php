@@ -32,6 +32,7 @@ class AdminMediaController extends Controller
         }
 
         return view('admin.media.index', [
+            'title' => __('Media library'),
             'items' => $items,
             'query' => $query,
         ]);

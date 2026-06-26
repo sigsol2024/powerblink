@@ -1,19 +1,30 @@
 <x-app-layout>
-  <x-admin.page-header :title="$tournament->title" />
+  <x-admin.page-header
+    :back-href="route('admin.tournaments.index')"
+    :back-label="__('Tournaments')"
+    :subtitle="__('Tournament details')"
+  >
+    <x-slot name="actions">
+      @can('tournaments.manage')
+        <x-admin.button variant="primary" :href="route('admin.tournaments.edit', $tournament)">{{ __('Edit tournament') }}</x-admin.button>
+      @endcan
+    </x-slot>
+  </x-admin.page-header>
+
   <x-admin.page-content>
     @include('admin.partials.flash')
+
     <x-admin.card>
-      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Season') }}</dt><dd>{{ $tournament->season?->name }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Category') }}</dt><dd>{{ $tournament->category ?? '—' }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Location') }}</dt><dd>{{ $tournament->location ?? '—' }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Status') }}</dt><dd>{{ $tournament->status }}</dd></div>
-        <div class="sm:col-span-2"><dt class="text-pb-muted text-xs uppercase">{{ __('Description') }}</dt><dd class="mt-1">{{ $tournament->description ?? '—' }}</dd></div>
+      <dl class="pb-admin-detail-grid">
+        <x-admin.detail-field :label="__('Season')">{{ $tournament->season?->name ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Category')">{{ $tournament->category ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Status')">{{ $tournament->status }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Start date')">{{ $tournament->start_date?->format('M j, Y') ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('End date')">{{ $tournament->end_date?->format('M j, Y') ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Location')">{{ $tournament->location ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Squad entries')">{{ number_format($tournament->squads->count()) }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Description')" span="full" class="font-normal leading-relaxed">{{ $tournament->description ?? '—' }}</x-admin.detail-field>
       </dl>
-      <p class="mt-4 text-sm text-pb-muted">{{ __(':count squad entries', ['count' => $tournament->squads->count()]) }}</p>
-      @can('tournaments.manage')
-        <a href="{{ route('admin.tournaments.edit', $tournament) }}" class="inline-block mt-4 text-pb-green font-semibold text-sm">{{ __('Edit') }}</a>
-      @endcan
     </x-admin.card>
   </x-admin.page-content>
 </x-app-layout>

@@ -8,7 +8,7 @@
   </x-admin.page-header>
   <x-admin.page-content>
     @include('admin.partials.flash')
-    <div class="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-sm">
+    <x-admin.card variant="table" class="overflow-hidden">
       <table class="pb-admin-table min-w-full text-sm">
         <thead><tr>
           <th>{{ __('Name') }}</th><th>{{ __('Age group') }}</th><th class="hidden md:table-cell">{{ __('Season') }}</th><th>{{ __('Active') }}</th><th></th>
@@ -27,7 +27,7 @@
           @endforelse
         </tbody>
       </table>
-    </div>
+    </x-admin.card>
     <div class="mt-4">{{ $programs->links() }}</div>
   </x-admin.page-content>
 </x-app-layout>

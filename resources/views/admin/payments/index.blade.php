@@ -13,7 +13,8 @@
       @include('partials.powerblink.dashboard-stat-card', ['label' => __('Tab'), 'value' => $tab === 'registration' ? __('Registration') : __('Academy'), 'accent' => 'gold'])
     </div>
 
-    <div class="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-sm">
+    <x-admin.card variant="table" class="overflow-hidden">
+      <div class="overflow-x-auto">
       <table class="pb-admin-table min-w-full text-sm">
         <thead><tr>
           <th>{{ __('Reference') }}</th><th>{{ __('Player') }}</th><th>{{ __('Amount') }}</th><th>{{ __('Status') }}</th><th></th>
@@ -34,7 +35,8 @@
           @endforelse
         </tbody>
       </table>
-    </div>
+      </div>
+    </x-admin.card>
     <div class="mt-4">{{ $payments->links() }}</div>
   </x-admin.page-content>
 </x-app-layout>

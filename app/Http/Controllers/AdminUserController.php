@@ -27,6 +27,7 @@ class AdminUserController extends Controller
         ];
 
         return view('admin.users.index', [
+            'title' => __('Customers'),
             'users' => $users,
             'userStats' => $stats,
             'canManageCustomers' => request()->user()?->can('customers.manage') ?? false,

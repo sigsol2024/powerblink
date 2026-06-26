@@ -60,7 +60,7 @@
     x-init="initCharts()"
   >
     @php $diag = $trackingDiagnostic ?? []; @endphp
-    <p class="text-xs text-wp-text-muted">
+    <p class="text-xs text-on-surface-variant">
       {{ __('Tracking') }}:
       @if (! empty($diag['last_event_at']))
         {{ __('Last event :time (:count total)', ['time' => $diag['last_event_at'], 'count' => number_format((int) ($diag['total_events'] ?? 0))]) }}

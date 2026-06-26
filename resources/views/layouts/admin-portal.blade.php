@@ -37,14 +37,8 @@
     @include('partials.powerblink.dashboard-header')
 
     <div class="pt-16 min-h-screen flex flex-col">
-      <div class="flex-1 {{ $isFullBleed ? '' : 'px-margin-mobile md:px-margin-desktop py-6 md:py-8' }}">
-        @if ($isFullBleed)
-          {{ $slot }}
-        @else
-          <div class="max-w-container-max mx-auto w-full">
-            {{ $slot }}
-          </div>
-        @endif
+      <div class="flex-1 w-full {{ $isFullBleed ? '' : 'px-margin-mobile md:px-margin-desktop py-6 md:py-8' }}">
+        {{ $slot }}
       </div>
       @include('partials.powerblink.dashboard-footer')
     </div>

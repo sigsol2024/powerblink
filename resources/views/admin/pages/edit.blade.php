@@ -138,7 +138,7 @@
 
         paths.forEach((path, idx) => {
           const thumb = document.createElement('div');
-          thumb.className = 'group relative aspect-square overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm';
+          thumb.className = 'group relative aspect-square overflow-hidden rounded-xl border border-outline-variant/60 bg-surface shadow-sm';
           thumb.innerHTML = `
             <img src="${publicUrlFromPath(path)}" class="h-full w-full object-cover" />
             <button type="button" class="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-red-600 shadow-sm opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-50" title="{{ __('Remove image') }}">
@@ -233,19 +233,19 @@
         grid.innerHTML = list.map((m, index) => {
           const sel = mediaSelectedPaths.includes(m.path);
           return `
-          <button type="button" data-index="${index}" data-path="${esc(m.path)}" class="group relative flex flex-col rounded-lg border p-2 text-left shadow-sm transition-all duration-200 ${sel ? 'border-indigo-600 ring-4 ring-indigo-100 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-slate-50'}" title="${esc(m.name)}">
-            <div class="relative overflow-hidden rounded-md">
+          <button type="button" data-index="${index}" data-path="${esc(m.path)}" class="group relative flex flex-col rounded-xl border p-2 text-left shadow-sm transition-all duration-200 ${sel ? 'border-secondary ring-4 ring-secondary/15 bg-secondary-container/20' : 'border-outline-variant/60 hover:border-secondary/40 hover:bg-surface-container-low'}">
+            <div class="relative overflow-hidden rounded-lg">
               <img src="${String(m.url).replace(/"/g, '&quot;')}" alt="" class="h-24 w-full object-cover transition-transform duration-300 group-hover:scale-110" />
               ${sel ? `
-                <div class="absolute inset-0 flex items-center justify-center bg-indigo-600/30 backdrop-blur-[1px]">
-                  <div class="rounded-full bg-white p-1 shadow-lg">
-                    <svg class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <div class="absolute inset-0 flex items-center justify-center bg-secondary/30 backdrop-blur-[1px]">
+                  <div class="rounded-full bg-surface p-1 shadow-lg">
+                    <svg class="h-5 w-5 text-secondary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                   </div>
                 </div>
               ` : ''}
-              <div class="absolute inset-0 bg-indigo-600 opacity-0 transition-opacity group-hover:opacity-10 pointer-events-none"></div>
+              <div class="absolute inset-0 bg-secondary opacity-0 transition-opacity group-hover:opacity-10 pointer-events-none"></div>
             </div>
-            <p class="mt-2 truncate text-[11px] font-medium ${sel ? 'text-indigo-900' : 'text-gray-600'} transition-colors" title="${esc(m.name)}">${esc(m.name)}</p>
+            <p class="mt-2 truncate text-[11px] font-medium ${sel ? 'text-secondary' : 'text-on-surface-variant'} transition-colors" title="${esc(m.name)}">${esc(m.name)}</p>
           </button>`;
         }).join('');
 
@@ -482,21 +482,17 @@
 @endphp
 
 <x-app-layout>
-  <div class="flex flex-col">
-    <x-admin.page-header :title="__('Edit page')" :subtitle="$pageInfo['label'] ?? null" />
+  <x-admin.page-header
+    :back-href="route('admin.pages.index')"
+    :back-label="__('All pages')"
+    :subtitle="$pageInfo['label'] ?? null"
+  />
 
-    <x-admin.page-content>
-      <div class="mb-4 flex justify-end">
-        <x-admin.button variant="secondary" :href="route('admin.pages.index')">{{ __('All pages') }}</x-admin.button>
-      </div>
-    @if (session('status'))
-      <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm">
-        {{ session('status') }}
-      </div>
-    @endif
+  <x-admin.page-content>
+    @include('admin.partials.flash')
 
     @if ($errors->any())
-      <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm">
+      <div class="mb-6 rounded-lg border border-error/30 bg-error-container/30 px-4 py-3 text-sm text-on-error-container">
         <ul class="list-disc space-y-1 pl-5">
           @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -505,57 +501,37 @@
       </div>
     @endif
 
-    <form method="post" action="{{ route('admin.pages.update', ['slug' => $slug]) }}" class="space-y-6">
+    <form method="post" action="{{ route('admin.pages.update', ['slug' => $slug]) }}" class="pb-admin-form pb-admin-form--wide space-y-6">
       @csrf
       @method('PUT')
 
-      <div class="space-y-6">
-        <div class="space-y-6">
-          <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            <div class="border-b border-gray-100 bg-gray-50/80 px-5 py-4">
-              <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500">{{ __('Page & SEO') }}</h3>
-              <p class="mt-1 text-sm text-gray-600">{{ __('Title and description used in the browser tab and search snippets.') }}</p>
-            </div>
-            <div class="space-y-5 p-5">
-              <div>
-                <x-input-label for="page_title" value="{{ __('Page title') }}" />
-                <x-text-input
-                  id="page_title"
-                  name="title"
-                  type="text"
-                  class="mt-1 block w-full"
-                  value="{{ old('title', $page->title) }}"
-                  required
-                />
-              </div>
-              <div>
-                <x-input-label for="meta_description" value="{{ __('Meta description') }}" />
-                <textarea
-                  id="meta_description"
-                  name="meta_description"
-                  rows="3"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                >{{ old('meta_description', $page->meta_description) }}</textarea>
-                <p class="mt-1.5 text-xs text-gray-500">{{ __('Optional. Roughly one or two sentences.') }}</p>
-              </div>
-            </div>
-          </div>
-
+      <x-admin.panel :title="__('Page & SEO')" :description="__('Title and description used in the browser tab and search snippets.')">
+        <div class="pb-field">
+          <label for="page_title">{{ __('Page title') }}</label>
+          <input
+            id="page_title"
+            name="title"
+            type="text"
+            value="{{ old('title', $page->title) }}"
+            required
+          />
         </div>
-      </div>
+        <div class="pb-field">
+          <label for="meta_description">{{ __('Meta description') }}</label>
+          <textarea id="meta_description" name="meta_description" rows="3">{{ old('meta_description', $page->meta_description) }}</textarea>
+          <p class="mt-1.5 text-xs text-on-surface-variant normal-case tracking-normal font-normal">{{ __('Optional. Roughly one or two sentences.') }}</p>
+        </div>
+      </x-admin.panel>
 
       @if (count($pageInfo['fields']) > 0)
-        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="border-b border-gray-100 bg-gray-50/80 px-5 py-4">
-            <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500">{{ __('Section content') }}</h3>
-            <p class="mt-1 text-sm text-gray-600">
-              {{ __('Copy and images for page sections. Lists and cards that pull from inventory stay dynamic.') }}
-            </p>
-          </div>
-          <div class="space-y-8 bg-slate-50/60 p-5">
+        <x-admin.panel
+          :title="__('Section content')"
+          :description="__('Copy and images for page sections. Lists and cards that pull from inventory stay dynamic.')"
+        >
+          <div class="space-y-6">
             @foreach ($sectionFieldGroups as $groupTitle => $fieldsInGroup)
-              <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h4 class="border-b border-gray-100 pb-3 text-sm font-semibold text-gray-900">{{ $groupTitle }}</h4>
+              <div class="rounded-2xl border border-outline-variant/60 bg-surface-container-low/40 p-5">
+                <h4 class="border-b border-outline-variant/40 pb-3 text-sm font-semibold text-on-surface">{{ $groupTitle }}</h4>
                 {{-- Short text fields share a row on md+ (cf. form-row); images span full width with select → dashed preview → optional path --}}
                 <div class="mt-5 grid gap-6 md:grid-cols-2">
                   @foreach ($fieldsInGroup as $field)
@@ -567,20 +543,22 @@
                       @php
                         $isThumbPreview = ($field['preview'] ?? '') === 'thumbnail';
                       @endphp
-                      <div class="js-media-field rounded-lg border border-gray-100 bg-slate-50/40 p-4 {{ $isThumbPreview ? 'md:col-span-1' : 'md:col-span-2' }}">
-                        <span class="block text-sm font-semibold text-gray-800">{{ $field['label'] }}</span>
-                        
+                      <div class="js-media-field rounded-xl border border-outline-variant/40 bg-surface-container-low/50 p-4 {{ $isThumbPreview ? 'md:col-span-1' : 'md:col-span-2' }}">
+                        <span class="block text-sm font-semibold text-on-surface">{{ $field['label'] }}</span>
+
                         <div class="mt-3 flex flex-wrap items-center gap-2">
-                          <button
+                          <x-admin.button
                             type="button"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 js-media-picker"
+                            variant="secondary"
+                            class="!min-h-9 !px-3 !py-1.5 !text-xs js-media-picker"
                             data-media-target="{{ $inputId }}"
-                          >{{ __('Select') }}</button>
-                          <button
+                          >{{ __('Select') }}</x-admin.button>
+                          <x-admin.button
                             type="button"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm hover:bg-gray-50 js-media-clear"
+                            variant="ghost"
+                            class="!min-h-9 !px-3 !py-1.5 !text-xs js-media-clear"
                             data-clear-target="{{ $inputId }}"
-                          >{{ __('Clear') }}</button>
+                          >{{ __('Clear') }}</x-admin.button>
                         </div>
 
                         <input
@@ -593,75 +571,75 @@
                         />
 
                         <div
-                          class="mt-3 overflow-hidden rounded-md border border-dashed border-gray-300 bg-white shadow-inner"
+                          class="mt-3 overflow-hidden rounded-xl border border-dashed border-outline-variant/60 bg-surface shadow-inner"
                           data-media-preview-wrap="{{ $inputId }}"
                         >
-                          <div class="relative flex items-center justify-center {{ $isThumbPreview ? 'h-32' : 'min-h-[10rem] max-h-[20rem]' }} w-full bg-gray-50">
+                          <div class="relative flex items-center justify-center {{ $isThumbPreview ? 'h-32' : 'min-h-[10rem] max-h-[20rem]' }} w-full bg-surface-container-low">
                             <img
                               src=""
                               alt=""
                               class="js-media-preview-img hidden {{ $isThumbPreview ? 'h-full w-full object-cover' : 'max-h-full max-w-full object-contain' }}"
                             />
                             <div class="js-media-preview-placeholder pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 p-2 text-center">
-                              <svg class="h-6 w-6 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-                              <span class="text-[10px] font-medium text-gray-400">{{ __('No image') }}</span>
+                              <x-icon name="photo" class="h-6 w-6 text-outline-variant" />
+                              <span class="text-[10px] font-medium text-on-surface-variant">{{ __('No image') }}</span>
                             </div>
-                            <div class="js-media-preview-error absolute inset-0 hidden flex-col items-center justify-center bg-red-50 p-2 text-center">
-                              <span class="text-[10px] font-medium text-red-900">{{ __('Load error') }}</span>
+                            <div class="js-media-preview-error absolute inset-0 hidden flex-col items-center justify-center bg-error-container/30 p-2 text-center">
+                              <span class="text-[10px] font-medium text-on-error-container">{{ __('Load error') }}</span>
                             </div>
                           </div>
                         </div>
 
                         <div class="mt-3">
                           <code
-                            class="js-media-path-readout block truncate rounded border border-gray-100 bg-gray-50 px-2 py-1 text-[10px] text-gray-500"
+                            class="js-media-path-readout block truncate rounded-lg border border-outline-variant/40 bg-surface-container-low px-2 py-1 text-[10px] text-on-surface-variant"
                             data-readout-for="{{ $inputId }}"
                             data-empty-label="{{ __('No path set') }}"
                           ></code>
                         </div>
 
                         <details class="mt-2">
-                          <summary class="cursor-pointer text-[10px] font-medium text-indigo-600 hover:text-indigo-800">{{ __('Edit path manually') }}</summary>
-                          <div class="mt-1">
+                          <summary class="cursor-pointer text-[10px] font-medium text-secondary hover:text-secondary/80">{{ __('Edit path manually') }}</summary>
+                          <div class="mt-1 pb-field !mb-0">
                             <input
                               type="text"
                               id="{{ $inputId }}-manual"
                               value="{{ $value }}"
-                              class="js-media-manual-input block w-full rounded-md border-gray-300 py-1 text-[10px] shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                              class="js-media-manual-input text-[10px]"
                               autocomplete="off"
                             />
                           </div>
                         </details>
                       </div>
                      @elseif ($field['type'] === 'repeater')
-                      <div class="md:col-span-2 js-repeater-field bg-slate-50 p-6 rounded-xl border border-gray-200" data-field-name="{{ $field['name'] }}" data-schema='@json($field['schema'])'>
+                      <div class="md:col-span-2 js-repeater-field rounded-2xl border border-outline-variant/60 bg-surface-container-low/50 p-6" data-field-name="{{ $field['name'] }}" data-schema='@json($field['schema'])'>
                         <div class="flex items-center justify-between mb-4">
-                          <span class="block text-sm font-bold text-slate-800 uppercase tracking-tight">{{ $field['label'] }}</span>
-                          <button type="button" class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 js-repeater-add">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                          <span class="block text-sm font-bold text-on-surface uppercase tracking-tight">{{ $field['label'] }}</span>
+                          <x-admin.button type="button" variant="primary" class="!min-h-9 !px-3 !py-1.5 !text-xs js-repeater-add">
+                            <x-icon name="add" class="w-4 h-4" />
                             {{ __('Add item') }}
-                          </button>
+                          </x-admin.button>
                         </div>
-                        
+
                         <input type="hidden" name="sections[{{ $field['name'] }}]" id="{{ $inputId }}" value="{{ $value }}" class="js-repeater-input" />
-                        
+
                         <div class="space-y-4 js-repeater-items">
                           {{-- Items injected by JS --}}
                         </div>
 
                         <template class="js-repeater-item-template">
-                          <div class="relative bg-white p-5 rounded-lg border border-gray-200 shadow-sm group js-repeater-item">
-                            <button type="button" class="absolute top-4 right-4 text-slate-400 hover:text-red-600 transition-colors js-repeater-remove" title="Remove">
-                              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                          <div class="relative bg-surface p-5 rounded-xl border border-outline-variant/60 shadow-sm group js-repeater-item">
+                            <button type="button" class="absolute top-4 right-4 text-on-surface-variant hover:text-error transition-colors js-repeater-remove" title="{{ __('Remove') }}">
+                              <x-icon name="trash" class="w-5 h-5" />
                             </button>
                             <div class="grid grid-cols-1 gap-4 pr-10">
                               @foreach($field['schema'] as $s)
-                                <div>
-                                  <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">{{ $s['label'] }}</label>
+                                <div class="pb-field !mb-0">
+                                  <label>{{ $s['label'] }}</label>
                                   @if($s['type'] === 'textarea')
-                                    <textarea data-name="{{ $s['name'] }}" rows="2" class="w-full rounded-md border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                    <textarea data-name="{{ $s['name'] }}" rows="2"></textarea>
                                   @else
-                                    <input type="text" data-name="{{ $s['name'] }}" class="w-full rounded-md border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                                    <input type="text" data-name="{{ $s['name'] }}" />
                                   @endif
                                 </div>
                               @endforeach
@@ -670,21 +648,23 @@
                         </template>
                       </div>
                     @elseif ($field['type'] === 'gallery')
-                      <div class="js-media-field rounded-lg border border-gray-100 bg-slate-50/40 p-4 md:col-span-2">
+                      <div class="js-media-field rounded-xl border border-outline-variant/40 bg-surface-container-low/50 p-4 md:col-span-2">
                         <div class="flex items-center justify-between gap-4">
-                          <span class="block text-sm font-semibold text-gray-800">{{ $field['label'] }}</span>
+                          <span class="block text-sm font-semibold text-on-surface">{{ $field['label'] }}</span>
                           <div class="flex items-center gap-2">
-                            <button
+                            <x-admin.button
                               type="button"
-                              class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 js-media-picker"
+                              variant="secondary"
+                              class="!min-h-9 !px-3 !py-1.5 !text-xs js-media-picker"
                               data-media-target="{{ $inputId }}"
                               data-media-multi="1"
-                            >{{ __('Select images') }}</button>
-                            <button
+                            >{{ __('Select images') }}</x-admin.button>
+                            <x-admin.button
                               type="button"
-                              class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm hover:bg-gray-50 js-media-clear"
+                              variant="ghost"
+                              class="!min-h-9 !px-3 !py-1.5 !text-xs js-media-clear"
                               data-clear-target="{{ $inputId }}"
-                            >{{ __('Clear all') }}</button>
+                            >{{ __('Clear all') }}</x-admin.button>
                           </div>
                         </div>
 
@@ -703,25 +683,14 @@
                         ></div>
                       </div>
                     @elseif ($field['type'] === 'textarea')
-                      <div class="md:col-span-2">
-                        <x-input-label :for="$inputId" :value="$field['label']" />
-                        <textarea
-                          id="{{ $inputId }}"
-                          name="sections[{{ $field['name'] }}]"
-                          rows="3"
-                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        >{{ $value }}</textarea>
+                      <div class="pb-field md:col-span-2">
+                        <label for="{{ $inputId }}">{{ $field['label'] }}</label>
+                        <textarea id="{{ $inputId }}" name="sections[{{ $field['name'] }}]" rows="3">{{ $value }}</textarea>
                       </div>
                     @else
-                      <div>
-                        <x-input-label :for="$inputId" :value="$field['label']" />
-                        <x-text-input
-                          id="{{ $inputId }}"
-                          name="sections[{{ $field['name'] }}]"
-                          type="text"
-                          class="mt-1 block w-full"
-                          value="{{ $value }}"
-                        />
+                      <div class="pb-field">
+                        <label for="{{ $inputId }}">{{ $field['label'] }}</label>
+                        <input id="{{ $inputId }}" name="sections[{{ $field['name'] }}]" type="text" value="{{ $value }}" />
                       </div>
                     @endif
                   @endforeach
@@ -729,55 +698,49 @@
               </div>
             @endforeach
           </div>
-        </div>
+        </x-admin.panel>
       @endif
 
       @unless(in_array($slug, ['about', 'listing-detail'], true))
-        <details class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <summary class="cursor-pointer select-none border-b border-gray-100 bg-gray-50/80 px-5 py-4">
+        <details class="overflow-hidden rounded-3xl border border-outline-variant/60 bg-surface shadow-sm">
+          <summary class="cursor-pointer select-none border-b border-outline-variant/40 bg-surface-container-low/80 px-5 py-4">
             <div class="flex items-center justify-between gap-4">
               <div>
-                <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500">{{ __('Advanced: Custom HTML') }}</h3>
-                <p class="mt-1 text-sm text-gray-600">{{ __('Optional extra markup for this page template. Prefer section fields above when possible.') }}</p>
+                <h3 class="font-label-caps text-label-caps uppercase tracking-wide text-on-surface-variant">{{ __('Advanced: Custom HTML') }}</h3>
+                <p class="mt-1 text-sm text-on-surface-variant normal-case tracking-normal font-normal">{{ __('Optional extra markup for this page template. Prefer section fields above when possible.') }}</p>
               </div>
-              <span class="text-xs font-semibold text-gray-500">{{ __('Toggle') }}</span>
+              <span class="text-xs font-semibold text-on-surface-variant">{{ __('Toggle') }}</span>
             </div>
           </summary>
           <div class="p-5">
-            <x-input-label for="content_html" value="{{ __('Content HTML') }}" />
-            <textarea
-              id="content_html"
-              name="content_html"
-              rows="12"
-              class="mt-1 block w-full rounded-md border-gray-300 font-mono text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            >{{ old('content_html', $page->content_html) }}</textarea>
+            <div class="pb-field">
+              <label for="content_html">{{ __('Content HTML') }}</label>
+              <textarea id="content_html" name="content_html" rows="12" class="font-mono text-sm">{{ old('content_html', $page->content_html) }}</textarea>
+            </div>
           </div>
         </details>
       @endunless
 
-      <div class="sticky bottom-4 z-20 rounded-xl border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
-        <label class="flex cursor-pointer items-start gap-3">
+      <div class="sticky bottom-4 z-20 rounded-3xl border border-outline-variant/60 bg-surface/95 p-4 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
+        <label class="flex cursor-pointer items-start gap-3 normal-case tracking-normal font-normal">
           <input type="hidden" name="is_active" value="0" />
           <input
             type="checkbox"
             name="is_active"
             value="1"
-            class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+            class="mt-0.5 rounded border-outline-variant text-secondary"
             {{ old('is_active', (int) $page->is_active) ? 'checked' : '' }}
           />
           <span>
-            <span class="block text-sm font-medium text-gray-900">{{ __('Page is active') }}</span>
-            <span class="mt-0.5 block text-xs text-gray-500">{{ __('Inactive pages return 404 on the public site.') }}</span>
+            <span class="block text-sm font-medium text-on-surface">{{ __('Page is active') }}</span>
+            <span class="mt-0.5 block text-xs text-on-surface-variant">{{ __('Inactive pages return 404 on the public site.') }}</span>
           </span>
         </label>
         <div class="mt-3 flex items-center justify-end gap-3 sm:mt-0">
-          <a href="{{ route('admin.pages.index') }}" class="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{{ __('All pages') }}</a>
-          <button type="submit" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            {{ __('Save page') }}
-          </button>
+          <x-admin.button variant="secondary" :href="route('admin.pages.index')">{{ __('All pages') }}</x-admin.button>
+          <x-admin.button type="submit">{{ __('Save page') }}</x-admin.button>
         </div>
       </div>
     </form>
-    </x-admin.page-content>
-  </div>
+  </x-admin.page-content>
 </x-app-layout>

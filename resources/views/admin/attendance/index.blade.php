@@ -11,7 +11,8 @@
         </select>
       </div>
     </form>
-    <div class="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-sm">
+    <x-admin.card variant="table" class="overflow-hidden">
+      <div class="overflow-x-auto">
       <table class="pb-admin-table min-w-full text-sm">
         <thead><tr>
           <th>{{ __('Player') }}</th><th class="hidden sm:table-cell">{{ __('Session') }}</th><th>{{ __('Status') }}</th>
@@ -28,7 +29,8 @@
           @endforelse
         </tbody>
       </table>
-    </div>
+      </div>
+    </x-admin.card>
     <div class="mt-4">{{ $attendance->links() }}</div>
   </x-admin.page-content>
 </x-app-layout>

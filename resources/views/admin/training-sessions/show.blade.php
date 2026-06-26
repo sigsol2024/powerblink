@@ -1,19 +1,28 @@
 <x-app-layout>
-  <x-admin.page-header :title="$session->title" />
+  <x-admin.page-header
+    :back-href="route('admin.training-sessions.index')"
+    :back-label="__('Training schedule')"
+    :subtitle="$session->date?->format('M j, Y').' · '.($session->program?->name ?? '')"
+  >
+    <x-slot name="actions">
+      @can('training-sessions.manage')
+        <x-admin.button variant="primary" :href="route('admin.training-sessions.edit', $session)">{{ __('Edit session') }}</x-admin.button>
+      @endcan
+    </x-slot>
+  </x-admin.page-header>
+
   <x-admin.page-content>
     @include('admin.partials.flash')
+
     <x-admin.card>
-      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Date') }}</dt><dd>{{ $session->date?->format('M j, Y') }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Time') }}</dt><dd>{{ $session->start_time }} – {{ $session->end_time }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Program') }}</dt><dd>{{ $session->program?->name }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Coach') }}</dt><dd>{{ $session->coach?->name ?? '—' }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Location') }}</dt><dd>{{ $session->location ?? '—' }}</dd></div>
-        <div><dt class="text-pb-muted text-xs uppercase">{{ __('Type') }}</dt><dd>{{ $session->session_type ?? '—' }}</dd></div>
+      <dl class="pb-admin-detail-grid">
+        <x-admin.detail-field :label="__('Date')">{{ $session->date?->format('M j, Y') ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Time')">{{ $session->start_time }} – {{ $session->end_time }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Program')">{{ $session->program?->name ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Coach')">{{ $session->coach?->name ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Location')">{{ $session->location ?? '—' }}</x-admin.detail-field>
+        <x-admin.detail-field :label="__('Session type')">{{ $session->session_type ?? '—' }}</x-admin.detail-field>
       </dl>
-      @can('training_sessions.manage')
-        <a href="{{ route('admin.training-sessions.edit', $session) }}" class="inline-block mt-4 text-pb-green font-semibold text-sm">{{ __('Edit') }}</a>
-      @endcan
     </x-admin.card>
   </x-admin.page-content>
 </x-app-layout>

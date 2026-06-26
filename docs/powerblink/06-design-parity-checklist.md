@@ -59,6 +59,13 @@ Phase B design parity against Stitch screens in `new designs/Powerblink_academy_
 | Communications | `communications_center_powerblink_fc` | `admin.announcements.*` | **Implemented** | Announcement list; compose CTA |
 | Performance analytics | `performance_analytics_powerblink_fc` | `admin.performance.*` | **Implemented** | Report list with overall scores |
 | Analytics (extended) | `performance_analytics_powerblink_fc` | `admin.analytics.*` | **Implemented** | PowerBlink KPI cards, toolbar, charts; legacy luxe/anx palette removed |
+| Site settings | — | `admin.settings.edit` | **Implemented** | `x-admin.panel` sections; `pb-admin-form--wide`; Elite tokens; mail test panel |
+| Media library | — | `admin.media.*` | **Implemented** | Grid/list toggle; `pb-admin-table`; Elite cards; bulk select/delete |
+| Page editor | — | `admin.pages.*` | **Implemented** | CMS field groups in panels; media picker; sticky save bar; shared media modal restyled |
+| Staff accounts | — | `admin.staff.*` | **Implemented** | Elite list + modals (create/edit/delete) |
+| Customer accounts | — | `admin.users.*` | **Implemented** | Elite list + modals |
+| Audit trail | — | `admin.audit.*` | **Implemented** | Filter toolbar; `pb-admin-table` in card |
+| Profile (all roles) | — | `profile.edit` | **Implemented** | Shared `x-admin.panel` form for admin + member portals |
 
 ---
 
@@ -97,6 +104,7 @@ Previously partial — now **Implemented** (see public pages table above).
 | Dashboard stat card | `partials/powerblink/dashboard-stat-card.blade.php` | Implemented — Stitch glass KPI (`rounded-3xl`, icon tile, badge slot) |
 | Inline SVG icons | `components/icon.blade.php` | Implemented — Material alias map; no Material Symbols webfont in views |
 | Admin/member shell | `layouts/admin-portal.blade.php`, `layouts/member-portal.blade.php` | Implemented — Stitch light sidebar (`w-64`), fixed blur header, `md:ml-64` canvas |
+| Media modal | `partials/media-modal.blade.php` | Implemented — Elite tokens; used by page editor + admin shell |
 | Registration layout | `layouts/registration.blade.php` | Implemented — task-focused, no duplicate nav |
 | Site layout | `layouts/site.blade.php` | Implemented — unified `pt-20`, minimal header for `registration.*` on legacy paths |
 
@@ -112,4 +120,4 @@ Previously partial — now **Implemented** (see public pages table above).
 
 ---
 
-*Last updated: Pre-deployment remediation — June 2026*
+*Last updated: Admin settings/media/pages parity — June 2026*

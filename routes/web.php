@@ -176,6 +176,7 @@ Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(func
         }
 
         return view('admin.audit.index', [
+            'title' => __('Audit trail'),
             'entries' => $query->paginate(30)->withQueryString(),
             'method' => $method,
             'userId' => $userId,
