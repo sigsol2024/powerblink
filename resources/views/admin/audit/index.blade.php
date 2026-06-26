@@ -103,5 +103,4 @@
       </div>
     </div>
   </div>
-  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

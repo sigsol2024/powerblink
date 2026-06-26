@@ -116,7 +116,7 @@
       @endif
     @else
       <x-admin.card class="p-8 text-center">
-        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-3">person_off</span>
+        <x-icon name="person_off" class="w-10 h-10 text-on-surface-variant mb-3" />
         <p class="text-on-surface-variant">{{ __('Player profile not linked yet.') }}</p>
       </x-admin.card>
     @endif

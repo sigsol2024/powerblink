@@ -487,7 +487,7 @@
 
     <x-admin.page-content>
       <div class="mb-4 flex justify-end">
-        <a href="{{ route('admin.pages.index') }}" class="admin-luxe-btn-secondary">{{ __('All pages') }}</a>
+        <x-admin.button variant="secondary" :href="route('admin.pages.index')">{{ __('All pages') }}</x-admin.button>
       </div>
     @if (session('status'))
       <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm">

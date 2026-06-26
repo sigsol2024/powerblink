@@ -179,7 +179,6 @@
     </div>
     </x-admin.page-content>
   </div>
-  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>
 
 @push('body-end')

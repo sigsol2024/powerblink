@@ -20,7 +20,7 @@
       </p>
       <a href="{{ route('registration.wizard') }}" class="inline-flex items-center gap-2 text-secondary-fixed font-bold text-sm hover:underline">
         {{ __('Start Registration') }}
-        <span class="material-symbols-outlined text-base">arrow_forward</span>
+        <x-icon name="arrow_forward" class="w-4 h-4" />
       </a>
     </div>
     <div>
@@ -45,18 +45,18 @@
       <h4 class="font-bold text-on-primary mb-6">{{ __('Contact Us') }}</h4>
       <ul class="space-y-3 text-sm">
         <li class="flex items-start gap-3 text-on-primary-container/80">
-          <span class="material-symbols-outlined text-secondary-fixed text-lg shrink-0">location_on</span>
+          <x-icon name="location_on" class="w-5 h-5 text-secondary-fixed shrink-0" />
           <span>{{ $address }}</span>
         </li>
         @if ($email !== '')
           <li class="flex items-center gap-3 text-on-primary-container/80">
-            <span class="material-symbols-outlined text-secondary-fixed text-lg">mail</span>
+            <x-icon name="mail" class="w-5 h-5 text-secondary-fixed" />
             <a href="mailto:{{ $email }}" class="hover:text-secondary-fixed transition-colors">{{ $email }}</a>
           </li>
         @endif
         @if ($phone !== '')
           <li class="flex items-center gap-3 text-on-primary-container/80">
-            <span class="material-symbols-outlined text-secondary-fixed text-lg">call</span>
+            <x-icon name="call" class="w-5 h-5 text-secondary-fixed" />
             <span>{{ $phone }}</span>
           </li>
         @endif

@@ -911,7 +911,7 @@
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var btn = form.querySelector('button[type="submit"]');
-        var icon = form.querySelector('.material-symbols-outlined');
+        var icon = form.querySelector('[data-favorite-icon]');
         var action = form.getAttribute('action') || '';
         if (!action) return;
         if (btn) btn.setAttribute('disabled', 'disabled');
@@ -936,8 +936,12 @@
           // Toggle is implemented as redirect-back; treat any 2xx/3xx as success and flip icon.
           if (res && (res.ok || (res.status >= 300 && res.status < 400))) {
             if (icon) {
-              var cur = (icon.textContent || '').trim();
-              icon.textContent = (cur === 'favorite') ? 'favorite_border' : 'favorite';
+              var filled = icon.getAttribute('data-favorite-icon') === 'filled';
+              icon.setAttribute('data-favorite-icon', filled ? 'outline' : 'filled');
+              var svgUse = icon.querySelector('[data-favorite-state]');
+              if (svgUse) {
+                svgUse.setAttribute('data-favorite-state', filled ? 'outline' : 'filled');
+              }
             }
           }
           return null;

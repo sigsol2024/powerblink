@@ -33,7 +33,7 @@
               @if ($catTitle)
                 <a href="#cat-{{ $catIdx }}" class="flex items-center justify-between p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/30 hover:border-secondary transition-colors group min-h-[44px]">
                   <span class="font-headline-md text-sm text-primary">{{ $catTitle }}</span>
-                  <span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform">{{ $s['cat_'.$catIdx.'_icon'] ?? 'help' }}</span>
+                  <x-icon name="{{ $s['cat_'.$catIdx.'_icon'] ?? 'help' }}" class="w-6 h-6 text-secondary group-hover:scale-110 transition-transform" />
                 </a>
               @endif
             @endforeach
@@ -44,7 +44,7 @@
             <p class="text-sm text-on-primary-container mb-4">{{ __('Our office team can help with registration, payments, and program placement.') }}</p>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 text-secondary-fixed font-bold text-sm min-h-[44px]">
               {{ __('Contact Us') }}
-              <span class="material-symbols-outlined text-lg">arrow_forward</span>
+              <x-icon name="arrow_forward" class="w-5 h-5" />
             </a>
           </div>
         </div>
@@ -70,7 +70,7 @@
                     <div class="rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden" data-faq-item>
                       <button type="button" class="w-full p-4 sm:p-5 text-left flex justify-between items-start gap-4 min-h-[44px]" data-faq-toggle>
                         <span class="font-headline-md text-primary pr-4">{{ $q }}</span>
-                        <span class="material-symbols-outlined text-secondary shrink-0 faq-chevron transition-transform">expand_more</span>
+                        <x-icon name="expand_more" class="w-5 h-5 text-secondary shrink-0 faq-chevron transition-transform" />
                       </button>
                       <div class="faq-accordion-content">
                         <div class="px-4 sm:px-5 pb-5 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/20 pt-4">

@@ -47,7 +47,7 @@ Phase B design parity against Stitch screens in `new designs/Powerblink_academy_
 | Player dashboard | `player_dashboard_powerblink_fc` | `portal.dashboard` (player) | **Implemented** | Cinematic welcome hero; stat cards (attendance, program, sessions); upcoming sessions pipeline; profile band; attendance table; announcements from DB |
 | Parent dashboard | — | `portal.dashboard` (parent) | **Implemented** | Welcome band; children/registrations stats; linked players + registration pipeline; announcements |
 | Coach dashboard | — | `portal.dashboard` (coach) | **Implemented** | Coach hero; squad/session stats; upcoming sessions table; coach profile card |
-| Admin dashboard | `admin_dashboard_powerblink_fc` | `admin.dashboard` | **Implemented** | KPI stat cards; recent registrations table; traffic summary; quick actions — all from Eloquent |
+| Admin dashboard | `admin_dashboard_powerblink_fc` | `admin.dashboard` | **Implemented** | Stitch light shell; glass KPI row (players, registrations, revenue, attendance); registrations table + upcoming events; pending payments + performance trends — all from Eloquent |
 | Player management | `player_management_powerblink_fc` | `admin.players.*` | **Implemented** | `pb-admin-table` responsive list; status pills; touch-friendly actions |
 | Programs management | `programs_management_powerblink_fc` | `admin.programs.*` | **Implemented** | CRUD table; season/active columns |
 | Coaching team mgmt | `coaching_team_management_powerblink_fc` | `admin.coaches.*` | **Implemented** | Staff list; license badges |
@@ -94,8 +94,9 @@ Previously partial — now **Implemented** (see public pages table above).
 | Public footer | `partials/powerblink/public-footer.blade.php` | Implemented |
 | Registration header | `partials/powerblink/registration-header.blade.php` | Implemented |
 | Registration progress | `partials/powerblink/registration-progress.blade.php` | Implemented |
-| Dashboard stat card | `partials/powerblink/dashboard-stat-card.blade.php` | Implemented |
-| Admin/member shell | `layouts/admin-portal.blade.php`, `layouts/member-portal.blade.php` | Implemented — single `dashboard-header` title; `x-admin.page-header` actions-only (no double header) |
+| Dashboard stat card | `partials/powerblink/dashboard-stat-card.blade.php` | Implemented — Stitch glass KPI (`rounded-3xl`, icon tile, badge slot) |
+| Inline SVG icons | `components/icon.blade.php` | Implemented — Material alias map; no Material Symbols webfont in views |
+| Admin/member shell | `layouts/admin-portal.blade.php`, `layouts/member-portal.blade.php` | Implemented — Stitch light sidebar (`w-64`), fixed blur header, `md:ml-64` canvas |
 | Registration layout | `layouts/registration.blade.php` | Implemented — task-focused, no duplicate nav |
 | Site layout | `layouts/site.blade.php` | Implemented — unified `pt-20`, minimal header for `registration.*` on legacy paths |
 

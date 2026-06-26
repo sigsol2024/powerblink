@@ -11,9 +11,9 @@
     </div>
     @if ($canManageCustomers)
       <div class="shrink-0">
-        <button type="button" class="admin-luxe-btn-primary" @click="$dispatch('open-customer-create')">
+        <x-admin.button type="button" @click="$dispatch('open-customer-create')">
           <x-icon name="plus" class="w-4 h-4" /> {{ __('Create customer') }}
-        </button>
+        </x-admin.button>
       </div>
     @endif
   </header>
@@ -78,7 +78,7 @@
           </tbody>
         </table>
         @if ($users->hasPages())
-          <div class="px-4 py-3 admin-luxe-pagination">{{ $users->links() }}</div>
+          <div class="px-4 py-3">{{ $users->links() }}</div>
         @endif
       </div>
     @endif

@@ -2,69 +2,71 @@
   $user = Auth::user();
   $site = $site ?? [];
   $brandName = \App\Support\SiteBrand::displayName($site);
-  $logoPath = $site['logo_path'] ?? $site['logo_url'] ?? null;
   $allNavItems = config('powerblink-admin-nav', []);
   $navItems = collect($allNavItems)->filter(fn ($item) => $user && $user->can($item['permission']))->values()->all();
   $homeRoute = 'admin.dashboard';
+  $isAdminSidebar = $isAdminSidebar ?? request()->routeIs('admin.*');
 @endphp
-<aside class="hidden lg:flex flex-col w-60 shrink-0 bg-pb-navy text-white h-full">
-  <div class="px-5 py-5 border-b border-white/10 shrink-0">
+
+<aside class="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-outline-variant bg-surface-container-lowest py-6 px-4 shadow-sm">
+  <div class="mb-8 px-2 shrink-0">
     <a href="{{ route($homeRoute) }}" class="block">
-      @if (!empty($logoPath))
-        <img src="{{ \App\Support\MediaImageUrl::url($logoPath) }}" alt="" class="h-8 w-8 rounded-full object-cover mb-2" />
-      @endif
-      <h1 class="font-display font-bold text-sm tracking-tight">{{ $brandName }}</h1>
-      <p class="text-[11px] text-white/50 mt-0.5">{{ __('Admin') }}</p>
+      <h1 class="font-headline-md text-headline-md font-extrabold text-primary leading-tight">{{ $brandName }}</h1>
+      <p class="font-label-caps text-label-caps text-on-surface-variant opacity-70 tracking-widest mt-1 uppercase">{{ __('Elite admin portal') }}</p>
     </a>
   </div>
 
-  <nav class="flex-1 overflow-y-auto py-2 text-[13px]" aria-label="{{ __('Admin navigation') }}">
+  <nav class="flex-grow space-y-1 custom-scrollbar overflow-y-auto" aria-label="{{ __('Admin navigation') }}">
     @foreach ($navItems as $item)
       @php $active = request()->routeIs($item['match']); @endphp
       <a href="{{ route($item['route']) }}"
          @if ($active) aria-current="page" @endif
-         class="flex items-center gap-3 px-5 py-2.5 transition-colors {{ $active ? 'bg-pb-green/30 text-white border-r-2 border-pb-green-bright' : 'text-white/75 hover:bg-white/10 hover:text-white' }}">
-        <span class="material-symbols-outlined text-[18px]">{{ $item['icon'] }}</span>
-        <span>{{ __($item['label']) }}</span>
+         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 {{ $active ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high' }}">
+        <x-icon name="{{ $item['icon'] }}" class="w-5 h-5 shrink-0" />
+        <span class="font-label-caps text-label-caps">{{ __($item['label']) }}</span>
       </a>
     @endforeach
   </nav>
 
-  <div class="border-t border-white/10 py-3 shrink-0 text-[13px]">
-    <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-5 py-2 text-white/70 hover:text-white">
-      <span class="material-symbols-outlined text-[18px]">public</span>
-      <span>{{ __('View site') }}</span>
-    </a>
-    <form method="POST" action="{{ route('logout') }}">
-      @csrf
-      <button type="submit" class="flex w-full items-center gap-3 px-5 py-2 text-white/70 hover:text-white text-left">
-        <span class="material-symbols-outlined text-[18px]">logout</span>
-        <span>{{ __('Logout') }}</span>
-      </button>
-    </form>
-  </div>
+  @if ($isAdminSidebar)
+    <div class="mt-6 shrink-0">
+      <a href="{{ route('registration.wizard') }}" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold font-headline-md text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+        <x-icon name="add" class="w-4 h-4" />
+        {{ __('New Registration') }}
+      </a>
+    </div>
+  @endif
 </aside>
 
-{{-- Mobile drawer nav (controlled by parent layout alpine state) --}}
+{{-- Mobile drawer --}}
 <aside
-  class="lg:hidden fixed inset-y-0 left-0 z-50 flex w-[min(16rem,calc(100vw-2rem))] flex-col bg-pb-navy text-white transition-transform duration-200 text-[13px]"
+  class="lg:hidden fixed inset-y-0 left-0 z-50 flex w-[min(16rem,calc(100vw-2rem))] flex-col border-r border-outline-variant bg-surface-container-lowest py-6 px-4 shadow-xl transition-transform duration-200"
   x-cloak
   :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
 >
-  <div class="px-5 py-4 flex items-center justify-between border-b border-white/10">
-    <span class="font-display font-bold text-sm">{{ $brandName }}</span>
-    <button type="button" class="p-1" @click="drawerOpen = false" aria-label="{{ __('Close') }}">
-      <span class="material-symbols-outlined">close</span>
+  <div class="flex items-center justify-between mb-6 px-2 shrink-0">
+    <div>
+      <span class="font-headline-md text-sm font-extrabold text-primary">{{ $brandName }}</span>
+      <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-0.5">{{ __('Elite admin portal') }}</p>
+    </div>
+    <button type="button" class="p-2 rounded-lg hover:bg-surface-container-high" @click="drawerOpen = false" aria-label="{{ __('Close') }}">
+      <x-icon name="close" class="w-5 h-5" />
     </button>
   </div>
-  <nav class="flex-1 overflow-y-auto py-2">
+  <nav class="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
     @foreach ($navItems as $item)
       @php $active = request()->routeIs($item['match']); @endphp
       <a href="{{ route($item['route']) }}" @click="drawerOpen = false"
-         class="flex items-center gap-3 px-5 py-2.5 {{ $active ? 'bg-pb-green/30' : 'hover:bg-white/10' }}">
-        <span class="material-symbols-outlined text-[18px]">{{ $item['icon'] }}</span>
-        <span>{{ __($item['label']) }}</span>
+         class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+        <x-icon name="{{ $item['icon'] }}" class="w-5 h-5 shrink-0" />
+        <span class="font-label-caps text-label-caps text-sm">{{ __($item['label']) }}</span>
       </a>
     @endforeach
   </nav>
+  @if ($isAdminSidebar)
+    <a href="{{ route('registration.wizard') }}" @click="drawerOpen = false" class="mt-4 w-full py-3 bg-primary text-on-primary rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+      <x-icon name="add" class="w-4 h-4" />
+      {{ __('New Registration') }}
+    </a>
+  @endif
 </aside>

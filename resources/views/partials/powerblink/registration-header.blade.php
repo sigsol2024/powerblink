@@ -17,7 +17,7 @@
       </div>
     </div>
     <a href="{{ route('home') }}" class="inline-flex items-center gap-2 min-h-11 px-3 text-on-surface-variant font-medium hover:text-primary transition-colors shrink-0">
-      <span class="material-symbols-outlined text-xl">close</span>
+      <x-icon name="close" class="w-5 h-5" />
       <span class="hidden sm:inline text-sm">{{ __('Exit application') }}</span>
     </a>
   </div>

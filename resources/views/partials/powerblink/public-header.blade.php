@@ -47,7 +47,7 @@
         {{ __('Register') }}
       </a>
       <button type="button" class="xl:hidden p-2 text-primary" x-data @click="$dispatch('toggle-mobile-nav')" aria-label="{{ __('Menu') }}">
-        <span class="material-symbols-outlined">menu</span>
+        <x-icon name="menu" class="w-6 h-6" />
       </button>
     </div>
   </div>

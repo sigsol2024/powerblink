@@ -25,36 +25,36 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
       <div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover fade-up">
         <div class="w-12 h-12 bg-secondary-container flex items-center justify-center rounded-xl mb-6 text-on-secondary-fixed">
-          <span class="material-symbols-outlined text-2xl">school</span>
+          <x-icon name="school" class="w-6 h-6" />
         </div>
         <h3 class="font-headline-md text-primary mb-4">{{ __('Academy Trials') }}</h3>
         <p class="text-on-surface-variant mb-6 text-sm">{{ __('Registration, age-group placement, and trial scheduling.') }}</p>
         @if ($email !== '')
           <a class="flex items-center gap-3 text-primary font-bold hover:underline text-sm" href="mailto:{{ $email }}">
-            <span class="material-symbols-outlined">alternate_email</span> {{ $email }}
+            <x-icon name="alternate_email" class="w-5 h-5" /> {{ $email }}
           </a>
         @endif
       </div>
       <div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover fade-up" style="transition-delay: 0.1s">
         <div class="w-12 h-12 bg-tertiary-fixed flex items-center justify-center rounded-xl mb-6 text-on-tertiary-fixed">
-          <span class="material-symbols-outlined text-2xl">corporate_fare</span>
+          <x-icon name="corporate_fare" class="w-6 h-6" />
         </div>
         <h3 class="font-headline-md text-primary mb-4">{{ __('General Inquiries') }}</h3>
         <p class="text-on-surface-variant mb-6 text-sm">{{ __('Corporate partnerships, media requests, and administrative support.') }}</p>
         @if ($hours !== '')
           <p class="flex items-start gap-3 text-on-surface text-sm whitespace-pre-line">
-            <span class="material-symbols-outlined shrink-0">schedule</span> {{ $hours }}
+            <x-icon name="schedule" class="w-5 h-5 shrink-0" /> {{ $hours }}
           </p>
         @endif
       </div>
       <div class="bg-surface-container-lowest p-8 rounded-brand shadow-sm border border-outline-variant/30 card-hover fade-up" style="transition-delay: 0.2s">
         <div class="w-12 h-12 bg-primary-container flex items-center justify-center rounded-xl mb-6 text-primary-fixed">
-          <span class="material-symbols-outlined text-2xl">location_on</span>
+          <x-icon name="location_on" class="w-6 h-6" />
         </div>
         <h3 class="font-headline-md text-primary mb-4">{{ __('Training Facility') }}</h3>
         <p class="text-on-surface-variant mb-4 text-sm leading-relaxed font-semibold text-on-surface">{{ $address }}</p>
         <a class="flex items-center gap-3 text-primary hover:text-secondary transition-colors text-sm font-bold" href="#map">
-          <span class="material-symbols-outlined">map</span> {{ __('View Map Location') }}
+          <x-icon name="map" class="w-5 h-5" /> {{ __('View Map Location') }}
         </a>
       </div>
     </div>
@@ -66,7 +66,7 @@
         @if(session('status') && ! $errors->any())
           <div id="contact-success" class="py-8 text-center" tabindex="-1">
             <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/10 text-secondary">
-              <span class="material-symbols-outlined text-3xl">check_circle</span>
+              <x-icon name="check_circle" class="w-8 h-8" />
             </div>
             <h2 class="font-headline-md text-primary mb-4">{{ __('Message sent') }}</h2>
             <p class="text-on-surface-variant mb-8">{{ session('status') }}</p>
@@ -110,7 +110,7 @@
                 <textarea class="w-full bg-surface border border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary outline-none resize-none" id="contact-message" name="message" rows="4" required>{{ old('message') }}</textarea>
               </div>
               <button class="w-full py-4 bg-primary text-on-primary rounded-brand font-bold text-lg hover:bg-secondary transition-all flex items-center justify-center gap-2" type="submit" id="contact-submit">
-                {{ __('Send Inquiry') }} <span class="material-symbols-outlined">send</span>
+                {{ __('Send Inquiry') }} <x-icon name="send" class="w-5 h-5" />
               </button>
             </form>
           </div>
@@ -125,7 +125,7 @@
           </p>
         </div>
         <div class="relative pl-8 border-l-4 border-secondary-fixed">
-          <span class="material-symbols-outlined text-secondary-fixed text-4xl absolute -left-6 -top-4 opacity-50">format_quote</span>
+          <x-icon name="format_quote" class="w-10 h-10 text-secondary-fixed absolute -left-6 -top-4 opacity-50" />
           <blockquote class="font-headline-md italic text-white mb-4 leading-relaxed">{{ $quote }}</blockquote>
         </div>
       </div>
@@ -139,12 +139,12 @@
         <h3 class="font-headline-md text-primary mb-6">{{ __('Training Facility') }}</h3>
         <div class="space-y-4 text-sm">
           <div class="flex gap-4">
-            <span class="material-symbols-outlined text-secondary shrink-0">location_on</span>
+            <x-icon name="location_on" class="w-5 h-5 text-secondary shrink-0" />
             <p class="text-on-surface-variant">{{ $address }}</p>
           </div>
           @if ($phone !== '')
             <div class="flex gap-4">
-              <span class="material-symbols-outlined text-secondary shrink-0">call</span>
+              <x-icon name="call" class="w-5 h-5 text-secondary shrink-0" />
               <p>{{ $phone }}</p>
             </div>
           @endif

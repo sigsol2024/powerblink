@@ -31,7 +31,7 @@
       @foreach ($values as $i => $card)
         <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm border border-outline-variant/20 card-hover fade-up" @if($i) style="transition-delay: {{ $i * 0.1 }}s" @endif>
           <div class="w-16 h-16 bg-primary-container rounded-lg flex items-center justify-center mb-8">
-            <span class="material-symbols-outlined text-secondary-fixed text-4xl">{{ $card['icon'] }}</span>
+            <x-icon name="{{ $card['icon'] }}" class="w-10 h-10 text-secondary-fixed" />
           </div>
           <h3 class="font-headline-md text-primary mb-4">{{ $card['title'] }}</h3>
           <p class="font-body-md text-on-surface-variant leading-relaxed">{{ $card['body'] }}</p>

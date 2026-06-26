@@ -25,8 +25,8 @@
 
 @section('content')
   {{-- Hero --}}
-  <section class="relative h-[85vh] min-h-[480px] sm:min-h-[560px] md:min-h-[700px] flex items-center overflow-hidden -mt-20 pt-20">
-    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $heroBg }}')"></div>
+  <section class="relative h-[90vh] min-h-[560px] md:min-h-[700px] flex items-center overflow-hidden -mt-20 pt-20">
+    <div class="absolute inset-0 pb-hero-bg" style="background-image: url('{{ $heroBg }}')"></div>
     <div class="absolute inset-0 cinematic-overlay" aria-hidden="true"></div>
     <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
       <div class="max-w-4xl">
@@ -36,7 +36,7 @@
           <p class="font-body-lg text-on-primary-container max-w-2xl mb-10 leading-relaxed">{{ $heroSubtitle }}</p>
         @endif
         <div class="flex flex-wrap gap-4 mb-12">
-          <a href="{{ $heroCtaUrl }}" class="inline-flex items-center bg-secondary-container text-on-secondary-fixed px-8 py-4 rounded-xl font-headline-md text-sm hover:bg-secondary-fixed transition-all">
+          <a href="{{ $heroCtaUrl }}" class="inline-flex items-center bg-secondary-container text-on-secondary-fixed px-8 py-4 rounded-xl font-headline-md text-sm hover:bg-secondary-fixed hover:shadow-[0_0_20px_rgba(100,255,146,0.4)] transition-all">
             {{ $s['hero_cta_text'] ?? __('Register Now') }}
           </a>
           <a href="{{ route('programs') }}" class="inline-flex items-center border-2 border-on-primary text-on-primary px-8 py-4 rounded-xl font-headline-md text-sm hover:bg-on-primary hover:text-primary transition-all">
@@ -75,7 +75,7 @@
       @foreach ($bento as $i => $card)
         <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/30 card-hover fade-up" @if($i > 0) style="transition-delay: {{ $i * 0.1 }}s" @endif>
           <div class="w-14 h-14 bg-primary-container rounded-lg flex items-center justify-center mb-6 text-secondary-fixed">
-            <span class="material-symbols-outlined text-3xl">{{ $card['icon'] }}</span>
+            <x-icon name="{{ $card['icon'] }}" class="w-8 h-8" />
           </div>
           <h3 class="font-headline-md text-primary mb-3">{{ $card['title'] }}</h3>
           <p class="text-on-surface-variant text-sm leading-relaxed">{{ $card['body'] }}</p>
@@ -86,13 +86,16 @@
 
   {{-- About preview --}}
   <section class="bg-primary-container py-section-gap relative overflow-hidden">
-    <div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none hidden md:block" aria-hidden="true">
+      <img src="{{ asset('asset/images/powerblink/powerblink_logo.png') }}" alt="" class="w-full h-auto object-contain" />
+    </div>
+    <div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
       <div class="fade-up">
         <h2 class="font-headline-lg text-on-primary mb-6">{{ $s['welcome_title'] ?? __('Elite Excellence in Ibeju Lekki') }}</h2>
         <p class="font-body-lg text-on-primary-container mb-8 leading-relaxed">{{ $s['welcome_body'] ?? __('Powerblink Football Club Limited is a launchpad for dreams — a safe, world-class environment where young athletes transform raw passion into professional competence.') }}</p>
         <a href="{{ route('about') }}" class="inline-flex items-center gap-2 text-secondary-fixed font-headline-md group">
           {{ __('Read Our Story') }}
-          <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
+          <x-icon name="arrow_forward" class="w-5 h-5 group-hover:translate-x-2 transition-transform" />
         </a>
       </div>
       <div class="relative fade-up">
@@ -162,13 +165,13 @@
             @endif
             @if ($coach->bio)
               <blockquote class="relative mb-8">
-                <span class="material-symbols-outlined absolute -top-4 -left-2 text-5xl text-secondary-fixed opacity-30">format_quote</span>
+                <x-icon name="format_quote" class="w-12 h-12 absolute -top-4 -left-2 text-secondary-fixed opacity-30" />
                 <p class="font-body-lg italic text-on-primary leading-relaxed pl-6 line-clamp-4">{{ $coach->bio }}</p>
               </blockquote>
             @endif
             <a href="{{ route('coaching') }}" class="inline-flex items-center gap-2 text-secondary-fixed font-bold group">
               {{ __('Meet the Team') }}
-              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              <x-icon name="arrow_forward" class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
           </div>
           <div class="h-72 lg:h-auto min-h-[320px]">
@@ -205,7 +208,13 @@
 
   {{-- Final CTA --}}
   <section class="py-section-gap px-margin-mobile md:px-margin-desktop">
-    <div class="max-w-container-max mx-auto bg-secondary text-on-secondary rounded-[2.5rem] p-10 md:p-16 text-center relative overflow-hidden fade-up">
+    <div class="max-w-container-max mx-auto bg-secondary text-on-secondary rounded-[2.5rem] p-10 md:p-24 text-center relative overflow-hidden fade-up">
+      <div class="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
+        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <path d="M0 100 C 20 0 50 0 100 100" fill="none" stroke="white" stroke-width="0.5"></path>
+          <path d="M0 80 C 30 20 60 20 100 80" fill="none" stroke="white" stroke-width="0.5"></path>
+        </svg>
+      </div>
       <div class="relative z-10">
         <h2 class="font-headline-lg text-on-secondary mb-6">{{ $s['promo_title'] ?? __('Ready To Begin Your Football Journey?') }}</h2>
         <p class="font-body-lg text-on-secondary/80 max-w-2xl mx-auto mb-10">{{ $s['welcome_body'] ?? __('Join the elite ranks of PowerBlink FC and take your first step toward professional excellence today.') }}</p>

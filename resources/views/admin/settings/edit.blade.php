@@ -304,5 +304,4 @@
       wirePreview('auth_panel_image_file', 'auth-panel-preview-live');
     })();
   </script>
-  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-8'])
 </x-app-layout>

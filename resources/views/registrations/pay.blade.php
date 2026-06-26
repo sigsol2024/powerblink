@@ -5,7 +5,7 @@
   <div class="bg-surface-container-lowest rounded-xl p-6 md:p-10 shadow-sm border border-outline-variant/30">
     <div class="flex items-center gap-3 mb-6">
       <span class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
-        <span class="material-symbols-outlined text-secondary text-2xl">payments</span>
+        <x-icon name="payments" class="w-7 h-7 text-secondary" />
       </span>
       <div>
         <h1 class="font-headline-lg text-headline-lg-mobile text-primary">{{ __('Registration payment') }}</h1>
@@ -31,7 +31,7 @@
     <form method="POST" action="{{ route('registration.pay.initialize', $token) }}">
       @csrf
       <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-secondary text-on-secondary px-6 py-4 min-h-12 rounded-full font-bold text-lg hover:scale-[1.01] active:scale-95 transition-transform">
-        <span class="material-symbols-outlined">lock</span>
+        <x-icon name="lock" class="w-5 h-5" />
         {{ __('Pay now') }}
       </button>
     </form>

@@ -85,7 +85,7 @@
         </section>
 
         <div class="flex items-center gap-3">
-          <button type="submit" class="admin-luxe-btn-primary">{{ __('Save changes') }}</button>
+          <x-admin.button type="submit">{{ __('Save changes') }}</x-admin.button>
         </div>
       </form>
 

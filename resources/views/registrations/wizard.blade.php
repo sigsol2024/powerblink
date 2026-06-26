@@ -126,7 +126,7 @@
               <div class="space-y-2">
                 <label class="text-label-caps font-label-caps uppercase text-on-surface text-xs">{{ $label }}</label>
                 <div class="flex items-center gap-4 border-2 border-dashed border-outline-variant rounded-lg p-4 bg-surface/50">
-                  <span class="material-symbols-outlined text-outline">upload_file</span>
+                  <x-icon name="upload_file" class="w-6 h-6 text-outline" />
                   <input type="file" name="{{ $field }}" class="text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:brightness-110 cursor-pointer w-full" />
                 </div>
               </div>
@@ -184,7 +184,7 @@
             </div>
           </div>
           <div class="p-4 bg-secondary-container/20 border border-secondary/20 rounded-xl flex items-start gap-4">
-            <span class="material-symbols-outlined text-secondary shrink-0">info</span>
+            <x-icon name="info" class="w-5 h-5 text-secondary shrink-0" />
             <p class="text-sm text-on-secondary-container">{{ __('No payment is required now. You will receive an email after admin review.') }}</p>
           </div>
           <label class="flex items-start gap-3 cursor-pointer">
@@ -197,7 +197,7 @@
           @if ($step > 1)
             <a href="{{ route('registration.wizard', ['step' => $step - 1]) }}"
                class="inline-flex items-center gap-2 px-6 py-3 min-h-11 font-bold text-on-surface hover:bg-surface-container-high rounded-full transition-all">
-              <span class="material-symbols-outlined">arrow_back</span>
+              <x-icon name="arrow_back" class="w-5 h-5" />
               {{ __('Back') }}
             </a>
           @else
@@ -206,7 +206,7 @@
           <button type="submit"
                   class="inline-flex items-center gap-2 px-8 py-3 min-h-11 rounded-full font-headline-md tracking-tight hover:scale-[1.02] active:scale-95 transition-transform {{ $step === 6 ? 'bg-secondary text-on-secondary' : 'bg-primary text-on-primary' }}">
             <span>{{ $step < 6 ? __('Continue') : __('Submit application') }}</span>
-            <span class="material-symbols-outlined">{{ $step < 6 ? 'arrow_forward' : 'check_circle' }}</span>
+            <x-icon name="{{ $step < 6 ? 'arrow_forward' : 'check_circle' }}" class="w-5 h-5" />
           </button>
         </div>
       </form>

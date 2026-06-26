@@ -25,28 +25,27 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
   @endif
 </head>
-<body class="font-body text-pb-navy antialiased h-full overflow-hidden bg-pb-bg" x-data="{ drawerOpen: false }" @keydown.escape.window="drawerOpen = false">
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen" x-data="{ drawerOpen: false }" @keydown.escape.window="drawerOpen = false">
   <div class="fixed inset-0 z-40 bg-black/50 lg:hidden" x-show="drawerOpen" x-cloak x-transition.opacity @click="drawerOpen = false" aria-hidden="true"></div>
 
-  <div class="flex h-screen w-full overflow-hidden">
-    @include('partials.powerblink.member-sidebar')
+  @include('partials.powerblink.member-sidebar')
 
-    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-      @include('partials.powerblink.dashboard-header')
+  <main class="md:ml-64 min-h-screen">
+    @include('partials.powerblink.dashboard-header')
 
-      <div class="flex-1 min-h-0 overflow-y-auto">
+    <div class="pt-16 min-h-screen flex flex-col">
+      <div class="flex-1 {{ $isFullBleed ? '' : 'px-margin-mobile md:px-margin-desktop py-6 md:py-8' }}">
         @if ($isFullBleed)
           {{ $slot }}
         @else
-          <div class="max-w-container mx-auto w-full p-4 md:p-6">
+          <div class="max-w-container-max mx-auto w-full">
             {{ $slot }}
           </div>
         @endif
       </div>
-
       @include('partials.powerblink.dashboard-footer')
     </div>
-  </div>
+  </main>
   @stack('body-end')
 </body>
 </html>

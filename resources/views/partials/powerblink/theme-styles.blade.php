@@ -1,7 +1,4 @@
 <style>
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  }
   .active-nav-link {
     color: #006d32;
     font-weight: 700;
@@ -10,6 +7,16 @@
   }
   .cinematic-overlay {
     background: linear-gradient(0deg, rgba(11, 28, 52, 0.95) 0%, rgba(11, 28, 52, 0.4) 50%, rgba(11, 28, 52, 0.2) 100%);
+  }
+  .pb-hero-bg {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center 32%;
+  }
+  @media (min-width: 768px) {
+    .pb-hero-bg {
+      background-position: center center;
+    }
   }
   .hero-gradient {
     background: linear-gradient(to bottom, rgba(11, 28, 52, 0.8), rgba(0, 0, 0, 0.9));

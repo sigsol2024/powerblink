@@ -11,7 +11,6 @@
   <title>@if(!empty($title ?? null)){{ $title }} | @endif{{ $brandName }}</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   @include('partials.powerblink.theme')
-  @include('partials.powerblink.theme-styles')
   @stack('head')
 </head>
 <body class="bg-background text-on-background font-body-md min-h-screen pb-mobile-safe">

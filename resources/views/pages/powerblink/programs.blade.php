@@ -26,7 +26,7 @@
                 <img src="{{ \App\Support\MediaImageUrl::url($program->heroImage->file_path) }}" alt="{{ $program->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               @else
                 <div class="w-full h-full flex items-center justify-center bg-primary-container">
-                  <span class="material-symbols-outlined text-5xl text-on-primary-container">sports_soccer</span>
+                  <x-icon name="sports_soccer" class="w-12 h-12 text-on-primary-container" />
                 </div>
               @endif
             </div>

@@ -8,7 +8,7 @@
   $secondaryCta = $secondaryCta ?? null;
 @endphp
 <section class="relative {{ $minHeight }} flex items-center overflow-hidden -mt-20 pt-20">
-  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $image }}')"></div>
+  <div class="absolute inset-0 pb-hero-bg bg-cover bg-center" style="background-image: url('{{ $image }}')"></div>
   <div class="absolute inset-0 cinematic-overlay" aria-hidden="true"></div>
   <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-24">
     @if ($eyebrow !== '')

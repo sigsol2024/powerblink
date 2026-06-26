@@ -25,9 +25,9 @@
       <span class="text-xs text-wp-text-muted">{{ trans_choice(':count staff member|:count staff members', $staffStats['total'], ['count' => number_format($staffStats['total'])]) }}</span>
     </div>
     <div class="shrink-0">
-      <button type="button" class="admin-luxe-btn-primary" @click="$dispatch('open-staff-create')">
+      <x-admin.button type="button" @click="$dispatch('open-staff-create')">
         <x-icon name="plus" class="w-4 h-4" /> {{ __('Add staff') }}
-      </button>
+      </x-admin.button>
     </div>
   </header>
 
@@ -173,7 +173,7 @@
       </div>
 
       @if ($staff->hasPages())
-        <div class="px-4 py-3 admin-luxe-pagination">{{ $staff->links() }}</div>
+        <div class="px-4 py-3">{{ $staff->links() }}</div>
       @endif
     </div>
 

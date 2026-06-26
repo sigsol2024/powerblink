@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAnalyticsController;
 use App\Http\Controllers\AdminAnnouncementController;
 use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\AdminCoachController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminMediaController;
 use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\AdminPaymentController;
@@ -122,63 +123,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'staff', 'admin.audit'])->prefix('admin')->group(function () {
-    Route::get('/', function () {
-        $user = request()->user();
-        if ($user && ! $user->can('dashboard.view')) {
-            return redirect()->route('admin.registrations.index');
-        }
-
-        $analyticsStart = now()->subDays(89)->startOfDay();
-        $analyticsEnd = now();
-        $analyticsBase = SiteTrafficEvent::query()->betweenDates($analyticsStart, $analyticsEnd);
-        $topPage = (clone $analyticsBase)->selectRaw('path, COUNT(*) as views')->groupBy('path')->orderByDesc('views')->first();
-        $topPagePath = trim((string) ($topPage->path ?? ''));
-        $topPageLabel = 'No data yet';
-        if ($topPagePath !== '') {
-            if ($topPagePath === '/') {
-                $topPageLabel = 'Homepage';
-            } else {
-                $clean = trim(str_replace(['-', '_', '/'], ' ', $topPagePath));
-                $topPageLabel = ucwords($clean !== '' ? $clean : $topPagePath);
-            }
-        }
-
-        $auditStart = now()->subDays(30)->startOfDay();
-        $auditBase = AdminAuditTrail::query()->where('created_at', '>=', $auditStart);
-
-        $totalViews = (int) (clone $analyticsBase)->count();
-
-        return view('admin.dashboard', [
-            'title' => __('Dashboard'),
-            'stats' => [
-                'pending_registrations' => Registration::query()->where('status', 'pending_review')->count(),
-                'awaiting_payment' => Registration::query()->where('status', 'awaiting_payment')->count(),
-                'active_players' => Player::query()->where('status', 'active')->count(),
-                'users_count' => User::query()->count(),
-                'visitors_total' => $totalViews,
-            ],
-            'recentRegistrations' => Registration::query()
-                ->with(['program'])
-                ->latest('submitted_at')
-                ->take(8)
-                ->get(),
-            'analyticsSummary' => [
-                'range_days' => 90,
-                'total_views' => $totalViews,
-                'unique_sessions' => (clone $analyticsBase)->whereNotNull('session_id')->distinct('session_id')->count('session_id'),
-                'top_page' => $topPage,
-                'top_page_label' => $topPageLabel,
-            ],
-            'auditSummary' => [
-                'range_days' => 30,
-                'total_actions' => (clone $auditBase)->count(),
-                'create_actions' => (clone $auditBase)->whereIn('method', ['POST'])->count(),
-                'update_actions' => (clone $auditBase)->whereIn('method', ['PUT', 'PATCH'])->count(),
-                'delete_actions' => (clone $auditBase)->where('method', 'DELETE')->count(),
-                'recent' => (clone $auditBase)->with('user:id,name,email')->latest()->take(8)->get(),
-            ],
-        ]);
-    })->name('admin.dashboard');
+    Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
 
     Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('admin.analytics.index');
     Route::get('/analytics/data', [AdminAnalyticsController::class, 'data'])->middleware('permission:analytics.view')->name('admin.analytics.data');

@@ -73,7 +73,7 @@
       <div></div>
       <a
         :href="`{{ route('admin.analytics.index') }}?range=${range}&export=csv&start_date=${startDate}&end_date=${endDate}`"
-        class="admin-luxe-btn-primary inline-flex shrink-0 items-center gap-2"
+        class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold rounded-lg transition-all min-h-11 px-4 bg-secondary text-on-secondary hover:brightness-110 active:scale-[0.98]"
       >
         <x-icon name="download" class="w-4 h-4" />
         <span>{{ __('Export CSV') }}</span>
@@ -296,5 +296,4 @@
     </section>
   </x-admin.page-content>
 
-  @include('admin.partials.luxe-footer', ['footerClass' => 'mt-4'])
 </x-app-layout>

@@ -53,7 +53,7 @@
                 <img src="{{ \App\Support\MediaImageUrl::url($coach->photo->file_path) }}" alt="{{ $coach->name }}" class="w-full h-64 object-cover object-top" />
               @else
                 <div class="w-full h-64 bg-primary-container flex items-center justify-center">
-                  <span class="material-symbols-outlined text-6xl text-on-primary-container">person</span>
+                  <x-icon name="person" class="w-16 h-16 text-on-primary-container" />
                 </div>
               @endif
               <div class="p-6">
